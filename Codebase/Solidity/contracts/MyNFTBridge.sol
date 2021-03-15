@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.2;
 
+import "./ERC721.sol";
+
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridgeERC721Departure
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 NFT from the bridge universe
@@ -261,6 +263,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     function getERC721DestinationTokenId(bytes32 _escrowHash) external view returns (bytes32);
 
+
     /// @notice Get the destination bridge of a migration registered with this bridge.
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _originWorld The smart contract address of the token currently representing the NFT
@@ -280,8 +283,6 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @return An array of 32 bytes representing the destination bridge. If the destination
     /// bridge is on an EVM, it is most likely an address.
     function getERC721DestinationBridge(bytes32 _escrowHash) external view returns (bytes32);
-
-
 
 
     /* 
@@ -308,6 +309,38 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
 interface MyNFTBridgeERC721toERC721Arrival {
     
+    /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
+    /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
+    /// @param _originUniverse An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    /// @param _destinationBridge An array of 32 bytes representing the destination bridge. If the destination
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationWorld An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    function migrateFromIOUERC721ToERC721(
+        bytes32 _originUniverse,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originBridge, 
+        address _destinationWorld,
+        uint256 _destinationTokenId,
+        address _destinationOwner,
+        address _signee,
+        bytes32 _height,
+        bytes32 _escrowHashSigned
+    ) external;
+
 }
 
 /// @author Guillaume Gonnaud 2021
