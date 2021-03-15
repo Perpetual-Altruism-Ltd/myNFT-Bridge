@@ -313,12 +313,11 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _originWorld An array of 32 bytes representing the origin world of the migrated token. 
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId The token ID of the token representing the NFT
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
-    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _destinationBridge An array of 32 bytes representing the destination bridge. If the destination
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
     /// bridge is on an EVM, it is most likely an address.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
