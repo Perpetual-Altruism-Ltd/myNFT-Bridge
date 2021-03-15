@@ -4,7 +4,7 @@ pragma solidity 0.8.2;
 /// @author Guillaume Gonnaud 2021
 /// @title myNFTBridgeERC721Departure
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 NFT from the bridge universe
-interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
+interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
@@ -198,6 +198,7 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @return the smart contract address of the migrated origin token
     function getERC721OriginWorld(bytes32 _escrowHash) external view returns(address);
 
+
     /// @notice Get the destination universe of a migration registered with this bridge.
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _originWorld The smart contract address of the token currently representing the NFT
@@ -218,6 +219,7 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     function getERC721DestinationUniverse(bytes32 _escrowHash) external view returns (bytes32);
 
+
     /// @notice Get the destination world of a migration registered with this bridge.
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _originWorld The smart contract address of the token currently representing the NFT
@@ -237,6 +239,7 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @return An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
     function getERC721DestinationWorld(bytes32 _escrowHash) external view returns (bytes32);
+
 
     /// @notice Get the destination tokenId of a migration registered with this bridge.
     /// @dev throw if the token has not been registered for migration or has been migrated back.
@@ -301,22 +304,22 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 }
 
 /// @author Guillaume Gonnaud 2021
-/// @title myNFTBridgeERC721toERC721Arrival
+/// @title MyNFTBridgeERC721toERC721Arrival
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
-interface myNFTBridgeERC721toERC721Arrival {
+interface MyNFTBridgeERC721toERC721Arrival {
     
 }
 
 /// @author Guillaume Gonnaud 2021
-/// @title myNFTBridgeControl
+/// @title MyNFTBridgeControl
 /// @notice Represent the core bridge functions necessary to setup and interact with potentials migrations
-interface myNFTBridgeControl {
+interface MyNFTBridgeControl {
     
 }
 
 /// @author Guillaume Gonnaud 2021
-/// @title myNFTBridge
+/// @title MyNFTBridge
 /// @notice Represent the ABI of all the core Bridge functions
-interface myNFTBridge is myNFTBridgeERC721Departure, myNFTBridgeERC721toERC721Arrival, myNFTBridgeControl{
+interface MyNFTBridge is MyNFTBridgeERC721Departure, MyNFTBridgeERC721toERC721Arrival, MyNFTBridgeControl{
 
 }
