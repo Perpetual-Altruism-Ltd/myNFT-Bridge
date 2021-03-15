@@ -13,10 +13,11 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
         bytes32 _destinationUniverse,
-        bytes32 indexed _destinationBridge,
+        bytes32 _destinationBridge,
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
-        bytes32 _destinationOwner
+        bytes32 _destinationOwner,
+        bytes32 _signee
     );
 
 
@@ -27,10 +28,11 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
         bytes32 _destinationUniverse,
-        bytes32 indexed _destinationBridge,
+        bytes32 _destinationBridge,
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
-        bytes32 _destinationOwner
+        bytes32 _destinationOwner,
+        bytes32 _signee
     );
 
 
@@ -40,7 +42,9 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         address _operator,
         address indexed _originWorld, 
         uint256 indexed _originTokenId,
-        bytes32 indexed _escrowHash //This hash depend of all other migration parameters and the height of the chain
+        bytes32 indexed _escrowHash // This hash depend of all other migration parameters and the 
+        // height of the chain. See documentation for details.
+        // _signee will then have to sign this hash before the relay will release at it's destination.
     );
 
 
@@ -61,6 +65,8 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _destinationWorld An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
     function migrateToIOUERC721(
         address _originWorld, 
         uint256 _originTokenId, 
@@ -68,7 +74,8 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
-        bytes32 _destinationOwner
+        bytes32 _destinationOwner,
+        bytes32 _signee
     ) external;
 
 
@@ -91,6 +98,8 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
     function migrateToFullERC721(
         address _originWorld, 
         uint256 _originTokenId, 
@@ -98,7 +107,8 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
-        bytes32 _destinationOwner
+        bytes32 _destinationOwner,
+        bytes32 _signee
     ) external;
 
 
@@ -141,7 +151,7 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
 
     /// @notice Get the original token ID of a token that used to be ERC-721 migrated trough this bridge
-    /// @dev throw if the token has not been migrated or has been migrated back.
+    /// @dev  throw if the token has not been registered for migration or has been migrated back.
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
@@ -155,8 +165,18 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationTokenId
     ) external view returns(uint256);
 
+
+
+    /// @notice Get the original token ID of a token that used to be ERC-721 migrated trough this bridge
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit
+    /// @return the tokenId of the originToken
+    function getERC721OriginTokenId(bytes32 _escrowHash) external view returns(uint256);
+
+
     /// @notice Get the original smart contract address of a token that used to be ERC-721 migrated trough this bridge
-    /// @dev throw if the token has not been migrated or has been migrated back.
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
@@ -169,6 +189,96 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId
     ) external view returns(address);
+
+
+    /// @notice Get the original smart contract address of a token that used to be ERC-721 migrated trough this bridge
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit
+    /// @return the smart contract address of the migrated origin token
+    function getERC721OriginWorld(bytes32 _escrowHash) external view returns(address);
+
+    /// @notice Get the destination universe of a migration registered with this bridge.
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _originWorld The smart contract address of the token currently representing the NFT
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @return An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    function getERC721DestinationUniverse(
+        address _originWorld, 
+        uint256 _originTokenId
+    ) external view returns (bytes32);
+
+    
+    /// @notice Get the destination universe of a migration registered with this bridge.
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit.
+    /// @return An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    function getERC721DestinationUniverse(bytes32 _escrowHash) external view returns (bytes32);
+
+    /// @notice Get the destination world of a migration registered with this bridge.
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _originWorld The smart contract address of the token currently representing the NFT
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @return An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    function getERC721DestinationWorld(
+        address _originWorld, 
+        uint256 _originTokenId
+    ) external view returns (bytes32);
+
+    
+    /// @notice Get the destination world of a migration registered with this bridge.
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit.
+    /// @return An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    function getERC721DestinationWorld(bytes32 _escrowHash) external view returns (bytes32);
+
+    /// @notice Get the destination tokenId of a migration registered with this bridge.
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _originWorld The smart contract address of the token currently representing the NFT
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @return An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    function getERC721DestinationTokenId(
+        address _originWorld, 
+        uint256 _originTokenId
+    ) external view returns (bytes32);
+
+    
+    /// @notice Get the destination tokenId of a migration registered with this bridge.
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit.
+    /// @return An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    function getERC721DestinationTokenId(bytes32 _escrowHash) external view returns (bytes32);
+
+    /// @notice Get the destination bridge of a migration registered with this bridge.
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _originWorld The smart contract address of the token currently representing the NFT
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @return An array of 32 bytes representing the destination bridge. If the destination
+    /// bridge is on an EVM, it is most likely an address.
+    function getERC721DestinationBridge(
+        address _originWorld, 
+        uint256 _originTokenId
+    ) external view returns (bytes32);
+
+    
+    /// @notice Get the destination bridge of a migration registered with this bridge.
+    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
+    /// answers even if the token is migrated back.
+    /// @param _escrowHash The escrow hash emitted at token deposit.
+    /// @return An array of 32 bytes representing the destination bridge. If the destination
+    /// bridge is on an EVM, it is most likely an address.
+    function getERC721DestinationBridge(bytes32 _escrowHash) external view returns (bytes32);
+
+
 
 
     /* 
@@ -191,9 +301,9 @@ interface myNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 }
 
 /// @author Guillaume Gonnaud 2021
-/// @title myNFTBridgeERC721Arrival
-/// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe
-interface myNFTBridgeERC721Arrival {
+/// @title myNFTBridgeERC721toERC721Arrival
+/// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
+interface myNFTBridgeERC721toERC721Arrival {
     
 }
 
@@ -207,6 +317,6 @@ interface myNFTBridgeControl {
 /// @author Guillaume Gonnaud 2021
 /// @title myNFTBridge
 /// @notice Represent the ABI of all the core Bridge functions
-interface myNFTBridge is myNFTBridgeERC721Departure, myNFTBridgeERC721Arrival, myNFTBridgeControl{
+interface myNFTBridge is myNFTBridgeERC721Departure, myNFTBridgeERC721toERC721Arrival, myNFTBridgeControl{
 
 }
