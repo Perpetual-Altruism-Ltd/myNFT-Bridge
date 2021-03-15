@@ -2,7 +2,7 @@
 pragma solidity 0.8.2;
 
 /// @author Guillaume Gonnaud 2021
-/// @title myNFTBridgeERC721Departure
+/// @title MyNFTBridgeERC721Departure
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 NFT from the bridge universe
 interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
