@@ -8,7 +8,7 @@ Our implementation for EVM will be using a fully transparent smart contract patt
 ## Step by Step IOU migration process with minimized user interaction 
 
 The following process only require a single on-chain transaction from the token owner (designing a relay as an operator), as well as signing 2 messages using a web3 wallet.
-This serve as definitive proof as the owner intent and satisfaction with the migration, even if operated by a third party.
+This serve as definitive proof of the owner intent and satisfaction with the migration, even if operated by a third party.
 
 ### 1: The Original Token publishers designate relays
 The original token publisher need to designate addresses as being able to act as operator for the escrow of its token on the departure NFT Bridge. Those operators could be human, trust-minimized, trustless, etc... Those operators are called relays.
