@@ -499,6 +499,16 @@ interface MyNFTBridgeERC721toERC721Arrival {
     ) external;
 
 
+    /// @notice Get the original smart contract address of a current ERC-721 token migrated toward this bridge
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _destinationWorld The smart contract address of the migrated ERC-721 token you want to query
+    /// @param _destinationTokenId The tokenId of the migrated ERC-721 token you want to query
+    /// @return A 32bytes array containing the world identifier of the origin token. If the origin universe
+    ///  is in an EVM, it is most likely a smart contract address padded with big endian 0s.
+    function getMigratedERC721OriginWorld(
+        address _destinationWorld,
+        uint256 _destinationTokenId
+    ) external view returns(address);
 
 }
 
@@ -512,7 +522,7 @@ interface MyNFTBridgeControl {
     /// @param _relay The address you wish to check as a relay
     /// @param _world The world you wish to check as being relayed
     /// @return TRUE if _world.owner() == _relay or if the owner did setup _relay as a relay. Otherwise, false.
-    function isAccreditedRelay( address _relay, address _world) external returns (bool);
+    function isAccreditedRelay(address _relay, address _world) external returns (bool);
 
 }
 
