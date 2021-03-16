@@ -356,7 +356,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationWorld,
         address _destinationTokenId,
         address _destinationOwner,
-        address _signee
+        address _signee,
+        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
     );
 
         // Event emitted when an ERC-721 Full migration is registered. 
@@ -370,25 +371,26 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationWorld,
         address _destinationTokenId,
         address _destinationOwner,
-        address _signee
+        address _signee,
+        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
     );
 
     // Event emitted when a token is released as the NFT representative at the end of an IOU migration. 
-    event ERC721FinalizedIOUMigration(
+    event FinalizedMigrationERC721IOU(
         address indexed _destinationWorld, 
         uint256 indexed _destinationTokenId,
         address _destinationOwner,
         address _relay,
-        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
+        bytes32 indexed _escrowHash
     );
 
     // Event emitted when a token is released as the NFT representative at the end of a full migration. 
-    event ERC721FinalizedFullMigration(
+    event FinalizedMigrationERC721Full(
         address indexed _destinationWorld, 
         uint256 indexed _destinationTokenId,
         address _destinationOwner,
         address _relay,
-        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
+        bytes32 indexed _escrowHash
     );
 
     
