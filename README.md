@@ -19,13 +19,14 @@ This is an open ended question with no correct answers, only compromises. Many s
 - Separates two concepts : A Bridge is a smart contract serving as an escrow/messaging system for NFT migrations (think of it as an airport 🛄), Relays are the one trusted by both token publishers and token owners to actually perform the migration (think of them as airlines ✈️).
 - Can take tokens in escrow in order to mint a deed to them in an another chain.  
 - Can give back tokens in escrow when the deed to them is reclaimed in the bridge the did was minted.
-- Allow token publishers to veto their token being represented as deeds by third parties
+- Allow token publishers to veto their token being represented as deeds by third parties.
 - Can take tokens in escrow in order for the original token publisher to mint them in an another chain.
 - Can give back tokens in escrow when the token to them is migrated back in a fashion defined by the original token publisher.
 - Allow token publishers to specify the only allowed migration destinations for a proper cross-chain NFT migration as well as hooking callbacks for it.
-- Can provably show declared previous owner intent to migrate
-- Allow token publishers to designate relays
-- Allow users to chose a relay
+- Can provably show declared previous owner intent to migrate.
+- Allow token publishers to designate relays.
+- Allow users to chose a relay.
+- Allow NFT owners to migrate tokens in a single operation : allowing a relay as the token operator.
 
 ## More details 
 
