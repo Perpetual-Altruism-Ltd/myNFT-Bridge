@@ -1,6 +1,4 @@
-# myNFT Bridge
-
-Hello.
+# MyNFT Bridge
 
 If you are a developper/user wanting to interact with an existing bridge, the only solidity file you need to generate the ABI of is myNFTBridge.sol
 It contain all the function interfaces describing how to interact with an NFT bridge.
