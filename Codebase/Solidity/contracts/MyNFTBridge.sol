@@ -373,6 +373,24 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _signee
     );
 
+    // Event emitted when a token is released as the NFT representative at the end of an IOU migration. 
+    event ERC721FinalizedIOUMigration(
+        address indexed _destinationWorld, 
+        uint256 indexed _destinationTokenId,
+        address _destinationOwner,
+        address _relay,
+        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
+    );
+
+    // Event emitted when a token is released as the NFT representative at the end of a full migration. 
+    event ERC721FinalizedFullMigration(
+        address indexed _destinationWorld, 
+        uint256 indexed _destinationTokenId,
+        address _destinationOwner,
+        address _relay,
+        bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
+    );
+
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
@@ -455,6 +473,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
 
     /// @notice Finalize a migration by transferring the IOU destination token to it's new owner
     /// @dev Throw if safeTransferFrom() fails to attribute the token.
+    /// emit : 
     /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
     /// in the arrival bridge
     /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
@@ -477,6 +496,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _migrationRelayedHashSigned
     ) external;
 
+
+
 }
 
 /// @author Guillaume Gonnaud 2021
@@ -484,6 +505,13 @@ interface MyNFTBridgeERC721toERC721Arrival {
 /// @notice Represent the core bridge functions necessary to setup and interact with potentials migrations
 interface MyNFTBridgeControl {
     
+    /// @notice Check if an address is designed as a relay for a specific world
+    /// @dev
+    /// @param _relay The address you wish to check as a relay
+    /// @param _world The world you wish to check as being relayed
+    /// @return TRUE if _world.owner() == _relay or if the owner did setup _relay as a relay. Otherwise, false.
+    function isAccreditedRelay( address _relay, address _world) external returns (bool);
+
 }
 
 /// @author Guillaume Gonnaud 2021
