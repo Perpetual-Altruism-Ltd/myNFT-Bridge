@@ -347,7 +347,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
-    /// This is especially important as relay could theoritically release token put in escrow beforehand
+    /// This is especially important as rogue relay could theoritically release tokens put in escrow beforehand.
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
