@@ -472,7 +472,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// in the arrival bridge
     /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
     /// by of the _signee of the migration
-    function finalizeERC721FukkMigration(
+    function finalizeERC721FullMigration(
         bytes32 _escrowHash,
         bytes32 _migrationRelayedHashSigned
     ) external;
