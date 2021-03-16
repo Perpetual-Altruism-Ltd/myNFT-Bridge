@@ -65,7 +65,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationWorld An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
@@ -284,14 +284,6 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     function getERC721DestinationBridge(bytes32 _escrowHash) external view returns (bytes32);
 
 
-    /// @notice Get the destination bridge of a migration registered with this bridge.
-    /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
-    /// answers even if the token is migrated back.
-    /// @param _escrowHash The escrow hash emitted at token deposit.
-    /// @return An array of 32 bytes representing the destination bridge. If the destination
-    /// bridge is on an EVM, it is most likely an address.
-    function getERC721DestinationBridge(bytes32 _escrowHash) external view returns (bytes32);
-
     /// @notice Query if a local token was migrated as an IOU
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _originWorld The smart contract address of the token that used to represent the NFT
@@ -301,6 +293,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         address _originWorld, 
         uint256 _originTokenId
     ) external view returns (bool);
+
 
     /// @notice Query if a local token was migrated as an IOU
     /// @dev throw if this _escrowHash was never emitted. Should keep giving accurate
@@ -366,7 +359,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationWorld An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
