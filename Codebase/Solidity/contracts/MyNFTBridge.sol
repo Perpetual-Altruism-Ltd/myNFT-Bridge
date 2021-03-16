@@ -347,7 +347,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
-    /// This is especially important as rogue relay could theoritically release tokens put in escrow beforehand.
+    /// This is especially important as a rogue relay could theoritically release tokens put in escrow beforehand.
+    /// This also mean that an IOU token can be migrated back only by a relay accredited by the original token publisher.
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
@@ -368,6 +369,42 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// Usually the block.timestamp, but different universes have different metrics
     /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromIOUERC721ToERC721(
+        bytes32 _originUniverse,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originBridge, 
+        address _destinationWorld,
+        uint256 _destinationTokenId,
+        address _destinationOwner,
+        address _signee,
+        bytes32 _height,
+        bytes32 _escrowHashSigned
+    ) external;
+
+    /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as a full migration
+    /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
+    /// This is especially important as a rogue relay could theoritically release tokens put in escrow beforehand.
+    /// This also mean that a token can be migrated back only by a relay accredited by the original token publisher.
+    /// @param _originUniverse An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _height The height at which the origin token was put in escrow in the origin universe.
+    /// Usually the block.timestamp, but different universes have different metrics
+    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
+    function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
