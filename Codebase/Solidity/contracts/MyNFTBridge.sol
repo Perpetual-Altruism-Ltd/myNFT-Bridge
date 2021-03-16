@@ -10,7 +10,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
-    event MigrationRegisteredERC721IOU(
+    event MigrationDepartureRegisteredERC721IOU(
         address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
@@ -25,7 +25,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
-    event MigrationRegisteredERC721Full(
+    event MigrationDepartureRegisteredERC721Full(
         address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
@@ -53,7 +53,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @notice Declare the intent to migrate an ERC-721 token to a different bridge as an IOU token.
     /// Calling this functionIt will assume that the migrating owner is the current owner at function call.
     /// @dev Throw if _originWorld owner disabled IOU migrations for this world.
-    /// Emit MigrationRegisteredERC721IOU
+    /// Emit MigrationDepartureRegisteredERC721IOU
     /// Can be called by the owner of the ERC-721 token or one of it's operator
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
@@ -86,7 +86,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @dev Throw if _originWorld owner has not set (_destinationUniverse, _destinationWorld) as an accepted
     /// migration.
     /// Will callback onFullMigration(_destinationWorld, _destinationTokenId);
-    /// Emit MigrationRegisteredERC721Full
+    /// Emit MigrationDepartureRegisteredERC721Full
     /// Can be called by the owner of the ERC-721 token or one of it's operator
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
@@ -344,6 +344,35 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 /// @title MyNFTBridgeERC721toERC721Arrival
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
 interface MyNFTBridgeERC721toERC721Arrival {
+
+    // Event emitted when an ERC-721 IOU migration is registered. 
+    // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
+    event MigrationArrivalRegisteredERC721IOU(
+        bytes32 _originUniverse,
+        bytes32 indexed _originWorld, 
+        bytes32 indexed _originTokenId,         
+        bytes32 _originOwner,
+        bytes32 _originBridge,
+        address _destinationWorld,
+        address _destinationTokenId,
+        address _destinationOwner,
+        address _signee
+    );
+
+        // Event emitted when an ERC-721 Full migration is registered. 
+    // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
+    event MigrationArrivalRegisteredERC721Full(
+        bytes32 _originUniverse,
+        bytes32 indexed _originWorld, 
+        bytes32 indexed _originTokenId,         
+        bytes32 _originOwner,
+        bytes32 _originBridge,
+        address _destinationWorld,
+        address _destinationTokenId,
+        address _destinationOwner,
+        address _signee
+    );
+
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
