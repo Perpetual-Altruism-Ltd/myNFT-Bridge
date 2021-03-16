@@ -499,7 +499,18 @@ interface MyNFTBridgeERC721toERC721Arrival {
     ) external;
 
 
-    /// @notice Get the original smart contract address of a current ERC-721 token migrated toward this bridge
+    /// @notice Get the original universe identifier of a current ERC-721 token migrated toward this bridge
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _destinationWorld The smart contract address of the migrated ERC-721 token you want to query
+    /// @param _destinationTokenId The tokenId of the migrated ERC-721 token you want to query
+    /// @return An array of 32 bytes representing the origin universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of origins.
+    function getMigratedERC721OriginUniverse(
+        address _destinationWorld,
+        uint256 _destinationTokenId
+    ) external view returns(bytes32);
+
+    /// @notice Get the original world identifier of a current ERC-721 token migrated toward this bridge
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _destinationWorld The smart contract address of the migrated ERC-721 token you want to query
     /// @param _destinationTokenId The tokenId of the migrated ERC-721 token you want to query
@@ -508,7 +519,18 @@ interface MyNFTBridgeERC721toERC721Arrival {
     function getMigratedERC721OriginWorld(
         address _destinationWorld,
         uint256 _destinationTokenId
-    ) external view returns(address);
+    ) external view returns(bytes32);
+
+    /// @notice Get the original tokenId of a current ERC-721 token migrated toward this bridge
+    /// @dev throw if the token has not been registered for migration or has been migrated back.
+    /// @param _destinationWorld The smart contract address of the migrated ERC-721 token you want to query
+    /// @param _destinationTokenId The tokenId of the migrated ERC-721 token you want to query
+    /// @return An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    function getMigratedERC721OriginTokenId(
+        address _destinationWorld,
+        uint256 _destinationTokenId
+    ) external view returns(bytes32);
 
 }
 
