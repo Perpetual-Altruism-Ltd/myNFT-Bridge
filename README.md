@@ -29,8 +29,7 @@ This is an open ended question with no correct answers, only compromises. Many s
 
 ## More details 
 
-This bridge codebase is based on
-
+This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:
 https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/edit?usp=sharing
 
 ## Thanks to
