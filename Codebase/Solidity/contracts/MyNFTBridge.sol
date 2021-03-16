@@ -347,6 +347,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
+    /// This is especially important as relay could theoritically release token put in escrow beforehand
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
@@ -363,6 +364,9 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
+    /// @param _height The height at which the origin token was put in escrow in the origin universe.
+    /// Usually the block.timestamp, but different universes have different metrics
+    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originWorld, 
