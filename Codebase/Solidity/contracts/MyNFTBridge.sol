@@ -423,6 +423,31 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _escrowHashSigned
     ) external;
 
+
+    /// @notice Finalize a migration by transferring the IOU destination token to it's new owner
+    /// @dev Throw if safeTransferFrom() fails to attribute the token.
+    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
+    /// in the arrival bridge
+    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
+    /// by of the _signee of the migration
+    function finalizeERC721IOUMigration(
+        bytes32 _escrowHash,
+        bytes32 _migrationRelayedHashSigned
+    ) external;
+
+    
+    /// @notice Finalize a migration by transferring the Full destination token to it's new owner
+    /// @dev Throw if safeTransferFrom() fails to attribute the token.
+    /// Will call a callback programmable by the token publisher before calling SafeTransfer
+    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
+    /// in the arrival bridge
+    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
+    /// by of the _signee of the migration
+    function finalizeERC721FukkMigration(
+        bytes32 _escrowHash,
+        bytes32 _migrationRelayedHashSigned
+    ) external;
+
 }
 
 /// @author Guillaume Gonnaud 2021
