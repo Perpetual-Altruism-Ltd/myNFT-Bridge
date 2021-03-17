@@ -360,7 +360,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
     );
 
-        // Event emitted when an ERC-721 Full migration is registered. 
+
+    // Event emitted when an ERC-721 Full migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
     event MigrationArrivalRegisteredERC721Full(
         bytes32 _originUniverse,
@@ -375,6 +376,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
     );
 
+
     // Event emitted when a token is released as the NFT representative at the end of an IOU migration. 
     event FinalizedMigrationERC721IOU(
         address indexed _destinationWorld, 
@@ -383,6 +385,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _relay,
         bytes32 indexed _escrowHash
     );
+
 
     // Event emitted when a token is released as the NFT representative at the end of a full migration. 
     event FinalizedMigrationERC721Full(
@@ -434,6 +437,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _escrowHashSigned
     ) external;
 
+
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as a full migration
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
     /// This is especially important as a rogue relay could theoritically release tokens put in escrow beforehand.
@@ -475,7 +479,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
 
     /// @notice Finalize a migration by transferring the IOU destination token to it's new owner
     /// @dev Throw if safeTransferFrom() fails to attribute the token.
-    /// emit : 
+    /// Can only succeed once per _escrowHash
+    /// emit FinalizedMigrationERC721IOU
     /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
     /// in the arrival bridge
     /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
@@ -489,6 +494,8 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// @notice Finalize a migration by transferring the Full destination token to it's new owner
     /// @dev Throw if safeTransferFrom() fails to attribute the token.
     /// Will call a callback programmable by the token publisher before calling SafeTransfer
+    /// Can only succeed once per _escrowHash
+    /// emit FinalizedMigrationERC721Full
     /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
     /// in the arrival bridge
     /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
@@ -604,7 +611,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _originWorld,
         bytes32 _originTokenId
     ) external view returns(uint256);
-    
+
 
     /// @notice Get the destination tokenID of a NFT migrated toward this bridge
     /// @dev throw if the token has not been registered for migration. Should work even when migrated back.
@@ -623,11 +630,17 @@ interface MyNFTBridgeERC721toERC721Arrival {
 interface MyNFTBridgeControl {
     
     /// @notice Check if an address is designed as a relay for a specific world
-    /// @dev
     /// @param _relay The address you wish to check as a relay
     /// @param _world The world you wish to check as being relayed
     /// @return TRUE if _world.owner() == _relay or if the owner did setup _relay as a relay. Otherwise, false.
     function isAccreditedRelay(address _relay, address _world) external returns (bool);
+
+    /// @notice Authorize a relay to operate a world's token when in escrow with the bridge
+    /// @dev throw if msg.sender != _world.owner(); Bridges should also implement an alternative way for token publishers
+    /// to designate relays. 
+    /// @param _relay The address you wish to add as a relay
+    /// @param _world The world you wish to add as being relayed
+    function accrediteRelay(address _relay, address _world) external;
 
 }
 
