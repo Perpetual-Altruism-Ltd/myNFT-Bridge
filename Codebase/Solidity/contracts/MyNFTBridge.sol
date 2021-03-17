@@ -604,6 +604,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _originWorld,
         bytes32 _originTokenId
     ) external view returns(uint256);
+    
 
     /// @notice Get the destination tokenID of a NFT migrated toward this bridge
     /// @dev throw if the token has not been registered for migration. Should work even when migrated back.
