@@ -510,6 +510,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         uint256 _destinationTokenId
     ) external view returns(bytes32);
 
+
     /// @notice Get the original world identifier of a current ERC-721 token migrated toward this bridge
     /// @dev throw if the token has not been registered for migration or has been migrated back.
     /// @param _destinationWorld The smart contract address of the migrated ERC-721 token you want to query
@@ -520,6 +521,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationWorld,
         uint256 _destinationTokenId
     ) external view returns(bytes32);
+
 
     /// @notice Get the original tokenId of a current ERC-721 token migrated toward this bridge
     /// @dev throw if the token has not been registered for migration or has been migrated back.
