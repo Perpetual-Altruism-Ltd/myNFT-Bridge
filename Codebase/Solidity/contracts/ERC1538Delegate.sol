@@ -87,9 +87,9 @@ contract ERC1538Delegate is ERC1538, ImplMemoryStructure {
                 //Setup start at the next 
                 start = pos; 
 
-                // This will store num at &signatures 
-                // In the EVM, the word at the begining of a dynamic lenght array is the lenght of the array. In essence, we are "truncating" 
-                // signatures to only include the signature of the last explored function.
+                // This will store num at &signatures
+                // In the EVM, the word at the begining of a dynamic lenght array is the lenght of the array. In essence, we are truncating 
+                // 'signatures' to only include the signature of the last explored function.
                 assembly {
                     mstore(signatures,num)
                 }
@@ -99,7 +99,6 @@ contract ERC1538Delegate is ERC1538, ImplMemoryStructure {
 
                 //Store the previous delegate at functionId
                 oldDelegate = delegates[funcId];
-
                
                 if(_delegate == address(0)) {  /* Function deletion */
                     index = funcSignatureToIndex[signatures];
@@ -128,10 +127,10 @@ contract ERC1538Delegate is ERC1538, ImplMemoryStructure {
                     emit FunctionUpdate(funcId, oldDelegate, _delegate, string(signatures));
 
                 }
-                
-                // Make signatures point to the last explored ')' in the string. 
-                // The ')' will then be replaced by the lenght of the next explored function and henceforth
-                // will become a properly formatted dynamic array
+
+                // Make 'signatures' point to the last explored ')' in the string. 
+                // The ')' will then be replaced by the lenght of the next explored function signature and henceforth
+                // 'signatures' will become a properly formatted dynamic array
                 assembly {signatures := add(signatures,num)}
             }
         }
