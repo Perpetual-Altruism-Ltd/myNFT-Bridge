@@ -227,7 +227,6 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationOwner,
         bytes32 _signee
     ) external pure returns (bytes32);
-
     
 
     /* 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: CC0-1.0
+// SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.2;
 
 /// @author Guillaume Gonnaud 2021
@@ -10,7 +10,19 @@ contract ImplMemoryStructure {
     // Memory structures relevant to the transparency of the contract are defined first //
     //////////////////////////////////////////////////////////////////////////////////////
 
+   //owner of the contract
+    address internal contractOwner;
 
+    // maps functions to the delegate contracts that execute the functions
+    // funcId => delegate contract
+    mapping(bytes4 => address) internal delegates;
+
+    // array of function signatures supported by the contract
+    bytes[] internal funcSignatures;
+
+    // maps each function signature to its position in the funcSignatures array.
+    // signature => index+1
+    mapping(bytes => uint256) internal funcSignatureToIndex;
     
     ////////////////////////////////////////////////////////////////////////////////////////
     // Memory structures relevant to the functionality of the contract are defined second //
