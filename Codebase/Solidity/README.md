@@ -14,7 +14,7 @@ This serves as definitive proof of the owner's intent and satisfaction with the 
 The original token publisher needs to designate addresses as being able to act as operator for the escrow of its token on the departure NFT Bridge. Those operators are called relays. A relay could be human-operated, trust-minimized, trustless, etc.
 
 ### 2: The IOU Token publisher gives the arrival bridge a batch of token
-The IOU Token publisher gives the destination bridge a batch of ERC-721 IOU token, allowing it to mint them on demand trough a special purpose IOU ERC-721 token of its own creation. Those tokens do not have to follow a specific standard outside of ERC-721. Other features are at the relay and token owner's discretion.
+The IOU Token publisher gives the destination bridge a batch of ERC-721 IOU token, allowing it to mint them on demand trough a special purpose IOU ERC-721 token of its own creation. Those tokens do not have to follow a specific standard outside of ERC-721. Other features are at the relay and token owner's discretion. The relay will write those worlds as possible destinations for the relevant origin tokens, in the origin bridge.
 
 ### 3: The IOU Token publisher designate relays
 The IOU Token publisher publisher needs to designate addresses as being able to act as operator for the escrow/minting of its token on the departure NFT Bridge. Those operators are called relays. A relay could be human-operated, trust-minimized, trustless, etc.

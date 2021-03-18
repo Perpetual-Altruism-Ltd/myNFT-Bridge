@@ -10,7 +10,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
-    event MigrationDepartureRegisteredERC721IOU(
+    event MigrationDeparturePreRegisteredERC721IOU(
         address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
@@ -26,7 +26,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
-    event MigrationDepartureRegisteredERC721Full(
+    event MigrationDeparturePreRegisteredERC721Full(
         address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
@@ -52,8 +52,9 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @notice Declare the intent to migrate an ERC-721 token to a different bridge as an IOU token.
     /// Calling this functionIt will assume that the migrating owner is the current owner at function call.
     /// @dev Throw if _originWorld owner disabled IOU migrations for this world.
-    /// Emit MigrationDepartureRegisteredERC721IOU
+    /// Emit MigrationDeparturePreRegisteredERC721IOU
     /// Can be called by the owner of the ERC-721 token or one of it's operator
+    /// The latest migration data would be bound to a token when the token is deposited in escrow
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
@@ -85,7 +86,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @dev Throw if _originWorld owner has not set (_destinationUniverse, _destinationWorld) as an accepted
     /// migration.
     /// Will callback onFullMigration(_destinationWorld, _destinationTokenId);
-    /// Emit MigrationDepartureRegisteredERC721Full
+    /// Emit MigrationDeparturePreRegisteredERC721Full
     /// Can be called by the owner of the ERC-721 token or one of it's operator
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
@@ -150,6 +151,20 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationTokenId
     ) external view returns(bool);
 
+    
+    /// @notice Query if a migration generating the given hash has been registered.
+    /// @param _migrationHash The bytes32 migrationHash that would have been generated when pre-registering the migration
+    /// @return TRUE if a migration generating such a hash was pre registered, FALSE if not.
+    function isMigrationPreRegisteredERC721(bytes32 _migrationHash) external view returns(bool);
+
+
+    /// @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
+    /// @dev throw if the token has not been deposited for this migration. To prevent front running, please wrap the safeTransfer transaction 
+    /// and check the deposit using this function.
+    /// @param _migrationHash The bytes32 migrationHash that would have been generated when pre-registering the migration
+    /// @return The proof of escrowHash associated with a migration (if any)
+    function getProofOfEscrowHash(bytes32 _migrationHash) external view returns(bytes32);
+
 
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
@@ -181,6 +196,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _signee
     ) external pure returns (bytes32);
 
+
     /// @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
     /// @param _originOwner The original owner of the token when migration is registered
@@ -211,9 +227,6 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationOwner,
         bytes32 _signee
     ) external pure returns (bytes32);
-
-    function isMigrationRegistered() external view returns(bool);
-
 
     
 
