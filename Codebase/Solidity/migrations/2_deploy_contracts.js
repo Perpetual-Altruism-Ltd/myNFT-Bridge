@@ -1,6 +1,7 @@
 const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
 const ERC1538Delegate = artifacts.require("ERC1538Delegate");
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
+const ImplTestERC721 = artifacts.require("ImplTestERC721");
 
 
 module.exports = async(deployer, network, accounts) => {
@@ -28,6 +29,7 @@ module.exports = async(deployer, network, accounts) => {
         "ERC1538Query"
     );
 
-
+    console.log("Deploying the ERC721 test contract");
+    await deployer.deploy(ImplTestERC721);
 
 }
