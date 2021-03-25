@@ -4,7 +4,7 @@ pragma solidity 0.8.2;
 //This contract only exist in order to run migration test. 
 //It is a genric fgreely mintable ERC-721 standard.
 
-import "./ERC721.sol";
+import "../ERC721.sol";
 
 contract ImplTestERC721 is ERC721 {
 

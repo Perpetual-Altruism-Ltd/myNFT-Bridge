@@ -2,7 +2,7 @@
 pragma solidity 0.8.2;
 
 import "./ERC1538.sol";
-import "./ImplMemoryStructure.sol";
+import "../ImplMemoryStructure.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ERC1538Query

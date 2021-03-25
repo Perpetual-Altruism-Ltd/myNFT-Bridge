@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.2;
 
-import "./ImplMemoryStructure.sol";
+import "../ImplMemoryStructure.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplMyNFTBridgeFunInit

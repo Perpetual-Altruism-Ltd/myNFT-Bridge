@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.2;
 
-import "./ERC721.sol";
+import "./Implementation/ERC721.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridgeERC721Departure
@@ -158,12 +158,21 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     function isMigrationPreRegisteredERC721(bytes32 _migrationHash) external view returns(bool);
 
 
-    /// @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
+    /// @notice Get the latest proof of escrow hash associated with a migration hash.
     /// @dev throw if the token has not been deposited for this migration. To prevent front running, please wrap the safeTransfer transaction 
     /// and check the deposit using this function.
-    /// @param _migrationHash The bytes32 migrationHash that would have been generated when pre-registering the migration
+    /// @param _migrationHash The bytes32 migrationHash that was generated when pre-registering the migration
     /// @return The proof of escrowHash associated with a migration (if any)
     function getProofOfEscrowHash(bytes32 _migrationHash) external view returns(bytes32);
+
+
+    /// @notice Get the migration hash associated with a proof of Escrow hash.
+    /// @dev throw if the token has not been deposited for this migration. To prevent front running, please wrap the safeTransfer transaction 
+    /// and check the deposit using this function.
+    /// @param _proofOfEscrowHash The bytes32 proofOfEscrowHash that was have been generated when depositing the token
+    /// @return The proof of escrowHash associated with a migration (if any)
+    function getMigrationHash(bytes32 _proofOfEscrowHash) external view returns(bytes32);
+
 
 
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
@@ -182,6 +191,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// @param _originHeight The height of the origin universe (usually block.timestamp)
     /// If the owner has access to a private key, it should be the owner.
     function generateMigrationHashERC721IOU(   
         bytes32 _originUniverse, 
@@ -193,7 +203,8 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
-        bytes32 _signee
+        bytes32 _signee,
+        bytes32 _originHeight
     ) external pure returns (bytes32);
 
 

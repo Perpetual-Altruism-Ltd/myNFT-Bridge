@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CC0-1.0
 pragma solidity 0.8.2;
 
-import "./ImplMemoryStructure.sol";
+import "../ImplMemoryStructure.sol";
 
 
 /// @author Guillaume Gonnaud 2021
