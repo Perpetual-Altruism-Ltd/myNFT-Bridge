@@ -53,7 +53,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// Calling this functionIt will assume that the migrating owner is the current owner at function call.
     /// @dev Throw if _originWorld owner disabled IOU migrations for this world.
     /// Emit MigrationDeparturePreRegisteredERC721IOU
-    /// Can be called by the owner of the ERC-721 token or one of it's operator
+    /// Can be called by the owner of the ERC-721 token or one of it's operator/approved address
     /// The latest migration data would be bound to a token when the token is deposited in escrow
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
@@ -87,7 +87,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// migration.
     /// Will callback onFullMigration(_destinationWorld, _destinationTokenId);
     /// Emit MigrationDeparturePreRegisteredERC721Full
-    /// Can be called by the owner of the ERC-721 token or one of it's operator
+    /// Can be called by the owner of the ERC-721 token or one of it's operator/approved address
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 

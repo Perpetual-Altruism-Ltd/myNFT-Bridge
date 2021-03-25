@@ -2,6 +2,7 @@
 pragma solidity 0.8.2;
 
 import "./ImplMemoryStructure.sol";
+import "./ERC721.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplMyNFTBridgeFunMigrateToERC721
@@ -44,7 +45,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// Calling this functionIt will assume that the migrating owner is the current owner at function call.
     /// @dev Throw if _originWorld owner disabled IOU migrations for this world.
     /// Emit MigrationDeparturePreRegisteredERC721IOU
-    /// Can be called by the owner of the ERC-721 token or one of it's operator
+    /// Can be called by the owner of the ERC-721 token or one of it's operator/approved address
     /// The latest migration data would be bound to a token when the token is deposited in escrow
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
@@ -70,7 +71,32 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _destinationOwner,
         bytes32 _signee
     ) external {
+        //Checking token ownership
 
+        //PUSH of tOwner for gas optimization
+        address tOwner = ERC721(_originWorld).ownerOf(_originTokenId);
+        require(
+            msg.sender == tOwner || 
+            ERC721(_originWorld).isApprovedForAll(tOwner, msg.sender) ||
+            msg.sender == ERC721(_originWorld).getApproved(_originTokenId),
+            "msg.sender is not the token owner, an operator, or the accredited address for the token"
+        );
+
+        //Checking if IOU migrations are allowed for this world
+        require(!isIOUForbidden[_originWorld], "The token creator have forbidden IOU migrations for this world");
+
+        //Generating the migration hash
+        bytes32 migrationHash = generateMigrationHash(
+            true, //the migration is an IOU migration
+            _originWorld,
+            _originTokenId,
+            _destinationUniverse, 
+            _destinationBridge, 
+            _destinationWorld, 
+            _destinationTokenId,
+            _destinationOwner,
+            _signee
+        );
     }
 
 
@@ -80,7 +106,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// migration.
     /// Will callback onFullMigration(_destinationWorld, _destinationTokenId);
     /// Emit MigrationDeparturePreRegisteredERC721Full
-    /// Can be called by the owner of the ERC-721 token or one of it's operator
+     /// Can be called by the owner of the ERC-721 token or one of it's operator/approved address
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
@@ -105,7 +131,36 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _destinationOwner,
         bytes32 _signee
     ) external {
-        
+
+    }
+
+    //Generate a migration hash for a local migration
+    function generateMigrationHash(   
+        bool _isIOU,     
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        bytes32 _signee) internal view returns(bytes32) {
+            bytes32 b32originWorld = bytes32(uint(uint160(_originWorld)));
+            bytes32 b32originTokenId = bytes32(_originTokenId);
+            return keccak256(
+                abi.encodePacked(
+                    _isIOU,
+                    localUniverse, 
+                    b32originWorld, 
+                    b32originTokenId, 
+                    _destinationUniverse, 
+                    _destinationBridge, 
+                    _destinationWorld, 
+                    _destinationTokenId,
+                    _destinationOwner,
+                    _signee
+                )
+            );
     }
 
 }
