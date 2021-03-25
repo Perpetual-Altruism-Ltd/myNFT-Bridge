@@ -158,8 +158,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
         //Checking token ownership
 
-
-        //PUSH of tOwner for gas optimization
+        //PUSH of tokenOwner for gas optimization
         address tOwner = ERC721(_originWorld).ownerOf(_originTokenId);
         require(
             msg.sender == tOwner || 
@@ -219,6 +218,27 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     }
 
 
+    /// @notice Query if a migration generating the given hash has been registered.
+    /// @param _migrationHash The bytes32 migrationHash that would have been generated when pre-registering the migration
+    /// @return TRUE if a migration generating such a hash was pre registered, FALSE if not.
+    function isMigrationPreRegisteredERC721(bytes32 _migrationHash) external view returns(bool){
+        return migrationsRegistered[_migrationHash];
+    }
+
+
+    /// @notice Get the latest proof of escrow hash associated with a migration hash.
+    /// @dev Throw if the token has not been deposited yet. To prevent front running, please wrap the safeTransfer transaction 
+    /// and check the deposit using this function.
+    /// @param _migrationHash The bytes32 migrationHash that was generated when pre-registering the migration
+    /// @return The proof of escrowHash associated with a migration (if any)
+    function getProofOfEscrowHash(bytes32 _migrationHash) external view returns(bytes32){
+        bytes32 poeh =  escrowHashOfMigrationHash[_migrationHash];
+        require(poeh != 0x0, "The token associated with this migration hash have not been deposited yet");
+        return poeh;
+    }
+
+
+
     /// @notice Check if an origin NFT token can be migrated to a different token as an IOU migration
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// _param _originTokenId The token ID of the token representing the NFT
@@ -236,7 +256,6 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 /*_destinationWorld*/,
         bytes32 /*_destinationTokenId*/
     ) external view returns(bool){
-
         //Either a departure world allows for IOU migration or it doesn't
         return(!isIOUForbidden[_originWorld]);
     }
@@ -273,7 +292,20 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32){
-
+        return generateMigrationHashArtificial(   
+            true,     
+            _originUniverse, 
+            _originWorld, 
+            _originTokenId, 
+            _originOwner,
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            _originHeight
+        );
     }
 
 
@@ -310,11 +342,22 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32){
-
+        return generateMigrationHashArtificial(   
+            false,     
+            _originUniverse, 
+            _originWorld, 
+            _originTokenId, 
+            _originOwner,
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            _originHeight
+        );
     }
     
-
-
 
     //Generate a migration hash for a local migration
     function generateMigrationHash(   

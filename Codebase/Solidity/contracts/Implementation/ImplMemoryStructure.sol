@@ -50,10 +50,15 @@ contract ImplMemoryStructure {
     // A mapping registering what is the hash of the latest migration registered for a specific local token hash
     mapping(bytes32 => bytes32) latestRegisteredMigration;
 
+    // A mapping associating a migrationHash with it's escrowhash.
+    mapping(bytes32 => bytes32) internal escrowHashOfMigrationHash; // migrationHash => escrowHash
+
     //Mapping storing if a world have disabled IOU migrations
     mapping(address => bool) internal isIOUForbidden; //False if IOU migrations (wrapping) are allowed for an origin world, True if they are forbidden.
 
     //Mapping storing where the rules for each  world fullMigrations are decentrally defined.
     mapping(address => address) internal fullMigrationsDelegates; // (world => delegate)
+
+
  
 }

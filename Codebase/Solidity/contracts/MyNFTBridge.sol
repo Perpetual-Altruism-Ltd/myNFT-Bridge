@@ -158,20 +158,12 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     function isMigrationPreRegisteredERC721(bytes32 _migrationHash) external view returns(bool);
 
 
-    /// @notice Get the latest proof of escrow hash associated with a migration hash.
+    /// @notice Get the proof of escrow hash associated with a migration hash.
     /// @dev throw if the token has not been deposited for this migration. To prevent front running, please wrap the safeTransfer transaction 
     /// and check the deposit using this function.
     /// @param _migrationHash The bytes32 migrationHash that was generated when pre-registering the migration
     /// @return The proof of escrowHash associated with a migration (if any)
     function getProofOfEscrowHash(bytes32 _migrationHash) external view returns(bytes32);
-
-
-    /// @notice Get the migration hash associated with a proof of Escrow hash.
-    /// @dev throw if the token has not been deposited for this migration. To prevent front running, please wrap the safeTransfer transaction 
-    /// and check the deposit using this function.
-    /// @param _proofOfEscrowHash The bytes32 proofOfEscrowHash that was have been generated when depositing the token
-    /// @return The proof of escrowHash associated with a migration (if any)
-    function getMigrationHash(bytes32 _proofOfEscrowHash) external view returns(bytes32);
 
 
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
@@ -568,7 +560,7 @@ interface MyNFTBridgeControl {
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridge
 /// @notice Represent the ABI of all the core Bridge functions
-interface MyNFTBridge is MyNFTBridgeERC721Departure, MyNFTBridgeERC721toERC721Arrival, MyNFTBridgeControl{
+interface MyNFTBridge is  ERC721TokenReceiver, MyNFTBridgeERC721Departure, MyNFTBridgeERC721toERC721Arrival, MyNFTBridgeControl{
 
 }
 
