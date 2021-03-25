@@ -42,8 +42,7 @@ module.exports = async(deployer, network, accounts) => {
         "ImplMyNFTBridgeFunInit"
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
-    await instancedInit.init("LOCALHOST");
-
+    await instancedInit.init("LOCALHOST"); //Replace localhost with whatever you are deploying on
 
     console.log("Deploying the ERC721 test contract");
     await deployer.deploy(ImplTestERC721);

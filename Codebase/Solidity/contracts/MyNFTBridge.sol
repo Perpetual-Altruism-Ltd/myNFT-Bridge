@@ -11,9 +11,9 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
     event MigrationDeparturePreRegisteredERC721IOU(
-        address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -27,9 +27,9 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
     event MigrationDeparturePreRegisteredERC721Full(
-        address _originOwner,
         address indexed _originWorld, 
         uint256 indexed _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -174,7 +174,6 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     function getMigrationHash(bytes32 _proofOfEscrowHash) external view returns(bytes32);
 
 
-
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
     /// @param _originOwner The original owner of the token when migration is registered
@@ -225,6 +224,8 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height of the origin universe (usually block.timestamp)
+    /// If the owner has access to a private key, it should be the owner.
     /// @return The bytes32 migrationHash that would be generated in such a migration
     function generateMigrationHashERC721Full(   
         bytes32 _originUniverse, 
@@ -236,7 +237,8 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
-        bytes32 _signee
+        bytes32 _signee,
+        bytes32 _originHeight
     ) external pure returns (bytes32);
     
 
@@ -568,4 +570,51 @@ interface MyNFTBridgeControl {
 /// @notice Represent the ABI of all the core Bridge functions
 interface MyNFTBridge is MyNFTBridgeERC721Departure, MyNFTBridgeERC721toERC721Arrival, MyNFTBridgeControl{
 
+}
+
+/// @author Guillaume Gonnaud 2021
+/// @title FullMigrationController
+/// @notice In order to control where and how their NFT can be fully migrated, creators need to deploy and 
+/// register a contract implementing this interface
+interface FullMigrationController {
+
+    /// @notice Indicate if a token migration path is acceptable
+    /// @dev This allows creators to specify the rules they want for their migrated tokens 
+    /// example : only one allowed destinbation and only a ETHMAINNET <=> MOONBEAM migration, with the 
+    /// same tokenID allowed.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @return True if the migration is acceptable and can be registered, False if not
+    function acceptableMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse, 
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId
+    ) external view returns(bool);
+
+    /// @notice Function that will be called by the bridge when a token is put in Escrow with it
+    /// @dev This allows to do creators to do decentralised synchronous on-chain work if the NFT is now represented
+    /// by an another token.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    function onDepartureCallback(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse, 
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId
+    ) external;
 }
