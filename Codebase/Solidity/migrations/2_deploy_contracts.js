@@ -2,6 +2,9 @@ const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
 const ERC1538Delegate = artifacts.require("ERC1538Delegate");
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
 const ImplTestERC721 = artifacts.require("ImplTestERC721");
+const ImplMyNFTBridgeFunInit = artifacts.require("ImplMyNFTBridgeFunInit");
+
+
 
 
 module.exports = async(deployer, network, accounts) => {
@@ -28,6 +31,19 @@ module.exports = async(deployer, network, accounts) => {
         "functionByIndex(uint256)functionExists(string)delegateAddress(string)delegateAddresses()delegateFunctionSignatures(address)functionById(bytes4)functionBySignature(string)functionSignatures()totalFunctions()", 
         "ERC1538Query"
     );
+
+    // Deploying, linking and calling the init of the bridge
+    // Done before other functions are added to prevent misuse
+    console.log("Deploying, linking and calling the init of the bridge...");
+    await deployer.deploy(ImplMyNFTBridgeFunInit);
+    await instancedProxy.updateContract(
+        ImplMyNFTBridgeFunInit.address, 
+        "init(string)", 
+        "ImplMyNFTBridgeFunInit"
+    );
+    let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
+    await instancedInit.init("LOCALHOST");
+
 
     console.log("Deploying the ERC721 test contract");
     await deployer.deploy(ImplTestERC721);
