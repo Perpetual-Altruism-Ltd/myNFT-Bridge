@@ -370,7 +370,8 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
-        bytes32 _signee) internal view returns(bytes32) {
+        bytes32 _signee
+    ) internal view returns(bytes32) {
             bytes32 b32OriginWorld = bytes32(uint(uint160(_originWorld)));
             bytes32 b32OriginTokenId = bytes32(_originTokenId);
             bytes32 b32Timestamp = bytes32(block.timestamp);
@@ -407,7 +408,8 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
         bytes32 _signee,
-        bytes32 _originHeight) internal pure returns(bytes32) {
+        bytes32 _originHeight
+    ) internal pure returns(bytes32) {
             bytes32 b32OriginWorld = bytes32(uint(uint160(_originWorld)));
             bytes32 b32OriginTokenId = bytes32(_originTokenId);
             bytes32 b32Owner = bytes32(uint(uint160(_originOwner)));
