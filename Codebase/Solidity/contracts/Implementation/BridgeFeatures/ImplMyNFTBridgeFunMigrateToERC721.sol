@@ -260,6 +260,27 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         return(!isIOUForbidden[_originWorld]);
     }
 
+
+    /// @notice Check if an origin NFT token can be migrated to a different token as a full migration
+    /// @param _originWorld The smart contract address of the token currently representing the NFT
+    /// @param _originTokenId The token ID of the token representing the NFT
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @return TRUE if token can be migrated, FALSE if it can't.
+    function acceptedMigrationDestinationERC721Full(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse, 
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId
+    ) external view returns(bool){
+        // TODO : Call the delegate
+    }
+
     
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in

@@ -2,10 +2,10 @@ const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
 const ERC1538Delegate = artifacts.require("ERC1538Delegate");
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
 const ImplTestERC721 = artifacts.require("ImplTestERC721");
+
 const ImplMyNFTBridgeFunInit = artifacts.require("ImplMyNFTBridgeFunInit");
-
-
-
+const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
+const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateToERC721");
 
 module.exports = async(deployer, network, accounts) => {
 
@@ -43,6 +43,30 @@ module.exports = async(deployer, network, accounts) => {
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
     await instancedInit.init("LOCALHOST"); //Replace localhost with whatever you are deploying on
+
+    //Adding ImplERC721TokenReceiver features
+    console.log("Adding ERC721TokenReceiver features...");
+    await deployer.deploy(ImplERC721TokenReceiver);
+    await instancedProxy.updateContract(
+        ImplERC721TokenReceiver.address, 
+        "onERC721Received(address,address,uint256)", 
+        "ImplERC721TokenReceiver"
+    );
+
+    //Adding ImplMyNFTBridgeFunMigrateToERC721 features
+    console.log("Adding ERC721TokenReceiver features...");
+    await deployer.deploy(ImplMyNFTBridgeFunMigrateToERC721);
+    await instancedProxy.updateContract(
+        ImplMyNFTBridgeFunMigrateToERC721.address, 
+        "ImplMyNFTBridgeFunMigrateToERC721.address,isMigrationPreRegisteredERC721(bytes32)getProofOfEscrowHash(bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)", 
+        "ImplMyNFTBridgeFunMigrateToERC721 Pt1"
+    );
+
+    await instancedProxy.updateContract(
+        ImplMyNFTBridgeFunMigrateToERC721.address,
+        "generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)", 
+        "ImplMyNFTBridgeFunMigrateToERC721 Pt2"
+    );
 
     console.log("Deploying the ERC721 test contract");
     await deployer.deploy(ImplTestERC721);
