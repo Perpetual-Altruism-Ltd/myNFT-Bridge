@@ -278,7 +278,13 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId
     ) external view returns(bool){
-        // TODO : Call the delegate
+        return FullMigrationController(fullMigrationsDelegates[_originWorld]).acceptableMigration(
+            _originWorld, 
+            _originTokenId, 
+            _destinationUniverse, 
+            _destinationWorld, 
+            _destinationTokenId
+        );
     }
 
     
