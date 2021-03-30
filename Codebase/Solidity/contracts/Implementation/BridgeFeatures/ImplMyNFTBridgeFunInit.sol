@@ -19,8 +19,8 @@ contract ImplMyNFTBridgeFunInit  is ImplMemoryStructure {
 
     //Convert the first 32 bytes of a string to a bytes32
     function stringToBytes32(string memory source) public pure returns (bytes32 result) {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
+        bytes memory tempEmptyString = bytes(source);
+        if (tempEmptyString.length == 0) {
             return 0x0;
         }
 
