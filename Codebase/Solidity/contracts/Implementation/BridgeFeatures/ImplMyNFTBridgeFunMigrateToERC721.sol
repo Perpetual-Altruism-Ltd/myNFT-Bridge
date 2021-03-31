@@ -87,21 +87,18 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         require(!isIOUForbidden[_originWorld], "The token creator have forbidden IOU migrations for this world");
 
         //Generating the migration hash
-        bytes32 migrationHash = generateMigrationHashArtificial(
-            true, //the migration is an IOU migration
-            localUniverse,
-            bytes32(uint(uint160(address(this)))),
-            bytes32(uint(uint160(_originWorld))), 
-            bytes32(_originTokenId),
-            bytes32(uint(uint160(tOwner))),
+        bytes32 migrationHash = generateMigrationHashArtificialLocalIOU(   
+            _originWorld, 
+            _originTokenId, 
+            tOwner,
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
             _destinationTokenId,
             _destinationOwner,
-            _signee,
-            bytes32(block.timestamp)
+            _signee
         );
+ 
 
         require(!migrationsRegistered[migrationHash], "This migration was already registered");
 
@@ -182,20 +179,16 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             "This migration is not acceptable for the token creator"
         );
 
-        bytes32 migrationHash = generateMigrationHashArtificial(
-            false, //the migration is a full migration
-            localUniverse,
-            bytes32(uint(uint160(address(this)))),
-            bytes32(uint(uint160(_originWorld))), 
-            bytes32(_originTokenId),
-            bytes32(uint(uint160(tOwner))),
+        bytes32 migrationHash = generateMigrationHashArtificialLocalFull(   
+            _originWorld, 
+            _originTokenId, 
+            tOwner,
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
             _destinationTokenId,
             _destinationOwner,
-            _signee,
-            bytes32(block.timestamp)
+            _signee
         );
 
         require(!migrationsRegistered[migrationHash], "This migration was already registered");
@@ -398,7 +391,70 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         );
     }
 
-     //Generate a migration hash for a query
+
+    //Generate a migration hash for an IOU migration
+    function generateMigrationHashArtificialLocalIOU(   
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        bytes32 _signee
+    ) internal view returns(bytes32){
+
+        return generateMigrationHashArtificial(
+            true,     
+            localUniverse, 
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_originWorld))),  
+            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originOwner))),
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            bytes32(block.timestamp)
+        );
+    }
+
+    //Generate a migration hash for a full migration
+    function generateMigrationHashArtificialLocalFull(   
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        bytes32 _signee
+    ) internal view returns(bytes32){
+
+        return generateMigrationHashArtificial(
+            true,     
+            localUniverse, 
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_originWorld))),  
+            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originOwner))),
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            bytes32(block.timestamp)
+        );
+    }
+
+
+
+    //Generate a migration hash for a query
     function generateMigrationHashArtificial(   
         bool _isIOU,     
         bytes32 _originUniverse, 
