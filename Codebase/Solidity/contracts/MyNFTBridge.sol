@@ -201,7 +201,7 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32);
-    
+
 
     // @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
@@ -479,6 +479,7 @@ interface FullMigrationController {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId
     ) external view returns(bool);
+    
 
     /// @notice Function that will be called by the bridge when a token is put in Escrow with it
     /// @dev This allows to do creators to do decentralised synchronous on-chain work if the NFT is now represented
