@@ -87,17 +87,20 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         require(!isIOUForbidden[_originWorld], "The token creator have forbidden IOU migrations for this world");
 
         //Generating the migration hash
-        bytes32 migrationHash = generateMigrationHash(
+        bytes32 migrationHash = generateMigrationHashArtificial(
             true, //the migration is an IOU migration
-            _originWorld,
-            _originTokenId,
-            tOwner,
+            localUniverse,
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_originWorld))), 
+            bytes32(_originTokenId),
+            bytes32(uint(uint160(tOwner))),
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
             _destinationTokenId,
             _destinationOwner,
-            _signee
+            _signee,
+            bytes32(block.timestamp)
         );
 
         require(!migrationsRegistered[migrationHash], "This migration was already registered");
@@ -179,18 +182,20 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             "This migration is not acceptable for the token creator"
         );
 
-        //Generating the migration hash
-        bytes32 migrationHash = generateMigrationHash(
+        bytes32 migrationHash = generateMigrationHashArtificial(
             false, //the migration is a full migration
-            _originWorld,
-            _originTokenId,
-            tOwner,
+            localUniverse,
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_originWorld))), 
+            bytes32(_originTokenId),
+            bytes32(uint(uint160(tOwner))),
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
             _destinationTokenId,
             _destinationOwner,
-            _signee
+            _signee,
+            bytes32(block.timestamp)
         );
 
         require(!migrationsRegistered[migrationHash], "This migration was already registered");
@@ -290,9 +295,10 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
-    /// @param _originOwner The original owner of the token when migration is registered
+    /// @param _originBridge the address of bridge the original token is gonna be in escrow with
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
+    /// @param _originOwner The original owner of the token when migration is registered
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
@@ -304,13 +310,16 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
     /// @param _originHeight The height of the origin universe (usually block.timestamp)
     /// If the owner has access to a private key, it should be the owner.
+    /// @return The bytes32 migrationHash that would be generated in such a migration
     function generateMigrationHashERC721IOU(   
         bytes32 _originUniverse, 
-        address _originOwner,
+        address _originBridge,
         address _originWorld, 
         uint256 _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -322,9 +331,10 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         return generateMigrationHashArtificial(   
             true,     
             _originUniverse, 
-            _originWorld, 
-            _originTokenId, 
-            _originOwner,
+            bytes32(uint(uint160(address(_originBridge)))),
+            bytes32(uint(uint160(_originWorld))), 
+            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
@@ -338,9 +348,10 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
     /// @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
-    /// @param _originOwner The original owner of the token when migration is registered
+    /// @param _originBridge the address of bridge the original token is gonna be in escrow with
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
+    /// @param _originOwner The original owner of the token when migration is registered
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
@@ -358,9 +369,10 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// @return The bytes32 migrationHash that would be generated in such a migration
     function generateMigrationHashERC721Full(   
         bytes32 _originUniverse, 
-        address _originOwner,
+        address _originBridge,
         address _originWorld, 
         uint256 _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -372,9 +384,10 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         return generateMigrationHashArtificial(   
             false,     
             _originUniverse, 
-            _originWorld, 
-            _originTokenId, 
-            _originOwner,
+            bytes32(uint(uint160(address(_originBridge)))),
+            bytes32(uint(uint160(_originWorld))), 
+            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
             _destinationWorld,
@@ -384,51 +397,15 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             _originHeight
         );
     }
-    
-
-    //Generate a migration hash for a local migration
-    function generateMigrationHash(   
-        bool _isIOU,     
-        address _originWorld, 
-        uint256 _originTokenId, 
-        address _originOwner,
-        bytes32 _destinationUniverse,
-        bytes32 _destinationBridge,
-        bytes32 _destinationWorld,
-        bytes32 _destinationTokenId,
-        bytes32 _destinationOwner,
-        bytes32 _signee
-    ) internal view returns(bytes32) {
-            bytes32 b32OriginWorld = bytes32(uint(uint160(_originWorld)));
-            bytes32 b32OriginTokenId = bytes32(_originTokenId);
-            bytes32 b32Timestamp = bytes32(block.timestamp);
-            bytes32 b32Owner = bytes32(uint(uint160(_originOwner)));
-            return keccak256(
-                abi.encodePacked(
-                    _isIOU,
-                    localUniverse, 
-                    b32OriginWorld, 
-                    b32OriginTokenId, 
-                    b32Owner,
-                    _destinationUniverse, 
-                    _destinationBridge, 
-                    _destinationWorld, 
-                    _destinationTokenId,
-                    _destinationOwner,
-                    _signee,
-                    b32Timestamp
-                )
-            );
-    }
-
 
      //Generate a migration hash for a query
     function generateMigrationHashArtificial(   
         bool _isIOU,     
         bytes32 _originUniverse, 
-        address _originWorld, 
-        uint256 _originTokenId, 
-        address _originOwner,
+        bytes32 _originBridge,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -437,16 +414,14 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _signee,
         bytes32 _originHeight
     ) internal pure returns(bytes32) {
-            bytes32 b32OriginWorld = bytes32(uint(uint160(_originWorld)));
-            bytes32 b32OriginTokenId = bytes32(_originTokenId);
-            bytes32 b32Owner = bytes32(uint(uint160(_originOwner)));
             return keccak256(
                 abi.encodePacked(
                     _isIOU,
                     _originUniverse, 
-                    b32OriginWorld, 
-                    b32OriginTokenId,
-                    b32Owner,
+                    _originBridge,
+                    _originWorld, 
+                    _originTokenId,
+                    _originOwner,
                     _destinationUniverse, 
                     _destinationBridge, 
                     _destinationWorld, 

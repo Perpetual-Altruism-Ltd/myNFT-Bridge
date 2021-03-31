@@ -168,9 +168,10 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
-    /// @param _originOwner The original owner of the token when migration is registered
+    /// @param _originBridge the address of bridge the original token is gonna be in escrow with
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
+    /// @param _originOwner The original owner of the token when migration is registered
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
@@ -182,13 +183,16 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token . 
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
     /// @param _originHeight The height of the origin universe (usually block.timestamp)
     /// If the owner has access to a private key, it should be the owner.
+    /// @return The bytes32 migrationHash that would be generated in such a migration
     function generateMigrationHashERC721IOU(   
         bytes32 _originUniverse, 
-        address _originOwner,
+        address _originBridge,
         address _originWorld, 
         uint256 _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -197,13 +201,14 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32);
+    
 
-
-    /// @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
+    // @notice Generate a hash that would be also generated when registering an IOU ERC721 migration with the same data
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
-    /// @param _originOwner The original owner of the token when migration is registered
+    /// @param _originBridge the address of bridge the original token is gonna be in escrow with
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
+    /// @param _originOwner The original owner of the token when migration is registered
     /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
@@ -221,9 +226,10 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
     /// @return The bytes32 migrationHash that would be generated in such a migration
     function generateMigrationHashERC721Full(   
         bytes32 _originUniverse, 
-        address _originOwner,
+        address _originBridge,
         address _originWorld, 
         uint256 _originTokenId, 
+        address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
