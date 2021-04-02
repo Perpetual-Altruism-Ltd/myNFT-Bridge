@@ -48,7 +48,7 @@ exports.setup = async function(accounts){
         "init(string)", 
         "ImplMyNFTBridgeFunInit"
     );
-    let alpha_instancedProxyBridgeInit = await logic_ImplMyNFTBridgeFunInit.at(alpha_instancedProxyBridge.address);
+    let alpha_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(alpha_instancedProxyBridge.address);
     await alpha_instancedProxyBridgeInit.init("ALPHA");
 
     
@@ -58,7 +58,7 @@ exports.setup = async function(accounts){
         "init(string)", 
         "ImplMyNFTBridgeFunInit"
     );
-    let beta_instancedProxyBridgeInit = await logic_ImplMyNFTBridgeFunInit.at(beta_instancedProxyBridge.address);
+    let beta_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(beta_instancedProxyBridge.address);
     await beta_instancedProxyBridgeInit.init("BETA");
 
     //Adding their other features to the bridgs
