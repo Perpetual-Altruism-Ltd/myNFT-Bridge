@@ -325,12 +325,14 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// original token back.
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
-    /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
     /// bridge is on an EVM, it is most likely an address.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the origin bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// If the origin world is on an EVM, it is most likely an address.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
@@ -345,9 +347,10 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
+        bytes32 _originBridge, 
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
-        bytes32 _originBridge, 
+        bytes32 _originOwner, 
         address _destinationWorld,
         uint256 _destinationTokenId,
         address _destinationOwner,
@@ -364,12 +367,14 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// Contrary to IOU migrations, do not throw in case of mismatched token back and forth migration. 
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
-    /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
     /// bridge is on an EVM, it is most likely an address.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the origin bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// If the origin world is on an EVM, it is most likely an address.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
@@ -384,9 +389,10 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
+        bytes32 _originBridge, 
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
-        bytes32 _originBridge, 
+        bytes32 _originOwner, 
         address _destinationWorld,
         uint256 _destinationTokenId,
         address _destinationOwner,

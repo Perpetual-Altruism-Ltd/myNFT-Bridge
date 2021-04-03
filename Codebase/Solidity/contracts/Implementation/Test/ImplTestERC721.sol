@@ -8,6 +8,8 @@ import "../ERC721.sol";
 
 contract ImplTestERC721 is ERC721 {
 
+    address public owner; //Address of the smart contract creator
+
     mapping(address => uint256) internal balanceOfToken; //A counter tracking each owner token balance without having to loop.
     mapping(uint256 => address) internal tokenOwners; //The mapping of the token to their owner
 
@@ -17,9 +19,15 @@ contract ImplTestERC721 is ERC721 {
     // Mapping associating tokens with an operator
     mapping(uint256 => address) internal tokenOperator; // tokenId => operator
 
+    mapping(uint256 => address) internal preminters; //Each token preminter
+
     // Total number of minted token
     uint256 internal mintedTokens;
 
+    //Set the owner as the smart contract creator
+    constructor(){
+        owner = msg.sender;
+    }
 
     /// @notice Mint a token for msg.sender and return the tokenId of this token
     /// @return the newly minted tokenId
@@ -30,6 +38,16 @@ contract ImplTestERC721 is ERC721 {
         balanceOfToken[msg.sender] = balanceOfToken[msg.sender] + 1;
 
         emit Transfer(address(0x0), msg.sender, mintedTokens);
+        return mintedTokens;
+    }
+
+    /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
+    /// @return the future minted tokenId
+    function premintFor(address _preminter) external returns(uint256){
+
+        mintedTokens = mintedTokens + 1;
+        preminters[mintedTokens] = _preminter;
+
         return mintedTokens;
     }
 
@@ -84,17 +102,17 @@ contract ImplTestERC721 is ERC721 {
     /// @param _tokenId The NFT to approve
     function approve(address _approved, uint256 _tokenId) external payable override{
 
-        address owner = tokenOwners[_tokenId];
+        address _owner = tokenOwners[_tokenId];
 
         //Operator verification
         require(
-            msg.sender == owner || // the current owner
-            ownerOperators[owner][msg.sender], // an authorized operqtor
+            msg.sender == _owner || // the current owner
+            ownerOperators[_owner][msg.sender], // an authorized operqtor
             "msg.sender is not allowed to approve an address for the NFT"
         );
 
         tokenOperator[_tokenId] = _approved;
-        emit Approval(owner, _approved, _tokenId);
+        emit Approval(_owner, _approved, _tokenId);
     }
 
 
@@ -190,14 +208,20 @@ contract ImplTestERC721 is ERC721 {
     /// @param _tokenId The NFT to transfer
     function transferInternal(address _from, address _to, uint256 _tokenId) internal {
 
-        //Ownership verification
-        require( tokenOwners[_tokenId] == _from, "The specified _from does not match the current token owner");
+        if(tokenOwners[_tokenId] != address(0x0)){ //If already minted
+            //Ownership verification
+            require( tokenOwners[_tokenId] == _from, "The specified _from does not match the current token owner");
 
-        //Valid nft <=> owner != 0x0
-        require(_from != address(0x0), "_tokenId is not a valid NFT");
+            //Valid nft <=> owner != 0x0
+            require(_from != address(0x0), "_tokenId is not a valid NFT");
+        } else { //If requiring minting
+            require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
+            require(msg.sender == preminters[_tokenId], "_tokenId has not be approved for minting by msg.sender");
+        }
 
         //Prevent 0x0 burns
         require(_to != address(0x0), "_to cannot be the address 0");
+
 
         //Operator verification
         require(

@@ -21,12 +21,14 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// original token back.
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
-    /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
     /// bridge is on an EVM, it is most likely an address.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the origin bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// If the origin world is on an EVM, it is most likely an address.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
@@ -41,15 +43,16 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
+        bytes32 _originBridge, 
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
-        bytes32 _originBridge, 
+        bytes32 _originOwner, 
         address _destinationWorld,
         uint256 _destinationTokenId,
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes32 _escrowHashSigned
+        bytes _escrowHashSigned
     ) external override {
     }
 
@@ -61,12 +64,14 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// Contrary to IOU migrations, do not throw in case of mismatched token back and forth migration. 
     /// @param _originUniverse An array of 32 bytes representing the destination universe. 
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
-    /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _originBridge An array of 32 bytes representing the origin bridge. If the origin
     /// bridge is on an EVM, it is most likely an address.
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// If the origin bridge is on an EVM, it is most likely an address.
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// If the origin world is on an EVM, it is most likely an address.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
     /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
@@ -81,15 +86,16 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
+        bytes32 _originBridge, 
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
-        bytes32 _originBridge, 
+        bytes32 _originOwner, 
         address _destinationWorld,
         uint256 _destinationTokenId,
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes32 _escrowHashSigned
+        bytes _escrowHashSigned
     ) external override {
     }
 
@@ -106,6 +112,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         bytes32 _escrowHash,
         bytes32 _migrationRelayedHashSigned
     ) external override {
+
     }
 
     
@@ -125,24 +132,101 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     }
 
 
-    function internalMigrateFromERC721ToERC721(
-        bool _isIOU,
+    function internalMigrateFromERC721ToERC721IOU(
         bytes32 _originUniverse,
+        bytes32 _originBridge, 
         bytes32 _originWorld, 
         bytes32 _originTokenId, 
-        bytes32 _originBridge, 
+        bytes32 _originOwner,
         address _destinationWorld,
         uint256 _destinationTokenId,
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes32 _escrowHashSigned
+        bytes _escrowHashSigned
     ) external{
+        //Reconstruct the escrow hash
+        bytes32 escrowhash = generateMigrationHashArtificialLocalIOUIncoming(
+                _originUniverse,
+                _originBridge,
+                _originWorld,
+                _originTokenId,
+                _originOwner,
+                _destinationWorld,
+                _destinationTokenId,
+                _destinationOwner,
+                _signee,
+                _height
+            );
 
+        //TODO : Check the escrow hash have been legitimately signed
+
+
+        //TODO : Register the safetransfer execution command with the associated migration hash
+        
     }
 
+    //Generate a migration hash for an incoming IOU migration
+    function generateMigrationHashArtificialLocalIOUIncoming(   
+        bytes32 _originUniverse, 
+        bytes32 _originBridge,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originOwner,
+        address _destinationWorld,
+        uint256 _destinationTokenId,
+        address _destinationOwner,
+        address _signee,
+        bytes32 _height
+    ) internal view returns(bytes32){
+        return generateMigrationHashArtificial(
+            true,     
+            _originUniverse, 
+            _originBridge,
+            _originWorld,  
+            _originTokenId, 
+            _originOwner,
+            localUniverse,
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_destinationWorld))), 
+            bytes32(_destinationTokenId),
+            bytes32(uint(uint160(_destinationOwner))),
+            bytes32(uint(uint160(_signee)),
+            _height
+        );
+    }
 
-    //Generate a migration hash for a query
+    //Generate a migration hash for an incoming Full migration
+    function generateMigrationHashArtificialLocalFullIncoming(   
+        bytes32 _originUniverse, 
+        bytes32 _originBridge,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originOwner,
+        address _destinationWorld,
+        uint256 _destinationTokenId,
+        address _destinationOwner,
+        bytes32 _signee,
+        bytes32 _height
+    ) internal view returns(bytes32){
+        return generateMigrationHashArtificial(
+            true,     
+            _originUniverse, 
+            _originBridge,
+            _originWorld,  
+            _originTokenId, 
+            _originOwner,
+            localUniverse,
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_destinationWorld))), 
+            bytes32(_destinationTokenId),
+            bytes32(uint(uint160(_destinationOwner))),
+            _signee,
+            _height
+        );
+    }
+
+    //Generate a migration hash
     function generateMigrationHashArtificial(   
         bool _isIOU,     
         bytes32 _originUniverse, 
