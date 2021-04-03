@@ -40,7 +40,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
+    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -52,8 +52,44 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes _escrowHashSigned
+        bytes calldata _relayedMigrationHashSigned
     ) external override {
+        
+        //Reconstruct the escrow hash
+        bytes32 escrowHash = generateMigrationHashArtificialLocalIOUIncoming(
+                _originUniverse,
+                _originBridge,
+                _originWorld,
+                _originTokenId,
+                _originOwner,
+                _destinationWorld,
+                _destinationTokenId,
+                _destinationOwner,
+                _signee,
+                _height
+        );
+
+        //Check that the escrow hash have been legitimately signed for this relay
+        checkEscrowSignature(_signee, escrowHash, _relayedMigrationHashSigned);
+
+        //Try to get the current token owner
+        try ERC721(_destinationWorld).ownerOf(_destinationTokenId) returns (address _currOwner) {
+            if(_currOwner == address(0x0)){
+                // If the current token owner is 0, then the token is not strict ERC721 compliant BUT 
+                // the bridge should still be able to transfer it for the purpose of minting
+                ERC721(_destinationWorld).safeTransferFrom(address(0x0), _destinationOwner, _destinationTokenId);
+
+            } else if (_currOwner == address(this)){ 
+                // If the current token owner is the bridge, then the token was in escrow with us
+                // This mean that project creators and owners need to trust the relays to not move 
+                // the tokens prematurely while the represented NFT are on an another chain.
+                ERC721(_destinationWorld).safeTransferFrom(_currOwner, _destinationOwner, _destinationTokenId);
+            }
+        } catch {
+            // The bridge assume that the call failed because the _destinationWorld is ERC-721 compliant and the token has not been minted yet
+            // The call of Safetransfer by the bridge will henceforth mint the IOU token
+            ERC721(_destinationWorld).safeTransferFrom(address(0x0), _destinationOwner, _destinationTokenId);
+        }
     }
 
 
@@ -83,7 +119,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
+    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain appended with the relay public address then signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -95,76 +131,12 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes _escrowHashSigned
-    ) external override {
-    }
-
-
-    /// @notice Finalize a migration by transferring the IOU destination token to it's new owner
-    /// @dev Throw if safeTransferFrom() fails to attribute the token.
-    /// Can only succeed once per _escrowHash
-    /// emit FinalizedMigrationERC721IOU
-    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
-    /// in the arrival bridge
-    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
-    /// by of the _signee of the migration
-    function finalizeERC721IOUMigration(
-        bytes32 _escrowHash,
-        bytes32 _migrationRelayedHashSigned
+        bytes calldata _relayedMigrationHashSigned
     ) external override {
 
     }
 
-    
-    /// @notice Finalize a migration by transferring the Full destination token to it's new owner
-    /// @dev Throw if safeTransferFrom() fails to attribute the token.
-    /// Will call a callback programmable by the token publisher before calling SafeTransfer
-    /// Can only succeed once per _escrowHash
-    /// emit FinalizedMigrationERC721Full
-    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
-    /// in the arrival bridge
-    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
-    /// by of the _signee of the migration
-    function finalizeERC721FullMigration(
-        bytes32 _escrowHash,
-        bytes32 _migrationRelayedHashSigned
-    ) external override {
-    }
 
-
-    function internalMigrateFromERC721ToERC721IOU(
-        bytes32 _originUniverse,
-        bytes32 _originBridge, 
-        bytes32 _originWorld, 
-        bytes32 _originTokenId, 
-        bytes32 _originOwner,
-        address _destinationWorld,
-        uint256 _destinationTokenId,
-        address _destinationOwner,
-        address _signee,
-        bytes32 _height,
-        bytes _escrowHashSigned
-    ) external{
-        //Reconstruct the escrow hash
-        bytes32 escrowhash = generateMigrationHashArtificialLocalIOUIncoming(
-                _originUniverse,
-                _originBridge,
-                _originWorld,
-                _originTokenId,
-                _originOwner,
-                _destinationWorld,
-                _destinationTokenId,
-                _destinationOwner,
-                _signee,
-                _height
-            );
-
-        //TODO : Check the escrow hash have been legitimately signed
-
-
-        //TODO : Register the safetransfer execution command with the associated migration hash
-        
-    }
 
     //Generate a migration hash for an incoming IOU migration
     function generateMigrationHashArtificialLocalIOUIncoming(   
@@ -191,40 +163,11 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             bytes32(uint(uint160(_destinationWorld))), 
             bytes32(_destinationTokenId),
             bytes32(uint(uint160(_destinationOwner))),
-            bytes32(uint(uint160(_signee)),
+            bytes32(uint(uint160(_signee))),
             _height
         );
     }
 
-    //Generate a migration hash for an incoming Full migration
-    function generateMigrationHashArtificialLocalFullIncoming(   
-        bytes32 _originUniverse, 
-        bytes32 _originBridge,
-        bytes32 _originWorld, 
-        bytes32 _originTokenId, 
-        bytes32 _originOwner,
-        address _destinationWorld,
-        uint256 _destinationTokenId,
-        address _destinationOwner,
-        bytes32 _signee,
-        bytes32 _height
-    ) internal view returns(bytes32){
-        return generateMigrationHashArtificial(
-            true,     
-            _originUniverse, 
-            _originBridge,
-            _originWorld,  
-            _originTokenId, 
-            _originOwner,
-            localUniverse,
-            bytes32(uint(uint160(address(this)))),
-            bytes32(uint(uint160(_destinationWorld))), 
-            bytes32(_destinationTokenId),
-            bytes32(uint(uint160(_destinationOwner))),
-            _signee,
-            _height
-        );
-    }
 
     //Generate a migration hash
     function generateMigrationHashArtificial(   
@@ -259,6 +202,43 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
                     _originHeight
                 )
             );
+    }
+
+
+    function checkEscrowSignature(
+        address _signee,
+        bytes32 escrowHash,
+        bytes calldata _relayedMigrationHashSigned
+    ) internal view {
+        //Generate the message that was outputed by eth_sign
+        bytes32 message = prefixed(keccak256(abi.encodePacked(escrowHash, msg.sender))); //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+        require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
+    }
+
+    /// signature methods.
+    function splitSignature(bytes memory sig) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
+
+        require(sig.length == 65);
+        assembly {
+            // first 32 bytes, after the length prefix.
+            r := mload(add(sig, 32))
+            // second 32 bytes.
+            s := mload(add(sig, 64))
+            // final byte (first byte of the next 32 bytes).
+            v := byte(0, mload(add(sig, 96)))
+        }
+        return (v, r, s);
+    }
+
+    function recoverSigner(bytes32 message, bytes memory sig) internal pure returns (address) {
+        (uint8 v, bytes32 r, bytes32 s) = splitSignature(sig);
+
+        return ecrecover(message, v, r, s);
+    }
+
+    /// builds a prefixed hash to mimic the behavior of eth_sign.
+    function prefixed(bytes32 hash) internal pure returns (bytes32) {
+        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
 
 }

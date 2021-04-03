@@ -294,27 +294,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _signee,
         bytes32 indexed _migrationRelayedHash // This hash depend of the escrowHash and the relay address.
     );
-
-
-    // Event emitted when a token is released as the NFT representative at the end of an IOU migration. 
-    event FinalizedMigrationERC721IOU(
-        address indexed _destinationWorld, 
-        uint256 indexed _destinationTokenId,
-        address _destinationOwner,
-        address _relay,
-        bytes32 indexed _escrowHash
-    );
-
-
-    // Event emitted when a token is released as the NFT representative at the end of a full migration. 
-    event FinalizedMigrationERC721Full(
-        address indexed _destinationWorld, 
-        uint256 indexed _destinationTokenId,
-        address _destinationOwner,
-        address _relay,
-        bytes32 indexed _escrowHash
-    );
-
+    
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.
     /// @dev Throw if msg.sender is not a relay accredited by _destinationWorld Owner
@@ -344,7 +324,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
+    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -356,7 +336,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes32 _escrowHashSigned
+        bytes calldata _relayedMigrationHashSigned
     ) external;
 
 
@@ -386,7 +366,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _escrowHashSigned The _escrowHash of the origin chain signed by _signee
+    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -398,37 +378,9 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes32 _escrowHashSigned
+        bytes calldata _relayedMigrationHashSigned
     ) external;
 
-
-    /// @notice Finalize a migration by transferring the IOU destination token to it's new owner
-    /// @dev Throw if safeTransferFrom() fails to attribute the token.
-    /// Can only succeed once per _escrowHash
-    /// emit FinalizedMigrationERC721IOU
-    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
-    /// in the arrival bridge
-    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
-    /// by of the _signee of the migration
-    function finalizeERC721IOUMigration(
-        bytes32 _escrowHash,
-        bytes32 _migrationRelayedHashSigned
-    ) external;
-
-    
-    /// @notice Finalize a migration by transferring the Full destination token to it's new owner
-    /// @dev Throw if safeTransferFrom() fails to attribute the token.
-    /// Will call a callback programmable by the token publisher before calling SafeTransfer
-    /// Can only succeed once per _escrowHash
-    /// emit FinalizedMigrationERC721Full
-    /// @param _escrowHash An array of 32 bytes that was reconstructed when writing the migration details
-    /// in the arrival bridge
-    /// @param _migrationRelayedHashSigned An array of 32 bytes of the _migrationRelayedHash signed 
-    /// by of the _signee of the migration
-    function finalizeERC721FullMigration(
-        bytes32 _escrowHash,
-        bytes32 _migrationRelayedHashSigned
-    ) external;
 
 }
 

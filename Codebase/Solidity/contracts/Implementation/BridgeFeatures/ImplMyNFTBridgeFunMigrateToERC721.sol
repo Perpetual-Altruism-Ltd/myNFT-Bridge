@@ -236,7 +236,6 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     }
 
 
-
     /// @notice Check if an origin NFT token can be migrated to a different token as an IOU migration
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// _param _originTokenId The token ID of the token representing the NFT
@@ -451,8 +450,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             bytes32(block.timestamp)
         );
     }
-
-
+    
 
     //Generate a migration hash for a query
     function generateMigrationHashArtificial(   

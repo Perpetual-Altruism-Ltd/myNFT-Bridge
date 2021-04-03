@@ -59,6 +59,9 @@ contract ImplMemoryStructure {
     //Mapping storing where the rules for each  world fullMigrations are decentrally defined.
     mapping(address => address) internal fullMigrationsDelegates; // (world => delegate)
 
+    //Mapping storing if a world is trusting a relay to handle it's tokens
+    mapping(address => mapping(address => bool)) internal isAccreditedRelayForWorld; // (world => relay => isAccredited)
+
 
  
 }
