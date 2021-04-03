@@ -39,9 +39,9 @@ The proofOfEscrowHash is hashed with the relay public address and then signed by
 
 There are three trust requirements that are NOT solved by the bridge and that both token owners and token creators need to be aware of when trusting a relay :
 
-1 : The relay should properly have the origin token put in escrow when minting the corresponding token on the new chain
-2 : The relay should not lie on the migrationHash from the departure universe input to the arrival universe input
-3 : The migration signee should be the original token owner whenever possible
+1 : The relay should properly have the origin token put in escrow when minting the corresponding token on the new chain                        
+2 : The relay should not lie on the migrationHash from the departure universe input to the arrival universe input           
+3 : The migration signee should be the original token owner whenever possible          
 
 The first requirement is a deliberate freedom given to relays in the bridge specification, asking owners to sign the migrationHash and not the escrowHash. A trustless relay behaviour could be to always wait for the escrow to be processed and confirmed by many blocks while a more centralized relay (eg: A creator being it's own relay) could mint the destination token earlier in order to allows owners to benefit from the migration as soon as possible.
 
