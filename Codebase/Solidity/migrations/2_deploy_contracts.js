@@ -54,7 +54,7 @@ module.exports = async(deployer, network, accounts) => {
     );
 
     //Adding ImplMyNFTBridgeFunMigrateToERC721 features
-    console.log("Adding ERC721TokenReceiver features...");
+    console.log("Adding MyNFTBridgeERC721Departure features...");
     await deployer.deploy(ImplMyNFTBridgeFunMigrateToERC721);
     await instancedProxy.updateContract(
         ImplMyNFTBridgeFunMigrateToERC721.address, 

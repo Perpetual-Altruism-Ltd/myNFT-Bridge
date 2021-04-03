@@ -21,10 +21,10 @@ exports.setup = async function(accounts){
     let logic_ImplMyNFTBridgeFunMigrateToERC721 = await ImplMyNFTBridgeFunMigrateToERC721.new();
 
     //Instancing the bridges
-    let alpha_proxyBridge =  await ImplTransparentProxy.new(ERC1538Delegate.address);
+    let alpha_proxyBridge =  await ImplTransparentProxy.new(logic_ERC1538Delegate.address);
     let alpha_instancedProxyBridge = await ERC1538Delegate.at(alpha_proxyBridge.address);
 
-    let beta_proxyBridge =  await ImplTransparentProxy.new(ERC1538Delegate.address);
+    let beta_proxyBridge =  await ImplTransparentProxy.new(logic_ERC1538Delegate.address);
     let beta_instancedProxyBridge = await ERC1538Delegate.at(beta_proxyBridge.address);
 
     await alpha_instancedProxyBridge.updateContract(
