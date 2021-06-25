@@ -1,3 +1,7 @@
+TODO : 
+Replacing signing scheme with metamask V4
+
+
 # MyNFT-Bridge
 The work in progress of an universal NFT bridge. 
 
