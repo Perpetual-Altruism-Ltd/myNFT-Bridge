@@ -1,6 +1,10 @@
 TODO : 
 Replacing signing scheme with metamask V4
 
+TODO:
+Put data automaticallyh in decentralized storage (IPFS ?)
+https://www.arweave.org/
+
 
 # MyNFT-Bridge
 The work in progress of an universal NFT bridge. 
