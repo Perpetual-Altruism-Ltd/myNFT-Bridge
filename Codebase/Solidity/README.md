@@ -37,6 +37,11 @@ The proofOfEscrowHash is hashed with the relay public address and then signed by
 ### 8: The migration data are pushed to decentralized storage
 The details of the migration are pushed to decentralized storage such as IPFS/arweave
 
+An Index list all the migrationHash, associate them with URL
+URL contains all the migrations data in JSON format
+
+Each bridge should point to it's latest index of migrations URL
+
 
 ## Requirement for trusting a relay : 
 
