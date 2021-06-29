@@ -34,6 +34,9 @@ The relay prefills/captures the destination the owner want to sent the token to 
 ### 7: The owner signs off the mgiration and the relay writes the migration in the arrival bridge.
 The proofOfEscrowHash is hashed with the relay public address and then signed by the owner. It is then inputted in the arrival bridge along with migration data. If the signature match, this will release the token.
 
+### 8: The migration data are pushed to decentralized storage
+The details of the migration are pushed to decentralized storage such as IPFS/arweave
+
 
 ## Requirement for trusting a relay : 
 
