@@ -204,7 +204,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             );
     }
 
-
+/// TODO : Change to sign V4, see implementation in gasless cryptograph
     function checkEscrowSignature(
         address _signee,
         bytes32 escrowHash,
