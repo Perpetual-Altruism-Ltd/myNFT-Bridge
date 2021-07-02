@@ -56,3 +56,23 @@ The first requirement is a deliberate freedom given to relays in the bridge spec
 The second requirement is the only technical truth requirement for trustless relays. If this variable can be read trustlessly from the origin universe, then the other parameters would be computationally impractical to be faked.
 
 The third requirement is because not all token owners/universes have the ability to sign messages using eth_sign, and hence the ability for _signee to be different than the token owner exist. Everytime a token owner is migrating a token, the relay should designate them to be the signee if technically possible.
+
+
+# Proposition on migration metadata
+
+## JSON
+
+To be formatted
+{
+	escrowHash
+	migrationHash
+		bytes32 _destinationUniverse,
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        bytes32 _signee
+}
