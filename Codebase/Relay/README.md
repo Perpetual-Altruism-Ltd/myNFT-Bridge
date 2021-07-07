@@ -1,0 +1,1 @@
+This relay can be launched and configured to listen to a bridge and RPC call other relay like him operating on other bridges to perform the destination migrations

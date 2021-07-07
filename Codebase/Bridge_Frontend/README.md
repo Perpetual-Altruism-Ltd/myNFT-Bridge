@@ -1,0 +1,1 @@
+Just launch this server with an appropriate conf to allow users to migrate their NFT using a bridge.
