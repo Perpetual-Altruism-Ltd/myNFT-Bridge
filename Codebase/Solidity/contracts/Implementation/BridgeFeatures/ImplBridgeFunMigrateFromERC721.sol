@@ -210,11 +210,20 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         bytes32 escrowHash,
         bytes calldata _relayedMigrationHashSigned
     ) internal view {
+        //Generate the domain separator for V4 sign
+        struct EIP712Domain {
+            string name;
+            string version;
+        }
+
+	    bytes32 public constant EIP712_DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version)");
+        bytes32 constant DOMAIN_SEPARATOR = keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, keccak256("MyNft"), keccak256("1")));
+        
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            prefixed(keccak256(abi.encodePacked(escrowHash, msg.sender))) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+            keccak256(abi.encodePacked(escrowHash, msg.sender)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
         ));  
         require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
     }
@@ -238,11 +247,6 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         (uint8 v, bytes32 r, bytes32 s) = splitSignature(sig);
 
         return ecrecover(message, v, r, s);
-    }
-
-    /// builds a prefixed hash to mimic the behavior of eth_sign.
-    function prefixed(bytes32 hash) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
     }
 
 }
