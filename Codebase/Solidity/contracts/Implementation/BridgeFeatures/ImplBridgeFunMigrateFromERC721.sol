@@ -203,14 +203,8 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
                 )
             );
     }
-
-/// TODO : Change to sign V4, see implementation in gasless cryptograph
-    function checkEscrowSignature(
-        address _signee,
-        bytes32 escrowHash,
-        bytes calldata _relayedMigrationHashSigned
-    ) internal view {
-        //Generate the domain separator for V4 sign
+    
+    //Generate the domain separator for V4 sign
         struct EIP712Domain {
             string name;
             string version;
@@ -218,6 +212,13 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
 
 	    bytes32 public constant EIP712_DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version)");
         bytes32 constant DOMAIN_SEPARATOR = keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, keccak256("MyNft"), keccak256("1")));
+
+/// TODO : Change to sign V4, see implementation in gasless cryptograph
+    function checkEscrowSignature(
+        address _signee,
+        bytes32 escrowHash,
+        bytes calldata _relayedMigrationHashSigned
+    ) internal view {
         
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
