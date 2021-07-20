@@ -204,7 +204,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             );
     }
     
-    //Generate the domain separator for V4 sign
+//Generate the domain separator for V4 sign
         struct EIP712Domain {
             string name;
             string version;
@@ -212,19 +212,25 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
 
 	    bytes32 public constant EIP712_DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version)");
         bytes32 constant DOMAIN_SEPARATOR = keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, keccak256("MyNft"), keccak256("1")));
+        
+    // HashStruct for the message
+        struct HashStruct {
+		bytes32 escrowHash;
+	    }
+	    bytes32 public constant MESSAGE_TYPEHASH = keccak256("HashStruct(bytes32 escrowHash)");
 
 /// TODO : Change to sign V4, see implementation in gasless cryptograph
     function checkEscrowSignature(
         address _signee,
         bytes32 escrowHash,
         bytes calldata _relayedMigrationHashSigned
-    ) internal view {
+    ) internal pure {
         
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            keccak256(abi.encodePacked(escrowHash, msg.sender)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+            keccak256(abi.encode(MESSAGE_TYPEHASH, escrowHash)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
         ));  
         require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
     }
