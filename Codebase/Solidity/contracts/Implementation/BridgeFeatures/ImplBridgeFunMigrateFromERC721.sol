@@ -226,11 +226,13 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         bytes calldata _relayedMigrationHashSigned
     ) internal pure {
         
+        HashStruct memory hashStruct = HashStruct(escrowHash); 
+        
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
             "\x19\x01",
             DOMAIN_SEPARATOR,
-            keccak256(abi.encode(MESSAGE_TYPEHASH, escrowHash)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+            keccak256(abi.encode(MESSAGE_TYPEHASH, hashStruct.escrowHash)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
         ));  
         require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
     }
