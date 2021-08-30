@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html prefix="og: http://ogp.me/ns#">
+	<head>
+		<meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39">
+		<link rel="stylesheet" href="/style.css">
+		
+		<title></title>
+	</head>
+	
+	<body>
+		<div class="ConnectionCenter">
+		<center>
+			<button type="button" class="btn btn-primary connectMetaMask">Connect MetaMask</button>
+			<button type="button" class="btn btn-primary connectTorus">Connect Torus</button>
+			<button type="button" class="btn btn-primary connectWalletConnect">Connect WalletConnect</button>
+			<button type="button" class="btn btn-primary connectPortis">Connect Portis</button>
+			<button type="button" class="btn btn-primary connectBitski">Connect Bitski</button>
+			<button type="button" class="btn btn-primary connectFortmatic">Connect Fortmatic</button><br/><br/>
+			<button type="button" class="btn btn-primary connectVenly">Connect Venly (Arkane)</button>
+			<button type="button" class="btn btn-primary connectCoinbase">Connect Coinbase</button>
+		</center>
+		<br>
+		Connected Address: <div class="address"></div>
+		</div>
+		<div class="BridgeCards">
+		<br><br>
+			<div class="DepartureCard">
+				Departure<br>
+				<br>
+				<label for="OriginNetwork">Select the network the NFT token is currently in :</label><br>
+				<select name="OriginNetworkSelector" id="OriginNetworkSelector">
+				</select><br>
+				<br>
+				Input the address of the ERC-721 smart contract the token is currently in :<br>
+				
+				<input size="42" id="inputOGContractAddress" value="0xD277FCd0e8199b61eE9Edb87e876dA2D8B6252aF"><br>
+				<br>
+				Input the tokenID of the ERC-721 token the NFT is currently associated to :<br>
+				<input size="42" id="inputOGTokenID" value="0xe483fdA0f7F26F540462Ac0BB8db4dE487916099"><br>
+			</div>
+		</div>
+		
+		<br>
+
+		<div class="tokenCard">
+			<button onclick="loadOgTokenData();">Load Data</button>
+			<br>
+			<br>
+			Token Contract Name: <span id="OGContractName"></span>
+			<br>
+			Token Contract Symbol: <span id="OGContractSymbol"></span>
+			<br>
+			Token Owner: <span id="OGTokenOwner"></span>
+			<br>
+			Token URI: <span id="OGTokenURI"></span>
+		</div>
+		<br>
+		
+		
+		<br>
+		<br>Arrival
+		<br>
+		<br>
+		<script type="application/javascript" src="/lib/westron/loader.js"></script>
+		<script type="application/javascript" src="/app.js"></script>
+	</body>
+</html>

@@ -11,6 +11,14 @@ router.get('/', function (req, res) {
 
 });
 
+router.get('/bridge', function (req, res) {
+    options = {};
+    res.render('migrate', {
+        options: options,
+    });
+
+});
+
 
 // ======= EXPORT THE ROUTER =========================
 module.exports = router;

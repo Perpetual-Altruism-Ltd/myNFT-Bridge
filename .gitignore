@@ -1,3 +1,4 @@
 Codebase/Solidity/build/contracts/*
 Codebase/Bridge_Frontend/node_modules/*
 Codebase/Bridge_Frontend/log/*
+Codebase/Bridge_Contracts/build/*
