@@ -88,5 +88,21 @@ body{
 }
 
 .mynftBridgeTitle{
+    margin-top: 50px;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 3.13rem;
+    line-height: 3.69rem;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 50px;;
+}
 
+.whitesheet{
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 20px;
 }
