@@ -1,3 +1,7 @@
+body{
+    font-family: 'Sequel Sans',sans-serif;
+}
+
 .bg_container{
     position: absolute;
     left: 0;
@@ -11,7 +15,7 @@
 .bg_gradient{
     height: 100%;
     width: 100%;
-    background-image: url('gradientBackground.svg');
+    background-image: url('medias/gradientBackground.svg');
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
@@ -36,4 +40,53 @@
 
 .imgassetpreview{
     width: 400px;
+}
+
+.content-pillar{
+    width: 70%;
+    margin-left: 15%;
+}
+
+
+.topBanner{
+    margin-top: 30px;
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.mynftLogoTop{
+    width: 120px;
+    height: 40px;
+    background-image: url('medias/myNFTWhiteLogo.svg');
+}
+
+.bannerButtonSectionRight{
+    display: flex;
+    justify-content: flex-end;
+    width: calc(100% - 120px);
+}
+
+.clickableRoundButton{
+    padding: 8px 16px;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 30px;
+    background-color: #fff;
+    -webkit-transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);
+    transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);
+    color: #333;
+    font-size: .88rem;
+    line-height: 1.5rem;
+    text-decoration: none;
+}
+
+.mynftBridgeTitle{
+
 }
