@@ -259,6 +259,8 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
 }
 
+
+
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridgeERC721toERC721Arrival
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
@@ -457,4 +459,77 @@ interface FullMigrationController {
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId
     ) external;
+}
+
+interface MyNftBridgeMigrationInfo{
+
+    /// @notice Return the URI where one can get all the metadata regarding a migration of any token located in the same universe as the bridge
+    function ERC721MigrationURI( 
+        address _tokenWorld, 
+        uint256 _tokenId ) external view returns (string); 
+    //eg : https://bridge.mynft.com/migrations/0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7/0x2449835e86a539ab33f5773729c0db42e89016ff
+
+
+    //Data is strutured as the following example if NFT has NOT been migrated yet: 
+    /*
+        {
+            "current" : {
+                "name": "OG Name", //Original NFT name
+                "description": "OG Desc", //Original NFT description
+                "image": "https://example.com/Original_NFT_image.png",
+                "universehash": "0x6d2f0e37", //bytes4 encoding of the origin universe
+                "universe": "Ethereum Mainnet", //origin universe as written in network_list.json of this project
+                "world": "0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7", //Smart contract address of the world
+                "tokenId" : "0x2449835e86a539ab33f5773729c0db42e89016ff" // TokenId of the token
+            },
+            "from" : {
+              
+            },
+            "to" : {
+               
+            },
+            "migration" : {
+                "migratedFrom": false,
+                "migratedTo": false
+            }
+        }
+
+    */
+
+    //Data is strutured as the following example if NFT has been migrated toward a different token (eg: a NFT moved From Mainnet to Rinkeby, querying the Mainnet Token)
+    /*
+        {
+            "current" : {
+                "name": "OG Name", //Original NFT name
+                "description": "OG Desc", //Original NFT description
+                "image": "https://example.com/Original_NFT_image.png",
+                "universehash": "0x6d2f0e37", //bytes4 encoding of the origin universe
+                "universe": "Ethereum Mainnet", //origin universe as written in network_list.json of this project
+                "world": "0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7", //Smart contract address of the world
+                "tokenId" : "0x2449835e86a539ab33f5773729c0db42e89016ff" // TokenId of the token
+            },
+            "from" : {
+
+            },
+            "to" : {
+                "name": "OG Name's IOU", //Once-Migrated NFT name
+                "description": "OG's IOU", //Once-Migrated NFT description
+                "image": "https://example.com/Original_NFT_image_with_IOU_Watermark.png",
+                "universehash": "0x07dac20e", //bytes4 encoding of the destination universe
+                "universe": "Ethereum Testnet Rinkeby", //origin universe as written in network_list.json of this project
+                "world": "0xA7427d0D45e8dd969049872F9cDE383716A39B23", //Smart contract address of the world
+                "tokenId" : "0xa7427d0d45e8dd969049872f9cde383716a39b23" // TokenId of the token
+            }
+            "migration" : {
+                "migratedFrom" : false,
+                "migratedTo": true
+                "to": {
+                    migrationHash : "0xf525d82328c214616be8c27cbcbb8774e7d7899db6d53f28bf232d9a3f11b427",
+                    relayedMigrationHashSigned : "0xf525d82328c214616be8c27cbcbb8774e7d7899db6d53f28bf232d9a3f11b427"
+                }
+            }
+        }
+
+    */
+
 }

@@ -218,6 +218,7 @@ var loadOgTokenData = async function () {
 			let content = await originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
 			if(content != null){
 				document.getElementById("OGTokenURI").innerHTML = content;
+                loadOgTokenMetaData();
 			} else {
 				document.getElementById("OGTokenURI").innerHTML = "Not Specified";
 			}
@@ -230,11 +231,58 @@ var loadOgTokenData = async function () {
     }
     getTokenURI();
 	
+}
+
+var loadOgTokenMetaData = async function () {
+
+    let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
+    var ogTokenData = {};
+    if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
+        return;
+    } else {
+        console.log("sending XHR");
+        try {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', OGTokenMetadataPath);
+            xhr.onload = function () {
+                if (xhr.status != 200) { // analyze HTTP status of the response
+                    console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                    alert("Could not load network list at " + pathERC721Metadata);
+                } else { // show the result
+                    //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                    var resp = xhr.response;
+                    ogTokenData = JSON.parse(resp);
+                    console.log(resp);
+
+                    document.getElementById("OGTokenMetaName").textContent = ogTokenData.name;
+                    document.getElementById("OGTokenMetaDesc").textContent = ogTokenData.description;
+
+                    //Img loading
+                    let ext4 = ogTokenData.image.substr(ogTokenData.image.length - 4).toLowerCase();
+                    if(ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
+                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenData.image) +'">';
+                    } else if(ogTokenData.image != null) {
+                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenData.image) + '">' + encodeURI(ogTokenData.image) + '>';
+                    }
+                   
+
+                }
+            };
+            xhr.send();
+        } catch (err) {
+            console.log(err);
+            alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+        };
+
+    }
+
 
 
 }
 
-endLoadMetamaskConnection = async function () {
+
+
+var endLoadMetamaskConnection = async function () {
     //Connecting to metmask if injected
     if (web3.__isMetaMaskShim__ && web3.currentProvider.selectedAddress != null) {
         if (connector == null || !connector.isConnected) {
