@@ -1,3 +1,39 @@
+.bg_container{
+    position: absolute;
+    left: 0;
+    right:0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg_gradient{
+    height: 100%;
+    width: 100%;
+    background-image: url('gradientBackground.svg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+.big-circle{
+    position: absolute;
+    left: 10vh;
+    top: -47px;
+    width: 110vh;
+    height: 110vh;
+    color: #96134e;
+    -webkit-animation:big-circle_spin 360s linear infinite;
+    -moz-animation:big-circle_spin 360s linear infinite;
+    animation:big-circle_spin 360s linear infinite;
+}
+
+@-moz-keyframes big-circle_spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes big-circle_spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes big-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 .imgassetpreview{
     width: 400px;
 }
