@@ -3,7 +3,7 @@ body{
 }
 
 .bg_container{
-    position: absolute;
+    position: fixed;
     left: 0;
     right:0;
     top: 0;
@@ -105,4 +105,30 @@ body{
     background-color: #fff;
     border-radius: 20px;
     padding: 20px;
+}
+
+.formfield{
+    width: 350px;
+    height: 54px;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 16px 32px 16px 22px;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    border: 1px solid #3e276c;
+    border-radius: 30px;
+    font-size: 1rem;
+    line-height: 1.38rem;   
+}
+
+.formfield:focus {
+    border-color: #96134e;
+}
+
+.ConnectionCenter{
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
 }
