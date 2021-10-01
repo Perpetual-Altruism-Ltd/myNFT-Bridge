@@ -475,8 +475,52 @@ var generateMigrationRequest = function(){
     migrationObject.destinationWorld = document.getElementById("inputDestContractAddress").value.toLowerCase();
     migrationObject.destinationTokenId = document.getElementById("inputOGTokenID").value.toLowerCase();
     migrationObject.destinationOwner = document.getElementById("inputDestOwner").value.toLowerCase();
+    migrationObject.destinationBridge = bridgeApp.migrations_paths[document.getElementById("OriginNetworkSelector").value][document.getElementById("DestinationNetworkSelector").value]["Localhost Relay"].paths[0].arrival_bridge;
 
     migrationObject.signee = document.getElementById("connectedAddress").innerHTML.toLowerCase();
 
     return migrationObject;
 }        
+
+
+var hexToBytes32 = function (_arg) {
+    try{
+        let ret = "" + _arg.substr(2);
+        while(ret.length < 64){
+            ret = "0" + ret;
+        }
+        ret = "0x" + ret;
+        return ret;
+    } catch (e){
+        console.log(e);
+        return _arg;
+    }
+    
+
+}
+
+var migrationInitTransaction = async function(){
+    let migrationObject = generateMigrationRequest();
+
+    let originBridge = new web3.eth.Contract(ABIS.MyNFTBridge, migrationObject.originBridge);
+    let originWorld = new web3.eth.Contract(ABIS.ERC721, migrationObject.originWorld);
+
+
+    console.log(migrationObject);
+    try {
+         await originBridge.methods.migrateToERC721IOU(
+            migrationObject.originWorld,
+            migrationObject.originTokenId,
+            hexToBytes32(migrationObject.destinationUniverse),
+            hexToBytes32(migrationObject.destinationBridge),
+            hexToBytes32(migrationObject.destinationWorld),
+            hexToBytes32(migrationObject.destinationTokenId),
+            hexToBytes32(migrationObject.destinationOwner),
+            hexToBytes32(migrationObject.signee)
+         ).send({from:migrationObject.signee});
+      
+        
+    } catch (err) {
+        console.log(err);
+    }
+}

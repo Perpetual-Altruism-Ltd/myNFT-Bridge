@@ -72,18 +72,18 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
 		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": {
-			"keccak256": "0x7376e83a253357f6ef7dd2e862c533fe1f4664ccc8fccaec59dc49ed56a1de5b",
+			"keccak256": "0x624138fe3a78abf6bb33ad1bbc8c67e07b7b8096ce36f24abd4aa53891e767f5",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://eaca247aec6b3dacb925c4f966f3aa39a8c327048ad70883a4693083a8878ca2",
-				"dweb:/ipfs/QmSmEFVwg6eL5MuQgAiLaViC3YzxFYPHoT7y5RggzT6796"
+				"bzz-raw://a8e09d06dbac559c9492b48749661a22dd5c7ad58294df2938e04b11688a3750",
+				"dweb:/ipfs/QmRwRJXEaBzdvqjwB1cGv1aTdnKksSh3fNQWif8Bn6Nxyt"
 			]
 		},
 		"contracts/Implementation/ImplMemoryStructure.sol": {

@@ -61,7 +61,7 @@
 							<input size="42" id="inputOGContractAddress" value="0xE443e3f78c7bE637930252AE848b22eF0cf08B18"><br>
 							<br>
 							Input the tokenID of the ERC-721 token the NFT is currently associated to :<br>
-							<input size="42" id="inputOGTokenID" value="1"><br>
+							<input size="42" id="inputOGTokenID" value="0x1"><br>
 						</div>
 					</div>
 					
@@ -113,7 +113,7 @@
 
 						<br>
 						Input the tokenID of the ERC-721 token the NFT is going to be associated with :<br>
-						<input size="42" id="inputDestTokenID" value="1"><br>
+						<input size="42" id="inputDestTokenID" value="0x1"><br>
 
 						<br>
 						Input the address of the next owner after the migration is completed (default to yourself) :<br>
@@ -122,7 +122,11 @@
 						<br>
 						<br>
 						<br>
-						<button>Request Migration</button>
+						<button onclick="migrationInitTransaction()">Request Migration</button>
+
+						<br>
+						<br>
+						<button>Put origin token in escrow</button>
 
 					</div>
 				</div>
