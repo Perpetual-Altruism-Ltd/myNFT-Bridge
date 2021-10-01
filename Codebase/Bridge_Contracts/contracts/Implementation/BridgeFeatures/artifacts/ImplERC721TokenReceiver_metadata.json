@@ -97,18 +97,18 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
 		"contracts/Implementation/BridgeFeatures/ImplERC721TokenReceiver.sol": {
-			"keccak256": "0x70e854ccc2cfd27324e8fec32b8a016aded6c5093f4422cc9e11d0502ae7ed27",
+			"keccak256": "0xe01ebb667b214498df9939cfba8010de0cbf6ffbda02972f849b2ff95d8ab930",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://1bf70b14361545a280e585a6633496e9282145bc5bb30c5ef06bbbd774fab621",
-				"dweb:/ipfs/QmPoFtRxE3UKRqddHPzCk4CWHBgNPZKAnTbBxJ5TswG5jc"
+				"bzz-raw://d23bab89e436c4a67ad6863bb26785c1f58c6288090e52fc548c2b6e72c00ee0",
+				"dweb:/ipfs/QmZthcKg3iiByHEVfqvXztCxzpmJUgwgSK4uQjEntCtyHh"
 			]
 		},
 		"contracts/Implementation/ERC721.sol": {

@@ -26,7 +26,7 @@ contract ImplERC721TokenReceiver is ImplMemoryStructure, ERC721TokenReceiver {
     /// _param _data Additional data with no specified format
     /// @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))` unless throwing
     /// bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")) === 0x150b7a02
-    function onERC721Received(address /*_operator */, address  /*_from*/, uint256 _tokenId, bytes calldata  /*_data*/) external override returns(bytes4){
+    function onERC721Received(address _operator , address  /*_from*/, uint256 _tokenId, bytes calldata  /*_data*/) external override returns(bytes4){
 
         // PUSH the migration hash
         bytes32 migrationHash = latestRegisteredMigration[keccak256(abi.encodePacked(msg.sender, _tokenId))];
@@ -47,6 +47,9 @@ contract ImplERC721TokenReceiver is ImplMemoryStructure, ERC721TokenReceiver {
 
         //Associate the Migration with it's proof of escrow
         escrowHashOfMigrationHash[migrationHash] = escrowHash;
+
+        //Allow the operator to withdraw the token
+        migrationOperator[escrowHash] = _operator;
 
         //Remove the pre-registration of the migration for the token
         delete latestRegisteredMigration[keccak256(abi.encodePacked(msg.sender, _tokenId))];

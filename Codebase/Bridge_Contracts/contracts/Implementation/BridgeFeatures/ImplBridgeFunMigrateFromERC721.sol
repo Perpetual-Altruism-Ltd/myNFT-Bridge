@@ -72,6 +72,10 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         //Check that the escrow hash have been legitimately signed for this relay
         checkEscrowSignature(_signee, escrowHash, _relayedMigrationHashSigned);
 
+        if(migrationOperator[escrowHash] != address(0)){
+            require(migrationOperator[escrowHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
+        }
+
         //Try to get the current token owner
         try ERC721(_destinationWorld).ownerOf(_destinationTokenId) returns (address _currOwner) {
             if(_currOwner == address(0x0)){

@@ -499,14 +499,22 @@ var hexToBytes32 = function (_arg) {
 
 }
 
-var migrationInitTransaction = async function(){
+
+var migrationButtonInitPressed = async function(){
+
+    //Creating the callback on transaction hash received
+    migrationInitTransaction(function(){
+
+    });
+}
+
+var migrationInitTransaction = async function(_callback){
     let migrationObject = generateMigrationRequest();
 
     let originBridge = new web3.eth.Contract(ABIS.MyNFTBridge, migrationObject.originBridge);
-    let originWorld = new web3.eth.Contract(ABIS.ERC721, migrationObject.originWorld);
+    //let originWorld = new web3.eth.Contract(ABIS.ERC721, migrationObject.originWorld);
 
-
-    console.log(migrationObject);
+    //console.log(migrationObject);
     try {
          await originBridge.methods.migrateToERC721IOU(
             migrationObject.originWorld,
@@ -517,10 +525,39 @@ var migrationInitTransaction = async function(){
             hexToBytes32(migrationObject.destinationTokenId),
             hexToBytes32(migrationObject.destinationOwner),
             hexToBytes32(migrationObject.signee)
-         ).send({from:migrationObject.signee});
+         ).send({from:migrationObject.signee}).then(function(receipt){
+            console.log(receipt);
+            sendTokenEscrowTransaction(migrationObject, receipt, _callback);
+        });;
       
         
     } catch (err) {
         console.log(err);
     }
+}
+
+var sendTokenEscrowTransaction = async function (_migrationObject, _receipt, _callback){
+    let originWorld = new web3.eth.Contract(ABIS.ERC721, _migrationObject.originWorld);
+    let migrationHash = _receipt.events.MigrationDeparturePreRegisteredERC721IOU.returnValues._migrationHash.toLowerCase();
+    console.log(migrationHash);
+
+
+    try {
+        await originWorld.methods.safeTransferFrom(
+            _migrationObject.signee,
+            _migrationObject.originBridge,
+            _migrationObject.originTokenId
+        ).send({from:_migrationObject.signee}).then(function(receipt){
+           console.log(receipt);
+        
+       });;
+     
+       
+   } catch (err) {
+       console.log(err);
+   }
+}
+
+globalProviderMessageHandler = function(_log){
+    console.log(_log);
 }
