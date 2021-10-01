@@ -98,7 +98,7 @@ var loadERC721ABI = async function () {
         xhr.onload = function () {
             if (xhr.status != 200) { // analyze HTTP status of the response
                 console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-                alert("Could not load network list at " + pathERC721ABI);
+                alert("Could not load ERC721 ABI at " + pathERC721ABI);
             } else { // show the result
                 //console.log(`Done, got ${xhr.response}`); // responseText is the server
                 var resp = xhr.response;
@@ -108,7 +108,7 @@ var loadERC721ABI = async function () {
         xhr.send();
     } catch (err) {
         console.log(err);
-        alert("Could not ERC721 ABI at " + pathERC721ABI);
+        alert("Could not load ERC721 ABI at " + pathERC721ABI);
     };
 }
 loadERC721ABI();
@@ -121,7 +121,7 @@ var loadERC721MetadataABI = async function () {
         xhr.onload = function () {
             if (xhr.status != 200) { // analyze HTTP status of the response
                 console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-                alert("Could not load network list at " + pathERC721Metadata);
+                alert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
             } else { // show the result
                 //console.log(`Done, got ${xhr.response}`); // responseText is the server
                 var resp = xhr.response;
@@ -131,10 +131,34 @@ var loadERC721MetadataABI = async function () {
         xhr.send();
     } catch (err) {
         console.log(err);
-        alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+        lert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
     };
 }
 loadERC721MetadataABI();
+
+var loadBridgeABI = async function () {
+    let pathBridgeABI = '/ABI/MyNFTBridge.json';
+    try {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', pathBridgeABI);
+        xhr.onload = function () {
+            if (xhr.status != 200) { // analyze HTTP status of the response
+                console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                alert("Could not load MyNFTBridge ABI at " + pathBridgeABI);
+            } else { // show the result
+                //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                var resp = xhr.response;
+                ABIS.MyNFTBridge = JSON.parse(resp).abi;
+            }
+        };
+        xhr.send();
+    } catch (err) {
+        console.log(err);
+        alert("Could not load MyNFTBridge ABI at " + pathBridgeABI);
+    };
+}
+loadBridgeABI();
+
 
 // ---------------------------------------------- Token Interactions -------------------------------------------
 
@@ -439,16 +463,20 @@ var generateRelayList = async function(_callback){
 }
 
 
-var generateMigrationRequest = function(_callback){
+var generateMigrationRequest = function(){
     let migrationObject = {};
+
+    migrationObject.originUniverse = bridgeApp.net[document.getElementById("OriginNetworkSelector").value].uniqueId;
+    migrationObject.originWorld = document.getElementById("inputOGContractAddress").value.toLowerCase();
+    migrationObject.originTokenId = document.getElementById("inputOGTokenID").value.toLowerCase();
+    migrationObject.originBridge = bridgeApp.migrations_paths[document.getElementById("OriginNetworkSelector").value][document.getElementById("DestinationNetworkSelector").value]["Localhost Relay"].paths[0].departure_bridge;
+
+    migrationObject.destinationUniverse = bridgeApp.net[document.getElementById("DestinationNetworkSelector").value].uniqueId;
+    migrationObject.destinationWorld = document.getElementById("inputDestContractAddress").value.toLowerCase();
+    migrationObject.destinationTokenId = document.getElementById("inputOGTokenID").value.toLowerCase();
+    migrationObject.destinationOwner = document.getElementById("inputDestOwner").value.toLowerCase();
+
+    migrationObject.signee = document.getElementById("connectedAddress").innerHTML.toLowerCase();
+
+    return migrationObject;
 }        
-/*
-address _originWorld, 
-uint256 _originTokenId, 
-bytes32 _destinationUniverse,
-bytes32 _destinationBridge,
-bytes32 _destinationWorld,
-bytes32 _destinationTokenId,
-bytes32 _destinationOwner,
-bytes32 _signee
-*/
