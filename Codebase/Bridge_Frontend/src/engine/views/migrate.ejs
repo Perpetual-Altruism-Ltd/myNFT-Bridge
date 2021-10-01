@@ -45,22 +45,23 @@
 
 
 					<br>
-					Connected Address: <div class="address"></div>
+					Connected Address: <div class="address" id="connectedAddress"></div>
 					<div class="BridgeCards">
 					<br><br>
 						<div class="DepartureCard">
 							Departure<br>
 							<br>
-							<label for="OriginNetwork">Select the network the NFT token is currently in :</label><br>
-							<select name="OriginNetworkSelector" id="OriginNetworkSelector">
-							</select><br>
+							<div class="linechoice">
+								<label for="OriginNetwork" class="LabelSelect">Origin Universe: </label><br>
+								<select class="SelectStyling" name="OriginNetworkSelector" id="OriginNetworkSelector" onchange="generateRelayList()">
+								</select><br>
+							</div>
 							<br>
-							Input the address of the ERC-721 smart contract the token is currently in :<br>
-							
-							<input size="42" id="inputOGContractAddress" value="0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7"><br>
+							Input the address of the ERC-721 smart contract the NFT token is currently in :<br>
+							<input size="42" id="inputOGContractAddress" value="0xE443e3f78c7bE637930252AE848b22eF0cf08B18"><br>
 							<br>
 							Input the tokenID of the ERC-721 token the NFT is currently associated to :<br>
-							<input size="42" id="inputOGTokenID" value="0x2449835e86a539aB33F5773729C0db42e89016fF"><br>
+							<input size="42" id="inputOGTokenID" value="1"><br>
 						</div>
 					</div>
 					
@@ -89,9 +90,41 @@
 					
 					
 					<br>
-					<br>Arrival
 					<br>
-					<br>
+
+					<div class="ArrivalCard">
+						Arrival<br>
+						<br>
+						<div class="linechoice">
+							<label for="DestinationNetwork" class="LabelSelect">Destination Universe: </label><br>
+							<select class="SelectStyling" name="DestinationNetworkSelector" id="DestinationNetworkSelector" onchange="generateRelayList()">
+							</select><br>
+						</div>
+						<br>
+						<div class="linechoice">
+							<label for="Relay" class="LabelSelect">Relay: </label><br>
+							<select class="SelectStyling" name="RelaySelector" id="RelaySelector">
+							</select><br>
+						</div>
+
+						<br><br>
+						Input the address of the ERC-721 smart contract the NFT token is going to be :<br>
+						<input size="42" id="inputDestContractAddress" value="0x085752b8c6E142aD6A2f1EDD154b71261379d7d5"><br>
+
+						<br>
+						Input the tokenID of the ERC-721 token the NFT is going to be associated with :<br>
+						<input size="42" id="inputDestTokenID" value="1"><br>
+
+						<br>
+						Input the address of the next owner after the migration is completed (default to yourself) :<br>
+						<input size="42" id="inputDestOwner" value=""><br>
+
+						<br>
+						<br>
+						<br>
+						<button>Request Migration</button>
+
+					</div>
 				</div>
 			</div>
 

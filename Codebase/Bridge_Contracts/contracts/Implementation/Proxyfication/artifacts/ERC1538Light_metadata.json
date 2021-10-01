@@ -1,0 +1,109 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "message",
+						"type": "string"
+					}
+				],
+				"name": "CommitMessage",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "bytes4",
+						"name": "functionId",
+						"type": "bytes4"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldDelegate",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newDelegate",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "functionSignature",
+						"type": "string"
+					}
+				],
+				"name": "FunctionUpdate",
+				"type": "event"
+			}
+		],
+		"devdoc": {
+			"author": "Guillaume Gonnaud 2021",
+			"events": {
+				"CommitMessage(string)": {
+					"details": "This emits when one or a set of functions are updated in a transparent contract.  The message string should give a short description of the change and why  the change was made."
+				},
+				"FunctionUpdate(bytes4,address,address,string)": {
+					"details": "This emits for each function that is updated in a transparent contract.  functionId is the bytes4 of the keccak256 of the function signature.  oldDelegate is the delegate contract address of the old delegate contract if  the function is being replaced or removed.  oldDelegate is the zero value address(0) if a function is being added for the  first time.  newDelegate is the delegate contract address of the new delegate contract if   the function is being added for the first time or if the function is being   replaced.  newDelegate is the zero value address(0) if the function is being removed."
+				}
+			},
+			"kind": "dev",
+			"methods": {},
+			"title": "ImplTransparentProxy",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"notice": "Same interface defined as in ERC1538.sol but with functions removed as the compiler is too dumb to explore  runtime execution.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Implementation/Proxyfication/ImplTransparentProxy.sol": "ERC1538Light"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Implementation/ImplMemoryStructure.sol": {
+			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
+				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+			]
+		},
+		"contracts/Implementation/Proxyfication/ImplTransparentProxy.sol": {
+			"keccak256": "0xabd35dd3b97df96a21622d33b2a7ded20ee3bb48e6461450facdc55a07adb192",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://7afffe1deaec54609f3d43491eb10cd11cee8f73cb1029b66488b62944fa2168",
+				"dweb:/ipfs/QmWR2QggJayg5EojtFKZLREJJRNKTb7LXDK3k2ZqJTwTQK"
+			]
+		}
+	},
+	"version": 1
+}

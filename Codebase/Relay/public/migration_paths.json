@@ -1,0 +1,21 @@
+{
+    "paths":[
+       {"from":"Ethereum Testnet Ropsten",
+        "to":"Ethereum Testnet Rinkeby",
+        "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+        "arrival_bridge":""
+       },
+       {
+        "from":"Ethereum Testnet Rinkeby",
+        "to":"Ethereum Testnet Ropsten",
+        "departure_bridge":"",
+        "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
+       },
+       {
+        "from":"Ethereum Testnet Ropsten",
+        "to":"Ethereum Testnet Ropsten",
+        "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+        "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
+       }
+    ]
+}

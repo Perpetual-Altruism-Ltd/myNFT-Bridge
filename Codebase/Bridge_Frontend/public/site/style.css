@@ -132,3 +132,34 @@ body{
     align-content: center;
     justify-content: space-between;
 }
+
+.linechoice{
+    display: flex;
+    align-items: center;
+}
+
+.LabelSelect{
+    width: 200px;
+    font-family: 'Sequel Sans',sans-serif;
+    color: #333;
+}
+
+.SelectStyling{
+    height: auto;
+    padding: 8px 16px;
+    font-size: .88rem;
+    line-height: 1.5rem;
+    border: 1px solid #3e276c;
+    border-radius: 30px;
+    display: block;
+    color: #333;
+    vertical-align: middle;
+    background-color: #fff;
+    outline-offset: 0px;
+    -webkit-writing-mode: horizontal-tb;
+    text-align: start;
+    appearance: auto;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+}
+

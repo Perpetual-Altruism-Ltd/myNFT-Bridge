@@ -1,0 +1,158 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_originWorld",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_originTokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationUniverse",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationWorld",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationTokenId",
+						"type": "bytes32"
+					}
+				],
+				"name": "acceptableMigration",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_originWorld",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_originTokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationUniverse",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationWorld",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_destinationTokenId",
+						"type": "bytes32"
+					}
+				],
+				"name": "onDepartureCallback",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "Guillaume Gonnaud 2021",
+			"kind": "dev",
+			"methods": {
+				"acceptableMigration(address,uint256,bytes32,bytes32,bytes32)": {
+					"details": "This allows creators to specify the rules they want for their migrated tokens  example : only one allowed destinbation and only a ETHMAINNET <=> MOONBEAM migration, with the  same tokenID allowed.",
+					"params": {
+						"_destinationTokenId": "An array of 32 bytes representing the tokenId world of the migrated token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_destinationWorld": "An array of 32 bytes representing the destination world of the migrated token.  If the destination bridge is on an EVM, it is most likely an address.",
+						"_originTokenId": "An array of 32 bytes representing the tokenId of the origin token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_originWorld": "An array of 32 bytes representing the origin world of the origin token.  If the destination bridge is on an EVM, it is most likely an address."
+					},
+					"returns": {
+						"_0": "True if the migration is acceptable and can be registered, False if not"
+					}
+				},
+				"onDepartureCallback(address,uint256,bytes32,bytes32,bytes32)": {
+					"details": "This allows to do creators to do decentralised synchronous on-chain work if the NFT is now represented by an another token.",
+					"params": {
+						"_destinationTokenId": "An array of 32 bytes representing the tokenId world of the migrated token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_destinationWorld": "An array of 32 bytes representing the destination world of the migrated token.  If the destination bridge is on an EVM, it is most likely an address.",
+						"_originTokenId": "An array of 32 bytes representing the tokenId of the origin token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_originWorld": "An array of 32 bytes representing the origin world of the origin token.  If the destination bridge is on an EVM, it is most likely an address."
+					}
+				}
+			},
+			"title": "FullMigrationController",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"acceptableMigration(address,uint256,bytes32,bytes32,bytes32)": {
+					"notice": "Indicate if a token migration path is acceptable"
+				},
+				"onDepartureCallback(address,uint256,bytes32,bytes32,bytes32)": {
+					"notice": "Function that will be called by the bridge when a token is put in Escrow with it"
+				}
+			},
+			"notice": "In order to control where and how their NFT can be fully migrated, creators need to deploy and  register a contract implementing this interface",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MyNFTBridge.sol": "FullMigrationController"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Implementation/ERC721.sol": {
+			"keccak256": "0xa6297f1856dad920fce8fd672cdc844ea5a8ab0ed28046ccdc717500ea75de23",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://38b70fd581a954de06eb47d6b0a92fdf32618a0787dbf7c6ac3a8f0efe238b44",
+				"dweb:/ipfs/QmTs8qdLPSYK3kGPb9Rt2eSJVczKBuYcZXeRZXdFPj2Kbp"
+			]
+		},
+		"contracts/MyNFTBridge.sol": {
+			"keccak256": "0x548b63eaa0b0dd8c9da6069c19b5240f72b221e72a14727a3317aacec3058dd8",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://515ed2436cc565d967afc2ca8afc8062075be21ecb505e48800fda0505e84a47",
+				"dweb:/ipfs/QmS6AccCSUBi383tgdqwEegTkmDKjxRaGdpKScY7geGukF"
+			]
+		}
+	},
+	"version": 1
+}

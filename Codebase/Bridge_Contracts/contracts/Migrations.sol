@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity 0.8.2;
+pragma solidity 0.8.9;
 
 contract Migrations {
   address public owner = msg.sender;

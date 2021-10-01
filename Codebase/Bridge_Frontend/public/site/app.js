@@ -32,6 +32,8 @@ For more information, please refer to <http://unlicense.org/>
 // ---------------------------------------------------- Loading GUI -------------------------------------------
 //Loading the EVM networks the bridge can interact with
 var bridgeApp = {};
+bridgeApp.migrations_paths = {}; //A dictionnary storing all available relays for a given migration paths
+var currentSelectedRelay = "";
 
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
@@ -53,7 +55,7 @@ var loadNets = async function (_callback) {
 
                 //Create a mapping from networkUniqueID
                 for (var i = 0; i < bridgeApp.networks.length; i++) {
-                    bridgeApp.net[bridgeApp.networks[i].uniqueId] = bridgeApp.networks[i];
+                    bridgeApp.net[bridgeApp.networks[i].name] = bridgeApp.networks[i];
                 } //You can now access Mainnet network data by calling bridgeApp.net.0x6d2f0e37
 
 
@@ -73,10 +75,15 @@ var loadNets = async function (_callback) {
 //Load the networks and change the dropdown options based on the list
 loadNets(function () {
     var selector = document.getElementById("OriginNetworkSelector");
+    var selector2 = document.getElementById("DestinationNetworkSelector");
 
     //Instanciate select options
     for (var i = 0; i < bridgeApp.networks.length; i++) {
-        selector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+        // selector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+        // selector2.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+    
+        selector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].name);
+        selector2.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].name);
     }
 });
 
@@ -297,3 +304,151 @@ var endLoadMetamaskConnection = async function () {
 
 }
 setTimeout(endLoadMetamaskConnection, 500);
+
+
+
+var loadRelayList = async function(_callback){
+
+    let pathRelayJson = '/relay_list.json';
+    try {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', pathRelayJson);
+
+        xhr.onload = function () {
+            if (xhr.status != 200) { // analyze HTTP status of the response
+                console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                alert("Could not load relay list at " + pathRelayJson);
+            } else { // show the result
+                //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                var resp = xhr.response;
+                bridgeApp.relays = JSON.parse(resp).relays;
+                _callback();
+
+            }
+        };
+
+        xhr.send();
+    } catch (err) {
+        console.log(err);
+        alert("Could not load relay list at " + pathRelayJson);
+
+    };
+
+}
+
+
+var loadPathList = async function(_callback){
+
+    for (var k = 0; k < bridgeApp.relays.length; k++) {
+        try {
+
+            var i = k;
+
+            let urlRelay = bridgeApp.relays[i].url + "/migration_paths.json"
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', urlRelay);
+    
+
+            xhr.onload = function () {
+                if (xhr.status != 200) { // analyze HTTP status of the response
+                    console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                    alert("Could not load relay list at " + pathRelayJson);
+                } else { // show the result
+                    //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                    var resp = xhr.response;
+                    bridgeApp.relays[i].paths = JSON.parse(resp).paths;
+
+                    //Populating the path dictionnary
+                    for (var j = 0; j < bridgeApp.relays[i].paths.length; j++) {
+
+                        if(bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from] == null){
+                            bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from] = {};
+                        }
+
+                        if(bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to] == null){
+                            bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to] = {};
+                        }
+
+                        if(bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to][bridgeApp.relays[i].name] == null){
+                            bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to].relays = [];
+                            bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to].relays.push(bridgeApp.relays[i].name)
+
+                            var obj = {};
+                            obj.paths = [];
+                            bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to][bridgeApp.relays[i].name] = obj;
+                        }
+
+                        bridgeApp.migrations_paths[bridgeApp.relays[i].paths[j].from][bridgeApp.relays[i].paths[j].to][bridgeApp.relays[i].name].paths.push(bridgeApp.relays[i].paths[j]);
+                        
+                        
+                    }
+
+                    _callback();
+    
+                }
+            };
+    
+            xhr.send();
+        } catch (err) {
+            console.log(err);
+            alert("Could not load path lists at " + urlRelay);
+    
+        };
+    }
+}
+
+//Loading the relays data structure
+loadRelayList(function(){
+    loadPathList(function(){});
+});
+
+//Generating the relay from the data selection
+var generateRelayList = async function(_callback){
+    //Check origin Universe
+    var ogNet = document.getElementById("OriginNetworkSelector").value.toString();
+    var destNet = document.getElementById("DestinationNetworkSelector").value.toString();
+
+    var selector = document.getElementById("RelaySelector");
+    try{
+        if(bridgeApp.migrations_paths[ogNet][destNet].relays.length != 0){
+            selector.options.length = 0;
+            //Instanciate select options
+            for (var i = 0; i < bridgeApp.migrations_paths[ogNet][destNet].relays.length; i++) {
+                selector.options[i] = new Option(bridgeApp.migrations_paths[ogNet][destNet].relays[i], bridgeApp.migrations_paths[ogNet][destNet].relays[i]);
+            }
+        } else {
+            selector.options.length = 0;
+            selector.options[0] = new Option("No relay found for this path", "NULL");
+        }
+
+    
+    } catch(e){
+        selector.options.length = 0;
+        selector.options[0] = new Option("No relay found for this path", "NULL");
+    }
+
+    if(_callback != null){
+        _callback();
+    }
+
+    //Also set the destination owner as self if the input is empty
+    if(document.getElementById("inputDestOwner").value == ""){
+        document.getElementById("inputDestOwner").value = document.getElementById("connectedAddress").innerHTML.toLowerCase();
+    }
+
+}
+
+
+var generateMigrationRequest = function(_callback){
+    let migrationObject = {};
+}        
+/*
+address _originWorld, 
+uint256 _originTokenId, 
+bytes32 _destinationUniverse,
+bytes32 _destinationBridge,
+bytes32 _destinationWorld,
+bytes32 _destinationTokenId,
+bytes32 _destinationOwner,
+bytes32 _signee
+*/

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity 0.8.2;
+pragma solidity 0.8.9;
 
 import "./Implementation/ERC721.sol";
 
@@ -466,7 +466,7 @@ interface MyNftBridgeMigrationInfo{
     /// @notice Return the URI where one can get all the metadata regarding a migration of any token located in the same universe as the bridge
     function ERC721MigrationURI( 
         address _tokenWorld, 
-        uint256 _tokenId ) external view returns (string); 
+        uint256 _tokenId ) external view returns (string memory); 
     //eg : https://bridge.mynft.com/migrations/0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7/0x2449835e86a539ab33f5773729c0db42e89016ff
 
 
