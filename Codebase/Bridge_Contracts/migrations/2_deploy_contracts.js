@@ -67,6 +67,12 @@ module.exports = async(deployer, network, accounts) => {
         "generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)", 
         "ImplMyNFTBridgeFunMigrateToERC721 Pt2"
     );
+    
+    await instancedProxy.updateContract(
+        ImplMyNFTBridgeFunMigrateToERC721.address,
+        "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)", 
+        "ImplMyNFTBridgeFunMigrateToERC721 Pt3"
+    );
 
     console.log("Deploying the ERC721 test contract");
     await deployer.deploy(ImplTestERC721);
