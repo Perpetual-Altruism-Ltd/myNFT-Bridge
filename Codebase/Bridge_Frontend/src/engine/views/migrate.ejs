@@ -4,18 +4,18 @@
 	<head>
 		<meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39">
 		<link rel="stylesheet" href="/site/style.css">
-		
+
 		<title></title>
 	</head>
-	
+
 	<body>
 		<div class="bg_container">
 			<div class="bg_gradient"></div>
 			<svg height="CurrentHeight" width="CurrentWidth" viewBox="0 0 1000 1000" class="big-circle">
 				<circle cx="500" cy="500" r="490" stroke="CurrentColor" stroke-width="1.5" fill="none" stroke-dasharray="5,5"></circle>
 			</svg>
-
 		</div>
+
 		<div class="content-pillar">
 			<div class="topBanner">
 				<a href="https://mynft.com"><div class="mynftLogoTop"></div></a>
@@ -31,71 +31,100 @@
 
 			<div class="whitesheet">
 
-
 				<div class="ConnectionCenter">
-						<button type="button" class="btn btn-primary connectMetaMask">Connect MetaMask</button>
-						<button type="button" class="btn btn-primary connectTorus">Connect Torus</button>
-						<button type="button" class="btn btn-primary connectWalletConnect">Connect WalletConnect</button>
-						<button type="button" class="btn btn-primary connectPortis">Connect Portis</button>
-						<button type="button" class="btn btn-primary connectBitski">Connect Bitski</button>
-						<button type="button" class="btn btn-primary connectFortmatic">Connect Fortmatic</button><br/><br/>
-						<button type="button" class="btn btn-primary connectVenly">Connect Venly (Arkane)</button>
-						<button type="button" class="btn btn-primary connectCoinbase">Connect Coinbase</button>
+						<button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
+						<button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
+						<button type="button" class="btn btn-primary connectWalletConnect clickableRoundButton">Connect WalletConnect</button>
+						<button type="button" class="btn btn-primary connectPortis clickableRoundButton">Connect Portis</button>
+						<button type="button" class="btn btn-primary connectBitski clickableRoundButton">Connect Bitski</button>
+						<button type="button" class="btn btn-primary connectFortmatic clickableRoundButton">Connect Fortmatic</button><br/><br/>
+						<button type="button" class="btn btn-primary connectVenly clickableRoundButton">Connect Venly (Arkane)</button>
+						<button type="button" class="btn btn-primary connectCoinbase clickableRoundButton">Connect Coinbase</button>
 				</div>
 
+				<div class="DataDisplay">
+					<div class="DataTitle">Connected address:</div>
+					<div class="address DataText"></div>
+				</div>
 
-					<br>
-					Connected Address: <div class="address"></div>
-					<div class="BridgeCards">
-					<br><br>
-						<div class="DepartureCard">
-							Departure<br>
-							<br>
-							<label for="OriginNetwork">Select the network the NFT token is currently in :</label><br>
-							<select name="OriginNetworkSelector" id="OriginNetworkSelector">
-							</select><br>
-							<br>
-							Input the address of the ERC-721 smart contract the token is currently in :<br>
-							
-							<input size="42" id="inputOGContractAddress" value="0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7"><br>
-							<br>
-							Input the tokenID of the ERC-721 token the NFT is currently associated to :<br>
-							<input size="42" id="inputOGTokenID" value="0x2449835e86a539aB33F5773729C0db42e89016fF"><br>
+				<div class="Card">
+					<div class="CardElement CardTitle">Departure</div>
+
+					<div class="CardElement InputDisplay">
+						<div class="InputTitle"><label for="OriginNetworkSelector">Select the network the NFT token is currently in :</label></div>
+						<div class="SelectorContainer">
+							<select class="SelectorInput" name="OriginNetworkSelector" id="OriginNetworkSelector"></select>
+							<div class="DropDownArrow"></div>
 						</div>
 					</div>
-					
-					<br>
-			
-					<div class="tokenCard">
-						<button onclick="loadOgTokenData();">Load Data</button>
-						<br>
-						<br>
-						Token Contract Name: <span id="OGContractName"></span>
-						<br>
-						Token Contract Symbol: <span id="OGContractSymbol"></span>
-						<br>
-						Token Owner: <span id="OGTokenOwner"></span>
-						<br>
-						Token URI: <span id="OGTokenURI"></span>
-						<br>
-						<br>
-						<br>
-						Metadata Name: <span id="OGTokenMetaName"></span><br>
-						Metadata Description: <span id="OGTokenMetaDesc"></span><br>
-						Metadata Image: <span id="OGTokenMetaImagePath"></span><br>
-						<br>
-					</div>
-					<br>
-					
-					
-					<br>
-					<br>Arrival
-					<br>
-					<br>
-				</div>
-			</div>
 
-		
+					<div class="CardElement InputDisplay">
+						<div class="InputTitle">Input the address of the ERC-721 smart contract the token is currently in :</div>
+						<div class="TextInputContainer"><input class="TextInput" size="42" id="inputOGContractAddress" value="0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7"></div>
+					</div>
+
+					<div class="CardElement InputDisplay">
+						<div class="InputTitle">Input the tokenID of the ERC-721 token the NFT is currently associated to :</div>
+						<div class="TextInputContainer"><input class="TextInput" size="42" id="inputOGTokenID" value="0x2449835e86a539aB33F5773729C0db42e89016fF"></div>
+					</div>
+				</div>
+
+				<div class="Card">
+					<div class="CardTitle CardElement">Token</div>
+
+					<div class="CardElement ColoredButtonContainer">
+						<button class="ColoredButton" onclick="loadOgTokenData();">Load Data</button>
+					</div>
+
+					<div class="CardElement">
+						<div class="DataDisplay">
+							<div class="DataTitle">Token Contract Name:</div>
+							<div class="DataText" id="OGContractName"></div>
+						</div>
+
+						<div class="DataDisplay">
+							<div class="DataTitle">Token Contract Symbol:</div>
+							<div class="DataText" id="OGContractSymbol"></div>
+						</div>
+
+						<div class="DataDisplay">
+							<div class="DataTitle">Token Owner:</div>
+							<div class="DataText" id="OGTokenOwner"></div>
+						</div>
+
+						<div class="DataDisplay">
+							<div class="DataTitle">Token URI:</div>
+							<div class="DataText" id="OGTokenURI"></div>
+						</div>
+					</div>
+
+
+					<div class="CardElement">
+						<div class="DataDisplay">
+							<div class="DataTitle">Metadata Name:</div>
+							<div class="DataText" id="OGTokenMetaName"></div>
+						</div>
+
+						<div class="DataDisplay">
+							<div class="DataTitle">Metadata Description:</div>
+							<div class="DataText" id="OGTokenMetaDesc"></div>
+						</div>
+
+						<div class="DataDisplay">
+							<div class="DataTitle">Metadata Image:</div>
+							<div class="DataText" id="OGTokenMetaImagePath"></div>
+						</div>
+					</div>
+				</div>
+
+				<div class="Card">
+					<div class="CardTitle CardElement">Arrival</div>
+				</div>
+
+			</div>
+		</div>
+
+
 		<script type="application/javascript" src="/lib/westron/loader.js"></script>
 		<script type="application/javascript" src="/site/app.js"></script>
 	</body>

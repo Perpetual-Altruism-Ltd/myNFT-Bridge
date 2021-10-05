@@ -12,6 +12,9 @@ body{
     overflow: hidden;
 }
 
+/* TOP RIGHT COLOR: #3e287a
+BOTTOM RIGHT COLOR: #af1540
+TOP LEFT COLOR: #12132b*/
 .bg_gradient{
     height: 100%;
     width: 100%;
@@ -47,6 +50,114 @@ body{
     margin-left: 15%;
 }
 
+.DataDisplay{
+  display: flex;
+  flex-flow: row wrap;
+  gap: 0em 1em;
+}
+
+.DataText{
+  font-weight: bold;
+}
+
+.InputDisplay{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0em 1em;
+  align-items: center;
+  justify-content: space-between;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+.SelectorContainer{
+  position: relative;
+}
+/*CUSTOM SELECT*/
+.SelectorInput{
+  appearance: none;/*Remove default arrow*/
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: transparent;/*Remove default background*/
+  border: solid 2px #555;
+  border-radius: 2em;
+  padding: 0.5em;
+  padding-right: 1.5em;
+  margin: 0;
+  width: auto;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;/*Remove the border when focused */
+
+  /* also working
+  background: transparent;
+  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-repeat: no-repeat;
+  background-position-x: 100%;
+  background-position-y: 5px;*/
+  min-width: 28em;
+}
+.SelectorInput::-ms-expand{/* Remove arrow For IE*/
+	display: none;
+}
+.DropDownArrow:after{
+  /*content: "\25b6";*/
+  content: "\142F";
+  font-weight: bold;
+  color: #555;
+  position: absolute; top: 0.5em; right: 0.5em;
+  /*-webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);*/
+  pointer-events: none;
+}
+.SelectorInput:focus{
+  appearance: none;
+  border-color: #000;
+}
+.SelectorInput:hover + .DropDownArrow:after{
+  color: #555;
+  position: absolute; bottom: 0.5em; right: 0.5em;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+.SelectorInput:focus + .DropDownArrow:after{
+  color: #000;
+  position: absolute; bottom: 0.5em; right: 0.5em;
+  -webkit-transform: rotate(90deg);
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
+/*--------*/
+
+.TextInput{
+  background-color: transparent;/*Remove default background*/
+  border: solid 2px #555;
+  border-radius: 2em;
+  padding: 0.5em;
+  padding-right: 1.5em;
+  margin: 0;
+  width: auto;
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;/*Remove the border when focused */
+  min-width: 28em;
+}
+
+.TextInput:focus{
+  border-color: #000;
+}
 
 .topBanner{
     margin-top: 30px;
@@ -87,6 +198,37 @@ body{
     text-decoration: none;
 }
 
+/* Careful, this css property needs to be after clickableRoundButton definition for proper overwrite*/
+.ColoredButton{
+  padding: 8px 16px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 30px;
+  border-width: 0em;
+  font-size: .88rem;
+  line-height: 1.5rem;
+  text-decoration: none;
+  transition: 0.5s;
+  background-image: linear-gradient(to right, #3e287a 0%, #af1540 100%);
+  background-size: 200% auto;
+  color: #fff;
+}
+.ColoredButton:hover{
+  background-position: right center;
+}
+.ColoredButton:active{
+  background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
+}
+.ColoredButton:disabled, .ColoredButton[disabled]{
+  background-image: linear-gradient(to right, #ccc 0%, #ccc 100%);
+}
+
 .mynftBridgeTitle{
     margin-top: 50px;
     margin-bottom: 10px;
@@ -98,13 +240,27 @@ body{
     margin-right: auto;
     width: 100%;
     text-align: center;
-    margin-bottom: 50px;;
+    margin-bottom: 50px;
 }
 
 .whitesheet{
     background-color: #fff;
     border-radius: 20px;
     padding: 20px;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    gap: 2em 0em;
+}
+
+.CardTitle{
+  font-size: 1.5em;
+}
+
+.Card{
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1em 0em;
 }
 
 .formfield{
@@ -128,7 +284,9 @@ body{
 }
 
 .ConnectionCenter{
+    flex-flow: row wrap;
     display: flex;
     align-content: center;
-    justify-content: space-between;
+    justify-content: center;
+    gap: 0.5em 2em;
 }

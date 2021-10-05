@@ -168,14 +168,14 @@ var loadOgTokenData = async function () {
 			} else {
 				document.getElementById("OGContractName").innerHTML = "Not Specified";
 			}
-            
+
         } catch (err) {
 			console.log(err);
 			console.log("Could not get name() for: contractAddress" + originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
 		}
     }
     getContractName();
-	
+
 	//Get the Contract Symbol
     let getContractSymbol = async function () {
         try {
@@ -185,14 +185,14 @@ var loadOgTokenData = async function () {
 			} else {
 				document.getElementById("OGContractSymbol").innerHTML = "Not Specified";
 			}
-            
+
         } catch (err) {
 			console.log(err);
 			console.log("Could not get symbol() for: contractAddress" + originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
 		}
     }
     getContractSymbol();
-	
+
 
     //Get the Token owner
     let getTokenOwner = async function () {
@@ -203,15 +203,15 @@ var loadOgTokenData = async function () {
 			} else {
 				document.getElementById("OGTokenOwner").innerHTML = "Not Specified";
 			}
-            
+
         } catch (err) {
 			console.log(err);
 			console.log("Could not get ownerOf() for: contractAddress" + originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-		
+
 		}
     }
     getTokenOwner();
-	
+
 	//Get the Token URI
     let getTokenURI = async function () {
         try {
@@ -222,15 +222,15 @@ var loadOgTokenData = async function () {
 			} else {
 				document.getElementById("OGTokenURI").innerHTML = "Not Specified";
 			}
-            
+
         } catch (err) {
 			console.log(err);
 			console.log("Could not get tokenURI() for: contractAddress" + originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-		
+
 		}
     }
     getTokenURI();
-	
+
 }
 
 var loadOgTokenMetaData = async function () {
@@ -264,7 +264,7 @@ var loadOgTokenMetaData = async function () {
                     } else if(ogTokenData.image != null) {
                         document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenData.image) + '">' + encodeURI(ogTokenData.image) + '>';
                     }
-                   
+
 
                 }
             };
