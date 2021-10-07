@@ -13,7 +13,7 @@ class ConnectorManager {
 	};
 
 	static loadedLibraries = [];
-	
+
 	constructor() {
 		this.onConnection = () => {};
 		this.onDisconnection = () => {};
@@ -59,7 +59,7 @@ class ConnectorManager {
 		throw new Error('You must implement this function');
 	}
 
-	/** Allow to disconnect, abstract method must be override 
+	/** Allow to disconnect, abstract method must be override
 	 *  @throws Error if not overrided into children
 	 */
 	async disconnection() {
@@ -105,7 +105,7 @@ class ConnectorManager {
 
 			default: return null; break;
 		}
-	
+
 		await ConnectorManager.loadLibrary("https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js");
 		await connector.loadLibraries();
 
@@ -155,7 +155,8 @@ class MetamaskConnector extends ConnectorManager {
 				// of the current chain ID by listening for this event.
 				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
 				console.log("*** Event chainChanged emmited ***");
-				window.location.reload();
+				//MODIF BY NICO. Need to change chain during the migration process to retrieve data from origin and then from destination chain, so must not reload.
+				//window.location.reload();
 			});
 
 			ethereum.on('message', (providerMessage) => {
@@ -288,7 +289,7 @@ class PortisConnector extends ConnectorManager {
 	}
 }
 
-/** Allow to connect with Bitski 
+/** Allow to connect with Bitski
  *  @documentation https://github.com/BitskiCo/bitski-js/
  *  No call of onAccountsChanged because it's impossible to change the account on Bitski
  */
@@ -306,7 +307,7 @@ class BitskiConnector extends ConnectorManager {
 	async connection() {
 		try {
 			this.bitski = new Bitski.Bitski('d64d35ca-37b3-484e-af16-370ddd2aa9f2', 'http://localhost:8080/callback.html');
-			
+
 			if (!this.isLoggedIn) {
 				await this.bitski.signIn();	// Logging the user in
 			}
@@ -352,11 +353,11 @@ class WalletConnectConnector extends ConnectorManager {
 				console.log('*** Event accountsChanged emitted ***', accounts[0]);
 				this.onAccountChanged(accounts[0]);
 			});
-			
+
 			this.walletconnect.on("chainChanged", (chainId) => {
 				console.log('*** Event chainChanged emitted ***');
 			});
-			
+
 			this.walletconnect.on("disconnect", (code, reason) => {
 				console.log('*** Event disconnect emitted ***');
 				if (this.isConnected) {
@@ -436,11 +437,11 @@ class VenlyConnector extends ConnectorManager {
 				environment: 'staging',
 				secretType: 'ETHEREUM'
 			});
-	
+
 			this.web3 = new Web3(provider);
 			this.connected = true;
 			localStorage.setItem("provider", ConnectorManager.providers.ARKANE);
-	
+
 			return true;
 	    } catch(e) {
 	        // if (e) {
@@ -485,13 +486,13 @@ class CoinbaseConnector extends ConnectorManager {
 		try {
 			const ETH_JSONRPC_URL = 'https://rinkeby.infura.io/v3/291396cbd2e9458f8355c6b2512a9e3f';
 			const CHAIN_ID = 4; // Rinkeby id = 4, Mainnet id = 1
-			
+
 			this.walletLink = new WalletLink({
 				appName: "Cryptograph Connector",
 				appLogoUrl: 'https://img.icons8.com/nolan/64/blockchain-technology--v1.png',
 				darkMode: false
 			});
-			
+
 			const provider = this.walletLink.makeWeb3Provider(ETH_JSONRPC_URL, CHAIN_ID);
 			const accounts = await provider.request({ method: 'eth_requestAccounts' });
 
@@ -513,5 +514,5 @@ class CoinbaseConnector extends ConnectorManager {
 		this.walletLink = null;
 		this.init();
 	}
-	
+
 }

@@ -50,22 +50,41 @@ TOP LEFT COLOR: #12132b*/
     margin-left: 15%;
 }
 
-.DataDisplay{
-  display: flex;
-  flex-flow: row wrap;
-  gap: 0em 1em;
-}
+
 
 .DataText{
   font-weight: bold;
 }
 
-.InputDisplay{
+.HorizFlex{
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row nowrap;/*Maybe nowrap ? but overflow */
   gap: 0em 1em;
   align-items: center;
+}
+
+.WrappedhorizFlex{
+  display: flex;
+  flex-flow: row wrap;/*Maybe nowrap ? but overflow */
+  gap: 0em 1em;
+  align-items: center;
+}
+
+.SpaceBetweenHorizDisplay{
   justify-content: space-between;
+}
+.SpaceEvenlyHorizDisplay{
+  justify-content: space-evenly;//HERE
+}
+.FlexStartHorizDisplay{
+  justify-content: flex-start;
+}
+.MigrationButtonGroup{
+  justify-content: center;
+  flex-grow: 1;
+}
+.MigrationType{
+  flex-grow: 1;
 }
 
 *,
@@ -227,6 +246,9 @@ TOP LEFT COLOR: #12132b*/
 }
 .ColoredButton:disabled, .ColoredButton[disabled]{
   background-image: linear-gradient(to right, #ccc 0%, #ccc 100%);
+}
+.ColoredButton:target{
+  background-image: linear-gradient(to right, #df3580 0%, #df3580 100%);
 }
 
 .mynftBridgeTitle{

@@ -33,6 +33,12 @@ For more information, please refer to <http://unlicense.org/>
 //Loading the EVM networks the bridge can interact with
 var bridgeApp = {};
 
+const NoMigrationType = 0;
+const RedeemMigrationType = 1;
+const IOUMigrationType = 2;
+const FullMigrationType = 3;
+let migrationTypeSelected = NoMigrationType;
+
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
     bridgeApp.net = {};
@@ -72,11 +78,13 @@ var loadNets = async function (_callback) {
 
 //Load the networks and change the dropdown options based on the list
 loadNets(function () {
-    var selector = document.getElementById("OriginNetworkSelector");
+    var ogSelector = document.getElementById("OriginNetworkSelector");
+    var destSelector = document.getElementById("DestinationNetworkSelector");
 
     //Instanciate select options
     for (var i = 0; i < bridgeApp.networks.length; i++) {
-        selector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+        ogSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+        destSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
     }
 });
 
@@ -176,20 +184,19 @@ var loadOgTokenData = async function () {
     }
     getContractName();
 
-	//Get the Contract Symbol
+	   //Get the Contract Symbol
     let getContractSymbol = async function () {
         try {
-			let content = await originalChainERC721MetadataContract.methods.symbol().call();
-			if(content != null){
-				document.getElementById("OGContractSymbol").innerHTML = content;
-			} else {
-				document.getElementById("OGContractSymbol").innerHTML = "Not Specified";
-			}
-
+    			let content = await originalChainERC721MetadataContract.methods.symbol().call();
+    			if(content != null){
+    				document.getElementById("OGContractSymbol").innerHTML = content;
+    			} else {
+    				document.getElementById("OGContractSymbol").innerHTML = "Not Specified";
+    			}
         } catch (err) {
-			console.log(err);
-			console.log("Could not get symbol() for: contractAddress" + originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-		}
+    			console.log(err);
+    			console.log("Could not get symbol() for: contractAddress" + originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+    		}
     }
     getContractSymbol();
 
@@ -218,7 +225,10 @@ var loadOgTokenData = async function () {
 			let content = await originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
 			if(content != null){
 				document.getElementById("OGTokenURI").innerHTML = content;
-                loadOgTokenMetaData();
+        console.log(content);
+				document.getElementById("OGTokenURI").href = content;
+
+        loadOgTokenMetaData();
 			} else {
 				document.getElementById("OGTokenURI").innerHTML = "Not Specified";
 			}
@@ -273,10 +283,7 @@ var loadOgTokenMetaData = async function () {
             console.log(err);
             alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
         };
-
     }
-
-
 
 }
 
@@ -297,3 +304,180 @@ var endLoadMetamaskConnection = async function () {
 
 }
 setTimeout(endLoadMetamaskConnection, 500);
+
+
+let promptSwitchChain = async function (ID) {
+  await window.ethereum.request({
+    method: 'wallet_switchEthereumChain',
+    params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+  });
+}
+
+//------Destination interface------
+//Function which disable the migration buttons that are not selected, and let the button selected enabled.
+//To unselect a button, and enable all of them, call selectMigrationButton(NoMigrationType)
+//Maintain the global var migrationTypeSelected to the right value depending on which button was selected
+let selectMigrationButton = function(btn){
+  switch(btn){
+    case RedeemMigrationType:
+      migrationTypeSelected = RedeemMigrationType;
+      document.getElementById("IOUMigrationButton").disabled = true;
+      document.getElementById("FullMigrationButton").disabled = true;
+    break;
+    case IOUMigrationType:
+      migrationTypeSelected = IOUMigrationType;
+      document.getElementById("RedeemButton").disabled = true;
+      document.getElementById("FullMigrationButton").disabled = true;
+    break;
+    case FullMigrationType:
+      migrationTypeSelected = FullMigrationType;
+      document.getElementById("RedeemButton").disabled = true;
+      document.getElementById("IOUMigrationButton").disabled = true;
+    break;
+
+    default:
+      migrationTypeSelected = NoMigrationType;
+      document.getElementById("RedeemButton").disabled = false;
+      document.getElementById("IOUMigrationButton").disabled = false;
+      document.getElementById("FullMigrationButton").disabled = false;
+  }
+}
+
+let RedeemButtonClick = async function(){
+  //If migration already selected: enable all buttons so the user can change his choice
+  if(migrationTypeSelected == RedeemMigrationType){
+    selectMigrationButton(NoMigrationType);
+  }else{
+    selectMigrationButton(RedeemMigrationType);
+  }
+}
+let IOUMigrationButtonClick = async function(){
+  //If migration already selected: enable all buttons so the user can change his choice
+  if(migrationTypeSelected == IOUMigrationType){
+    selectMigrationButton(NoMigrationType);
+  }else{
+    selectMigrationButton(IOUMigrationType);
+  }
+}
+let FullMigrationButtonClick = async function(){
+  //If migration already selected: enable all buttons so the user can change his choice
+  if(migrationTypeSelected == FullMigrationType){
+    selectMigrationButton(NoMigrationType);
+  }else{
+    selectMigrationButton(FullMigrationType);
+  }
+}
+
+let destNetworkChanged = function(){
+  let destSelector = document.getElementById("DestinationNetworkSelector");
+  let chainIndexSelected = destSelector.selectedIndex;
+  let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID;
+  promptSwitchChain(chainIDSelected);
+  document.getElementById("inputDestOwner").value = web3.currentProvider.selectedAddress;
+}
+
+let destContractChanged = function(){
+  document.getElementById("DestContractSymbol").innerHTML = "";
+  document.getElementById("DestContractName").innerHTML = "";
+  loadDestTokenData();
+
+  document.getElementById("inputDestTokenID").value = document.getElementById("inputOGTokenID").value;
+}
+
+let destTokenIDChanged = function(){
+
+}
+
+
+//------Destination data loading------
+var destChainERC721Contract = {};
+var destChainERC721MetadataContract = {};
+let loadDestTokenData = async function(){
+
+  destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputDestContractAddress").value);
+  destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputDestContractAddress").value);
+
+  let getContractName = async function () {
+      try {
+        let content = await destChainERC721MetadataContract.methods.name().call();
+        if(content != null){
+          document.getElementById("DestContractName").innerHTML = content;
+        } else {
+          document.getElementById("DestContractName").innerHTML = "Not Specified";
+        }
+      } catch (err) {
+        console.log(err);
+        console.log("Could not get name() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+      }
+  }
+  getContractName();
+
+  //Get the Contract Symbol
+  let getContractSymbol = async function () {
+     try {
+       let content = await destChainERC721MetadataContract.methods.symbol().call();
+       if(content != null){
+         document.getElementById("DestContractSymbol").innerHTML = content;
+       } else {
+         document.getElementById("DestContractSymbol").innerHTML = "Not Specified";
+       }
+     } catch (err) {
+       console.log(err);
+       console.log("Could not get symbol() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+     }
+   }
+   getContractSymbol();
+
+
+
+}
+
+
+let sendIOUPrefixedMetadata = async function(){
+  //load metadata, prefix it by "IOU OF" and create the JSON file.
+  let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
+  var ogTokenData = {};
+  if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
+      return;
+  } else {
+      console.log("sending XHR");
+      try {
+          //First retrieve original metadata
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', OGTokenMetadataPath);
+          xhr.onload = function () {
+              if (xhr.status != 200) { // analyze HTTP status of the response
+                  console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                  alert("Could not load network list at " + pathERC721Metadata);
+              } else { // show the result
+                  var resp = xhr.response;
+                  ogTokenData = JSON.parse(resp);
+
+                  //Prefix Metadata
+                  ogTokenData.name = "IOU of " + ogTokenData.name;
+                  ogTokenData.tokId = document.getElementById("inputOGTokenID").value; // Just for the name of the file to create serverside
+                  //Watermark the image (to do later)
+
+                  //Send the new metadata to the server
+                  let xhrSend = new XMLHttpRequest();
+                  xhrSend.open('POST', '/iouMetadata');
+                  xhrSend.setRequestHeader("Accept", "application/json");
+                  xhrSend.setRequestHeader("Content-Type", "application/json");
+                  xhrSend.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                     console.log(xhrSend.status);
+                     console.log(xhrSend.responseText);
+                    };
+                  }
+                  var data = JSON.stringify(ogTokenData);
+                  xhrSend.send(data);
+
+              }
+          };
+          xhr.send();
+      } catch (err) {
+          console.log(err);
+          alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+      };
+  }
+}
