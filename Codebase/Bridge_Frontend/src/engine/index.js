@@ -20,6 +20,15 @@ router.get('/bridge', function (req, res) {
 
 });
 
+router.post('/register', function (req, res) {
+    console.log(req.body.migrationData);
+    data = {};
+    data = JSON.parse(req.body.migrationData);//HERE
+    res.render('register', {
+        migrationData: data
+    });
+});
+
 router.post('/iouMetadata', function (req, res) {
     let tokId = req.body.tokId;
     delete req.body.tokId;

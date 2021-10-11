@@ -1,0 +1,10 @@
+{
+	"relays": [
+
+		{
+			"name":"MyNFT Relay",
+			"url": "migration.mynft.com",
+      "uniqueId": "0x6d2f0e37"
+		}
+	]
+}

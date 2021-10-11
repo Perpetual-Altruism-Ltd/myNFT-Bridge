@@ -70,14 +70,17 @@ TOP LEFT COLOR: #12132b*/
   align-items: center;
 }
 
-.SpaceBetweenHorizDisplay{
+.JustifySpaceBetweenDisplay{
   justify-content: space-between;
 }
-.SpaceEvenlyHorizDisplay{
-  justify-content: space-evenly;//HERE
+.JustifySpaceEvenlyDisplay{
+  justify-content: space-evenly;
 }
-.FlexStartHorizDisplay{
+.JustifyFlexStartDisplay{
   justify-content: flex-start;
+}
+.JustifyCenterDisplay{
+  justify-content: center;
 }
 .MigrationButtonGroup{
   justify-content: center;
@@ -85,6 +88,10 @@ TOP LEFT COLOR: #12132b*/
 }
 .MigrationType{
   flex-grow: 1;
+}
+
+.Tabulation{
+  margin-left: 25%;
 }
 
 *,

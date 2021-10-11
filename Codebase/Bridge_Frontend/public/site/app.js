@@ -75,7 +75,6 @@ var loadNets = async function (_callback) {
 
     };
 }
-
 //Load the networks and change the dropdown options based on the list
 loadNets(function () {
     var ogSelector = document.getElementById("OriginNetworkSelector");
@@ -86,6 +85,47 @@ loadNets(function () {
         ogSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
         destSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
     }
+
+    destSelector.selectedIndex = -1;
+});
+
+let loadRelays = async function(callback){
+  bridgeApp.relays = [];
+
+  let pathRelaysJson = '/relay_list.json';
+  try {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', pathRelaysJson);
+
+      xhr.onload = function () {
+          if (xhr.status != 200) { // analyze HTTP status of the response
+              console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+              alert("Could not load relay list at " + pathRelaysJson);
+          } else { // show the result
+              //console.log(`Done, got ${xhr.response}`); // responseText is the server
+              var resp = xhr.response;
+              bridgeApp.relays = JSON.parse(resp).relays;
+
+              callback();
+
+          }
+      };
+
+      xhr.send();
+  } catch (err) {
+      console.log(err);
+      alert("Could not load relay list at " + pathRelaysJson);
+
+  };
+}
+//Load the relays and change the dropdown options based on the list
+loadRelays(function (){
+  var relaySelector = document.getElementById("RelaySelector");
+
+  //Instanciate select options
+  for (var i = 0; i < bridgeApp.relays.length; i++) {
+      relaySelector.options[i] = new Option(bridgeApp.relays[i].name, bridgeApp.relays[i].uniqueId);
+  }
 });
 
 // ---------------------------------------------- LOADING ABIS -------------------------------------------
@@ -99,7 +139,7 @@ var loadERC721ABI = async function () {
         xhr.onload = function () {
             if (xhr.status != 200) { // analyze HTTP status of the response
                 console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-                alert("Could not load network list at " + pathERC721ABI);
+                alert("Could not load ERC721 ABI at " + pathERC721ABI);
             } else { // show the result
                 //console.log(`Done, got ${xhr.response}`); // responseText is the server
                 var resp = xhr.response;
@@ -122,7 +162,7 @@ var loadERC721MetadataABI = async function () {
         xhr.onload = function () {
             if (xhr.status != 200) { // analyze HTTP status of the response
                 console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-                alert("Could not load network list at " + pathERC721Metadata);
+                alert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
             } else { // show the result
                 //console.log(`Done, got ${xhr.response}`); // responseText is the server
                 var resp = xhr.response;
@@ -136,6 +176,31 @@ var loadERC721MetadataABI = async function () {
     };
 }
 loadERC721MetadataABI();
+
+//=====Retrieve ABI for registration=====
+//Interface MyNFTBridgeERC721Departure
+var loadBridgeERC721DepartureABI = async function () {
+    let pathERC721Metadata = '/ABI/MyNFTBridgeERC721Departure.json';
+    try {
+        let xhr = new XMLHttpRequest();
+        xhr.open('GET', pathERC721Metadata);
+        xhr.onload = function () {
+            if (xhr.status != 200) { // analyze HTTP status of the response
+                console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                alert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
+            } else { // show the result
+                //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                var resp = xhr.response;
+                ABIS.ERC721Metadata = JSON.parse(resp).abi;
+            }
+        };
+        xhr.send();
+    } catch (err) {
+        console.log(err);
+        alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+    };
+}
+//loadERC721MetadataABI();
 
 // ---------------------------------------------- Token Interactions -------------------------------------------
 
@@ -243,10 +308,11 @@ var loadOgTokenData = async function () {
 
 }
 
+var ogTokenData = {};//Var ogTokenData is the origin token metadata JSON
 var loadOgTokenMetaData = async function () {
 
     let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
-    var ogTokenData = {};
+
     if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
         return;
     } else {
@@ -286,8 +352,6 @@ var loadOgTokenMetaData = async function () {
     }
 
 }
-
-
 
 var endLoadMetamaskConnection = async function () {
     //Connecting to metmask if injected
@@ -342,7 +406,6 @@ let selectMigrationButton = function(btn){
       document.getElementById("FullMigrationButton").disabled = false;
   }
 }
-
 let RedeemButtonClick = async function(){
   //If migration already selected: enable all buttons so the user can change his choice
   if(migrationTypeSelected == RedeemMigrationType){
@@ -368,12 +431,77 @@ let FullMigrationButtonClick = async function(){
   }
 }
 
+//--------------------Redirecting to Migration Recap----------------------
+//Packing all migration data into one JSON.
+let PackMigrationData = function(){
+  let migrationData = {};
+  var ogNetSelector = document.getElementById("OriginNetworkSelector");
+  var destNetSelector = document.getElementById("DestinationNetworkSelector");
+  var relaySelector = document.getElementById("RelaySelector");
+
+  //Origin universe
+  migrationData.ogNetIndex = ogNetSelector.selectedIndex;
+  migrationData.ogNet = bridgeApp.networks[ogNetSelector.selectedIndex].name;
+  //Origin world
+  migrationData.ogWorld = document.getElementById("inputOGContractAddress").value;
+  //Origin Token
+  migrationData.ogTokenID = document.getElementById("inputOGTokenID").value;
+  migrationData.ogTokenName = document.getElementById("OGTokenMetaName").textContent;
+
+  //Migration type
+  migrationData.migrationTypeId = migrationTypeSelected;
+  switch(migrationTypeSelected){
+    case RedeemMigrationType: migrationData.migrationType = 'Redeem IOU'; break;
+    case IOUMigrationType: migrationData.migrationType = 'Mint IOU'; break;
+    case FullMigrationType: migrationData.migrationType = 'Full migration'; break;
+    default: migrationData.migrationType = 'Nothing choosen';
+  }
+  //Migration relay
+  migrationData.relayId = relaySelector.selectedIndex;
+  migrationData.relay = bridgeApp.relays[relaySelector.selectedIndex].name;
+
+  //Destination universe
+  migrationData.destNetIndex = destNetSelector.selectedIndex;
+  migrationData.destNet = bridgeApp.networks[destNetSelector.selectedIndex].name;
+  //Destination world
+  migrationData.destWorld = document.getElementById("inputDestContractAddress").value;
+  //Destination Token
+  migrationData.destTokenID = document.getElementById("inputDestTokenID").value;
+
+  //Migrated token metadata
+  switch(migrationTypeSelected){
+    case IOUMigrationType:
+      migrationData.metadata = ogTokenData;
+      migrationData.metadata.name = "IOU of " + migrationData.metadata.name;
+      break;
+
+    default:
+      migrationData.metadata = ogTokenData;
+  }
+  return migrationData;
+}
+
+//Send migrationData to server through GET and redirect to migration recap
+let CompleteButtonClick = async function(){
+  let migrationData = PackMigrationData();
+  console.log(migrationData);
+  //GET /register migrationData
+  let form = document.getElementById("sendingForm");
+  //Add data to form
+  let input = document.createElement('input');
+  input.setAttribute('name', 'migrationData');
+  input.setAttribute('value', JSON.stringify(migrationData));//Object-Json format
+  input.setAttribute('type', 'hidden');
+
+  form.appendChild(input);
+  form.submit();
+}
+
 let destNetworkChanged = function(){
   let destSelector = document.getElementById("DestinationNetworkSelector");
   let chainIndexSelected = destSelector.selectedIndex;
   let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID;
   promptSwitchChain(chainIDSelected);
-  document.getElementById("inputDestOwner").value = web3.currentProvider.selectedAddress;
 }
 
 let destContractChanged = function(){
@@ -381,11 +509,10 @@ let destContractChanged = function(){
   document.getElementById("DestContractName").innerHTML = "";
   loadDestTokenData();
 
+  //Autofill tokenID
   document.getElementById("inputDestTokenID").value = document.getElementById("inputOGTokenID").value;
-}
-
-let destTokenIDChanged = function(){
-
+  //Autofill dest owner with the current connected account
+  document.getElementById("inputDestOwner").value = web3.currentProvider.selectedAddress;
 }
 
 
@@ -431,7 +558,6 @@ let loadDestTokenData = async function(){
 
 
 }
-
 
 let sendIOUPrefixedMetadata = async function(){
   //load metadata, prefix it by "IOU OF" and create the JSON file.
@@ -480,4 +606,28 @@ let sendIOUPrefixedMetadata = async function(){
           alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
       };
   }
+}
+
+
+//=====REGISTRATION PAGE=====
+let editMigrationButtonClick = function(){
+  window.location = '/bridge';
+}
+
+let preRegisterMigration(){
+
+}
+
+let registerButtonClick = async function(){
+  //1 - Pre register migration
+  //Call to ogBridge.migrateToERC721[Full | IOU](...)
+  //-> emit event MigrationDeparturePreRegisteredERC721[IOU | Full](..., MIGRATIONHASH)
+  //2 - Transfer origin token to escrow
+  //-> emit event TokenDepositedInEscrowERC721(migrationHash, ESCROWHASH)
+  //3 - Ask user to sign escrowHash
+  //4 - Write migration data in destination bridge
+  //Call destBridge.migrateFrom*(..., migrationHashSigned)
+  //DON'T UNDERSTAND HERE migrationHashSigned (from contracts) OR proofEscrowHashSigned (from white paper)
+  //5 - Ask user to sign migrationRelayedHash
+  //6 - Transfer dest token to dest owner
 }
