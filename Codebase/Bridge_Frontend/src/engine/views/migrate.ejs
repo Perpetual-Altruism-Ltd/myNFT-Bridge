@@ -33,6 +33,7 @@
 
 				<!--============= Migration Form display =============-->
 				<div id="MigrationFormDisplay" class="Card">
+					<!-- Connection buttons card -->
 					<div class="ConnectionCenter">
 							<button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
 							<button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
@@ -44,6 +45,7 @@
 							<button type="button" class="btn btn-primary connectCoinbase clickableRoundButton">Connect Coinbase</button>
 					</div>
 
+					<!-- Connected address card -->
 					<div class="JustifyFlexStartDisplay HorizFlex">
 						<div class="DataTitle">Connected address:</div>
 						<div class="address DataText"></div>
@@ -127,9 +129,9 @@
 						<div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
 							<div class="MigrationType">Migration type:</div>
 							<div class="MigrationButtonGroup HorizFlex">
-								<button class="ColoredButton" id="RedeemButton" onclick="RedeemButtonClick();">Redeem</button>
+								<button class="ColoredButton" id="RedeemButton" onclick="redeemButtonClick();">Redeem</button>
 								<button class="ColoredButton" id="IOUMigrationButton" onclick="IOUMigrationButtonClick();">IOU</button>
-								<button class="ColoredButton" id="FullMigrationButton" onclick="FullMigrationButtonClick();">Full</button>
+								<button class="ColoredButton" id="FullMigrationButton" onclick="fullMigrationButtonClick();">Full</button>
 							</div>
 						</div>
 
@@ -182,19 +184,22 @@
 							<div class="">Destination owner:</div>
 							<div class="TextInputContainer"><input class="TextInput" size="42" id="inputDestOwner"></div>
 						</div>
+					</div><!-- end of arrival card -->
 
+					<!-- Complete button card -->
+					<div class="Card">
 						<div class="CardElement JustifySpaceEvenlyDisplay HorizFlex">
 							<form action="/register" method="post" id="sendingForm">
-								<input type="button" value="Complete" class="ColoredButton" id="CompleteButton" onclick="CompleteButtonClick();"/>
+								<input type="button" value="Complete" class="ColoredButton" id="CompleteButton" onclick="completeButtonClick();"/>
 							</form>
 						</div>
-					</div><!-- end of arrival card -->
+					</div>
 				</div><!--====== end migration form display ======-->
 
 
 
 				<!--============= Registration display =============-->
-				<div id="RegistrationDisplay">
+				<div id="RegistrationDisplay" class="Card">
 					<div class="Card" >
 	          <div class="HorizFlex JustifyCenterDisplay CardTitle">Register migration</div>
 	        </div>
@@ -205,22 +210,22 @@
 	          <div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Origin universe:</div>
-	              <div class="DataText" id="OGNetwork"></div>
+	              <div class="DataText" id="OGNetworkRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Origin world:</div>
-	              <div class="DataText" id="OGContractAddress"></div>
+	              <div class="DataText" id="OGContractAddressRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Origin token ID:</div>
-	              <div class="DataText" id="OGTokenID"></div>
+	              <div class="DataText" id="OGTokenIDRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Token name:</div>
-	              <div class="DataText"></div>
+	              <div class="DataText" id="TokenNameRegistrationDisp"></div>
 	            </div>
 	          </div>
 
@@ -228,12 +233,12 @@
 	          <div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Migration type:</div>
-	              <div class="DataText" id="OGTokenID"></div>
+	              <div class="DataText" id="MigrationTypeRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Migration relay:</div>
-	              <div class="DataText"></div>
+	              <div class="DataText" id="MigrationRelayRegistrationDisp"></div>
 	            </div>
 	          </div>
 
@@ -241,17 +246,17 @@
 	          <div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Destination universe:</div>
-	              <div class="DataText" id="OGNetwork"></div>
+	              <div class="DataText" id="DestNetworkRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Destination world:</div>
-	              <div class="DataText" id="OGContractAddress"></div>
+	              <div class="DataText" id="DestContractAddressRegistrationDisp"></div>
 	            </div>
 
 	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
 	              <div class="DataTitle">Destination token ID:</div>
-	              <div class="DataText" id="OGTokenID"></div>
+	              <div class="DataText" id="DestTokenIDRegistrationDisp"></div>
 	            </div>
 	          </div>
 
@@ -267,7 +272,32 @@
 	        </div><!-- End of registration card -->
 				</div><!-- End of registration display -->
 
-			</div>
+
+				<!--============= Registration Loading display =============-->
+				<div id="RegistrationLoadingDisplay" class="Card">
+					<div class="Card" >
+						<div class="HorizFlex JustifyCenterDisplay CardTitle">Registering migration...</div>
+					</div>
+
+					<div class="Card">
+						<div class="HorizFlex JustifyCenterDisplay">
+							<div class="LoadingCircle">
+								<svg height="CurrentHeight" width="CurrentWidth" viewBox="0 0 1000 1000" class="loading-circle">
+									<circle cx="500" cy="500" r="490" stroke="CurrentColor" stroke-width="5" fill="none" stroke-dasharray="51.1"></circle>
+								</svg>
+							</div>
+						</div>
+					</div>
+
+					<div class="Card">
+						<div class="HorizFlex JustifyCenterDisplay">
+							Waiting for the transaction to be accepted on the blockchain.
+						</div>
+					</div>
+				</div><!-- End of registration loading display -->
+
+			</div><!-- End of Whitsheet -->
+
 		</div>
 
 

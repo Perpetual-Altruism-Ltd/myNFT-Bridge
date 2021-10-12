@@ -51,21 +51,20 @@ TOP LEFT COLOR: #12132b*/
 }
 
 
-
 .DataText{
   font-weight: bold;
 }
 
 .HorizFlex{
   display: flex;
-  flex-flow: row nowrap;/*Maybe nowrap ? but overflow */
+  flex-flow: row nowrap;
   gap: 0em 1em;
   align-items: center;
 }
 
 .WrappedhorizFlex{
   display: flex;
-  flex-flow: row wrap;/*Maybe nowrap ? but overflow */
+  flex-flow: row wrap;
   gap: 0em 1em;
   align-items: center;
 }
@@ -122,7 +121,9 @@ TOP LEFT COLOR: #12132b*/
 
   /* also working
   background: transparent;
-  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
+  background-image: url("data:image/svg+xml;utf8,
+  <svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
+  <path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
   background-repeat: no-repeat;
   background-position-x: 100%;
   background-position-y: 5px;*/
@@ -184,6 +185,18 @@ TOP LEFT COLOR: #12132b*/
 .TextInput:focus{
   border-color: #000;
 }
+
+.LoadingCircle{
+  width: 50vh;
+  height: 50vh;
+  color: #12132b;
+  -webkit-animation:loading-circle_spin 10s linear infinite;
+  -moz-animation:loading-circle_spin 10s linear infinite;
+  animation:loading-circle_spin 10s linear infinite;
+}
+@-moz-keyframes loading-circle_spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
 .topBanner{
     margin-top: 30px;
