@@ -34,8 +34,9 @@
           <div class="HorizFlex JustifyCenterDisplay CardTitle">Register migration</div>
         </div>
 
-        <!-- Origin -->
+        <!-- Registration Card -->
         <div class="Card">
+					<!-- Departure data -->
           <div class="CardElement">
             <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
               <div class="DataTitle">Origin universe:</div>
@@ -58,7 +59,7 @@
             </div>
           </div>
 
-          <!-- Migration -->
+          <!-- Migration data display-->
           <div class="CardElement">
             <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
               <div class="DataTitle">Migration type:</div>
@@ -71,7 +72,7 @@
             </div>
           </div>
 
-          <!-- Destination -->
+          <!-- Destination data display-->
           <div class="CardElement">
             <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
               <div class="DataTitle">Destination universe:</div>
@@ -89,6 +90,7 @@
             </div>
           </div>
 
+					<!-- Registration Buttons-->
           <div class="Card">
             <div class="WrappedhorizFlex JustifyCenterDisplay">
               <button type="button" class="btn btn-primary clickableRoundButton" onclick="editMigrationButtonClick();">Edit</button>
@@ -97,15 +99,14 @@
               <button type="button" class="ColoredButton" onclick="registerButtonClick();">Register !</button>
             </div>
           </div>
-
-
-        </div>
+        </div><!-- End of registration card -->
 
 			</div>
 		</div>
 
 
 		<script type="application/javascript" src="/lib/westron/loader.js"></script>
+		<script type="application/javascript" src="/site/registerApp.js"></script>
 		<script type="application/javascript" src="/site/app.js"></script>
 		<script type="application/javascript">
 			let migrationData = <%-JSON.stringify(migrationData)%>;

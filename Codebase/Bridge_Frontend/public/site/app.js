@@ -32,12 +32,38 @@ For more information, please refer to <http://unlicense.org/>
 // ---------------------------------------------------- Loading GUI -------------------------------------------
 //Loading the EVM networks the bridge can interact with
 var bridgeApp = {};
+var contracts = {};
 
+//---Global var---
 const NoMigrationType = 0;
 const RedeemMigrationType = 1;
 const IOUMigrationType = 2;
 const FullMigrationType = 3;
 let migrationTypeSelected = NoMigrationType;
+
+//---Display management---
+const MigrationFormDisplay = 1;
+const RegistrationDisplay = 2;
+let currentDisplay = MigrationFormDisplay;//Initialisation, Do not write it after. Read only. To change the display, only use setDisplay()
+
+let setDisplay = function(displayID){
+  currentDisplay = displayID;
+  let registrationcontainer = document.getElementById("RegistrationDisplay");
+  let migrationFormcontainer = document.getElementById("MigrationFormDisplay");
+
+  switch(displayID){
+    case MigrationFormDisplay:
+      registrationcontainer.style.display = 'none';
+      migrationFormcontainer.style.display = 'inherit';//TRY WITH DISPLAY BLOCK AND FLEX + vertic GAP
+      break;
+
+    case RegistrationDisplay:
+      registrationcontainer.style.display = 'inherit';
+      migrationFormcontainer.style.display = 'none';
+      break;
+  }
+}
+//setDisplay(currentDisplay);
 
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
@@ -178,6 +204,7 @@ var loadERC721MetadataABI = async function () {
 loadERC721MetadataABI();
 
 //=====Retrieve ABI for registration=====
+//NOT FINISHED
 //Interface MyNFTBridgeERC721Departure
 var loadBridgeERC721DepartureABI = async function () {
     let pathERC721Metadata = '/ABI/MyNFTBridgeERC721Departure.json';
@@ -204,9 +231,6 @@ var loadBridgeERC721DepartureABI = async function () {
 
 // ---------------------------------------------- Token Interactions -------------------------------------------
 
-
-var originalChainERC721Contract = {};
-var originalChainERC721MetadataContract = {};
 //Loading a token metadata
 var loadOgTokenData = async function () {
 
@@ -229,8 +253,8 @@ var loadOgTokenData = async function () {
     }
 
     //Instanciate an ERC721 contract at the address
-    originalChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputOGContractAddress").value);
-    originalChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
+    contracts.originalChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputOGContractAddress").value);
+    contracts.originalChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
 
 	//Get the Contract Name
     let getContractName = async function () {
@@ -447,6 +471,11 @@ let PackMigrationData = function(){
   //Origin Token
   migrationData.ogTokenID = document.getElementById("inputOGTokenID").value;
   migrationData.ogTokenName = document.getElementById("OGTokenMetaName").textContent;
+  //Origin Bridge addr
+  migrationData.ogBridgeAddr = bridgeApp.networks[migrationData.ogNetIndex].bridgeAdress;
+  //Origin token owner
+  migrationData.ogOwner = document.getElementById("OGTokenOwner").textContent;
+
 
   //Migration type
   migrationData.migrationTypeId = migrationTypeSelected;
@@ -467,6 +496,10 @@ let PackMigrationData = function(){
   migrationData.destWorld = document.getElementById("inputDestContractAddress").value;
   //Destination Token
   migrationData.destTokenID = document.getElementById("inputDestTokenID").value;
+  //Dest bridge addr
+  migrationData.destBridgeAddr = bridgeApp.networks[migrationData.destNetIndex].bridgeAdress;
+  //Dest owner
+  migrationData.destOwner = document.getElementById("inputDestOwner").value;
 
   //Migrated token metadata
   switch(migrationTypeSelected){
@@ -559,6 +592,11 @@ let loadDestTokenData = async function(){
 
 }
 
+
+//--------Migration registering---------
+
+
+//---------Sending Metadata to server--------
 let sendIOUPrefixedMetadata = async function(){
   //load metadata, prefix it by "IOU OF" and create the JSON file.
   let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
@@ -606,28 +644,4 @@ let sendIOUPrefixedMetadata = async function(){
           alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
       };
   }
-}
-
-
-//=====REGISTRATION PAGE=====
-let editMigrationButtonClick = function(){
-  window.location = '/bridge';
-}
-
-let preRegisterMigration(){
-
-}
-
-let registerButtonClick = async function(){
-  //1 - Pre register migration
-  //Call to ogBridge.migrateToERC721[Full | IOU](...)
-  //-> emit event MigrationDeparturePreRegisteredERC721[IOU | Full](..., MIGRATIONHASH)
-  //2 - Transfer origin token to escrow
-  //-> emit event TokenDepositedInEscrowERC721(migrationHash, ESCROWHASH)
-  //3 - Ask user to sign escrowHash
-  //4 - Write migration data in destination bridge
-  //Call destBridge.migrateFrom*(..., migrationHashSigned)
-  //DON'T UNDERSTAND HERE migrationHashSigned (from contracts) OR proofEscrowHashSigned (from white paper)
-  //5 - Ask user to sign migrationRelayedHash
-  //6 - Transfer dest token to dest owner
 }
