@@ -186,9 +186,19 @@ TOP LEFT COLOR: #12132b*/
   border-color: #000;
 }
 
+.LoadingContainer{
+  position:relative;
+  height: 15em;
+}
+.LoadingText{
+  position: absolute;
+  width: 12em;
+  text-align: center;
+}
 .LoadingCircle{
-  width: 50vh;
-  height: 50vh;
+  position: absolute;
+  width: 15em;
+  height: 15em;
   color: #12132b;
   -webkit-animation:loading-circle_spin 10s linear infinite;
   -moz-animation:loading-circle_spin 10s linear infinite;

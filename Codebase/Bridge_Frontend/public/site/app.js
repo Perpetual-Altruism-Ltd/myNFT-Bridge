@@ -34,6 +34,9 @@ For more information, please refer to <http://unlicense.org/>
 var bridgeApp = {};
 var contracts = {};
 let migrationData = {};
+let ogTokenData = {};//ogTokenData is the origin token metadata JSON. It is the content of the token URI
+let accounts = [];
+let account = "";
 
 //---Global var---
 const NoMigrationType = 0;
@@ -46,35 +49,57 @@ let migrationTypeSelected = NoMigrationType;
 const MigrationFormDisplay = 1;
 const RegistrationDisplay = 2;
 const RegistrationLoadingDisplay = 3;//When waiting for the network event MigrationDeparturePreRegisteredERC721
+const MigrateNFTDisplay = 4;
+const MigrationLoadingDisplay = 5;
+const MigrationCompleteDisplay = 6;
 let currentDisplay = 0;//Initialisation, Do not write it after. Read only. To change the display, only use setDisplay()
 let setDisplay = function(displayID){
   currentDisplay = displayID;
   let migrationFormContainer = document.getElementById("MigrationFormDisplay");
   let registrationContainer = document.getElementById("RegistrationDisplay");
   let registrationLoadingContainer = document.getElementById("RegistrationLoadingDisplay");
+  let migrateNFTContainer = document.getElementById("MigrateNFTDisplay");
+  let migrationLoadingContainer = document.getElementById("MigrationLoadingDisplay");
+  let migrationCompleteContainer = document.getElementById("MigrationCompleteDisplay");
+
+  migrationFormContainer.style.display = 'none';
+  registrationContainer.style.display = 'none';
+  registrationLoadingContainer.style.display = 'none';
+  migrateNFTContainer.style.display = 'none';
+  migrationLoadingContainer.style.display = 'none';
+  migrationCompleteContainer.style.display = 'none';
 
   switch(displayID){
     case MigrationFormDisplay:
       migrationFormContainer.style.display = 'flex';
-      registrationContainer.style.display = 'none';
-      registrationLoadingContainer.style.display = 'none';
       break;
-
     case RegistrationDisplay:
-      migrationFormContainer.style.display = 'none';
       registrationContainer.style.display = 'flex';
-      registrationLoadingContainer.style.display = 'none';
-
+      break;
+    case RegistrationLoadingDisplay:
+      registrationLoadingContainer.style.display = 'flex';
+      break;
+    case MigrateNFTDisplay:
+      migrateNFTContainer.style.display = 'flex';
+      break;
+    case MigrationLoadingDisplay:
+      migrationLoadingContainer.style.display = 'flex';
+      break;
+    case MigrationCompleteDisplay:
+      migrationCompleteContainer.style.display = 'flex';
       break;
 
-    case RegistrationLoadingDisplay:
-      migrationFormContainer.style.display = 'none';
-      registrationContainer.style.display = 'none';
+    default:
+      migrationFormContainer.style.display = 'flex';
+      registrationContainer.style.display = 'flex';
       registrationLoadingContainer.style.display = 'flex';
+      migrateNFTContainer.style.display = 'flex';
+      migrationLoadingContainer.style.display = 'flex';
+      migrationCompleteContainer.style.display = 'flex';
       break;
   }
 }
-setDisplay(RegistrationLoadingDisplay);
+setDisplay(MigrationFormDisplay);
 
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
@@ -270,6 +295,7 @@ var loadOgTokenData = async function () {
 
     if (parseInt(web3.currentProvider.chainId) != parseInt(ogEthNetwork.chainID)) {
         alert("Please connect to the original token network in your web3 provider");
+        promptSwitchChain('0x' + ogEthNetwork.chainID.toString(16));//TODELETE cuz metamask support only
         return;
     }
 
@@ -353,7 +379,6 @@ var loadOgTokenData = async function () {
 
 }
 
-var ogTokenData = {};//Var ogTokenData is the origin token metadata JSON
 var loadOgTokenMetaData = async function () {
 
     let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
@@ -414,7 +439,18 @@ var endLoadMetamaskConnection = async function () {
 }
 setTimeout(endLoadMetamaskConnection, 500);
 
-
+//Loading account addr
+let enableEth = async function() {
+    //Will Start the metamask extension
+    accounts = await ethereum.request({
+            method: 'eth_requestAccounts'
+        });
+    account = accounts[0];
+    if (account != null) {
+        //document.getElementById("enableEthButton").style.display = "none";
+    }
+}
+enableEth();
 let promptSwitchChain = async function (ID) {
   await window.ethereum.request({
     method: 'wallet_switchEthereumChain',
@@ -422,6 +458,8 @@ let promptSwitchChain = async function (ID) {
   });
 }
 
+
+//--------------------Migration Form Interface----------------------
 //------Destination interface------
 //Function which disable the migration buttons that are not selected, and let the button selected enabled.
 //To unselect a button, and enable all of them, call selectMigrationButton(NoMigrationType)
@@ -476,7 +514,6 @@ let fullMigrationButtonClick = async function(){
   }
 }
 
-//--------------------Redirecting to Migration Registration----------------------
 //Packing all migration data into one JSON.
 let packMigrationData = function(){
   let migrationData = {};
@@ -508,17 +545,17 @@ let packMigrationData = function(){
   }
   //Migration relay
   migrationData.relayId = relaySelector.selectedIndex;
-  migrationData.relay = bridgeApp.relays[relaySelector.selectedIndex].name;
+  migrationData.relay = bridgeApp.relays[Math.max(0, relaySelector.selectedIndex)].name;
 
   //Destination universe
   migrationData.destNetIndex = destNetSelector.selectedIndex;
-  migrationData.destNet = bridgeApp.networks[destNetSelector.selectedIndex].name;
+  migrationData.destNet = bridgeApp.networks[Math.max(0, destNetSelector.selectedIndex)].name;
   //Destination world
   migrationData.destWorld = document.getElementById("inputDestContractAddress").value;
   //Destination Token
   migrationData.destTokenID = document.getElementById("inputDestTokenID").value;
   //Dest bridge addr
-  migrationData.destBridgeAddr = bridgeApp.networks[migrationData.destNetIndex].bridgeAdress;
+  migrationData.destBridgeAddr = bridgeApp.networks[Math.max(0, migrationData.destNetIndex)].bridgeAdress;
   //Dest owner
   migrationData.destOwner = document.getElementById("inputDestOwner").value;
 
@@ -546,13 +583,16 @@ let completeButtonClick = async function(){
   console.log(migrationData);
 }
 
+//Prompt user to connect to nez chain selected from destination network selector
 let destNetworkChanged = function(){
   let destSelector = document.getElementById("DestinationNetworkSelector");
   let chainIndexSelected = destSelector.selectedIndex;
-  let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID;
-  promptSwitchChain(chainIDSelected);
+  let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
+  console.log("Switching to network id " + chainIDSelected);
+  promptSwitchChain(chainIDSelected);//TODELETE cuz metamask support only.
 }
 
+//Autofill tokenID & owner with current departure data when destWorld input changed
 let destContractChanged = function(){
   document.getElementById("DestContractSymbol").innerHTML = "";
   document.getElementById("DestContractName").innerHTML = "";
@@ -561,17 +601,21 @@ let destContractChanged = function(){
   //Autofill tokenID
   document.getElementById("inputDestTokenID").value = document.getElementById("inputOGTokenID").value;
   //Autofill dest owner with the current connected account
-  document.getElementById("inputDestOwner").value = web3.currentProvider.selectedAddress;
+  document.getElementById("inputDestOwner").value = account;
 }
-
 
 //------Destination data loading------
 var destChainERC721Contract = {};
 var destChainERC721MetadataContract = {};
 let loadDestTokenData = async function(){
 
-  destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputDestContractAddress").value);
-  destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputDestContractAddress").value);
+  try{
+    destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputDestContractAddress").value);
+    destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputDestContractAddress").value);
+  }catch(err){
+    document.getElementById("DestContractName").innerHTML = "Unable to connect to contract.";
+    document.getElementById("DestContractSymbol").innerHTML = "Unable to connect to contract.";
+  }
 
   let getContractName = async function () {
       try {
@@ -603,14 +647,11 @@ let loadDestTokenData = async function(){
      }
    }
    getContractSymbol();
-
-
-
 }
 
 
-//--------Migration registering---------
-//---Registration Interface---
+//--------------------------------------------Register Migration-----------------------------------------
+//----------Registration Interface--------
 let editMigrationButtonClick = function(){
   setDisplay(MigrationFormDisplay);
 }
@@ -629,49 +670,24 @@ let refreshMigrationDataDisplay = function(){
   document.getElementById("DestTokenIDRegistrationDisp").textContent = migrationData.destTokenID;
 }
 
-//Pre register migration to departure bridge by calling ogBridge.migrateToERC721[Full | IOU]
-//will emit MigrationDeparturePreRegisteredERC721[IOU | Full](..., MIGRATIONHASH) event
-let preRegisterMigration = async function(){
-
-  if(migrationData.migrationTypeId == IOUMigrationType){
-    //signeeAddr = account
-    await contracts.originBridgeContract.migrateToERC721IOU(
-      migrationData.ogWorld,//address
-      parseInt(migrationData.ogTokenID),//uint256
-      migrationData.destNet,//bytes for the others params
-      migrationData.destBridgeAddr,
-      migrationData.destWorld,
-      migrationData.destTokenID,
-      migrationData.destOwner,
-      account,
-      {
-        from: account
-      }, async function (err, res) {
-          log("Migration successfully pre-registered !");
-          console.log(res);
-      }
-    );
-  }else if(migrationData.migrationTypeId == FullMigrationType){
-    await contracts.originBridgeContract.migrateToERC721Full(
-      migrationData.ogWorld,//address
-      parseInt(migrationData.ogTokenID),//uint256
-      migrationData.destNet,//bytes for the others params
-      migrationData.destBridgeAddr,
-      migrationData.destWorld,
-      migrationData.destTokenID,
-      migrationData.destOwner,
-      account,
-      {
-        from: account
-      }, async function (err, res) {
-          log("Migration successfully pre-registered !");
-          console.log(res);
-      }
-    );
+//-------------Register-------------
+//Ask user to grant approvalForAll to the relay
+let grantRelayOperatorPrivilege = async function(){
+  try{
+    let relayOgNetworkAddr = bridgeApp.relays[0].relayNetworkaddr.rinkeby;//TODO ADAPT DEPENDING ON THE OG NETWORK
+    contracts.originalChainERC721Contract.methods.setApprovalForAll(relayOgNetworkAddr, "true")
+    .send({from: account, gas: 30000,})
+    .then((res) => {
+      console.log("Relay is now an operator");
+      console.log(res);
+      document.getElementById("RegistrationLoadingText").textContent = "Relay approved as an operator !";
+    });
+  }catch(err){
+    console.log("Error when setting relay as an operator: " + err);
   }
-
 }
 
+//Start listening to preRegister event on departure bridge
 let setupPreRegisterEventListener = async function(){
   //Pre register IOU migration Event
   contracts.originBridgeContract.events.MigrationDeparturePreRegisteredERC721IOU(options)
@@ -689,11 +705,40 @@ let setupPreRegisterEventListener = async function(){
           .on('error', err => console.error(err));
 }
 
+//Pre register migration to departure bridge by calling ogBridge.migrateToERC721[Full | IOU] serverside
+//will emit MigrationDeparturePreRegisteredERC721[IOU | Full](..., MIGRATIONHASH) event
+let preRegisterMigration = async function(){
+
+  let pathERC721Metadata = '/ABI/ERC721Metadata.json';
+  try {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', pathERC721Metadata);
+      xhr.onload = function () {
+          if (xhr.status != 200) { // analyze HTTP status of the response
+              console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+              alert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
+          } else { // show the result
+              //console.log(`Done, got ${xhr.response}`); // responseText is the server
+              var resp = xhr.response;
+              ABIS.ERC721Metadata = JSON.parse(resp).abi;
+          }
+      };
+      xhr.send();
+  } catch (err) {
+      console.log(err);
+      alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+  };
+
+}
+
 let registerButtonClick = async function(){
+  //Ask the user to grant operator privilege to the relay
+  grantRelayOperatorPrivilege();
+  setDisplay(RegistrationLoadingDisplay);
   //Listen to preRegister event on blockchain
-  setupPreRegisterEventListener();
+  //setupPreRegisterEventListener();
   //1 - Pre register migration
-  preRegisterMigration();
+  //preRegisterMigration();
 
   //2 - Transfer origin token to escrow (serverside)
   //-> emit event TokenDepositedInEscrowERC721(migrationHash, ESCROWHASH)
@@ -704,55 +749,41 @@ let registerButtonClick = async function(){
   //6 - Transfer dest token to dest owner
 }
 
+//-----------------------------------Migrate NFT------------------------------------
+let signEscrowHashButtonClick = function(){
+  setDisplay(5);
+}
+
+
+//-----------------------------------Metadata prefixing------------------------------
+let getIOUPrefixedMetadata = function(){
+  //Prefix Metadata
+  let IOUPrefixedMetadata;
+  IOUPrefixedMetadata = ogTokenData;
+  IOUPrefixedMetadata.name = "IOU of " + ogTokenData.name;
+  //Add migration data
+  var ogNetSelector = document.getElementById("OriginNetworkSelector");
+  IOUPrefixedMetadata.originUniverse = bridgeApp.networks[ogNetSelector.selectedIndex].name;
+  IOUPrefixedMetadata.originWorld = document.getElementById("inputOGContractAddress").value;
+  IOUPrefixedMetadata.originTokenId = document.getElementById("inputOGTokenID").value;
+  //Watermark the image (to do later)
+  return IOUPrefixedMetadata;
+}
+
 //---------Sending Metadata to server--------
 //load metadata, prefix it by "IOU OF", add migration details and send the JSON file to the server.
 let sendIOUPrefixedMetadata = async function(){
-  let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
-  var ogTokenData = {};
-  if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
-      return;
-  } else {
-      console.log("sending XHR");
-      try {
-          //First retrieve original metadata
-          let xhr = new XMLHttpRequest();
-          xhr.open('GET', OGTokenMetadataPath);
-          xhr.onload = function () {
-              if (xhr.status != 200) { // analyze HTTP status of the response
-                  console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
-                  alert("Could not load network list at " + pathERC721Metadata);
-              } else { // show the result
-                  var resp = xhr.response;
-                  ogTokenData = JSON.parse(resp);
-
-                  //Prefix Metadata
-                  ogTokenData.name = "IOU of " + ogTokenData.name;
-                  //Add migration data
-                  ogTokenData.originUniverse = migrationData.ogNet;
-                  ogTokenData.originWorld = migrationData.ogWorld;
-                  ogTokenData.tokenId = ogTokenID;
-                  //Watermark the image (to do later)
-
-                  //Send the new metadata to the server
-                  let xhrSend = new XMLHttpRequest();
-                  xhrSend.open('POST', '/iouMetadata');
-                  xhrSend.setRequestHeader("Accept", "application/json");
-                  xhrSend.setRequestHeader("Content-Type", "application/json");
-                  xhrSend.onreadystatechange = function () {
-                    if (xhr.readyState === 4) {
-                     console.log(xhrSend.status);
-                     console.log(xhrSend.responseText);
-                    };
-                  }
-                  var data = JSON.stringify(ogTokenData);
-                  xhrSend.send(data);
-
-              }
-          };
-          xhr.send();
-      } catch (err) {
-          console.log(err);
-          alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
-      };
+  //Send the new metadata to the server
+  let xhrSend = new XMLHttpRequest();
+  xhrSend.open('POST', '/iouMetadata');
+  xhrSend.setRequestHeader("Accept", "application/json");
+  xhrSend.setRequestHeader("Content-Type", "application/json");
+  xhrSend.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+     console.log(xhrSend.status);
+     console.log(xhrSend.responseText);
+    };
   }
+  var data = JSON.stringify(getIOUPrefixedMetadata());
+  xhrSend.send(data);
 }

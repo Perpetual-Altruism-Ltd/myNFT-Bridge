@@ -189,9 +189,7 @@
 					<!-- Complete button card -->
 					<div class="Card">
 						<div class="CardElement JustifySpaceEvenlyDisplay HorizFlex">
-							<form action="/register" method="post" id="sendingForm">
-								<input type="button" value="Complete" class="ColoredButton" id="CompleteButton" onclick="completeButtonClick();"/>
-							</form>
+							<button class="ColoredButton" id="CompleteButton" onclick="completeButtonClick();">Complete</button>
 						</div>
 					</div>
 				</div><!--====== end migration form display ======-->
@@ -261,40 +259,77 @@
 	          </div>
 
 						<!-- Registration Buttons-->
-	          <div class="Card">
+	          <div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyCenterDisplay">
 	              <button type="button" class="btn btn-primary clickableRoundButton" onclick="editMigrationButtonClick();">Edit</button>
 	            </div>
+						</div>
+
+						<div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyCenterDisplay">
 	              <button type="button" class="ColoredButton" onclick="registerButtonClick();">Register !</button>
 	            </div>
 	          </div>
+
 	        </div><!-- End of registration card -->
 				</div><!-- End of registration display -->
 
 
 				<!--============= Registration Loading display =============-->
 				<div id="RegistrationLoadingDisplay" class="Card">
-					<div class="Card" >
-						<div class="HorizFlex JustifyCenterDisplay CardTitle">Registering migration...</div>
-					</div>
+					<div class="HorizFlex JustifyCenterDisplay CardTitle">Registering migration...</div>
 
-					<div class="Card">
-						<div class="HorizFlex JustifyCenterDisplay">
-							<div class="LoadingCircle">
-								<svg height="CurrentHeight" width="CurrentWidth" viewBox="0 0 1000 1000" class="loading-circle">
-									<circle cx="500" cy="500" r="490" stroke="CurrentColor" stroke-width="5" fill="none" stroke-dasharray="51.1"></circle>
-								</svg>
-							</div>
+					<div class="HorizFlex JustifyCenterDisplay LoadingContainer">
+						<div class="LoadingCircle">
+							<svg height="CurrentHeight" width="CurrentWidth" viewBox="0 0 1000 1000" class="loading-circle">
+								<circle cx="500" cy="500" r="490" stroke="CurrentColor" stroke-width="5" fill="none" stroke-dasharray="51.1"></circle>
+							</svg>
 						</div>
-					</div>
 
-					<div class="Card">
-						<div class="HorizFlex JustifyCenterDisplay">
+						<div id="RegistrationLoadingText" class="LoadingText">
 							Waiting for the transaction to be accepted on the blockchain.
 						</div>
 					</div>
 				</div><!-- End of registration loading display -->
+
+				<!--============= Migrate NFT display =============-->
+				<div id="MigrateNFTDisplay" class="Card">
+						<div class="HorizFlex JustifyCenterDisplay CardTitle">Migrate NFT</div>
+
+						<div class="HorizFlex JustifyCenterDisplay">The origin token was successfully transferred to the bridge.</div>
+						<div class="HorizFlex JustifyCenterDisplay">Please sign the escrow hash to allow the relay to mint the new token.</div>
+
+						<div class="WrappedhorizFlex JustifyCenterDisplay">
+							<button type="button" class="ColoredButton" onclick="signEscrowHashButtonClick();">Let's sign!</button>
+						</div>
+				</div>
+				<!--============= Migration Loading display =============-->
+				<div id="MigrationLoadingDisplay" class="Card">
+					<div class="HorizFlex JustifyCenterDisplay CardTitle">Migrate NFT</div>
+
+					<div class="HorizFlex JustifyCenterDisplay LoadingContainer">
+						<div class="LoadingCircle">
+							<svg height="CurrentHeight" width="CurrentWidth" viewBox="0 0 1000 1000" class="loading-circle">
+								<circle cx="500" cy="500" r="490" stroke="CurrentColor" stroke-width="5" fill="none" stroke-dasharray="51.1"></circle>
+							</svg>
+						</div>
+
+						<div id="MigrationLoadingText" class="LoadingText">
+							Waiting the relay to mint the destination token.
+						</div>
+					</div>
+
+				</div>
+				<!--============= Migration Complete display =============-->
+				<div id="MigrationCompleteDisplay" class="Card">
+					<div class="HorizFlex JustifyCenterDisplay CardTitle">Successful migration !</div>
+
+					<div class="HorizFlex JustifyCenterDisplay">Congrats !</div>
+
+					<div class="WrappedhorizFlex JustifyCenterDisplay">
+						<button type="button" class="btn btn-primary clickableRoundButton" onclick="editMigrationButtonClick();">Let's migrate another one :)</button>
+					</div>
+				</div>
 
 			</div><!-- End of Whitsheet -->
 
