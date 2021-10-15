@@ -4,6 +4,7 @@
 	<head>
 		<meta name="generator" content="HTML Tidy for HTML5 (experimental) for Windows https://github.com/w3c/tidy-html5/tree/c63cc39">
 		<link rel="stylesheet" href="/site/style.css">
+		<link rel="stylesheet" href="/site/customDropDown.css">
 
 		<title></title>
 	</head>
@@ -56,12 +57,22 @@
 						<div class="CardElement CardTitle">Departure</div>
 
 						<div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
-							<div class=""><label for="OriginNetworkSelector">Select the network the NFT token is currently in :</label></div>
-							<div class="SelectorContainer">
-								<select class="SelectorInput" name="OriginNetworkSelector" id="OriginNetworkSelector"></select>
-								<div class="DropDownArrow"></div>
+							<div class="">Select the network the NFT token is currently in :</div>
+							<!-- Custom drop down selector -->
+							<div class="select-wrapper" id="OriginNetworkSelector">
+							  <div class="select">
+							    <div class="select-trigger">
+							      <span></span>
+							      <div class="arrow"></div>
+							    </div>
+
+							    <div class="select-options">
+							    </div>
+							  </div>
 							</div>
 						</div>
+
+
 
 						<div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
 							<div class="">Input the address of the ERC-721 smart contract the token is currently in :</div>
@@ -137,9 +148,17 @@
 
 						<div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
 							<div class="">Migration relay</div>
-							<div class="SelectorContainer">
-								<select class="SelectorInput" name="" id="RelaySelector"></select>
-								<div class="DropDownArrow"></div>
+							<!-- Custom drop down selector -->
+							<div class="select-wrapper" id="RelaySelector">
+							  <div class="select">
+							    <div class="select-trigger">
+							      <span></span>
+							      <div class="arrow"></div>
+							    </div>
+
+							    <div class="select-options">
+							    </div>
+							  </div>
 							</div>
 						</div>
 
@@ -150,10 +169,18 @@
 						<div class="CardTitle CardElement">Arrival</div>
 
 						<div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
-							<div class=""><label for="DestinationNetworkSelector">Select the network the NFT token will be migrated to :</label></div>
-							<div class="SelectorContainer">
-								<select class="SelectorInput" name="DestinationNetworkSelector" id="DestinationNetworkSelector" onChange="destNetworkChanged();"></select>
-								<div class="DropDownArrow"></div>
+							<div class="">Select the network the NFT token will be migrated to :</div>
+							<!-- Custom drop down selector -->
+							<div class="select-wrapper" id="DestinationNetworkSelector">
+							  <div class="select">
+							    <div class="select-trigger">
+							      <span></span>
+							      <div class="arrow"></div>
+							    </div>
+
+							    <div class="select-options">
+							    </div>
+							  </div>
 							</div>
 						</div>
 
@@ -194,71 +221,71 @@
 					</div>
 				</div><!--====== end migration form display ======-->
 
-
-
 				<!--============= Registration display =============-->
 				<div id="RegistrationDisplay" class="Card">
 					<div class="Card" >
 	          <div class="HorizFlex JustifyCenterDisplay CardTitle">Register migration</div>
 	        </div>
 
-	        <!-- Registration Card -->
+	        <!-- Registration data Card -->
 	        <div class="Card">
 						<!-- Departure data -->
 	          <div class="CardElement">
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Origin universe:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Origin universe:</div>
 	              <div class="DataText" id="OGNetworkRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Origin world:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Origin world:</div>
 	              <div class="DataText" id="OGContractAddressRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Origin token ID:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Origin token ID:</div>
 	              <div class="DataText" id="OGTokenIDRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Token name:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Token name:</div>
 	              <div class="DataText" id="TokenNameRegistrationDisp"></div>
 	            </div>
 	          </div>
 
-	          <!-- Migration data display-->
+	          <!-- Migration data display -->
 	          <div class="CardElement">
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Migration type:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Migration type:</div>
 	              <div class="DataText" id="MigrationTypeRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Migration relay:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Migration relay:</div>
 	              <div class="DataText" id="MigrationRelayRegistrationDisp"></div>
 	            </div>
 	          </div>
 
-	          <!-- Destination data display-->
+	          <!-- Destination data display  -->
 	          <div class="CardElement">
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Destination universe:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Destination universe:</div>
 	              <div class="DataText" id="DestNetworkRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Destination world:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Destination world:</div>
 	              <div class="DataText" id="DestContractAddressRegistrationDisp"></div>
 	            </div>
 
-	            <div class="WrappedhorizFlex JustifyFlexStartDisplay Tabulation">
-	              <div class="DataTitle">Destination token ID:</div>
+	            <div class="WrappedhorizFlex JustifyFlexStartDisplay">
+	              <div class="DataTitle Tabulation">Destination token ID:</div>
 	              <div class="DataText" id="DestTokenIDRegistrationDisp"></div>
 	            </div>
 	          </div>
+					</div><!-- End of registration data card -->
 
-						<!-- Registration Buttons-->
+					<!-- Registration buttons card -->
+					<div class="Card">
 	          <div class="CardElement">
 	            <div class="WrappedhorizFlex JustifyCenterDisplay">
 	              <button type="button" class="btn btn-primary clickableRoundButton" onclick="editMigrationButtonClick();">Edit</button>
@@ -270,10 +297,9 @@
 	              <button type="button" class="ColoredButton" onclick="registerButtonClick();">Register !</button>
 	            </div>
 	          </div>
+					</div><!-- End of registration buttons card -->
 
-	        </div><!-- End of registration card -->
 				</div><!-- End of registration display -->
-
 
 				<!--============= Registration Loading display =============-->
 				<div id="RegistrationLoadingDisplay" class="Card">
@@ -303,6 +329,7 @@
 							<button type="button" class="ColoredButton" onclick="signEscrowHashButtonClick();">Let's sign!</button>
 						</div>
 				</div>
+
 				<!--============= Migration Loading display =============-->
 				<div id="MigrationLoadingDisplay" class="Card">
 					<div class="HorizFlex JustifyCenterDisplay CardTitle">Migrate NFT</div>
@@ -320,6 +347,7 @@
 					</div>
 
 				</div>
+
 				<!--============= Migration Complete display =============-->
 				<div id="MigrationCompleteDisplay" class="Card">
 					<div class="HorizFlex JustifyCenterDisplay CardTitle">Successful migration !</div>
@@ -337,6 +365,7 @@
 
 
 		<script type="application/javascript" src="/lib/westron/loader.js"></script>
+		<script type="application/javascript" src="/site/customDropDownHandler.js"></script>
 		<script type="application/javascript" src="/site/app.js"></script>
 	</body>
 </html>

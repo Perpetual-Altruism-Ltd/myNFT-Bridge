@@ -28,6 +28,7 @@ For more information, please refer to <http://unlicense.org/>
 
 // IP compliant NFT bridge.
 // Author : Guillaume Gonnaud
+// Collaborator: Foin Nicolas
 
 // ---------------------------------------------------- Loading GUI -------------------------------------------
 //Loading the EVM networks the bridge can interact with
@@ -99,7 +100,15 @@ let setDisplay = function(displayID){
       break;
   }
 }
+//Set initial display when page loaded
 setDisplay(MigrationFormDisplay);
+
+// ---- SETUP CUSTOM SELECTOR ----
+initDropDownBehaviour();
+setupDropDown("OriginNetworkSelector");//The ID of your dropdown container
+setupDropDown("RelaySelector");//The ID of your dropdown container
+setupDropDown("DestinationNetworkSelector");//The ID of your dropdown container
+
 
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
@@ -139,16 +148,11 @@ var loadNets = async function (_callback) {
 }
 //Load the networks and change the dropdown options based on the list
 loadNets(function () {
-    var ogSelector = document.getElementById("OriginNetworkSelector");
-    var destSelector = document.getElementById("DestinationNetworkSelector");
-
-    //Instanciate select options
+    //Add select options
     for (var i = 0; i < bridgeApp.networks.length; i++) {
-        ogSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
-        destSelector.options[i] = new Option(bridgeApp.networks[i].name, bridgeApp.networks[i].uniqueId);
+        addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
+        addDropDownOption("DestinationNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
     }
-
-    destSelector.selectedIndex = -1;
 });
 
 let loadRelays = async function(callback){
@@ -182,11 +186,9 @@ let loadRelays = async function(callback){
 }
 //Load the relays and change the dropdown options based on the list
 loadRelays(function (){
-  var relaySelector = document.getElementById("RelaySelector");
-
-  //Instanciate select options
+  //Add select options
   for (var i = 0; i < bridgeApp.relays.length; i++) {
-      relaySelector.options[i] = new Option(bridgeApp.relays[i].name, bridgeApp.relays[i].uniqueId);
+      addDropDownOption("RelaySelector", bridgeApp.relays[i].name, "", bridgeApp.relays[i].uniqueId);
   }
 });
 
@@ -290,8 +292,8 @@ var loadOgTokenData = async function () {
         alert("Please connect to a Wallet first");
         return;
     }
-
-    let ogEthNetwork = bridgeApp.net[document.getElementById("OriginNetworkSelector").value];
+    let selectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+    let ogEthNetwork = bridgeApp.net[getDropDownOptionText("OriginNetworkSelector", selectedIndex)];
 
     if (parseInt(web3.currentProvider.chainId) != parseInt(ogEthNetwork.chainID)) {
         alert("Please connect to the original token network in your web3 provider");
@@ -517,13 +519,9 @@ let fullMigrationButtonClick = async function(){
 //Packing all migration data into one JSON.
 let packMigrationData = function(){
   let migrationData = {};
-  var ogNetSelector = document.getElementById("OriginNetworkSelector");
-  var destNetSelector = document.getElementById("DestinationNetworkSelector");
-  var relaySelector = document.getElementById("RelaySelector");
-
   //Origin universe
-  migrationData.ogNetIndex = ogNetSelector.selectedIndex;
-  migrationData.ogNet = bridgeApp.networks[ogNetSelector.selectedIndex].name;
+  migrationData.ogNetIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+  migrationData.ogNet = bridgeApp.networks[migrationData.ogNetIndex].name;
   //Origin world
   migrationData.ogWorld = document.getElementById("inputOGContractAddress").value;
   //Origin Token
@@ -544,12 +542,12 @@ let packMigrationData = function(){
     default: migrationData.migrationType = 'Nothing choosen';
   }
   //Migration relay
-  migrationData.relayId = relaySelector.selectedIndex;
-  migrationData.relay = bridgeApp.relays[Math.max(0, relaySelector.selectedIndex)].name;
+  migrationData.relayId = getDropDownSelectedOptionIndex("RelaySelector");
+  migrationData.relay = bridgeApp.relays[Math.max(0, migrationData.relayId)].name;
 
   //Destination universe
-  migrationData.destNetIndex = destNetSelector.selectedIndex;
-  migrationData.destNet = bridgeApp.networks[Math.max(0, destNetSelector.selectedIndex)].name;
+  migrationData.destNetIndex = getDropDownSelectedOptionIndex("DestinationNetworkSelector");
+  migrationData.destNet = bridgeApp.networks[Math.max(0, migrationData.destNetIndex)].name;
   //Destination world
   migrationData.destWorld = document.getElementById("inputDestContractAddress").value;
   //Destination Token
@@ -584,13 +582,11 @@ let completeButtonClick = async function(){
 }
 
 //Prompt user to connect to nez chain selected from destination network selector
-let destNetworkChanged = function(){
-  let destSelector = document.getElementById("DestinationNetworkSelector");
-  let chainIndexSelected = destSelector.selectedIndex;
+addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
   let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
   console.log("Switching to network id " + chainIDSelected);
   promptSwitchChain(chainIDSelected);//TODELETE cuz metamask support only.
-}
+});
 
 //Autofill tokenID & owner with current departure data when destWorld input changed
 let destContractChanged = function(){
@@ -648,7 +644,6 @@ let loadDestTokenData = async function(){
    }
    getContractSymbol();
 }
-
 
 //--------------------------------------------Register Migration-----------------------------------------
 //----------Registration Interface--------
@@ -762,8 +757,8 @@ let getIOUPrefixedMetadata = function(){
   IOUPrefixedMetadata = ogTokenData;
   IOUPrefixedMetadata.name = "IOU of " + ogTokenData.name;
   //Add migration data
-  var ogNetSelector = document.getElementById("OriginNetworkSelector");
-  IOUPrefixedMetadata.originUniverse = bridgeApp.networks[ogNetSelector.selectedIndex].name;
+  var ogNetSelectorIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+  IOUPrefixedMetadata.originUniverse = bridgeApp.networks[ogNetSelectorIndex].name;
   IOUPrefixedMetadata.originWorld = document.getElementById("inputOGContractAddress").value;
   IOUPrefixedMetadata.originTokenId = document.getElementById("inputOGTokenID").value;
   //Watermark the image (to do later)
