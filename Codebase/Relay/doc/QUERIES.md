@@ -11,14 +11,14 @@ None
 ```json
 {
 	"relays": [
-        {
+		{
 			"name":"Localhost Relay",
-            "Operator": "Perpetual Altruism Ltd",
-            "Description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs ",
-            "trustMecanism": "Centralised Relay",
+			"Operator": "Perpetual Altruism Ltd",
+			"Description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs ",
+			"trustMecanism": "Centralised Relay",
 			"url": "http://127.0.0.1"
-        }
-    ]
+		}
+	]
 }
 ```
 
@@ -59,7 +59,7 @@ None
 			"uniqueId": "0x6d2f0e37",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		},
 		{
 			"name":"Ethereum Testnet Ropsten",
@@ -68,7 +68,7 @@ None
 			"uniqueId": "0xeb4fb0d1",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
@@ -77,7 +77,7 @@ None
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		}
     ]
 }
