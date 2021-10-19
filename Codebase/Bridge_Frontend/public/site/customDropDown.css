@@ -89,7 +89,7 @@ License: none (public domain) */
    border-radius: 1em;
    /*border-top: 0;*/
    /*Color */
-   background: #eee;
+   background: #e0e0e0;
 }
 .select.open .select-options {
      opacity: 1;
@@ -108,7 +108,7 @@ License: none (public domain) */
 }
 .select-option:hover {
      cursor: pointer;
-     background-color: #b2b2b2;
+     background-color: #c0b2e6;
 }
 .select-option.selected {
      color: #ffffff;

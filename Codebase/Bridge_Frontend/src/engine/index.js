@@ -80,8 +80,8 @@ router.post('/preregistermigration', function (req, res) {
 });*/
 
 router.post('/iouMetadata', function (req, res) {
-    let tokId = req.body.tokId;
-    delete req.body.tokId;
+    console.log(req);
+    let tokId = req.body.originTokenId;
     let fileName =  tokId + ".json";//PB HERE IF NO .json EXT : BROWSER ASK TO DOWNLOAD
     fs.writeFile("public/metadata/" + fileName, JSON.stringify(req.body), function(err) {
         if(err) {

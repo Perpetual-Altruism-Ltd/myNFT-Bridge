@@ -98,74 +98,6 @@ TOP LEFT COLOR: #12132b*/
   box-sizing: border-box;
 }
 
-/*CUSTOM SELECT*/
-/*TODELETE*/
-.SelectorInput{
-  appearance: none;/*Remove default arrow*/
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  background-color: transparent;/*Remove default background*/
-  border: solid 2px #555;
-  border-radius: 2em;
-  padding: 0.5em;
-  padding-right: 1.5em;
-  margin: 0;
-  width: auto;
-  font-family: inherit;
-  font-size: inherit;
-  cursor: inherit;
-  line-height: inherit;
-  outline: none;/*Remove the border when focused */
-
-  /* also working
-  background: transparent;
-  background-image: url("data:image/svg+xml;utf8,
-  <svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'>
-  <path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
-  background-repeat: no-repeat;
-  background-position-x: 100%;
-  background-position-y: 5px;*/
-  min-width: 28em;
-}
-.SelectorInput::-ms-expand{/* Remove arrow For IE*/
-	display: none;
-}
-.DropDownArrow:after{
-  /*content: "\25b6";*/
-  content: "\142F";
-  font-weight: bold;
-  color: #555;
-  position: absolute; top: 0.5em; right: 0.5em;
-  /*-webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);*/
-  pointer-events: none;
-}
-.SelectorInput:focus{
-  appearance: none;
-  border-color: #000;
-}
-.SelectorInput:hover + .DropDownArrow:after{
-  color: #555;
-  position: absolute; bottom: 0.5em; right: 0.5em;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-.SelectorInput:focus + .DropDownArrow:after{
-  color: #000;
-  position: absolute; bottom: 0.5em; right: 0.5em;
-  -webkit-transform: rotate(90deg);
-  -moz-transform: rotate(90deg);
-  -ms-transform: rotate(90deg);
-  transform: rotate(90deg);
-}
-
-
-/*--------*/
-
 .TextInput{
   background-color: transparent;/*Remove default background*/
   border: solid 2px #555;
@@ -207,6 +139,7 @@ TOP LEFT COLOR: #12132b*/
 @-moz-keyframes loading-circle_spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); } }
 @keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
 
 .topBanner{
     margin-top: 30px;

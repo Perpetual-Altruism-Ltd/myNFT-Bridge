@@ -35,7 +35,7 @@ For more information, please refer to <http://unlicense.org/>
 var bridgeApp = {};
 var contracts = {};
 let migrationData = {};
-let ogTokenData = {};//ogTokenData is the origin token metadata JSON. It is the content of the token URI
+let ogTokenMetaData = {};//ogTokenMetaData is the origin token metadata JSON. It is the content of the token URI
 let accounts = [];
 let account = "";
 
@@ -293,7 +293,7 @@ var loadOgTokenData = async function () {
         return;
     }
     let selectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-    let ogEthNetwork = bridgeApp.net[getDropDownOptionText("OriginNetworkSelector", selectedIndex)];
+    let ogEthNetwork = bridgeApp.net[getDropDownOptionUniqueID("OriginNetworkSelector", selectedIndex)];
 
     if (parseInt(web3.currentProvider.chainId) != parseInt(ogEthNetwork.chainID)) {
         alert("Please connect to the original token network in your web3 provider");
@@ -399,18 +399,18 @@ var loadOgTokenMetaData = async function () {
                 } else { // show the result
                     //console.log(`Done, got ${xhr.response}`); // responseText is the server
                     var resp = xhr.response;
-                    ogTokenData = JSON.parse(resp);
+                    ogTokenMetaData = JSON.parse(resp);
                     console.log(resp);
 
-                    document.getElementById("OGTokenMetaName").textContent = ogTokenData.name;
-                    document.getElementById("OGTokenMetaDesc").textContent = ogTokenData.description;
+                    document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
+                    document.getElementById("OGTokenMetaDesc").textContent = ogTokenMetaData.description;
 
                     //Img loading
-                    let ext4 = ogTokenData.image.substr(ogTokenData.image.length - 4).toLowerCase();
+                    let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
                     if(ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
-                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenData.image) +'">';
-                    } else if(ogTokenData.image != null) {
-                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenData.image) + '">' + encodeURI(ogTokenData.image) + '>';
+                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
+                    } else if(ogTokenMetaData.image != null) {
+                        document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '>';
                     }
 
 
@@ -557,15 +557,14 @@ let packMigrationData = function(){
   //Dest owner
   migrationData.destOwner = document.getElementById("inputDestOwner").value;
 
-  //Migrated token metadata
+  //Migrated token metadata. Metadata on dest network
   switch(migrationTypeSelected){
     case IOUMigrationType:
-      migrationData.metadata = ogTokenData;
-      migrationData.metadata.name = "IOU of " + migrationData.metadata.name;
+      migrationData.metadata = getIOUPrefixedMetadata();
       break;
 
     default:
-      migrationData.metadata = ogTokenData;
+      migrationData.metadata = ogTokenMetaData;
   }
   return migrationData;
 }
@@ -581,7 +580,14 @@ let completeButtonClick = async function(){
   console.log(migrationData);
 }
 
-//Prompt user to connect to nez chain selected from destination network selector
+//Prompt user to connect to new chain selected from origin network selector
+addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
+  let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
+  console.log("Switching to network id " + chainIDSelected);
+  promptSwitchChain(chainIDSelected);//TODELETE cuz metamask support only.
+});
+
+//Prompt user to connect to new chain selected from destination network selector
 addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
   let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
   console.log("Switching to network id " + chainIDSelected);
@@ -675,7 +681,8 @@ let grantRelayOperatorPrivilege = async function(){
     .then((res) => {
       console.log("Relay is now an operator");
       console.log(res);
-      document.getElementById("RegistrationLoadingText").textContent = "Relay approved as an operator !";
+      document.getElementById("RegistrationLoadingText").textContent = "Waiting for the relay to proceed to the token transfert.";
+      //Waiting for the transaction to be accepted on the blockchain.
     });
   }catch(err){
     console.log("Error when setting relay as an operator: " + err);
@@ -749,13 +756,12 @@ let signEscrowHashButtonClick = function(){
   setDisplay(5);
 }
 
-
 //-----------------------------------Metadata prefixing------------------------------
 let getIOUPrefixedMetadata = function(){
   //Prefix Metadata
-  let IOUPrefixedMetadata;
-  IOUPrefixedMetadata = ogTokenData;
-  IOUPrefixedMetadata.name = "IOU of " + ogTokenData.name;
+  let IOUPrefixedMetadata = {};
+  IOUPrefixedMetadata = JSON.parse(JSON.stringify(ogTokenMetaData));//Deep copy
+  IOUPrefixedMetadata.name = "IOU of " + ogTokenMetaData.name;
   //Add migration data
   var ogNetSelectorIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
   IOUPrefixedMetadata.originUniverse = bridgeApp.networks[ogNetSelectorIndex].name;
@@ -774,7 +780,7 @@ let sendIOUPrefixedMetadata = async function(){
   xhrSend.setRequestHeader("Accept", "application/json");
   xhrSend.setRequestHeader("Content-Type", "application/json");
   xhrSend.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
+    if (xhrSend.readyState === 4) {
      console.log(xhrSend.status);
      console.log(xhrSend.responseText);
     };

@@ -1,6 +1,12 @@
-/*==================Use-case====================
+/*
+This code is inspired from https://andrejgajdos.com/custom-select-dropdown/
 
-//====In HTNL file====
+==================Use-case====================
+
+//====In HTML file====
+//Add the CSS in the HEAD of your HTML page
+<link rel="stylesheet" href="customDropDown.css">
+
 //This is your drop down structure to put where you want in your HTML file.
 //Choose an ID for the container. You will use this ID to modify the drop down with already built-in functions
 <div class="select-wrapper" id="CustomDropDown">
@@ -22,12 +28,13 @@ addDropDownOption("CustomDropDown", "Dell computer", "dell", "0x1")
 addDropDownOption("CustomDropDown", "Lenovo computer", "lenovo", "0x2")
 addDropDownOption("CustomDropDown", "Bosh washing machine", "bosh", "0x3")
 
-selectOptionByIndex("CustomDropDown", 0);
-getSelectedOptionIndex("CustomDropDown");
-getOptionDataValue("CustomDropDown", 1);
-getOptionText("CustomDropDown", 1);
-getOptionUniqueID("CustomDropDown", 1);
-addOnChangeCallback("CustomDropDown", function(index){
+selectDropDownOptionByIndex("CustomDropDown", 0);
+selectDropDownOptionByUniqueID("CustomDropDown", "0x3fbf5c9a");
+getDropDownSelectedOptionIndex("CustomDropDown");
+getDropDownOptionDataValue("CustomDropDown", 1);
+getDropDownOptionText("CustomDropDown", 1);
+getDropDownOptionUniqueID("CustomDropDown", 1);
+addDropDownOnChangeCallback("CustomDropDown", function(index){
   console.log("New selected item: " + index);
 })
 */
@@ -111,9 +118,10 @@ let addDropDownOnChangeCallback = function(wrapperId, callbackFunc){
 }
 
 /*
-Select the option corresponding to 'optionUniqueID' from the selector identified by 'wrapperId'
+Select the option corresponding to 'optionUniqueID' from the selector identified by 'wrapperId'.
+Nothing thrown and nothing changed if 'optionUniqueID' if a bad ID.
 */
-let selectDropDownOptionByID = function(wrapperId, optionUniqueID){
+let selectDropDownOptionByUniqueID = function(wrapperId, optionUniqueID){
   let select = document.getElementById(wrapperId);
   let options = select.querySelectorAll(".select-option");
 
@@ -143,7 +151,7 @@ let selectDropDownOptionByIndex = function(wrapperId, optionIndex){
   let options = select.querySelectorAll(".select-option");
   let option = options[optionIndex];
   if(option == undefined){
-    console.error("Bad optionIndex given to selectOptionByIndex(wrapperId, optionIndex)");
+    console.error("Bad optionIndex given to selectDropDownOptionByIndex(wrapperId, optionIndex)");
     return;
   }
   //Remove the previously selected item
@@ -173,7 +181,7 @@ let getDropDownSelectedOptionIndex = function(wrapperId){
     }
     cmptr++;
   }
-  console.error("No option selected in " + wrapperId + " when calling getSelectedOptionIndex(wrapperId)");
+  console.error("No option selected in " + wrapperId + " when calling getDropDownSelectedOptionIndex(wrapperId)");
   return -1;
 }
 
@@ -187,7 +195,7 @@ let getDropDownOptionDataValue = function(wrapperId, optionIndex){
   let option = options[optionIndex];
   //If optionIndex doesn't exists, return "" and display error
   if(option == undefined){
-    console.error("Bad optionIndex given to getOptionDataValue(wrapperId, optionIndex)");
+    console.error("Bad optionIndex given to getDropDownOptionDataValue(wrapperId, optionIndex)");
     return "";
   }else{
     return option.getAttribute("data-value");
@@ -203,7 +211,7 @@ let getDropDownOptionText = function(wrapperId, optionIndex){
   let option = options[optionIndex];
   //If optionIndex doesn't exists, return "" and display error
   if(option == undefined){
-    console.error("Bad optionIndex given to getOptionDataValue(wrapperId, optionIndex)");
+    console.error("Bad optionIndex given to getDropDownOptionText(wrapperId, optionIndex)");
     return "";
   }else{
     return option.textContent;
@@ -219,7 +227,7 @@ let getDropDownOptionUniqueID = function(wrapperId, optionIndex){
   let option = options[optionIndex];
   //If optionIndex doesn't exists, return "" and display error
   if(option == undefined){
-    console.error("Bad optionIndex given to getOptionDataValue(wrapperId, optionIndex)");
+    console.error("Bad optionIndex given to getDropDownOptionUniqueID(wrapperId, optionIndex)");
     return "";
   }else{
     return option.getAttribute("value");
