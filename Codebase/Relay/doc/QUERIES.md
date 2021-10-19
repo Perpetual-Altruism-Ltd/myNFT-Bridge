@@ -159,7 +159,19 @@ None
 ```json
 {
     "signedEscrowHash": "0x00",
-    "universe": "0x00",
-    "tokenId": "123"
+    "originUniverse": "0x00",
+    "originContract": "0x00",
+    "originTokenId": "123",
+    "destinationUniverse": "0x00",
+    "destinationContract": "0x00",
+    "destinationTokenId": "0x00"
+}
+```
+
+### Result
+
+```json
+{
+    "status": "IOU token minted on destination universe/contract"
 }
 ```
