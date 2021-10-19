@@ -37,7 +37,7 @@ None
 			"uniqueId": "0x6d2f0e37",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		},
 		{
 			"name":"Ethereum Testnet Ropsten",
@@ -46,7 +46,7 @@ None
 			"uniqueId": "0xeb4fb0d1",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
@@ -55,7 +55,7 @@ None
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
+            		"operatorAddress": "0x00"
 		}
     ]
 }
