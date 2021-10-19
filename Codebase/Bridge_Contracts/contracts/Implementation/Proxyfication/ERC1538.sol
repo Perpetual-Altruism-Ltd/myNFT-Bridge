@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: CC0-1.0
-pragma solidity 0.8.2;
+pragma solidity 0.8.9;
 
 /// @title ERC1538 Transparent Contract Standard
 /// @dev https://github.com/ethereum/EIPs/issues/1538

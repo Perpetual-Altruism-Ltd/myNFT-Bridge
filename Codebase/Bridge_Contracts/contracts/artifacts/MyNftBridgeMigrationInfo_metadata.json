@@ -1,0 +1,82 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_tokenWorld",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					}
+				],
+				"name": "ERC721MigrationURI",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"ERC721MigrationURI(address,uint256)": {
+					"notice": "Return the URI where one can get all the metadata regarding a migration of any token located in the same universe as the bridge"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MyNFTBridge.sol": "MyNftBridgeMigrationInfo"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Implementation/ERC721.sol": {
+			"keccak256": "0xa6297f1856dad920fce8fd672cdc844ea5a8ab0ed28046ccdc717500ea75de23",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://38b70fd581a954de06eb47d6b0a92fdf32618a0787dbf7c6ac3a8f0efe238b44",
+				"dweb:/ipfs/QmTs8qdLPSYK3kGPb9Rt2eSJVczKBuYcZXeRZXdFPj2Kbp"
+			]
+		},
+		"contracts/MyNFTBridge.sol": {
+			"keccak256": "0x548b63eaa0b0dd8c9da6069c19b5240f72b221e72a14727a3317aacec3058dd8",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://515ed2436cc565d967afc2ca8afc8062075be21ecb505e48800fda0505e84a47",
+				"dweb:/ipfs/QmS6AccCSUBi383tgdqwEegTkmDKjxRaGdpKScY7geGukF"
+			]
+		}
+	},
+	"version": 1
+}

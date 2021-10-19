@@ -49,7 +49,7 @@ module.exports = async(deployer, network, accounts) => {
     await deployer.deploy(ImplERC721TokenReceiver);
     await instancedProxy.updateContract(
         ImplERC721TokenReceiver.address, 
-        "onERC721Received(address,address,uint256)", 
+        "onERC721Received(address,address,uint256)onERC721Received(address,address,uint256,bytes)", 
         "ImplERC721TokenReceiver"
     );
 

@@ -1,0 +1,357 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originUniverse",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_originWorld",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_originTokenId",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originOwner",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originBridge",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationWorld",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationTokenId",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationOwner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_signee",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_migrationRelayedHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "MigrationArrivalRegisteredERC721Full",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originUniverse",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_originWorld",
+						"type": "bytes32"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_originTokenId",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originOwner",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes32",
+						"name": "_originBridge",
+						"type": "bytes32"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationWorld",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationTokenId",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_destinationOwner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "_signee",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bytes32",
+						"name": "_migrationRelayedHash",
+						"type": "bytes32"
+					}
+				],
+				"name": "MigrationArrivalRegisteredERC721IOU",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_originUniverse",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originBridge",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originWorld",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originTokenId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originOwner",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "_destinationWorld",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_destinationTokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_destinationOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_signee",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_height",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_relayedMigrationHashSigned",
+						"type": "bytes"
+					}
+				],
+				"name": "migrateFromFullERC721ToERC721",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes32",
+						"name": "_originUniverse",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originBridge",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originWorld",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originTokenId",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_originOwner",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "address",
+						"name": "_destinationWorld",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_destinationTokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "_destinationOwner",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_signee",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_height",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_relayedMigrationHashSigned",
+						"type": "bytes"
+					}
+				],
+				"name": "migrateFromIOUERC721ToERC721",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "Guillaume Gonnaud 2021",
+			"kind": "dev",
+			"methods": {
+				"migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": {
+					"details": "Throw if msg.sender is not a relay accredited by _destinationWorld Owner This is especially important as a rogue relay could theoritically release tokens put in escrow beforehand. This also mean that a token can be migrated back only by a relay accredited by the original token publisher. Contrary to IOU migrations, do not throw in case of mismatched token back and forth migration. ",
+					"params": {
+						"_destinationOwner": "An array of 32 bytes representing the final owner of the migrated token .  If the destination world is on an EVM, it is most likely an address.",
+						"_destinationTokenId": "An array of 32 bytes representing the tokenId world of the migrated token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_destinationWorld": "An array of 32 bytes representing the destination world of the migrated token.  If the destination bridge is on an EVM, it is most likely an address.",
+						"_height": "The height at which the origin token was put in escrow in the origin universe. Usually the block.timestamp, but different universes have different metrics",
+						"_originBridge": "An array of 32 bytes representing the origin bridge. If the origin bridge is on an EVM, it is most likely an address.",
+						"_originOwner": "An array of 32 bytes representing the original owner of the migrated token .  If the origin world is on an EVM, it is most likely an address.",
+						"_originTokenId": "An array of 32 bytes representing the tokenId of the origin token.  If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_originUniverse": "An array of 32 bytes representing the destination universe.  eg : \"Ropsten\", \"Moonbeam\". Please refer to the documentation for a standardized list of destination.",
+						"_originWorld": "An array of 32 bytes representing the origin world of the origin token.  If the origin bridge is on an EVM, it is most likely an address.",
+						"_relayedMigrationHashSigned": "The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee",
+						"_signee": "The address that will be verified as signing the transfer as legitimate on the destination If the owner has access to a private key, it should be the owner. A relay unable to lie on _signee from the departure bridge to here is a trustless relay"
+					}
+				},
+				"migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": {
+					"details": "Throw if msg.sender is not a relay accredited by _destinationWorld Owner This is especially important as a rogue relay could theoritically release tokens put in escrow beforehand. This also mean that a token can be migrated back only by a relay accredited by the original token publisher. Throw if the destination token is already in escrow with this bridge as a migration origin token but that  current _origin* parameters do not match the previous _destination* parameters : Only the IOU can claim the  original token back.",
+					"params": {
+						"_destinationOwner": "An array of 32 bytes representing the final owner of the migrated token .  If the destination world is on an EVM, it is most likely an address.",
+						"_destinationTokenId": "An array of 32 bytes representing the tokenId world of the migrated token.  If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_destinationWorld": "An array of 32 bytes representing the destination world of the migrated token.  If the destination bridge is on an EVM, it is most likely an address.",
+						"_height": "The height at which the origin token was put in escrow in the origin universe. Usually the block.timestamp, but different universes have different metrics",
+						"_originBridge": "An array of 32 bytes representing the origin bridge. If the origin bridge is on an EVM, it is most likely an address.",
+						"_originOwner": "An array of 32 bytes representing the original owner of the migrated token .  If the origin world is on an EVM, it is most likely an address.",
+						"_originTokenId": "An array of 32 bytes representing the tokenId of the origin token.  If the origin token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.",
+						"_originUniverse": "An array of 32 bytes representing the destination universe.  eg : \"Ropsten\", \"Moonbeam\". Please refer to the documentation for a standardized list of destination.",
+						"_originWorld": "An array of 32 bytes representing the origin world of the origin token.  If the origin bridge is on an EVM, it is most likely an address.",
+						"_relayedMigrationHashSigned": "The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee",
+						"_signee": "The address that will be verified as signing the transfer as legitimate on the destination If the owner has access to a private key, it should be the owner. A relay unable to lie on _signee from the departure bridge to here is a trustless relay"
+					}
+				}
+			},
+			"title": "MyNFTBridgeERC721toERC721Arrival",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": {
+					"notice": "Declare a migration of an ERC-721 token from a different bridge toward this bridge as a full migration"
+				},
+				"migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": {
+					"notice": "Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token."
+				}
+			},
+			"notice": "Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/MyNFTBridge.sol": "MyNFTBridgeERC721toERC721Arrival"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Implementation/ERC721.sol": {
+			"keccak256": "0xa6297f1856dad920fce8fd672cdc844ea5a8ab0ed28046ccdc717500ea75de23",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://38b70fd581a954de06eb47d6b0a92fdf32618a0787dbf7c6ac3a8f0efe238b44",
+				"dweb:/ipfs/QmTs8qdLPSYK3kGPb9Rt2eSJVczKBuYcZXeRZXdFPj2Kbp"
+			]
+		},
+		"contracts/MyNFTBridge.sol": {
+			"keccak256": "0x548b63eaa0b0dd8c9da6069c19b5240f72b221e72a14727a3317aacec3058dd8",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://515ed2436cc565d967afc2ca8afc8062075be21ecb505e48800fda0505e84a47",
+				"dweb:/ipfs/QmS6AccCSUBi383tgdqwEegTkmDKjxRaGdpKScY7geGukF"
+			]
+		}
+	},
+	"version": 1
+}

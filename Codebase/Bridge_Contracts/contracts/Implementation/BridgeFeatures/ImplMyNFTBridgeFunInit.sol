@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity 0.8.2;
+pragma solidity 0.8.9;
 
 import "../ImplMemoryStructure.sol";
 
@@ -14,6 +14,7 @@ contract ImplMyNFTBridgeFunInit  is ImplMemoryStructure {
     function init(
        string calldata _localUniverse
     ) external {
+        require(localUniverse == 0x0, "local universe value already initialized");
         localUniverse = stringToBytes32(_localUniverse);
     }
 

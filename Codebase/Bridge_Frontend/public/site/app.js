@@ -109,7 +109,6 @@ setupDropDown("OriginNetworkSelector");//The ID of your dropdown container
 setupDropDown("RelaySelector");//The ID of your dropdown container
 setupDropDown("DestinationNetworkSelector");//The ID of your dropdown container
 
-
 var loadNets = async function (_callback) {
     bridgeApp.networks = [];
     bridgeApp.net = {};
@@ -130,7 +129,7 @@ var loadNets = async function (_callback) {
 
                 //Create a mapping from networkUniqueID
                 for (var i = 0; i < bridgeApp.networks.length; i++) {
-                    bridgeApp.net[bridgeApp.networks[i].uniqueId] = bridgeApp.networks[i];
+                    bridgeApp.net[bridgeApp.networks[i].name] = bridgeApp.networks[i];
                 } //You can now access Mainnet network data by calling bridgeApp.net.0x6d2f0e37
 
 
@@ -213,7 +212,7 @@ var loadERC721ABI = async function () {
         xhr.send();
     } catch (err) {
         console.log(err);
-        alert("Could not ERC721 ABI at " + pathERC721ABI);
+        alert("Could not load ERC721 ABI at " + pathERC721ABI);
     };
 }
 loadERC721ABI();
@@ -236,7 +235,7 @@ var loadERC721MetadataABI = async function () {
         xhr.send();
     } catch (err) {
         console.log(err);
-        alert("Could not ERC721Metadata ABI at " + pathERC721Metadata);
+        lert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
     };
 }
 loadERC721MetadataABI();

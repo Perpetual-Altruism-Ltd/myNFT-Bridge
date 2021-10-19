@@ -6,42 +6,48 @@
 			"chainID": 1,
 			"networkID":1,
 			"uniqueId": "0x6d2f0e37",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		},
 		{
 			"name":"Ethereum Testnet Ropsten",
 			"chainID": 3,
 			"networkID":3,
 			"uniqueId": "0xeb4fb0d1",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
 			"chainID": 4,
 			"networkID":4,
 			"uniqueId": "0x07dac20e",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		},
 		{
 			"name":"Ethereum Testnet Goerli",
 			"chainID": 5,
 			"networkID":5,
 			"uniqueId": "0x3fbf5c9a",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		},
 		{
 			"name":"Ethereum Testnet Kovan",
 			"chainID": 42,
 			"networkID": 42,
 			"uniqueId": "0xee0bec75",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		},
 		{
 			"name":"myNFT Sidechain",
 			"chainID": 323232,
 			"networkID": 323232,
 			"uniqueId": "0xd1e94e57",
-			"bridgeAdress": "0x0"
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
 		}
 		
 	

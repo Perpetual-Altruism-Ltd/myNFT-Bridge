@@ -6,7 +6,7 @@ pragma solidity 0.8.9;
 
 import "../ERC721.sol";
 
-contract ImplTestERC721 is ERC721 {
+contract IOUExample is ERC721 {
 
     address public owner; //Address of the smart contract creator
 
@@ -22,7 +22,7 @@ contract ImplTestERC721 is ERC721 {
     mapping(uint256 => address) internal preminters; //Each token preminter
 
     // Total number of minted token
-    uint256 internal mintedTokens;
+    uint256 public mintedTokens;
 
     //Set the owner as the smart contract creator
     constructor(){
@@ -33,7 +33,10 @@ contract ImplTestERC721 is ERC721 {
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
 
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
         mintedTokens = mintedTokens + 1;
+        require((preminters[mintedTokens] == address(0) || preminters[mintedTokens] == msg.sender) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
         tokenOwners[mintedTokens] = msg.sender;
         balanceOfToken[msg.sender] = balanceOfToken[msg.sender] + 1;
 
@@ -41,14 +44,40 @@ contract ImplTestERC721 is ERC721 {
         return mintedTokens;
     }
 
+    function mint (uint256 _tokenID) external returns(uint256){
+
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require((preminters[_tokenID] == address(0) || preminters[_tokenID] == msg.sender) && tokenOwners[_tokenID] == address(0), "This token is already minted");
+        mintedTokens = mintedTokens + 1;
+        tokenOwners[_tokenID] = msg.sender;
+        emit Transfer(address(0x0), msg.sender, _tokenID);
+        return _tokenID;
+    }
+
     /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
     /// @return the future minted tokenId
     function premintFor(address _preminter) external returns(uint256){
 
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
         mintedTokens = mintedTokens + 1;
+        require(preminters[mintedTokens] == address(0) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
         preminters[mintedTokens] = _preminter;
 
         return mintedTokens;
+    }
+
+    /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
+    /// @return the future minted tokenId
+    function premintFor(address _preminter, uint256 _tokenID) external returns(uint256){
+
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
+        mintedTokens = mintedTokens + 1;
+        require(preminters[_tokenID] == address(0) &&  tokenOwners[_tokenID] == address(0), "This token is already minted");
+        preminters[_tokenID] = _preminter;
+
+        return _tokenID;
     }
 
 
@@ -214,22 +243,26 @@ contract ImplTestERC721 is ERC721 {
 
             //Valid nft <=> owner != 0x0
             require(_from != address(0x0), "_tokenId is not a valid NFT");
+
+            //Operator verification
+            require(
+                msg.sender == _from || // the current owner
+                ownerOperators[_from][msg.sender] || // an authorized operator
+                msg.sender == tokenOperator[_tokenId], // the approved address for this NFT
+                "msg.sender is not allowed to transfer this NFT"
+            );
+
+
         } else { //If requiring minting
             require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
-            require(msg.sender == preminters[_tokenId], "_tokenId has not be approved for minting by msg.sender");
+            require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
+            require(msg.sender == owner, "only this smart contract owner can premint tokens");
         }
 
         //Prevent 0x0 burns
         require(_to != address(0x0), "_to cannot be the address 0");
 
 
-        //Operator verification
-        require(
-            msg.sender == _from || // the current owner
-            ownerOperators[_from][msg.sender] || // an authorized operqtor
-            msg.sender == tokenOperator[_tokenId], // the approved address for this NFT
-            "msg.sender is not allowed to transfer this NFT"
-        );
 
         //Transfer the token ownership record
         tokenOwners[_tokenId] = _to;
@@ -252,7 +285,56 @@ contract ImplTestERC721 is ERC721 {
     ///  Metadata JSON Schema".
     function tokenURI(uint256 _tokenId) external view returns(string memory){
         require(tokenOwners[_tokenId] != address(0), "This token is not minted");
-        return string(abi.encodePacked("https://cryptograph.co/tokenuri/0x2449835e86a539ab33f5773729c0db42e89016ff"));
+        return string(abi.encodePacked("http://127.0.0.1/tokens/", addressToString(address(this)), "/", uint2str(_tokenId)));
+
+    }
+    
+        /// @notice Convert an Ethereum address to a human readable string
+    /// @param _addr The adress you want to convert
+    /// @return The address in 0x... format
+    function addressToString(address _addr) internal pure returns(string memory)
+    {
+        bytes32 addr32 = bytes32(uint256(uint160(_addr))); //Put the address 20 byte address in a bytes32 word
+        bytes memory alphabet = "0123456789abcdef";  //What are our allowed characters ?
+
+        //Initializing the array that is gonna get returned
+        bytes memory str = new bytes(42);
+
+        //Prefixing
+        str[0] = '0';
+        str[1] = 'x';
+
+        for (uint256 i = 0; i < 20; i++) { //iterating over the actual address
+
+            /*
+                proper offset : output starting at 2 because of '0X' prefix, 1 hexa char == 2 bytes.
+                input starting at 12 because of 12 bytes of padding, byteshifted because 2byte == 1char
+            */
+            str[2+i*2] = alphabet[uint8(addr32[i + 12] >> 4)];
+            str[3+i*2] = alphabet[uint8(addr32[i + 12] & 0x0f)];
+        }
+        return string(str);
+    }
+
+    function uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
+        unchecked{
+            if (_i == 0) {
+                return "0";
+            }
+            uint j = _i;
+            uint len;
+            while (j != 0) {
+                len++;
+                j /= 10;
+            }
+            bytes memory bstr = new bytes(len);
+            uint k = len - 1;
+            while (_i != 0) {
+                bstr[k--] = bytes1(uint8(48 + _i % 10));
+                _i /= 10;
+            }
+            return string(bstr);
+        }
     }
 
 }

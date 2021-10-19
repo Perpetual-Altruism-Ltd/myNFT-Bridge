@@ -163,6 +163,10 @@ class MetamaskConnector extends ConnectorManager {
 				// The metamask provider emits this event when it receives some message that the consumer should be notified of.
 				// The kind of message is identified by the type string. (subscription is one of that)
 				console.log("*** Event message emmited ***");
+				if(globalProviderMessageHandler != null){
+					globalProviderMessageHandler(providerMessage);
+				}
+				
 			});
 
 			try {

@@ -1,6 +1,5 @@
 {
 	"relays": [
-
 		{
 			"name":"MyNFT Relay",
 			"url": "migration.mynft.com",
@@ -10,6 +9,10 @@
 					"rinkeby": "0xb3B841Df340B79778627b7fAAf1D6DD33839A473"
 				}
 
+		},
+    {
+			"name":"Localhost Relay",
+			"url": "http://127.0.0.1"
 		}
-	]
+    ]
 }

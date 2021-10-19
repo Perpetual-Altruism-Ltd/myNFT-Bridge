@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Unlicense
-pragma solidity 0.8.2;
+pragma solidity 0.8.9;
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplMemoryStructure
@@ -62,6 +62,7 @@ contract ImplMemoryStructure {
     //Mapping storing if a world is trusting a relay to handle it's tokens
     mapping(address => mapping(address => bool)) internal isAccreditedRelayForWorld; // (world => relay => isAccredited)
 
-
+    //Mapping storing who was the operator that put the token inside the relay
+    mapping(bytes32 => address) internal migrationOperator;  // escrowHash => operator address
  
 }

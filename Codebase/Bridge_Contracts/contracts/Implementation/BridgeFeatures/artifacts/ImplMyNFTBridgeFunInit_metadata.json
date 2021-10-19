@@ -1,0 +1,99 @@
+{
+	"compiler": {
+		"version": "0.8.9+commit.e5eed63a"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_localUniverse",
+						"type": "string"
+					}
+				],
+				"name": "init",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "source",
+						"type": "string"
+					}
+				],
+				"name": "stringToBytes32",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "result",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"author": "Guillaume Gonnaud 2021",
+			"kind": "dev",
+			"methods": {
+				"init(string)": {
+					"params": {
+						"_localUniverse": "The local universe this bridge is deployed in. Refer to ImplMemoryStructure for a list of standardized universes."
+					}
+				}
+			},
+			"title": "ImplMyNFTBridgeFunInit",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"init(string)": {
+					"notice": "Initialize a bridge"
+				}
+			},
+			"notice": "The implementation of a bridge initilalisation. Call this function at once before using the bridge.",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": "ImplMyNFTBridgeFunInit"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": {
+			"keccak256": "0x624138fe3a78abf6bb33ad1bbc8c67e07b7b8096ce36f24abd4aa53891e767f5",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://a8e09d06dbac559c9492b48749661a22dd5c7ad58294df2938e04b11688a3750",
+				"dweb:/ipfs/QmRwRJXEaBzdvqjwB1cGv1aTdnKksSh3fNQWif8Bn6Nxyt"
+			]
+		},
+		"contracts/Implementation/ImplMemoryStructure.sol": {
+			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
+				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+			]
+		}
+	},
+	"version": 1
+}

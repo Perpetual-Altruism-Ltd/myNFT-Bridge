@@ -1,0 +1,918 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"görli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)": "ece34ef9",
+			"acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)": "4e641890",
+			"accrediteRelay(address,address)": "42787bc6",
+			"generateMigrationHashERC721Full(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "0eb55f08",
+			"generateMigrationHashERC721IOU(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "c25b0c09",
+			"getProofOfEscrowHash(bytes32)": "f57dc650",
+			"isAccreditedRelay(address,address)": "69491d1b",
+			"isMigrationPreRegisteredERC721(bytes32)": "5ceb78e1",
+			"migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": "69f0e0c4",
+			"migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": "94696e78",
+			"migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "d0c1d38b",
+			"migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "ea841b47",
+			"onERC721Received(address,address,uint256,bytes)": "150b7a02"
+		}
+	},
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_originWorld",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_originTokenId",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originOwner",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originBridge",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationWorld",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationTokenId",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationOwner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_migrationRelayedHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "MigrationArrivalRegisteredERC721Full",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_originWorld",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_originTokenId",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originOwner",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_originBridge",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationWorld",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationTokenId",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_destinationOwner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_migrationRelayedHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "MigrationArrivalRegisteredERC721IOU",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "MigrationDeparturePreRegisteredERC721Full",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"indexed": true,
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"indexed": false,
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "MigrationDeparturePreRegisteredERC721IOU",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				},
+				{
+					"indexed": true,
+					"internalType": "bytes32",
+					"name": "_escrowHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "TokenDepositedInEscrowERC721",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				}
+			],
+			"name": "acceptedMigrationDestinationERC721Full",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				}
+			],
+			"name": "acceptedMigrationDestinationERC721IOU",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_relay",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_world",
+					"type": "address"
+				}
+			],
+			"name": "accrediteRelay",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_originBridge",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originHeight",
+					"type": "bytes32"
+				}
+			],
+			"name": "generateMigrationHashERC721Full",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_originBridge",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originHeight",
+					"type": "bytes32"
+				}
+			],
+			"name": "generateMigrationHashERC721IOU",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "pure",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "getProofOfEscrowHash",
+			"outputs": [
+				{
+					"internalType": "bytes32",
+					"name": "",
+					"type": "bytes32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_relay",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_world",
+					"type": "address"
+				}
+			],
+			"name": "isAccreditedRelay",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "isMigrationPreRegisteredERC721",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_destinationWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_destinationTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_destinationOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_height",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_relayedMigrationHashSigned",
+					"type": "bytes"
+				}
+			],
+			"name": "migrateFromFullERC721ToERC721",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_originUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_destinationWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_destinationTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_destinationOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_height",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_relayedMigrationHashSigned",
+					"type": "bytes"
+				}
+			],
+			"name": "migrateFromIOUERC721ToERC721",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				}
+			],
+			"name": "migrateToERC721Full",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_signee",
+					"type": "bytes32"
+				}
+			],
+			"name": "migrateToERC721IOU",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_operator",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "_from",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_tokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_data",
+					"type": "bytes"
+				}
+			],
+			"name": "onERC721Received",
+			"outputs": [
+				{
+					"internalType": "bytes4",
+					"name": "",
+					"type": "bytes4"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}
