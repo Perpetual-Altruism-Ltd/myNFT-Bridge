@@ -1,27 +1,5 @@
 # List of queries
 
-## /getRelays [type GET]
-
-### Input parameters
-
-None
-
-### Result
-
-```json
-{
-	"relays": [
-        {
-			"name":"Localhost Relay",
-            "Operator": "Perpetual Altruism Ltd",
-            "Description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs ",
-            "trustMecanism": "Centralised Relay",
-			"url": "http://127.0.0.1"
-        }
-    ]
-}
-```
-
 ## /allocateTokenId [type POST]
 
 ### Input parameters
@@ -89,7 +67,7 @@ None
 
 ```json
 {
-    "universe": "0x00"
+    "universeUniqueId": "0x07dac20e"
 }
 ```
 

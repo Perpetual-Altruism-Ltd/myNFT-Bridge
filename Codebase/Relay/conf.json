@@ -1,0 +1,77 @@
+{
+    "ethereumRpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+    "port": 3000,
+    "migrationPaths": [
+        {
+            "from":"Ethereum Testnet Ropsten",
+            "to":"Ethereum Testnet Rinkeby",
+            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
+        },
+        {
+            "from":"Ethereum Testnet Rinkeby",
+            "to":"Ethereum Testnet Ropsten",
+            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
+        },
+        {
+            "from":"Ethereum Testnet Ropsten",
+            "to":"Ethereum Testnet Ropsten",
+            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
+        }
+    ],
+    "universes": [
+		{
+			"name":"Ethereum Mainnet",
+			"chainID": 1,
+			"networkID":1,
+			"uniqueId": "0x6d2f0e37",
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/",
+            "operatorAddress": "0x00",
+            "contracts": [
+                {
+                    "address": "0x00",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+		},
+		{
+			"name":"Ethereum Testnet Ropsten",
+			"chainID": 3,
+			"networkID":3,
+			"uniqueId": "0xeb4fb0d1",
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/",
+            "operatorAddress": "0x00",
+            "contracts": [
+                {
+                    "address": "0x00",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+		},
+		{
+			"name":"Ethereum Testnet Rinkeby",
+			"chainID": 4,
+			"networkID":4,
+			"uniqueId": "0x07dac20e",
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/",
+            "operatorAddress": "0x00",
+            "contracts": [
+                {
+                    "address": "0x00",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+		}
+    ]
+}
