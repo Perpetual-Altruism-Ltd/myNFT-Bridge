@@ -1,8 +1,15 @@
 {
 	"relays": [
-        {
-			"name":"Localhost Relay",
-			"url": "http://127.0.0.1"
+
+		{
+			"name":"MyNFT Relay",
+			"url": "migration.mynft.com",
+      "uniqueId": "0x6d2f0e37",
+			"relayNetworkaddr":
+				{
+					"rinkeby": "0xb3B841Df340B79778627b7fAAf1D6DD33839A473"
+				}
+
 		}
-    ]
+	]
 }
