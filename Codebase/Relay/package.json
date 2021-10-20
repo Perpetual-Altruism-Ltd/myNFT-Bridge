@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "ipfs-http-client": "^53.0.1",
     "joi": "^17.4.2",
     "nodemon": "^2.0.13",
     "uuid": "^8.3.2",

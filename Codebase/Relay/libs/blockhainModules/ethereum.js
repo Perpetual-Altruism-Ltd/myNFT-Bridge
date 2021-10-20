@@ -7,21 +7,13 @@ const EventEmitter = require('events')
 class Ethereum extends EventEmitter {
     constructor(){
         super()
-        this.web3Provider = new Web3.providers.WebsocketProvider(Conf.ethereumRpc);
+        this.web3Provider = new Web3.providers.WebsocketProvider(Conf.ethereumRpc)
         this.web3Instance = new Web3(this.web3Provider)
         Logger.info(`Web3 ethereum querier instanciated on rpc ${Conf.ethereumRpc}`)
     }
     
     listenForOperator(contract, tokenId) {
         const web3Contract = new this.web3Instance.eth.Contract(ERC721Abi, contract)
-
-
-        web3Contract.events.Approval({
-            filter: { tokenId: 0 }
-        },(err, data) => {
-            console.log('on', err, data)
-            this.emit('operatorSetted', data)
-        })
 
         web3Contract.once('Approval', { filter: { tokenId: tokenId } }, (err, data) => {
             console.log('once', err, data)
