@@ -8,21 +8,21 @@
 6. Frontend read destination universes available and display them in dropdown
 7. User select migration type (redeem or mint iou)
 8. Frontend read its config to get available relays and user select the wished relay
-9. User select the destination world ---> To be defined
-10. User select the destination token ---> To be defined
+9. User select the destination world, which is given by the relay
+10. User select the destination token id, which is given by the relay
 11. User fill in the destination address
 12. User click complete
 13. Frontend display the transfer datas and allow to continue
 14. User sign the data of the transfer via metamask
-16. User set relay as operator of the origin token
-17. Frontend  notify backend that the token is ready to be transfered and give the signed data on step 14
-18. Frontend start polling the relay for escrow hash
-19. The relay transfer the origin token to the bridge and emit an escrow hash
-20. User sign the escrow hash along with the first signature datas (all the migration data)
-21. Frontend send to relay these signature data
-22. The relay edit the origin token to forge a IOU token
-23. The relay start minting the new IOU token
-24. The frontend poll until the relay say that everything is finished
+15. User set relay as operator of the origin token
+16. Frontend  notify backend that the token is ready to be transfered and give the signed data on step 14
+17. Frontend start polling the relay for escrow hash
+18. The relay transfer the origin token to the bridge and emit an escrow hash
+19. User sign the escrow hash along with the first signature datas (all the migration data)
+20. Frontend send to relay these signature data
+21. The relay edit the origin token to forge a IOU token
+22. The relay start minting the new IOU token
+23. The frontend poll until the relay say that everything is finished
 
 
 
