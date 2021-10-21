@@ -1,4 +1,5 @@
 {
+    "ipfsApiUrl": "http://localhost:5001/api/v0",
     "ethereumRpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
     "port": 3000,
     "migrationPaths": [

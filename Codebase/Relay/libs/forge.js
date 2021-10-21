@@ -1,35 +1,51 @@
 const Jimp = require('jimp')
+const IPFS = require('./ipfsClient')
+
 
 class Forge {
-    constructor(){}
-
-    async _uploadImage(imageBuffer){
-        //IPFS call to upload image buffer
-
-        return 'https://cloudflare-ipfs.com/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/m/Vincent_van_Gogh_-_Self-Portrait_-_Google_Art_Project_(454045).jpg'
+    constructor(){
+        this.ipfsClient = new IPFS()        
     }
 
+    /**
+     * Upload an image to IPFS
+     * @param {Buffer} imageBuffer : The buffer of data containing the image
+     */
+    async _uploadImage(imageBuffer){
+        return await this.ipfsClient.addFileObj(null, imageBuffer)
+    }
+
+    /**
+     * Modify an image to add the mention 'I AM AN IOU'
+     * @param {string} imageUri : The url of the image to modify
+     */
     async _forgeImage(imageUri){
         const image = await Jimp.read(imageUri)
         const font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK)
-        image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'I AM A IOU')
+        image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'I AM AN IOU')
 
         return image.getBuffer('image/jpg')
     }
 
-    async _forgeMetadata(originMetadata){
+    /**
+     * Forge IOU NFT metadata from original NFT metadata
+     * @param {JSON Object} originalMetadata 
+     */
+    async _forgeMetadata(originalMetadata){
         return {
-            name: `IOU of ${originMetadata.name}`,
-            description: `IOU of ${originMetadata.description}`,
-            image: await this._uploadImage(await this._forgeImage(originMetadata.image)),
-            from: originMetadata
+            name: `IOU of ${originalMetadata.name}`,
+            description: `IOU of ${originalMetadata.description}`,
+            image: await this._uploadImage(await this._forgeImage(originalMetadata.image)),
+            from: originalMetadata
         }
     }
 
+    /**
+     * Forge IOU NFT metadata from original NFT metadata
+     * @param {JSON Object} originalMetadata 
+     */
     async forgeIOUMetadata(originalMetadata){
-        const IOUMetadata = await this._forgeMetadata(originMetadata)
-        //IPFS call to upload metadata
-        return 'https://cloudflare-ipfs.com/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco/I/m/truc.json'
+        return await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalMetadata))
     }
 }
 

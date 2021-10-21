@@ -1,9 +1,10 @@
 const Logger = require('./winston.js')('IPFS');
 const IPFS = require('ipfs-http-client');
+const Conf = require('../conf')
 
 class IPFSClient {
     constructor() {
-        this.ipfsInstance = IPFS.create('http://localhost:5001/api/v0')
+        this.ipfsInstance = IPFS.create(Conf.ipfsApiUrl)
     }
 
     /**
