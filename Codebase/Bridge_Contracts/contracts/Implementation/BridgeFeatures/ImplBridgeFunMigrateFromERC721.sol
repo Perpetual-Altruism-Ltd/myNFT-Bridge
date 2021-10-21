@@ -38,8 +38,8 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
-    /// @param _height The height at which the origin token was put in escrow in the origin universe.
-    /// Usually the block.timestamp, but different universes have different metrics
+    /// @param _height The verification parameter allowing to check which fork was the escrow made on. Usually 
+    /// equals to blockhash(block.number - 1) ^ bytes32(uint(uint160(address(block.coinbase))
     /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,

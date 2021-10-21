@@ -1,24 +1,14 @@
 var express = require('express');
+const fs = require('fs');
 const { resolve } = require('path');
 var router = express.Router();
 
 var conf = require('../../conf');
-router.get('/', function (req, res) {
-    options = {};
-    res.render('home', {
-        options: options,
-    });
 
+/* Redirect all routes to our "index.html" file */
+router.get("/*", (req, res) => {
+  res.sendFile(resolve("public/site/display", "index.html"));
 });
-
-router.get('/bridge', function (req, res) {
-    options = {};
-    res.render('migrate', {
-        options: options,
-    });
-
-});
-
 
 // ======= EXPORT THE ROUTER =========================
 module.exports = router;

@@ -17,15 +17,15 @@ async function connection() {
     connector.onConnection = async () => {
         const accounts = await connector.web3.eth.getAccounts();
         document.querySelector(".address").innerHTML = accounts[0];
-    
+
         colorContract = new ColorContractManager(new connector.web3.eth.Contract(colorJSON, colorContractAddress), accounts[0]);
         refresh();
     };
-    
+
     connector.onDisconnection = () => {
         window.location.href = "./index.html";
     };
-    
+
     connector.onAccountChanged = (account) => {
         document.querySelector(".address").innerHTML = account;
     };
@@ -59,7 +59,7 @@ const balanceOfSpinner = document.querySelector('.balanceOfSpinner');
 
 balanceOfButton.addEventListener('click', () => {
 	balanceOfSpinner.hidden = false;
-	
+
 	colorContract.balanceOf(document.querySelector('.balanceOfInput').value).then(data => {
 		document.querySelector('.balanceOf').innerHTML = data;
 		balanceOfSpinner.hidden = true;
