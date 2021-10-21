@@ -318,7 +318,7 @@ export default class extends AbstractView {
     //Load ERC721 Metadata ABI
     loadERC721MetadataABI();
     //Auto connect to metamask if wallet exists
-    setTimeout(endLoadMetamaskConnection, 500);
+    setTimeout(endLoadMetamaskConnection, 1000);
 
 
     //Setting up interface interactions
