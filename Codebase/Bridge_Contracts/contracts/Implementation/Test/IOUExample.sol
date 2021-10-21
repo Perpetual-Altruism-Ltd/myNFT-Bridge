@@ -33,7 +33,10 @@ contract IOUExample is ERC721 {
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
 
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
         mintedTokens = mintedTokens + 1;
+        require((preminters[mintedTokens] == address(0) || preminters[mintedTokens] == msg.sender) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
         tokenOwners[mintedTokens] = msg.sender;
         balanceOfToken[msg.sender] = balanceOfToken[msg.sender] + 1;
 
@@ -41,14 +44,40 @@ contract IOUExample is ERC721 {
         return mintedTokens;
     }
 
+    function mint (uint256 _tokenID) external returns(uint256){
+
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require((preminters[_tokenID] == address(0) || preminters[_tokenID] == msg.sender) && tokenOwners[_tokenID] == address(0), "This token is already minted");
+        mintedTokens = mintedTokens + 1;
+        tokenOwners[_tokenID] = msg.sender;
+        emit Transfer(address(0x0), msg.sender, _tokenID);
+        return _tokenID;
+    }
+
     /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
     /// @return the future minted tokenId
     function premintFor(address _preminter) external returns(uint256){
 
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
         mintedTokens = mintedTokens + 1;
+        require(preminters[mintedTokens] == address(0) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
         preminters[mintedTokens] = _preminter;
 
         return mintedTokens;
+    }
+
+    /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
+    /// @return the future minted tokenId
+    function premintFor(address _preminter, uint256 _tokenID) external returns(uint256){
+
+        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+
+        mintedTokens = mintedTokens + 1;
+        require(preminters[_tokenID] == address(0) &&  tokenOwners[_tokenID] == address(0), "This token is already minted");
+        preminters[_tokenID] = _preminter;
+
+        return _tokenID;
     }
 
 
@@ -214,22 +243,26 @@ contract IOUExample is ERC721 {
 
             //Valid nft <=> owner != 0x0
             require(_from != address(0x0), "_tokenId is not a valid NFT");
+
+            //Operator verification
+            require(
+                msg.sender == _from || // the current owner
+                ownerOperators[_from][msg.sender] || // an authorized operator
+                msg.sender == tokenOperator[_tokenId], // the approved address for this NFT
+                "msg.sender is not allowed to transfer this NFT"
+            );
+
+
         } else { //If requiring minting
             require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
-            require(msg.sender == preminters[_tokenId], "_tokenId has not be approved for minting by msg.sender");
+            require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
+            require(msg.sender == owner, "only this smart contract owner can premint tokens");
         }
 
         //Prevent 0x0 burns
         require(_to != address(0x0), "_to cannot be the address 0");
 
 
-        //Operator verification
-        require(
-            msg.sender == _from || // the current owner
-            ownerOperators[_from][msg.sender] || // an authorized operqtor
-            msg.sender == tokenOperator[_tokenId], // the approved address for this NFT
-            "msg.sender is not allowed to transfer this NFT"
-        );
 
         //Transfer the token ownership record
         tokenOwners[_tokenId] = _to;
