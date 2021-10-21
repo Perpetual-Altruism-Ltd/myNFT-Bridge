@@ -3,7 +3,7 @@ const IPFS = require('ipfs-http-client');
 
 class IPFSClient {
     constructor() {
-        this.ipfsInstance = IPFS.create('/ip4/127.0.0.1/tcp/5001')
+        this.ipfsInstance = IPFS.create('http://localhost:5001/api/v0')
     }
 
     /**
