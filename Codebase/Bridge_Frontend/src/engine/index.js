@@ -2,21 +2,6 @@ var express = require('express');
 const fs = require('fs');
 const { resolve } = require('path');
 var router = express.Router();
-/*
-const Web3 = require('web3');
-const provider = new Web3.providers.WebsocketProvider("wss://rinkeby.infura.io/ws/v3/f96a777fce0a4e30ad13544c52314cd5");//infura nico's node
-const web3 = new Web3(provider);
-const relayPubAddr = "0xb3B841Df340B79778627b7fAAf1D6DD33839A473";
-const relayPrivAddr = "74479fdf522607680f827d014011dbabb90429113e05301fcde7c6d74f63cb5e";
-let ABIS = {};
-
-let loadERC721ABI = async function(){
-  fs.readFile("public/ABI/ERC721.json", 'utf8', function(err, data) {
-      if(err) return console.log(err);
-      ABIS.ERC721 = data;
-  });
-}
-loadERC721ABI();*/
 
 var conf = require('../../conf');
 router.get('/', function (req, res) {
@@ -33,7 +18,15 @@ router.get('/bridge', function (req, res) {
     });
 });
 
-/*THIS IS THE WORK OF THE RELAY WHICH WE WILL CALL BY RPC
+/* Redirect all routes to our "index.html" file */
+router.get("/*", (req, res) => {
+  options = {};
+  res.render('migrate', {
+      options: options,
+  });
+});
+
+/*==================THIS IS THE WORK OF THE RELAY WHICH WE WILL CALL BY RPC=====================
 router.post('/preregistermigration', function (req, res) {
     let migrationData = req.body.migrationData;
     console.log("Pre registering migration of token " + migrationData.tokenName + " from universe " + migrationData.ogNet + " to " + migrationData.destNet);
