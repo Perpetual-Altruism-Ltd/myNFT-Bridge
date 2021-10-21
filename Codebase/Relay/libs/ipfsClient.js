@@ -9,4 +9,8 @@ class IPFSClient {
     async addJson(json){
         return await this.ipfsInstance.add(JSON.stringify(json))
     }
+
+    async pinFile(cid){
+        return await this.ipfsInstance.pinFile(cid)
+    }
 }
