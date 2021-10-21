@@ -20,7 +20,7 @@ class Forge {
     async _forgeMetadata(originMetadata){
         return {
             name: `IOU of ${originMetadata.name}`,
-            description: `IOU of ${originMetadata.name}`,
+            description: `IOU of ${originMetadata.description}`,
             image: await this._uploadImage(await this._forgeImage(originMetadata.image)),
             from: originMetadata
         }
