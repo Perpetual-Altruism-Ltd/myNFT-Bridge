@@ -1,13 +1,39 @@
 # List of queries
 
-## /allocateTokenId [type POST]
+## /getAvailableWorlds [type GET]
+
+### Description
+
+Given an universe, the relay give back its available destination ERC721 contracts.
+
+### Input parameters
+
+```json
+{
+    "universe": "0x00"
+}
+```
+
+### Result
+
+```json
+{
+    "worlds": [ "0x00", "0x00" ]
+}
+```
+
+## /getAvailableTokenId [type GET]
+
+### Description
+
+The relay make sure the univers and contract are referenced and usable. If there is no preminted token waiting, the relay make at least one before responding to this query.
 
 ### Input parameters
 
 ```json
 {
     "universe": "0x00",
-    "contract": "0x00"
+    "world": "0x00"
 }
 ```
 
@@ -19,55 +45,23 @@
 }
 ```
 
-## /getUniverses [type GET]
 
-### Input parameters
-
-None
-
-### Result
-
-```json
-{
-    "universes": [
-		{
-			"name":"Ethereum Mainnet",
-			"chainID": 1,
-			"networkID":1,
-			"uniqueId": "0x6d2f0e37",
-			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
-		},
-		{
-			"name":"Ethereum Testnet Ropsten",
-			"chainID": 3,
-			"networkID":3,
-			"uniqueId": "0xeb4fb0d1",
-			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
-		},
-		{
-			"name":"Ethereum Testnet Rinkeby",
-			"chainID": 4,
-			"networkID":4,
-			"uniqueId": "0x07dac20e",
-			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/",
-            "operatorAddress": "0x00"
-		}
-    ]
-}
-```
-
-## /getContracts [type POST]
+## /initMigration [type POST]
 
 ### Input parameters
 
 ```json
 {
-    "universeUniqueId": "0x07dac20e"
+    "migrationData": {
+        "originUniverse": "0x00",
+        "originWorld": "0x00",
+        "originTokenId": "123",
+        "destinationUniverse": "0x00",
+        "destinationWorld": "0x00",
+        "destinationTokenId": "123"
+    },
+    "migrationSignature": "0x00",
+    "operatorHash": "0x00",
 }
 ```
 
@@ -75,74 +69,57 @@ None
 
 ```json
 {
-    "contracts": [
-        {
-            "address": "0x00",
-            "name": "MyContract",
-            "tokenName": "TOKENNAME",
-            "owner": "0x00"
-        }
-    ]
+    "migrationId": "12345"
 }
 ```
 
-
-## /getEscrowTokenList [type GET]
-
-### Input parameters
-
-None
-
-### Result
-
-```json
-{
-    "tokens": [
-        {
-            "tokenId": "123",
-            "name": "MyEscrowedToken",
-            "tokenName": "TOKENNAME",
-            "dateEscrowed": "1634624286",
-            "universe": "0x00"
-        }
-    ]
-}
-```
-
-## /transferToken [type POST]
+## /pollingMigration [type GET]
 
 ### Input parameters
 
 ```json
 {
-    "universe": "0x00",
-    "contract": "0x00",
-    "tokenId": "123"
+    "migrationId": "12345",
 }
 ```
 
 ### Result
 
 ```json
+
+// User must sign the escrow hash + migration_signature
 {
-    "status": "Token migrated to escrow",
-    "escrowHash": "0x00"
+    "escrowHash": "12345",
+    "migrationSignature": "0x00"
 }
+
 ```
 
-## /mintToken
+
+## /closeMigration [type POST]
 
 ### Input parameters
 
 ```json
 {
-    "signedEscrowHash": "0x00",
-    "originUniverse": "0x00",
-    "originContract": "0x00",
-    "originTokenId": "123",
-    "destinationUniverse": "0x00",
-    "destinationContract": "0x00",
-    "destinationTokenId": "0x00"
+    "migrationId": "12345",
+    "mintingSignature": "0x00",
+}
+```
+
+### Result
+
+```json
+NONE
+```
+
+## /pollingEndMigration [type POST]
+
+### Input parameters
+
+```json
+{
+    "migrationId": "12345"
 }
 ```
 
@@ -150,6 +127,7 @@ None
 
 ```json
 {
-    "status": "IOU token minted on destination universe/contract"
+    "migrationStatus": "Ok | Running",
+    "transactionHash": "0x00" // If migrationStatus Ok
 }
 ```
