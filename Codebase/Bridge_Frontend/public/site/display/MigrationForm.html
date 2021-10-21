@@ -1,0 +1,188 @@
+<!--============= Migration Form display =============-->
+<div id="MigrationFormDisplay" class="Card">
+  <!-- Connection buttons card -->
+  <div class="ConnectionCenter">
+      <button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
+      <button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
+      <button type="button" class="btn btn-primary connectWalletConnect clickableRoundButton">Connect WalletConnect</button>
+      <button type="button" class="btn btn-primary connectPortis clickableRoundButton">Connect Portis</button>
+      <button type="button" class="btn btn-primary connectBitski clickableRoundButton">Connect Bitski</button>
+      <button type="button" class="btn btn-primary connectFortmatic clickableRoundButton">Connect Fortmatic</button><br/><br/>
+      <button type="button" class="btn btn-primary connectVenly clickableRoundButton">Connect Venly (Arkane)</button>
+      <button type="button" class="btn btn-primary connectCoinbase clickableRoundButton">Connect Coinbase</button>
+  </div>
+
+  <!-- Connected address card -->
+  <div class="JustifyFlexStartDisplay HorizFlex">
+    <div class="DataTitle">Connected address:</div>
+    <div class="address DataText"></div>
+  </div>
+
+  <!-- Departure card -->
+  <div class="Card">
+    <div class="CardElement CardTitle">Departure</div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Select the network the NFT token is currently in :</div>
+      <!-- Custom drop down selector -->
+      <div class="select-wrapper" id="OriginNetworkSelector">
+        <div class="select">
+          <div class="select-trigger">
+            <span></span>
+            <div class="arrow"></div>
+          </div>
+
+          <div class="select-options">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Input the address of the ERC-721 smart contract the token is currently in :</div>
+      <div class="TextInputContainer"><input class="TextInput" size="42" id="inputOGContractAddress" value="0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7"></div>
+    </div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Input the tokenID of the ERC-721 token the NFT is currently associated to :</div>
+      <div class="TextInputContainer"><input class="TextInput" size="42" id="inputOGTokenID" value="0x2449835e86a539aB33F5773729C0db42e89016fF"></div>
+    </div>
+  </div> <!-- end of departure card -->
+
+  <!-- Token data card -->
+  <div class="Card">
+    <div class="CardTitle CardElement">Token</div>
+
+    <div class="CardElement ColoredButtonContainer">
+      <button class="ColoredButton" id="FetchDataButton">Fetch Data</button>
+    </div>
+
+    <div class="CardElement">
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token Contract Name:</div>
+        <div class="DataText" id="OGContractName"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token Contract Symbol:</div>
+        <div class="DataText" id="OGContractSymbol"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token Owner:</div>
+        <div class="DataText" id="OGTokenOwner"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token URI:</div>
+        <div class="DataText"><a href="" target="_blank" id="OGTokenURI"></a></div>
+      </div>
+    </div>
+
+    <div class="CardElement">
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Metadata Name:</div>
+        <div class="DataText" id="OGTokenMetaName"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Metadata Description:</div>
+        <div class="DataText" id="OGTokenMetaDesc"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Metadata Image:</div>
+        <div class="DataText" id="OGTokenMetaImagePath"></div>
+      </div>
+    </div>
+  </div> <!-- end of token card -->
+
+  <!-- Migration card -->
+  <div class="Card">
+    <div class="CardTitle CardElement">Migration</div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="MigrationType">Migration type:</div>
+      <div class="MigrationButtonGroup HorizFlex">
+        <button class="ColoredButton" id="RedeemButton" onclick="redeemButtonClick();">Redeem</button>
+        <button class="ColoredButton" id="IOUMigrationButton" onclick="IOUMigrationButtonClick();">IOU</button>
+        <button class="ColoredButton" id="FullMigrationButton" onclick="fullMigrationButtonClick();">Full</button>
+      </div>
+    </div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Migration relay</div>
+      <!-- Custom drop down selector -->
+      <div class="select-wrapper" id="RelaySelector">
+        <div class="select">
+          <div class="select-trigger">
+            <span></span>
+            <div class="arrow"></div>
+          </div>
+
+          <div class="select-options">
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end of migration card -->
+
+  <!-- Arrival card -->
+  <div class="Card">
+    <div class="CardTitle CardElement">Arrival</div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Select the network the NFT token will be migrated to :</div>
+      <!-- Custom drop down selector -->
+      <div class="select-wrapper" id="DestinationNetworkSelector">
+        <div class="select">
+          <div class="select-trigger">
+            <span></span>
+            <div class="arrow"></div>
+          </div>
+
+          <div class="select-options">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Input the address of the ERC-721 smart contract the token will be migrated in :</div>
+      <div class="TextInputContainer"><input class="TextInput" size="42" onChange="destContractChanged();" id="inputDestContractAddress"></div>
+    </div>
+
+
+    <div class="CardElement">
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token Contract Name:</div>
+        <div class="DataText" id="DestContractName"></div>
+      </div>
+
+      <div class="JustifyFlexStartDisplay WrappedhorizFlex">
+        <div class="DataTitle">Token Contract Symbol:</div>
+        <div class="DataText" id="DestContractSymbol"></div>
+      </div>
+    </div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Input the tokenID of the ERC-721 token the NFT will be associated to :</div>
+      <div class="TextInputContainer"><input class="TextInput" size="42" id="inputDestTokenID"></div>
+    </div>
+
+    <div class="CardElement JustifySpaceBetweenDisplay HorizFlex">
+      <div class="">Destination owner:</div>
+      <div class="TextInputContainer"><input class="TextInput" size="42" id="inputDestOwner"></div>
+    </div>
+  </div><!-- end of arrival card -->
+
+  <!-- Complete button card -->
+  <div class="Card">
+    <div class="CardElement JustifySpaceEvenlyDisplay HorizFlex">
+      <button class="ColoredButton" id="CompleteButton">Complete</button>
+    </div>
+  </div>
+</div><!--====== end migration form display ======-->
