@@ -1,6 +1,5 @@
 {
     "ipfsApiUrl": "http://localhost:5001/api/v0",
-    "ethereumRpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
     "port": 3000,
     "migrationPaths": [
         {
@@ -25,6 +24,7 @@
     "universes": [
 		{
 			"name":"Ethereum Mainnet",
+            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"chainID": 1,
 			"networkID":1,
 			"uniqueId": "0x6d2f0e37",
@@ -42,6 +42,7 @@
 		},
 		{
 			"name":"Ethereum Testnet Ropsten",
+            "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"chainID": 3,
 			"networkID":3,
 			"uniqueId": "0xeb4fb0d1",
@@ -59,6 +60,7 @@
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
+            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"chainID": 4,
 			"networkID":4,
 			"uniqueId": "0x07dac20e",

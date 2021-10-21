@@ -7,6 +7,11 @@ const schemas = {
         universeUniqueId: Joi.string().required(),
         contract: Joi.string().required(),
         tokenId: Joi.string().required()
+    }),
+    getAvailableWorlds: Joi.object({ universe: Joi.string().required() }),
+    getAvailableTokenId: Joi.object({
+        universe: Joi.string().required(),
+        world: Joi.string().required()
     })
 }
 

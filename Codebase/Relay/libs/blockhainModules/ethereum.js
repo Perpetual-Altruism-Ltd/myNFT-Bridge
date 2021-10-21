@@ -5,11 +5,12 @@ const ERC721Abi = require('../../erc721abi')
 const EventEmitter = require('events')
 
 class Ethereum extends EventEmitter {
-    constructor(){
+    constructor(rpc){
         super()
-        this.web3Provider = new Web3.providers.WebsocketProvider(Conf.ethereumRpc)
+        this.web3Provider = new Web3.providers.WebsocketProvider(rpc)
         this.web3Instance = new Web3(this.web3Provider)
-        Logger.info(`Web3 ethereum querier instanciated on rpc ${Conf.ethereumRpc}`)
+        
+        Logger.info(`Web3 ethereum querier instanciated on rpc ${rpc}`)
     }
     
     listenForOperator(contract, tokenId) {
@@ -21,8 +22,7 @@ class Ethereum extends EventEmitter {
         })
     }
 
-    
-    getAvailableTokenId(universe, contract) {
+    premintToken(universe, contract) {
         return new Promise((resolve, reject) => {
             resolve('123'.toString());
         });

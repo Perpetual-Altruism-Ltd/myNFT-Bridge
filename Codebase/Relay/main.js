@@ -6,8 +6,10 @@ const Logger = require('./libs/winston')('Main')
 const Client = require('./libs/client')
 const Ethereum = require('./libs/blockhainModules/ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
-const { loggers } = require('winston')
+const Db = require('./libs/db')
 
+
+const db = new Db()
 const clientList = {}
 
 const app = Express()
@@ -23,10 +25,18 @@ app.get('/register', (req, res) => {
     })
 })
 
-app.get('/getAvailableWorlds', (req, res) => {
-    const universeIndex = Conf.universes.findIndex(elt => elt.uniqueId == req.query.universe);
-    if(universeIndex != -1) {
-        const addresses = Conf.universes[universeIndex].contracts.map(elt => elt.address);
+app.post('/getAvailableWorlds', (req, res) => {
+    const { error } = JoiSchemas.getAvailableWorlds.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /getAvailableWorlds" })
+        Logger.error("Bad parameters given to /getAvailableWorlds")
+        return
+    }
+
+    const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+    if(universe) {
+        const addresses = universe.contracts.map(elt => elt.address);
         return res.json({
             "worlds" : addresses
         });
@@ -34,18 +44,34 @@ app.get('/getAvailableWorlds', (req, res) => {
     return res.status(400).json({ error : 'Universe Not Found' });
 })
 
-app.get('/getAvailableTokenId', (req, res) => {
-    const ethereum = new Ethereum();
-    ethereum.getAvailableTokenId(req.body.universe, req.body.world).then(token => {
-        res.json({ 
-            "tokenId" : token 
-        });
-    }).catch(e => {
-        loggers.error(e);
-        res.status(500).json({
-            error : "Error retrieving an available token" 
-        });
-    });
+app.get('/getAvailableTokenId', async (req, res) => {
+    const { error } = JoiSchemas.getAvailableTokenId.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /getAvailableTokenId" })
+        Logger.error("Bad parameters given to /getAvailableTokenId")
+        return
+    }
+
+    const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+
+    const premintedTokens = db.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
+
+    if(premintedTokens.length === 0){
+        const token = await ethereum.premintToken(req.body.universe, req.body.world)
+        db.premintedTokens.insert({ 
+            tokenId: token, 
+            universe: universe.uniqueId, 
+            world: req.body.world,
+            used: true
+        })
+    }else{
+        const token = premintedTokens[0].tokenId
+        premintedTokens[0].used = true
+        db.premintedTokens.update(premintedToken[0])
+    }
+
+    res.json({ "tokenId" : token })
 })
 
 app.get('/getMigrationPaths', (req, res) => {
