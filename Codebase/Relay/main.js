@@ -4,7 +4,9 @@ const Conf = require('./conf')
 const Express = require('express')
 const Logger = require('./libs/winston')('Main')
 const Client = require('./libs/client')
+const Ethereum = require('./libs/blockhainModules/ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
+const { loggers } = require('winston')
 
 const clientList = {}
 
@@ -19,6 +21,31 @@ app.get('/register', (req, res) => {
     res.send({
         id: client.id
     })
+})
+
+app.get('/getAvailableWorlds', (req, res) => {
+    const universeIndex = Conf.universes.findIndex(elt => elt.uniqueId == req.query.universe);
+    if(universeIndex != -1) {
+        const addresses = Conf.universes[universeIndex].contracts.map(elt => elt.address);
+        return res.json({
+            "worlds" : addresses
+        });
+    }
+    return res.status(400).json({ error : 'Universe Not Found' });
+})
+
+app.get('/getAvailableTokenId', (req, res) => {
+    const ethereum = new Ethereum();
+    ethereum.getAvailableTokenId(req.body.universe, req.body.world).then(token => {
+        res.json({ 
+            "tokenId" : token 
+        });
+    }).catch(e => {
+        loggers.error(e);
+        res.status(500).json({
+            error : "Error retrieving an available token" 
+        });
+    });
 })
 
 app.get('/getMigrationPaths', (req, res) => {

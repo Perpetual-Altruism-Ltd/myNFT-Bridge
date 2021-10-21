@@ -20,6 +20,13 @@ class Ethereum extends EventEmitter {
             this.emit('operatorSetted', data)
         })
     }
+
+    
+    getAvailableTokenId(universe, contract) {
+        return new Promise((resolve, reject) => {
+            resolve('123'.toString());
+        });
+    }
 }
 
 module.exports = Ethereum
