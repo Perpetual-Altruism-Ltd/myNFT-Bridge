@@ -11,19 +11,9 @@ router.get('/', function (req, res) {
     });
 });
 
-router.get('/bridge', function (req, res) {
-    options = {};
-    res.render('migrate', {
-        options: options,
-    });
-});
-
 /* Redirect all routes to our "index.html" file */
 router.get("/*", (req, res) => {
-  options = {};
-  res.render('migrate', {
-      options: options,
-  });
+  res.sendFile(resolve("public/site/display", "index.html"));
 });
 
 /*==================THIS IS THE WORK OF THE RELAY WHICH WE WILL CALL BY RPC=====================

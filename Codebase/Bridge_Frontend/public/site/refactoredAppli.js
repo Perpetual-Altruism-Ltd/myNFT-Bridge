@@ -65,21 +65,15 @@ const navigateTo = url => {
 };
 Model.navigateTo = navigateTo;
 
-document.addEventListener("DOMContentLoaded", () => {
-    //Only useful not to be redirected by <a> tags
-    /*document.body.addEventListener("click", e => {
-        if (e.target.matches("[data-link]")) {
-            e.preventDefault();//Block default behaviour of redirection
-            navigateTo(e.target.href);
-        }
-    });*/
+//Initialize javascript context for all views
+initDropDownBehaviour();
 
-    //Initialize javascript context for all views
-    initDropDownBehaviour();
+/* Document has loaded -  run the router! */
+router();
 
-    /* Document has loaded -  run the router! */
-    router();
+/* call the router when the user goes a page backward*/
+window.addEventListener("popstate", router);
 
-    /* call the router when the user goes a page backward*/
-    window.addEventListener("popstate", router);
-});
+/*document.addEventListener("DOMContentLoaded", () => {
+
+});*/
