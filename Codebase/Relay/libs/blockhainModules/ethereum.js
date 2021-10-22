@@ -1,7 +1,7 @@
 const Logger = require('../winston.js')('Ethereum')
 const Web3 = require('web3')
 const Conf = require('../../conf')
-const ERC721Abi = require('../../erc721abi')
+const ERC721Abi = require('../../abis/erc721abi')
 const EventEmitter = require('events')
 
 class Ethereum extends EventEmitter {
