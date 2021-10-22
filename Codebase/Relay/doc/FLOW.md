@@ -14,8 +14,8 @@
 12. User fill in the destination address of the owner of the token after the migration
 13. User click complete
 14. Frontend display the transfer datas and allow to continue
-15. User sign the data of the transfer via metamask
-16. User set relay as operator of the origin token
+15. User set relay as operator of the origin token
+16. User sign the data of the transfer via metamask
 17. Frontend  notify backend that the token is ready to be transfered and give the signed data on step 14
 18. Frontend start polling the relay for escrow hash
 19. The relay transfer the origin token to the bridge and emit an escrow hash
