@@ -145,6 +145,44 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     }
 
 
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will assume that the owner that has initated the migration depositing 
+    /// the token in the bridge is the _signee of the escrowhash
+    function registerEscrowHashSignature(bytes32 _migrationHash, bytes calldata _escrowHashSigned) external {
+        require(!isEscrowHashVerified[_migrationHash], "This escrowhash has already been verified");
+       
+        require(_escrowHashSigned[0]   == 0x0, "TODO"); //Todo : Verify the escrowhash
+
+        isEscrowHashVerified[_migrationHash] = true;
+    }
+
+
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will assume that the owner that has initated the migration depositing 
+    /// the token in the bridge is the _signee of the escrowhash
+    function registerEscrowHashSignature( 
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight,
+        bytes calldata _escrowHashSigned) external {
+
+        bytes32 migrationHash = 0x0; //TODO : regenerate the migration hash from the args and local data
+        
+        require(!isEscrowHashVerified[migrationHash], "This escrowhash has already been verified");
+       
+        require(_escrowHashSigned[0] == 0x0, "TODO"); //Todo : Verify the escrowhash, use _signee for erecover
+
+        isEscrowHashVerified[migrationHash] = true;
+    }
+
+
+
 
     //Generate a migration hash for an incoming IOU migration
     function generateMigrationHashArtificialLocalIOUIncoming(   
@@ -231,11 +269,11 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
 /// TODO : Change to sign V4, see implementation in gasless cryptograph
     function checkMigrationSignature(
         address _signee,
-        bytes32 escrowHash,
+        bytes32 _migrationhash,
         bytes calldata _relayedMigrationHashSigned
     ) internal pure {
         
-        HashStruct memory hashStruct = HashStruct(escrowHash); 
+        HashStruct memory hashStruct = HashStruct(_migrationhash); 
         
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
@@ -245,6 +283,9 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         ));  
         require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
     }
+
+
+
 
     /// signature methods.
     function splitSignature(bytes memory sig) internal pure returns (uint8 v, bytes32 r, bytes32 s) {
