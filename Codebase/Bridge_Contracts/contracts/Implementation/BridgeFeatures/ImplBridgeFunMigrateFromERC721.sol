@@ -40,7 +40,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The verification parameter allowing to check which fork was the escrow made on. Usually 
     /// equals to blockhash(block.number - 1) ^ bytes32(uint(uint160(address(block.coinbase))
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -52,11 +52,11 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external override {
         
         //Reconstruct the escrow hash
-        bytes32 escrowHash = generateMigrationHashArtificialLocalIOUIncoming(
+        bytes32 migrationHash = generateMigrationHashArtificialLocalIOUIncoming(
                 _originUniverse,
                 _originBridge,
                 _originWorld,
@@ -70,10 +70,14 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         );
 
         //Check that the escrow hash have been legitimately signed for this relay
-        checkEscrowSignature(_signee, escrowHash, _relayedMigrationHashSigned);
+        checkMigrationSignature(_signee, migrationHash, _migrationHashSigned);
 
-        if(migrationOperator[escrowHash] != address(0)){
-            require(migrationOperator[escrowHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
+        bytes32 oldMigrationHash; //Todo : find back proper migration hash mapping
+
+        if(migrationOperator[oldMigrationHash] != address(0)){
+            require(isEscrowHashVerified[oldMigrationHash], "This token has not been unlocked by the relay with a signed escrowhash");
+
+            require(migrationOperator[oldMigrationHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
         }
 
         //Try to get the current token owner
@@ -123,7 +127,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain appended with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -135,7 +139,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external override {
 
     }
@@ -208,6 +212,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             );
     }
     
+//TODO : Change to typless signing because hardware wallet
 //Generate the domain separator for V4 sign
         struct EIP712Domain {
             string name;
@@ -224,7 +229,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
 	    bytes32 public constant MESSAGE_TYPEHASH = keccak256("HashStruct(bytes32 escrowHash)");
 
 /// TODO : Change to sign V4, see implementation in gasless cryptograph
-    function checkEscrowSignature(
+    function checkMigrationSignature(
         address _signee,
         bytes32 escrowHash,
         bytes calldata _relayedMigrationHashSigned

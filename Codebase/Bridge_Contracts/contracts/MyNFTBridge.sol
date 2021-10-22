@@ -326,7 +326,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -338,7 +338,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external;
 
 
@@ -368,7 +368,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -380,7 +380,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external;
 
 
