@@ -150,7 +150,13 @@
   flex-flow: row nowrap;
   gap: 0vw 2vw;
   align-items: center;
-  /*margin: 0vw 0vw 0vw 5vw;*/
+}
+.CardLineNoWrap{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 2vw;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .DataDisplay{
