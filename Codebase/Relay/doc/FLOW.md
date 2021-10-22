@@ -14,10 +14,11 @@
 12. User fill in the destination address of the owner of the token after the migration
 13. User click complete
 14. Frontend display the transfer datas and allow to continue
-15. User set relay as operator of the origin token
-16. Relay call migrateToERC721IOU on Origin Bridge (generate a migration hash)
-17. User sign the migration hash
-18. The relay transfer the origin token to the bridge and emit an escrow hash
+15. Relay need to get all the migration data
+16. User set relay as operator of the origin token
+17. Relay call migrateToERC721IOU on Origin Bridge (generate a migration hash)
+18. User sign the migration hash
+19. The relay transfer the origin token to the bridge and emit an escrow hash
 20. Frontend start polling the relay for escrow hash
 22. User sign the escrow hash along with the first signature datas (all the migration data)
 23. Frontend send to relay these signature data
