@@ -20,7 +20,7 @@
 18. User sign the migration hash
 19. The relay transfer the origin token to the bridge and emit an escrow hash
 20. Frontend start polling the relay for escrow hash
-22. User sign the escrow hash along with the first signature datas (all the migration data)
+22. User sign the escrow hash
 23. Frontend send to relay these signature data
 24. The relay caputre data of the origin token to forge a IOU token
 25. The relay start minting the new IOU token on destination chain and call migrateFromIOUERC721ToERC721 on the destination bridge
