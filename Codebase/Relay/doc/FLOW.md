@@ -24,7 +24,7 @@
 23. Frontend send to relay these signature data
 24. The relay caputre data of the origin token to forge a IOU token
 25. The relay start minting the new IOU token on destination chain and call migrateFromIOUERC721ToERC721 on the destination bridge
-26. The relay call registerEscrowHashSignature on the origin bridge in order to be able to reverse the mgiration in the future
+26. The relay call registerEscrowHashSignature on the origin bridge in order to be able to reverse the migration in the future
 27. The frontend poll until the relay say that everything is finished
 
 
