@@ -384,6 +384,32 @@ interface MyNFTBridgeERC721toERC721Arrival {
     ) external;
 
 
+    function cancelMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight
+    ) external;
+
+
+    function registerEscrowHashSignature( 
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight,
+        bytes calldata _escrowHashSigned
+    ) external;
+
 }
 
 /// @author Guillaume Gonnaud 2021

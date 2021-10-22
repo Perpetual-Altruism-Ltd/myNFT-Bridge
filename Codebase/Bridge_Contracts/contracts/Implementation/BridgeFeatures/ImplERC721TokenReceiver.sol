@@ -49,7 +49,8 @@ contract ImplERC721TokenReceiver is ImplMemoryStructure, ERC721TokenReceiver {
         escrowHashOfMigrationHash[migrationHash] = escrowHash;
 
         //Allow the operator to withdraw the token
-        migrationOperator[escrowHash] = _operator;
+        require(migrationOperator[migrationHash] == address(0), "The token have already been deposited for this migration. Please register a new migration.");
+        migrationOperator[migrationHash] = _operator;
 
         //migrationInitialOwner
         migrationInitialOwner[migrationHash] = _from;

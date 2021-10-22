@@ -178,7 +178,30 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
        
         require(_escrowHashSigned[0] == 0x0, "TODO"); //Todo : Verify the escrowhash, use _signee for erecover
 
+        //Allow the token to be transferred to whoever the relay designate as recipient post migration
         isEscrowHashVerified[migrationHash] = true;
+    }
+
+
+    function cancelMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight) external {
+
+        bytes32 migrationHash = 0x0; //TODO : regenerate the migration hash from the args and local data
+            
+        require(msg.sender == migrationOperator[migrationHash], "Only the operating relay can cancel a migration");
+        require(!isEscrowHashVerified[migrationHash], "The escrowhash has already been verified");
+
+        //Send back the token to the original owner
+        ERC721(_originWorld).safeTransferFrom(address(this), migrationInitialOwner[migrationHash], _originTokenId);
+
     }
 
 
