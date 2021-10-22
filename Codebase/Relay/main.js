@@ -7,10 +7,35 @@ const Client = require('./libs/client')
 const Ethereum = require('./libs/blockhainModules/ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
 const Db = require('./libs/db')
+const { sleep } = require('./libs/utils')
 
 
 const db = new Db()
 const clientList = {}
+
+function premintStock(){
+    Conf.universes.forEach(universe => {
+        const ethereum = new Ethereum(universe.rpc)
+        universe.worlds.forEach(async world => {
+            while(true){
+                await sleep(1000)
+                const premintedTokens = db.dbCollections.premintedTokens.find({ universe: universe.uniqueId, world: world.address, used: false })
+                if(premintedTokens.length < 2){
+                    const tokenId = await ethereum.premintToken(world.address)
+                    db.dbCollections.premintedTokens.insert({ 
+                        tokenId, 
+                        universe: universe.uniqueId, 
+                        world: world.address,
+                        used: false
+                    })
+                }
+
+            }
+        })
+    })
+}
+
+premintStock()
 
 const app = Express()
 
@@ -36,7 +61,7 @@ app.post('/getAvailableWorlds', (req, res) => {
 
     const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
     if(universe) {
-        const addresses = universe.contracts.map(elt => elt.address);
+        const addresses = universe.worlds.map(elt => elt.address);
         return res.json({
             "worlds" : addresses
         });
@@ -55,12 +80,14 @@ app.get('/getAvailableTokenId', async (req, res) => {
 
     const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
 
-    const premintedTokens = db.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
+    const premintedTokens = db.dbCollections.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
+
+    const ethereum = new Ethereum(universe.rpc)
 
     if(premintedTokens.length === 0){
-        const token = await ethereum.premintToken(req.body.universe, req.body.world)
-        db.premintedTokens.insert({ 
-            tokenId: token, 
+        const tokenId = await ethereum.premintToken(req.body.universe, req.body.world)
+        db.dbCollections.premintedTokens.insert({ 
+            tokenId, 
             universe: universe.uniqueId, 
             world: req.body.world,
             used: true
@@ -68,7 +95,7 @@ app.get('/getAvailableTokenId', async (req, res) => {
     }else{
         const token = premintedTokens[0].tokenId
         premintedTokens[0].used = true
-        db.premintedTokens.update(premintedToken[0])
+        db.dbCollections.premintedTokens.update(premintedToken[0])
     }
 
     res.json({ "tokenId" : token })

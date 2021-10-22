@@ -1,9 +1,9 @@
 const Logger = require('../winston.js')('Ethereum')
 const Web3 = require('web3')
 const Conf = require('../../conf')
-// TODO : one require to import an ABIs object
 const ERC721Abi = require('../../abis/erc721abi')
 const BridgeAbi = {};
+const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
 
 class Ethereum extends EventEmitter {
@@ -11,30 +11,33 @@ class Ethereum extends EventEmitter {
         super()
         this.web3Provider = new Web3.providers.WebsocketProvider(rpc)
         this.web3Instance = new Web3(this.web3Provider)
-
+        this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
+        this.web3Instance.eth.defaultAccount = this.web3Wallet.address
+        
         Logger.info(`Web3 ethereum querier instanciated on rpc ${rpc}`)
     }
 
-    listenForOperator(contract, tokenId) {
-        const web3Contract = new this.web3Instance.eth.Contract(ERC721Abi, contract)
 
-        web3Contract.once('Approval', { filter: { tokenId: tokenId } }, (err, data) => {
-            console.log('once', err, data)
-            this.emit('operatorSetted', data)
-        })
-    }
-
-    premintToken(universe, contract) {
-        return new Promise((resolve, reject) => {
-            resolve('123'.toString());
-        });
+    /* ==== Tokens ==== */
+    async premintToken(contractAddress) {
+        const networkId = await this.web3Instance.eth.net.getId();    
+        const contract = new this.web3Instance.eth.Contract(
+            ERC721IOUAbi,
+            contractAddress, 
+            { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
+        );
+        
+        const tx = await contract.methods.premintFor(this.web3Wallet.address).send();
+        const tokenId = await contract.methods.mintedTokens().call()
+        Logger.info(`Preminted a token ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
+        
+        return tokenId
     }
 
     verifySignature(messageHash, signature) {
         return this.web3Instance.eth.personal.ecRecover(messageHash, signature);
     }
 
-    /* ==== Tokens ==== */
     safeTransferFrom(contract, from, to, tokenId) {
         return new Promise(async (resolve, reject) => {
             const web3Contract = new this.web3Instance.eth.Contract(
@@ -55,6 +58,7 @@ class Ethereum extends EventEmitter {
     }
 
     /* ==== Departure Bridge Interractions  ==== */
+
     migrateToERC721IOU(migrationData, migrationSignature) {
         return new Promise(async (resolve, reject) => {
             // Check signee
