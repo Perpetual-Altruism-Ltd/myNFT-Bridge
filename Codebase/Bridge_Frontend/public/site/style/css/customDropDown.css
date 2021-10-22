@@ -1,0 +1,154 @@
+/* CSS RESET
+License: none (public domain) */
+ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code,
+ del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset,
+ form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer,
+ header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+     margin: 0;
+     padding: 0;
+     border: 0;
+     font-size: 100%;
+     font: inherit;
+     vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+     display: block;
+}
+ body {
+     line-height: 1;
+}
+ ol, ul {
+     list-style: none;
+}
+ blockquote, q {
+     quotes: none;
+}
+ blockquote:before, blockquote:after, q:before, q:after {
+     content: '';
+     content: none;
+}
+ table {
+     border-collapse: collapse;
+     border-spacing: 0;
+}
+*, *:after, *:before {
+     box-sizing: border-box;
+}
+/* END OF CSS RESET */
+
+/*==============CUSTOM DROP DOWN==============*/
+/* Select + options*/
+.select-wrapper {
+     position: relative;
+     user-select: none;
+}
+.select {
+     position: relative;
+     display: flex;
+     flex-direction: column;
+}
+.select-trigger {
+  /*Positioning*/
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /*Sizing*/
+  padding: 0em 1em;
+  height: 2.5em;
+  line-height: 2em;
+  font-weight: 300;
+  /*Color*/
+  color: #000;
+  background: #ffffff;
+  cursor: pointer;
+  /*Round border*/
+  border: solid 2px #555;
+  border-radius: 2em;
+}
+/*The container for the list which is displayed or hidden*/
+.select-options {
+  /*Positioning*/
+   position: absolute;
+   display: block;
+   top: 100%;
+   left: 0;
+   right: 0;
+
+   /*Animation*/
+   transition: all 0.5s;
+   pointer-events: none;
+   /*Visibility*/
+   opacity: 0;
+   visibility: hidden;
+   z-index: 2;/*Display the drop down list on top of the others elements in window. */
+   overflow: hidden;
+   /*Round border*/
+   border: solid 2px #555;
+   border-radius: 1em;
+   /*border-top: 0;*/
+   /*Color */
+   background: #e0e0e0;
+}
+.select.open .select-options {
+     opacity: 1;
+     visibility: visible;
+     pointer-events: all;
+}
+.select-option {
+     position: relative;
+     display: block;
+     padding: 0 0.5em;
+     font-weight: 300;
+     color: #000;
+     line-height: 2em;
+     cursor: pointer;
+     transition: all 0.5s;
+}
+.select-option:hover {
+     cursor: pointer;
+     background-color: #c0b2e6;
+}
+.select-option.selected {
+     color: #ffffff;
+     background-color: #3e287a;
+}
+/* Arrow */
+.arrow {
+     position: relative;
+     height: 15px;
+     width: 15px;
+}
+.arrow::before, .arrow::after {
+     content: "";
+     position: absolute;
+     bottom: 0px;
+     width: 0.15rem;
+     height: 100%;
+     transition: all 0.5s;
+}
+.arrow::before {
+     left: -5px;
+     top: -5px;
+     transform: rotate(45deg);
+     background-color: #3e287a;
+}
+.arrow::after {
+     left: -5px;
+     top: 5px;
+     transform: rotate(-45deg);
+     background-color: #3e287a;
+}
+.open .arrow::before {
+     left: -5px;
+     top: 0px;
+     background-color: #af1540;
+     transform: rotate(-45deg);
+}
+.open .arrow::after {
+     left: 5px;
+     top: 0px;
+     background-color: #af1540;
+     transform: rotate(45deg);
+}
