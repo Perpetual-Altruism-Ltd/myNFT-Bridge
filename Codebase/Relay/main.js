@@ -29,7 +29,6 @@ function premintStock(){
                         used: false
                     })
                 }
-
             }
         })
     })
