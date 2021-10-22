@@ -89,9 +89,11 @@ export default class extends AbstractView {
       }).then((res) =>{
         console.log("Network switch done.");
         //Display next form step: ogWorld input
-        document.getElementById("DepartureCard").style = 'display: flex;';
+        document.getElementById("OriginWorldCardLine").style = 'display: flex;';
       }).catch((res) => {
         console.log("Network switch canceled or error");
+        //HERE
+        document.getElementById("OriginWorldCardLine").style = 'display: none;';
         alert("Please accept the metamask switch network prompt in order to change to desired network");
       });
     }
