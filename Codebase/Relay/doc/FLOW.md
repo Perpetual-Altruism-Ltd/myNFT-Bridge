@@ -11,7 +11,7 @@
 9. User select the destination world, which is given by the relay
 10. The frontend ask the relay for available token ids given the contract
 11. User select the destination token id, which is given by the relay
-12. User fill in the destination address
+12. User fill in the destination address of the owner of the token after the migration
 13. User click complete
 14. Frontend display the transfer datas and allow to continue
 15. User sign the data of the transfer via metamask
