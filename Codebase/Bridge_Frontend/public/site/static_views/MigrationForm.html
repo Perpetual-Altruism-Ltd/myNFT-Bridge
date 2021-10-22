@@ -1,7 +1,7 @@
 <!--============= Migration Form display =============-->
 <div id="MigrationFormDisplay" class="Card">
   <!-- Connection buttons card -->
-  <div class="ConnectionCenter">
+  <div id="ConnectionCenter">
       <button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
       <button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
       <button type="button" class="btn btn-primary connectWalletConnect clickableRoundButton">Connect WalletConnect</button>
@@ -13,7 +13,7 @@
   </div>
 
   <!-- Connected address card -->
-  <div class="Card">
+  <div class="Card" id="ConnectedAddrCard">
     <div class="CardLine DataDisplay">
       <div class="LineElement TextElement">Connected address:</div>
       <div class="LineElement DataText address"></div>
@@ -21,7 +21,7 @@
   </div>
 
   <!-- Departure card -->
-  <div class="Card">
+  <div class="Card" id="DepartureCard">
     <div class="CardLine CardTitle"><div class="LineElement">Departure</div></div>
 
     <div class="CardLine">
@@ -44,13 +44,13 @@
       <div class="LineElement"></div>
     </div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="OriginWorldCardLine">
       <div class="LineElement">Origin ERC721 contract:</div>
       <div class="LineElement"><input class="TextInput InputElement" id="inputOGContractAddress" value="0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7"></div>
       <div class="LineElement"></div><!-- Same as previous empty LineElement -->
     </div>
 
-    <div class="CardLine" >
+    <div class="CardLine" id="OriginTokenIDCardLine">
       <div class="LineElement">Origin token ID</div>
       <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" value="0x2449835e86a539aB33F5773729C0db42e89016fF"></div>
       <div class="LineElement ColoredButtonContainer">
@@ -60,7 +60,7 @@
   </div> <!-- end of departure card -->
 
   <!-- Token data card -->
-  <div class="Card">
+  <div class="Card" id="TokenDataCard">
     <div class="CardLine CardTitle"><div class="LineElement">Token</div></div>
 
     <div class="CompactCard">
@@ -104,7 +104,7 @@
   </div> <!-- end of token card -->
 
   <!-- Migration card -->
-  <div class="Card">
+  <div class="Card" id="MigrationCard">
     <div class="CardLine CardTitle"><div class="LineElement">Migration</div></div>
 
     <div class="CardLine">
@@ -137,7 +137,7 @@
   </div><!-- end of migration card -->
 
   <!-- Arrival card -->
-  <div class="Card">
+  <div class="Card" id="ArrivalCard">
     <div class="CardLine CardTitle">Arrival</div>
 
     <div class="CardLine">
@@ -187,7 +187,7 @@
   </div><!-- end of arrival card -->
 
   <!-- Complete button card -->
-  <div class="Card">
+  <div class="Card" id="CompleteMigrationCard">
     <div class="CenteredCardLine">
         <button class="ColoredButton" id="CompleteButton">Complete</button>
     </div>

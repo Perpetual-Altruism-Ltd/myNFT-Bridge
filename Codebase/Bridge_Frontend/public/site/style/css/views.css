@@ -1,46 +1,16 @@
 /*============Views===========*/
-/*.HorizFlex{
-  display: flex;
-  flex-flow: row nowrap;
-  gap: 0em 1em;
-  align-items: center;
-  margin: 0vw 10vw 0vw 5vw;
-}*/
-
-/*.WrappedhorizFlex{
-  display: flex;
-  flex-flow: row wrap;
-  gap: 0em 1em;
-  align-items: center;
-}*/
-
-/*.JustifySpaceBetweenDisplay{
-  justify-content: space-between;
-}
-.JustifySpaceEvenlyDisplay{
-  justify-content: space-evenly;
-}
-.JustifySpaceAroundDisplay{
-  justify-content: space-around;
-}
-.JustifyFlexStartDisplay{
-  justify-content: flex-start;
-}
-.JustifyCenterDisplay{
-  justify-content: center;
-}
-.MigrationButtonGroup{
-  justify-content: center;
-  flex-grow: 1;
-}
-.MigrationType{
-  flex-grow: 1;
+/*Initial view */
+#ConnectedAddrCard,
+#DepartureCard,
+#OriginTokenIDCardLine,
+#OriginWorldCardLine,
+#TokenDataCard,
+#MigrationCard,
+#ArrivalCard,
+#CompleteMigrationCard{
+  display: none;
 }
 
-.Tabulation{
-  text-indent:15vw;
-}
-*/
 *,
 *::before,
 *::after {
@@ -73,6 +43,7 @@
 .LoadingContainer{
   position:relative;
   height: 15em;
+  overflow: hidden;/*Prevent the page's height to change when the loading circle is turning ;) */
 }
 .LoadingText{
   position: absolute;

@@ -3,7 +3,7 @@ let connectedButton = null;
 let providerConnected = "";
 // Button declarations
 window.onload = function() {
-    if(!window.location.hash){ 
+    if(!window.location.hash){
         window.location = window.location + '#loaded';
 		  window.location.href = window.location.href
     }
@@ -152,6 +152,9 @@ async function connection(desc) {
 	if (await connector.connection()) {
 		connectedButton.innerHTML = "Disconnect " + providerConnected;
 		web3 = connector.web3;
+    //Display connected addr + departure cards
+    document.getElementById("ConnectedAddrCard").style = 'display: flex;';
+    document.getElementById("DepartureCard").style = 'display: flex;';
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");

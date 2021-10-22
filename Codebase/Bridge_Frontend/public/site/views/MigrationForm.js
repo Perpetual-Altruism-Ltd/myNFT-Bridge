@@ -83,9 +83,16 @@ export default class extends AbstractView {
 
     //Define functions interact with blockchains
     let promptSwitchChain = async function (ID) {
-      await window.ethereum.request({
+      window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+      }).then((res) =>{
+        console.log("Network switch done.");
+        //Display next form step: ogWorld input
+        document.getElementById("DepartureCard").style = 'display: flex;';
+      }).catch((res) => {
+        console.log("Network switch canceled or error");
+        alert("Please accept the metamask switch network prompt in order to change to desired network");
       });
     }
     let loadERC721ABI = async function () {
@@ -156,7 +163,11 @@ export default class extends AbstractView {
         contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, document.getElementById("inputOGContractAddress").value);
         contracts.originalChainERC721MetadataContract = new window.web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
 
-    	//Get the Contract Name
+        //Display token data card
+        document.getElementById("TokenDataCard").style = 'display: flex;';
+        document.getElementById("MigrationCard").style = 'display: flex;';
+
+    	  //Get the Contract Name
         let getContractName = async function () {
             try {
         			let content = await contracts.originalChainERC721MetadataContract.methods.name().call();
@@ -173,7 +184,7 @@ export default class extends AbstractView {
         }
         getContractName();
 
-    	   //Get the Contract Symbol
+    	  //Get the Contract Symbol
         let getContractSymbol = async function () {
             try {
         			let content = await contracts.originalChainERC721MetadataContract.methods.symbol().call();
@@ -188,7 +199,6 @@ export default class extends AbstractView {
         		}
         }
         getContractSymbol();
-
 
         //Get the Token owner
         let getTokenOwner = async function () {
@@ -208,7 +218,7 @@ export default class extends AbstractView {
         }
         getTokenOwner();
 
-    	//Get the Token URI
+    	  //Get the Token URI
         let getTokenURI = async function () {
             try {
         			let content = await contracts.originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
@@ -295,7 +305,9 @@ export default class extends AbstractView {
     addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
       let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
       console.log("Switching to network id " + chainIDSelected);
-      promptSwitchChain(chainIDSelected);//TODELETE cuz metamask support only.
+      promptSwitchChain(chainIDSelected);//TOCHECK metamask support only?.
+      document.getElementById("DepartureCard").style = 'display: flex;';
+
     });
 
     //Load networks

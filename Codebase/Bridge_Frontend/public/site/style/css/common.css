@@ -74,7 +74,6 @@ TOP LEFT COLOR: #12132b*/
     flex-flow: column wrap;
     justify-content: space-between;
     gap: 2em 0em;
-    overflow: hidden;/*Prevent the page's height to change when the loading circle is turning ;) */
 }
 
 .topBanner{
@@ -136,7 +135,7 @@ TOP LEFT COLOR: #12132b*/
     border-color: #96134e;
 }
 
-.ConnectionCenter{
+#ConnectionCenter{
     flex-flow: row wrap;
     display: flex;
     align-content: center;
