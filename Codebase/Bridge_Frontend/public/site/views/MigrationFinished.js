@@ -26,7 +26,7 @@ export default class extends AbstractView {
         callback(htmlContent);
       }
     };
-    xhr.open('GET', '/site/display/MigrationFinished.html');
+    xhr.open('GET', '/site/static_views/MigrationFinished.html');
     xhr.send();
   }
 }

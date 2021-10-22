@@ -24,7 +24,7 @@ export default class extends AbstractView {
         callback(htmlContent);
       }
     };
-    xhr.open('GET', '/site/display/EscrowToken.html');
+    xhr.open('GET', '/site/static_views/EscrowToken.html');
     xhr.send();
   }
 }

@@ -24,7 +24,7 @@ export default class extends AbstractView {
         callback(htmlContent);
       }
     };
-    xhr.open('GET', '/site/display/MintToken.html');
+    xhr.open('GET', '/site/static_views/MintToken.html');
     xhr.send();
   }
 }
