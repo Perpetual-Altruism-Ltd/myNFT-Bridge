@@ -58,7 +58,8 @@ The relay make sure the univers and contract are referenced and usable. If there
         "originTokenId": "123",
         "destinationUniverse": "0x00",
         "destinationWorld": "0x00",
-        "destinationTokenId": "123"
+        "destinationTokenId": "123",
+        "destinationOwner": "0x00"
     },
     "migrationSignature": "0x00",
     "operatorHash": "0x00",
