@@ -68,11 +68,13 @@ TOP LEFT COLOR: #12132b*/
 .whitesheet{
     background-color: #fff;
     border-radius: 20px;
-    padding: 20px;
+    padding: 1em;
+    margin: 1em;
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
     gap: 2em 0em;
+    overflow: hidden;/*Prevent the page's height to change when the loading circle is turning ;) */
 }
 
 .topBanner{

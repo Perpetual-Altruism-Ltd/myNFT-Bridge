@@ -13,7 +13,7 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
 
-    //setTimeout(() => { model.navigateTo("/sign_escrow"); }, 5000);
+    setTimeout(() => { model.navigateTo("/sign_escrow"); }, 5000);
   }
 
   async getHtml(callback){
