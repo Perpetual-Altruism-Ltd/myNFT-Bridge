@@ -72,7 +72,10 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         //Check that the escrow hash have been legitimately signed for this relay
         checkMigrationSignature(_signee, migrationHash, _migrationHashSigned);
 
-        bytes32 oldMigrationHash; //Todo : find back proper migration hash mapping
+        //Build a potential old migration hash if the token is being redeemed
+        bytes32 oldMigrationHash = latestRegisteredMigration[keccak256(abi.encodePacked(_destinationWorld, _destinationTokenId))]; 
+        
+        //Todo : find back proper migration hash mapping
 
         if(migrationOperator[oldMigrationHash] != address(0)){
             require(isEscrowHashVerified[oldMigrationHash], "This token has not been unlocked by the relay with a signed escrowhash");
