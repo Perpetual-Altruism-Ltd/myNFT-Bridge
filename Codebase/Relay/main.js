@@ -40,15 +40,6 @@ const app = Express()
 
 app.use(Express.json())
 
-app.get('/register', (req, res) => {
-    const client = new Client()
-    clientList[client.id] = client
-
-    res.send({
-        id: client.id
-    })
-})
-
 app.post('/getAvailableWorlds', (req, res) => {
     const { error } = JoiSchemas.getAvailableWorlds.validate(req.body)
     if(error){
@@ -68,7 +59,7 @@ app.post('/getAvailableWorlds', (req, res) => {
     return res.status(400).json({ error : 'Universe Not Found' });
 })
 
-app.get('/getAvailableTokenId', async (req, res) => {
+app.post('/getAvailableTokenId', async (req, res) => {
     const { error } = JoiSchemas.getAvailableTokenId.validate(req.body)
     if(error){
         res.status(400)
@@ -170,15 +161,15 @@ app.post('/continueMigration', async (req, res) => {
     }
 
     try{
+        res.status(200).send({
+            status: "Migration continuing."
+        })
+
         // Transferring token to departure bridge
         await client.transferToBridge(req.body.migrationHashSignature)
 
         // Update escrow hash
         await client.updateEscrowHash()
-
-        res.status(200).send({
-            status: "Migration continuing."
-        })
     }catch(err){
         res.status(500).send({
             error: "Unexpected error on the server."
@@ -223,6 +214,9 @@ app.post('/closeMigration', async (req, res) => {
     }
 
     try{
+        res.status(200).send({
+            "status": "Minting of the token initiated"
+        })
         // Check if escrow hash is valid before doing anything
         await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
 
@@ -231,8 +225,6 @@ app.post('/closeMigration', async (req, res) => {
 
         // Call origin bridge migrateFromIOUERC721ToERC721
         await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
-
-        res.status(200).send({})
     }catch(err){
         res.status(500).send({
             error: "Unexpected error on the server."
@@ -262,64 +254,6 @@ app.post('/pollingEndMigration', (req, res) => {
     return res.json({
         "migrationStatus":"Running"
     })
-})
-
-app.get('/getMigrationPaths', (req, res) => {
-    res.send(Conf.migrationPaths)
-})
-
-app.get('/getUniverses', (req, res) => {
-    res.send(Conf.universes)
-})
-
-app.post('/getContracts', (req, res) => {
-    const { error } = JoiSchemas.getContracts.validate(req.body)
-    if(error){
-        res.status(400)
-        res.send({ status: "Bad parameters given to /getContracts" })
-        Logger.error("Bad parameters given to /getContracts")
-        return
-    }
-
-    const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universeUniqueId)
-    if(!universe){
-        res.status(404)
-        res.send({ "status": "Universe not found" })
-        Logger.error(`Universe ${req.body.universeUniqueId} not found`)
-        return
-    }
-
-    res.send(universe.contracts)
-})
-
-app.post('/waitForOperatorElevation', (req, res) => {
-    const { error } = JoiSchemas.waitForOperatorElevation.validate(req.body)
-    if(error){
-        res.status(400)
-        res.send({ status: "Bad parameters given to /waitForOperatorElevation" })
-        Logger.error("Bad parameters given to /waitForOperatorElevation")
-        return
-    }
-
-    const client = clientList[req.body.clientId]
-
-    if(!client){
-        res.status(404)
-        res.send({ status: "Client does not exist" })
-        return
-    }
-
-    const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universeUniqueId)
-    if(!universe){
-        res.status(404)
-        res.send({ "status": "Universe not found" })
-        Logger.error(`Universe ${req.body.universeUniqueId} not found`)
-        return
-    }
-
-    client.waitForApproval(universe, req.body.contract, req.body.tokenId)
-
-    res.send({ status: "Waiting for approval" })
 })
 
 app.listen(Conf.port, () => {
