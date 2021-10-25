@@ -59,7 +59,6 @@ class Ethereum extends EventEmitter {
     }
 
     /* ==== Departure Bridge Interractions  ==== */
-
     migrateToERC721IOU(migrationData, migrationSignature) {
         return new Promise(async (resolve, reject) => {
             // Check signee
