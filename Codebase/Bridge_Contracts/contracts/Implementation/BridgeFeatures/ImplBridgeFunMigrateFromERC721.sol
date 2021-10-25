@@ -194,23 +194,21 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         bytes32 _destinationOwner,
         address _signee,
         bytes32 _originHeight,
-        bytes calldata _escrowHashSigned) external {
+        bytes calldata _escrowHashSigned
+    ) external {
 
-        bytes32 migrationHash = generateMigrationHashArtificial(   
-            true, //_isIOU
-            localUniverse, //_originUniverse
-            bytes32(uint(uint160(address(this)))), //_originBridge
-            bytes32(uint(uint160(_originWorld))), // _originWorld, 
-            bytes32(_originTokenId), // _originTokenId, 
-            bytes32(uint(uint160(_originOwner))), // _originOwner,
-            _destinationUniverse, // _destinationUniverse,
-            _destinationBridge, // _destinationBridge,
-            _destinationWorld, // _destinationWorld,
-            _destinationTokenId, // _destinationTokenId,
-            _destinationOwner, // _destinationOwner,
-            bytes32(uint(uint160(_signee))), // _signee,
-            _originHeight // _originHeight
-        ); 
+        bytes32 migrationHash = generateMigrationHashArtificialLocal(      
+            _originWorld, 
+            _originTokenId, 
+            _originOwner,
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            _originHeight
+        );
 
         require(!isEscrowHashVerified[migrationHash], "This escrowhash has already been verified");
         require(migrationInitialOwner[migrationHash] == _originOwner, "The migration hash data do not match _originOwner");
@@ -253,7 +251,8 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
         address _signee,
-        bytes32 _originHeight) external {
+        bytes32 _originHeight
+    ) external {
 
         bytes32 migrationHash = generateMigrationHashArtificial(   
             true, //_isIOU
@@ -369,6 +368,38 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             _height
         );
     }
+
+    function generateMigrationHashArtificialLocal(      
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight) internal view returns (bytes32){
+        
+        return (
+            generateMigrationHashArtificial(   
+                true, //_isIOU
+                localUniverse, //_originUniverse
+                bytes32(uint(uint160(address(this)))), //_originBridge
+                bytes32(uint(uint160(_originWorld))), // _originWorld, 
+                bytes32(_originTokenId), // _originTokenId, 
+                bytes32(uint(uint160(_originOwner))), // _originOwner,
+                _destinationUniverse, // _destinationUniverse,
+                _destinationBridge, // _destinationBridge,
+                _destinationWorld, // _destinationWorld,
+                _destinationTokenId, // _destinationTokenId,
+                _destinationOwner, // _destinationOwner,
+                bytes32(uint(uint160(_signee))), // _signee,
+                _originHeight // _originHeight
+            )
+        );
+    }
+
 
 
     //Generate a migration hash
