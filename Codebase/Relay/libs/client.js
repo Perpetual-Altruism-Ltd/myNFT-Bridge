@@ -44,7 +44,7 @@ class Client {
 
     async updateEscrowHash() {
         if(this.migrationHash) {
-            this.escrowHash = await ethereum.getProofOfEscrowHash(this.migrationHash)
+            this.escrowHash = await ethereum.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
         } else {
             throw "Invalid migrationHash"
         }

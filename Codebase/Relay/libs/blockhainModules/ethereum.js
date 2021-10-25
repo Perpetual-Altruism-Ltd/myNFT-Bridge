@@ -40,8 +40,16 @@ class Ethereum extends EventEmitter {
         return this.web3Instance.eth.personal.ecRecover(messageHash, signature);
     }
 
-    async getProofOfEscrowHash(migrationHash) {
-        const escrowHash = await contract.methods.getProofOfEscrowHash(migrationHash).call();
+    async getProofOfEscrowHash(bridgeAddress, migrationHash) {
+        const web3Contract = new this.web3Instance.eth.Contract(
+            BridgeAbi,
+            bridgeAddress,
+            {
+                from: this.web3Instance.eth.defaultAccount,
+                gas: 8000000
+            }
+        )
+        const escrowHash = await web3Contract.methods.getProofOfEscrowHash(migrationHash).call();
         return escrowHash;
     }
 
