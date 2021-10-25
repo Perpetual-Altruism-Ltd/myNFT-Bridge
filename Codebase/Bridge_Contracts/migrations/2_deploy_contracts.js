@@ -39,7 +39,7 @@ module.exports = async(deployer, network, accounts) => {
     await deployer.deploy(ImplMyNFTBridgeFunInit);
     await instancedProxy.updateContract(
         ImplMyNFTBridgeFunInit.address, 
-        "init(string)", 
+        "init(uint256)", 
         "ImplMyNFTBridgeFunInit"
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);

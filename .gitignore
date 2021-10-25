@@ -4,3 +4,7 @@ Codebase/Bridge_Frontend/log/*
 Codebase/Bridge_Contracts/build/*
 Codebase/Relay/node_modules/*
 Codebase/Relay/log/*
+Codebase/Bridge_Contracts/contracts/Implementation/Proxyfication/artifacts/*
+Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/artifacts/*
+Codebase/Bridge_Contracts/contracts/Implementation/Proxyfication/artifacts/*
+
