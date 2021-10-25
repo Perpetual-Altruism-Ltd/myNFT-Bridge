@@ -81,7 +81,7 @@ export default class extends AbstractView {
       };
     };
 
-    //Define functions interact with blockchains
+    //Define functions which interact with blockchains
     let promptSwitchChain = async function (ID) {
       window.ethereum.request({
         method: 'wallet_switchEthereumChain',
@@ -296,6 +296,19 @@ export default class extends AbstractView {
             }
         }
     }
+
+    //Functions which interact with relay's backend
+    /*let getRelayAvailableWorlds(){
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          let htmlContent = xhr.response;
+          callback(htmlContent);
+        }
+      };
+      xhr.open('POST', '/site/static_views/MigrationForm.html');
+      xhr.send();
+    }*/
 
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");

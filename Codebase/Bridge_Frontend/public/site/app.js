@@ -47,10 +47,16 @@ const router = async () => {
       };
 
       /*Controller: update view */
-      let view = new match.route.view(getParams(match));
-
       //Get and display the view's html
-      //If MigrationForm already loaded, filled up by user and hidden:
+      let view = new match.route.view(getParams(match));
+      view.getHtml(htmlContent => {
+        document.getElementById("WhiteSheet").innerHTML = htmlContent;
+        //Run the code associated to this view
+        view.initCode(Model);
+      });
+
+      //EDIT MIGRATION FORM ISSUE
+      /*//If MigrationForm already loaded, filled up by user and hidden:
       //User come back from  registration page, and want to edit migration form data.
       //So disaply migration form already filled up
       let migrationFormCard = document.getElementById("MigrationFormDisplay");
@@ -82,7 +88,7 @@ const router = async () => {
           //Run the code associated to this view
           view.initCode(Model);
         });
-      }
+      }*/
 }
 
 const navigateTo = url => {
