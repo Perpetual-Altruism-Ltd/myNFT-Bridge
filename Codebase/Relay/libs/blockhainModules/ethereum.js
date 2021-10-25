@@ -40,23 +40,17 @@ class Ethereum extends EventEmitter {
         return this.web3Instance.eth.personal.ecRecover(messageHash, signature);
     }
 
-    safeTransferFrom(contract, from, to, tokenId) {
-        return new Promise(async (resolve, reject) => {
-            const web3Contract = new this.web3Instance.eth.Contract(
-                ERC721Abi,
-                contract,
-                {
-                    from: this.web3Instance.eth.defaultAccount,
-                    gas: 8000000
-                }
-            );    
-            try {
-                const escrowHash = await web3Contract.methods.safeTransferFrom(from, to, tokenId).send();
-                resolve(escrowHash);
-            } catch(e) {
-                reject(e);
+    async safeTransferFrom(contract, from, to, tokenId) {
+        const web3Contract = new this.web3Instance.eth.Contract(
+            ERC721Abi,
+            contract,
+            {
+                from: this.web3Instance.eth.defaultAccount,
+                gas: 8000000
             }
-        })
+        )
+        const escrowHash = await web3Contract.methods.safeTransferFrom(from, to, tokenId).send()
+        return escrowHash
     }
 
     /* ==== Departure Bridge Interractions  ==== */
@@ -67,7 +61,7 @@ class Ethereum extends EventEmitter {
             const signee = await this.verifySignature(
                 this.web3Instance.utils.sha3(JSON.stringify(migrationData)),
                 migrationSignature
-            );
+            )
 
             const web3Contract = new this.web3Instance.eth.Contract(
                 BridgeAbi,
@@ -76,7 +70,7 @@ class Ethereum extends EventEmitter {
                     from: this.web3Instance.eth.defaultAccount,
                     gas: 8000000
                 }
-            );
+            )
     
             const data = [
                 migrationData.originWorld,
@@ -87,18 +81,18 @@ class Ethereum extends EventEmitter {
                 migrationData.destinationTokenId,
                 migrationData.destinationOwner,
                 signee
-            ];
+            ]
     
             try {
                 web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: signee } }, (err, data) => {
                     const migrationHash = data?.returnValues?.migrationHash;
                     if(migrationHash)
-                        return resolve(migrationHash);
-                    return reject("Can't retrieve the migration hash");
+                        resolve(migrationHash);
+                    reject("Can't retrieve the migration hash")
                 })
-                web3Contract.methods.migrateToERC721IOU(...data).send();
+                web3Contract.methods.migrateToERC721IOU(...data).send()
             } catch(e) {
-                reject(e);
+                reject(e)
             }
         })
     }

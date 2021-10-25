@@ -45,7 +45,7 @@ class Client {
         const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature)
         this.escrowHash = await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
-            owner, 
+            owner,
             this.originUniverse.bridgeAdress, 
             this.migrationData.originTokenId
         )
