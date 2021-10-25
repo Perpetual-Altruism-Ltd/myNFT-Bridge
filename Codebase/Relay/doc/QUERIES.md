@@ -89,10 +89,30 @@ The relay make sure the univers and contract are referenced and usable. If there
 
 ```json
 
-// User must sign the escrow hash + migration_signature
+// User must sign the migration hash
 {
-    "escrowHash": "12345",
-    "migrationSignature": "0x00"
+    "migrationHash": "12345"
+}
+
+```
+
+## /pollingEscrow [type POST]
+
+### Input parameters
+
+```json
+{
+    "migrationId": "12345",
+}
+```
+
+### Result
+
+```json
+
+// User must sign the escrow hash
+{
+    "escrowHash": "12345"
 }
 
 ```
