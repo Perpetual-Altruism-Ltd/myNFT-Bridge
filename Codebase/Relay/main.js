@@ -153,6 +153,9 @@ app.post('/pollingMigration', (req, res) => {
             migrationHash: client.migrationHash
         })
     }
+    res.json({
+        status: "No migration hash yet"
+    })
 })
 
 app.post('/pollingEscrow', (req, res) => {
