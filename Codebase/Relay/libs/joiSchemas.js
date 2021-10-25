@@ -14,14 +14,14 @@ const schemas = {
         world: Joi.string().required()
     }),
     initMigration: Joi.object({
-        migrationData: {
+        migrationData: Joi.object({
             originUniverse: Joi.string().required(),
             originWorld: Joi.string().required(),
             originTokenId: Joi.string().required(),
             destinationUniverse: Joi.string().required(),
             destinationWorld: Joi.string().required(),
             destinationTokenId: Joi.string().required()
-        },
+        }).required(),
         migrationSignature: Joi.string().required(),
         operatorHash: Joi.string().required(),
     }),
