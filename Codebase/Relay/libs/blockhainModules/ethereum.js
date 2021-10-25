@@ -17,8 +17,10 @@ class Ethereum extends EventEmitter {
         Logger.info(`Web3 ethereum querier instanciated on rpc ${rpc}`)
     }
 
-
-    /* ==== Tokens ==== */
+    /**
+     * Premint a token on the blockchain
+     * @param {string} contractAddress : Address of the contract to interact with
+     */
     async premintToken(contractAddress) {
         const networkId = await this.web3Instance.eth.net.getId();    
         const contract = new this.web3Instance.eth.Contract(
