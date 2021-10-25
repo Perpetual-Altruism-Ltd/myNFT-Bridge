@@ -470,9 +470,11 @@ interface MyNFTBridgeERC721toERC721Arrival {
         bytes32 _destinationTokenId,
         bytes32 _destinationOwner,
         address _signee,
-        bytes32 _originHeight) external view returns(bool)
+        bytes32 _originHeight
+    ) external view returns(bool);
 
 }
+    
 
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridgeControl
