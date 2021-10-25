@@ -40,15 +40,23 @@ class Client {
 
     async transferToBridge() {
         this.step = 'transferToBridge';
-        this.web3Instance.utils.sha3(JSON.stringify(this.migrationData))
+        this.web3Instance.utils.sha3(JSON.stringify(migrationData))
         const ethereum = new Ethereum(this.universe.rpc)
         const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature)
-        this.escrowHash = await ethereum.safeTransferFrom(
+        await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
             this.originUniverse.bridgeAdress, 
             this.migrationData.originTokenId
         )
+    }
+
+    async updateEscrowHash() {
+        if(this.migrationHash) {
+            this.escrowHash = await ethereum.getProofOfEscrowHash(this.migrationHash)
+        } else {
+            throw "Invalid migrationHash"
+        }
     }
 
 }

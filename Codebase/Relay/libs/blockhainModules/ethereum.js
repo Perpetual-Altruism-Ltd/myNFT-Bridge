@@ -40,6 +40,11 @@ class Ethereum extends EventEmitter {
         return this.web3Instance.eth.personal.ecRecover(messageHash, signature);
     }
 
+    async getProofOfEscrowHash(migrationHash) {
+        const escrowHash = await contract.methods.getProofOfEscrowHash(migrationHash).call();
+        return escrowHash;
+    }
+
     async safeTransferFrom(contract, from, to, tokenId) {
         const web3Contract = new this.web3Instance.eth.Contract(
             ERC721Abi,

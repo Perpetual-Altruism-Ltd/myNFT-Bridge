@@ -28,6 +28,9 @@ const schemas = {
     pollingMigration: Joi.object({
         migrationId: Joi.string().required(),
     }),
+    pollingEscrow: Joi.object({
+        migrationId: Joi.string().required(),
+    }),
     closeMigration: Joi.object({
         migrationId: Joi.string().required(),
         mintingSignature: Joi.string().required()
