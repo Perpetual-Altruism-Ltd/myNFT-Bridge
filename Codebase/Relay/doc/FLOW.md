@@ -11,19 +11,21 @@
 9. User select the destination world, which is given by the relay
 10. The frontend ask the relay for available token ids given the contract
 11. User select the destination token id, which is given by the relay
-12. User fill in the destination address
+12. User fill in the destination address of the owner of the token after the migration
 13. User click complete
 14. Frontend display the transfer datas and allow to continue
-15. User sign the data of the transfer via metamask
+15. Relay need to get all the migration data
 16. User set relay as operator of the origin token
-17. Frontend  notify backend that the token is ready to be transfered and give the signed data on step 14
-18. Frontend start polling the relay for escrow hash
+17. Relay call migrateToERC721IOU on Origin Bridge (generate a migration hash)
+18. User sign the migration hash
 19. The relay transfer the origin token to the bridge and emit an escrow hash
-20. User sign the escrow hash along with the first signature datas (all the migration data)
-21. Frontend send to relay these signature data
-22. The relay edit the origin token to forge a IOU token
-23. The relay start minting the new IOU token
-24. The frontend poll until the relay say that everything is finished
+20. Frontend start polling the relay for escrow hash
+22. User sign the escrow hash
+23. Frontend send to relay these signature data
+24. The relay caputre data of the origin token to forge a IOU token
+25. The relay start minting the new IOU token on destination chain and call migrateFromIOUERC721ToERC721 on the destination bridge
+26. The relay call registerEscrowHashSignature on the origin bridge in order to be able to reverse the migration in the future
+27. The frontend poll until the relay say that everything is finished
 
 
 

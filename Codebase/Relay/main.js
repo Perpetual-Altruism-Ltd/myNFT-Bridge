@@ -100,6 +100,91 @@ app.get('/getAvailableTokenId', async (req, res) => {
     res.json({ "tokenId" : token })
 })
 
+app.post('/initMigration', async (req, res) => {
+    const { error } = JoiSchemas.initMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /initMigration" })
+        Logger.error("Bad parameters given to /initMigration")
+        return
+    }
+    const { migrationData, migrationSignature } = req.body;
+    const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse);
+    if(!originUniverse) {
+        throw "Can't find this universe";
+    }
+
+    // Returning migration_id
+    const client = new Client(
+        migrationData, 
+        migrationSignature, 
+        originUniverse
+    );
+    clientList[client.id] = client;
+    res.json({
+        migrationId: client.id
+    });
+
+    // Calling departure bridge
+    await client.annonceToBridge(originUniverse)
+
+    // Transferring token to departure bridge
+    await client.transferToBridge(originUniverse)
+})
+
+app.post('/pollingMigration', (req, res) => {
+    const { error } = JoiSchemas.pollingMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /pollingMigration" })
+        Logger.error("Bad parameters given to /pollingMigration")
+        return
+    }
+    const client = clientList[req.body.migrationId];
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' });
+    }
+    if(client.escrowHash) {
+        return res.json({
+                escrowHash: client.escrowHash,
+                migrationSignature: client.migrationSignature
+            });
+    }
+})
+
+app.post('/closeMigration', async (req, res) => {
+    const { error } = JoiSchemas.closeMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /closeMigration" })
+        Logger.error("Bad parameters given to /closeMigration")
+        return
+    }
+})
+
+app.post('/pollingEndMigration', (req, res) => {
+    const { error } = JoiSchemas.pollingEndMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /pollingEndMigration" })
+        Logger.error("Bad parameters given to /pollingEndMigration")
+        return
+    }
+    const client = clientList[req.body.migrationId];
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' });
+    }
+    if(client.creationTransferHash) {
+        return res.json({
+                "migrationStatus":"Ok",
+                "transactionHash": client.creationTransferHash
+            });
+    }
+    return res.json({
+        "migrationStatus":"Running"
+    });
+})
+
 app.get('/getMigrationPaths', (req, res) => {
     res.send(Conf.migrationPaths)
 })

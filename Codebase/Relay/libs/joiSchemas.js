@@ -2,7 +2,7 @@ const Joi = require('joi');
 
 const schemas = {
     getContracts: Joi.object({ universeUniqueId: Joi.string().required() }),
-    waitForOperatorElevation: Joi.object({ 
+    waitForOperatorElevation: Joi.object({
         clientId: Joi.string().required(),
         universeUniqueId: Joi.string().required(),
         contract: Joi.string().required(),
@@ -12,7 +12,29 @@ const schemas = {
     getAvailableTokenId: Joi.object({
         universe: Joi.string().required(),
         world: Joi.string().required()
-    })
+    }),
+    initMigration: Joi.object({
+        migrationData: {
+            originUniverse: Joi.string().required(),
+            originWorld: Joi.string().required(),
+            originTokenId: Joi.string().required(),
+            destinationUniverse: Joi.string().required(),
+            destinationWorld: Joi.string().required(),
+            destinationTokenId: Joi.string().required()
+        },
+        migrationSignature: Joi.string().required(),
+        operatorHash: Joi.string().required(),
+    }),
+    pollingMigration: Joi.object({
+        migrationId: Joi.string().required(),
+    }),
+    closeMigration: Joi.object({
+        migrationId: Joi.string().required(),
+        mintingSignature: Joi.string().required()
+    }),
+    pollingEndMigration: Joi.object({
+        migrationId: Joi.string().required(),
+    }),
 }
 
 module.exports = schemas
