@@ -8,33 +8,14 @@
 			{
 				"inputs": [
 					{
-						"internalType": "string",
+						"internalType": "uint256",
 						"name": "_localUniverse",
-						"type": "string"
+						"type": "uint256"
 					}
 				],
 				"name": "init",
 				"outputs": [],
 				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "string",
-						"name": "source",
-						"type": "string"
-					}
-				],
-				"name": "stringToBytes32",
-				"outputs": [
-					{
-						"internalType": "bytes32",
-						"name": "result",
-						"type": "bytes32"
-					}
-				],
-				"stateMutability": "pure",
 				"type": "function"
 			}
 		],
@@ -42,7 +23,7 @@
 			"author": "Guillaume Gonnaud 2021",
 			"kind": "dev",
 			"methods": {
-				"init(string)": {
+				"init(uint256)": {
 					"params": {
 						"_localUniverse": "The local universe this bridge is deployed in. Refer to ImplMemoryStructure for a list of standardized universes."
 					}
@@ -54,7 +35,7 @@
 		"userdoc": {
 			"kind": "user",
 			"methods": {
-				"init(string)": {
+				"init(uint256)": {
 					"notice": "Initialize a bridge"
 				}
 			},
@@ -79,19 +60,19 @@
 	},
 	"sources": {
 		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": {
-			"keccak256": "0x624138fe3a78abf6bb33ad1bbc8c67e07b7b8096ce36f24abd4aa53891e767f5",
+			"keccak256": "0x2da6f483f87e142268cbb70d14b857b40672484a97dab0742bc949783d186ab4",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://a8e09d06dbac559c9492b48749661a22dd5c7ad58294df2938e04b11688a3750",
-				"dweb:/ipfs/QmRwRJXEaBzdvqjwB1cGv1aTdnKksSh3fNQWif8Bn6Nxyt"
+				"bzz-raw://122c1e0dd90d515c5b0aafc352b16a1bb8f948b24b8f1552c1da740a19fa4df0",
+				"dweb:/ipfs/QmSCfDo2DM5L5yh4R6T12ho8EwDGkKYPPpA1hEJVPAGeDA"
 			]
 		},
 		"contracts/Implementation/ImplMemoryStructure.sol": {
-			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"keccak256": "0x6def2852bd98a8a5f352ad59abf1649c753379f7b0c4dd4d2f457d684de706ed",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
-				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+				"bzz-raw://13369ab20cfdd3b06a9b8285c1db3cb3cb8ac395e0ce8d9cc76b17461c993ea0",
+				"dweb:/ipfs/Qmf9RDNfsB7cPsHWZhErbtN8h5BKT3wjko4dSBHD6gCnXm"
 			]
 		}
 	},
