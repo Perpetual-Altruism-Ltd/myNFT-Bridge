@@ -12,6 +12,22 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
+
+    //Display migration data from model.migData
+    document.getElementById("OGNetworkRegistrationDisp").textContent = migData.originUniverse;
+    document.getElementById("OGContractAddressRegistrationDisp").textContent = migData.originWorld;
+    document.getElementById("OGTokenIDRegistrationDisp").textContent = migData.originTokenId;
+    document.getElementById("TokenNameRegistrationDisp").textContent = migData.originTokenName;
+
+    document.getElementById("MigrationTypeRegistrationDisp").textContent = migData.migrationType;
+    document.getElementById("MigrationRelayRegistrationDisp").textContent = migData.migrationRelay;
+
+    document.getElementById("DestNetworkRegistrationDisp").textContent = migData.destinationUniverse;
+    document.getElementById("DestContractAddressRegistrationDisp").textContent = migData.destinationWorld;
+    document.getElementById("DestTokenIDRegistrationDisp").textContent = migData.destinationTokenId;
+    document.getElementById("DestTokenOwnerRegistrationDisp").textContent = migData.destinationOwner;
+
 
     document.getElementById("EditMigrationButton").addEventListener('click', async() =>{
       model.navigateTo("/migration_form");

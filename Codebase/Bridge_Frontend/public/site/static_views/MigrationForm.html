@@ -107,6 +107,23 @@
   <div class="Card" id="MigrationCard">
     <div class="CardLine CardTitle" id="MigrationCardLineTitle"><div class="LineElement">Migration</div></div>
 
+    <div class="CardLine" id="DestNetworkCardLine">
+      <div class="LineElement TextElement">Destination network:</div>
+      <div class="LineElement">
+        <!-- Custom drop down selector -->
+        <div class="select-wrapper InputElement" id="DestinationNetworkSelector">
+          <div class="select">
+            <div class="select-trigger">
+              <span></span>
+              <div class="arrow"></div>
+            </div>
+
+            <div class="select-options"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="CardLine" id="MigrationTypeCardLine">
       <div class="LineElement TextElement">Migration type:</div>
       <div class="MigrationButtonLine">
@@ -138,13 +155,13 @@
 
   <!-- Arrival card -->
   <div class="Card" id="ArrivalCard">
-    <div class="CardLine CardTitle" id="ArrivalCardLineTitle">Arrival</div>
+    <div class="CardLine CardTitle" id="ArrivalCardLineTitle"><div class="LineElement">Arrival</div></div>
 
-    <div class="CardLine" id="DestNetworkCardLine">
-      <div class="LineElement TextElement">Destination network:</div>
+    <div class="CardLine" id="DestWorldCardLine">
+      <div class="LineElement TextElement">Destination ERC721 contract:</div>
       <div class="LineElement">
         <!-- Custom drop down selector -->
-        <div class="select-wrapper InputElement" id="DestinationNetworkSelector">
+        <div class="select-wrapper InputElement" id="DestinationWorldSelector">
           <div class="select">
             <div class="select-trigger">
               <span></span>
@@ -156,12 +173,6 @@
         </div>
       </div>
     </div>
-
-    <div class="CardLine" id="DestWorldCardLine">
-      <div class="LineElement TextElement">Destination ERC721 contract:</div>
-      <div class="LineElement"><input class="TextInput InputElement" onChange="destContractChanged();" id="inputDestContractAddress"></div>
-    </div>
-
 
     <div class="Card" id="DestTokenDataCard">
       <div class="CardLine">

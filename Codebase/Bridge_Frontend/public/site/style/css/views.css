@@ -90,7 +90,7 @@ document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
   text-decoration: none;
   transition: 0.5s;
   background-image: linear-gradient(to right, #3e287a 0%, #af1540 100%);
-  background-size: 201% auto;
+  background-size: 200% auto;
   color: #fff;
   white-space: nowrap;
 }

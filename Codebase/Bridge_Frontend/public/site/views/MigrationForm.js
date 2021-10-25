@@ -13,6 +13,7 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
     let ogTokenMetaData = model.ogTokenMetaData;
+    let migData = model.migrationData;
 
     //Define functions to load data from server
     let loadNets = async function (_callback) {
@@ -81,6 +82,27 @@ export default class extends AbstractView {
       };
     };
 
+    //Update global var (model) and display once new network is selected
+    let onChainSwitchedSuccess = function(){
+      //Display next form field: ogWorld input
+      document.getElementById("OriginWorldCardLine").style.display = 'flex';
+
+      //Set origin network in the object migData to access it later in the migration process
+      migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+      migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
+
+      //Show the available destination networks for the ogNet selected
+      for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
+        let destNetId = target.networkId
+        let targetNet = {};
+        for(const network of bridgeApp.networks){
+          if(network.networkID == destNetId)
+            targetNet = network;
+        }
+        addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
+      }
+    }
+
     //Define functions which interact with blockchains
     let promptSwitchChain = async function (ID) {
       window.ethereum.request({
@@ -88,8 +110,7 @@ export default class extends AbstractView {
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
         console.log("Network switch done.");
-        //Display next form field: ogWorld input
-        document.getElementById("OriginWorldCardLine").style.display = 'flex';
+        onChainSwitchedSuccess();
       }).catch((res) => {
         console.log("Network switch canceled or error");
         alert("Please accept the metamask switch network prompt in order to change to desired network");
@@ -167,7 +188,7 @@ export default class extends AbstractView {
         document.getElementById("TokenDataCard").style.display = 'flex';
         document.getElementById("MigrationCard").style.display = 'flex';
         document.getElementById("MigrationCardLineTitle").style.display = 'flex';
-        document.getElementById("MigrationTypeCardLine").style.display = 'flex';
+        document.getElementById("DestNetworkCardLine").style.display = 'flex';
 
     	  //Get the Contract Name
         let getContractName = async function () {
@@ -263,7 +284,8 @@ export default class extends AbstractView {
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
                       document.getElementById("OGTokenMetaDesc").textContent = ogTokenMetaData.description;
-
+                      //Add token name to migData to display it later in registerMig page
+                      migData.originTokenName = ogTokenMetaData.name;
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
                       if(ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
@@ -297,30 +319,65 @@ export default class extends AbstractView {
         }
     }
 
-    //Functions which interact with relay's backend
-    /*let getRelayAvailableWorlds(){
+    //---Functions which interact with relay's backend---
+    //Query relay for list of dest worlds available for the destination network selected
+    //And display it into dropDown
+    let getRelayAvailableWorlds = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
+      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
+
       const xhr = new XMLHttpRequest();
       xhr.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
-          let htmlContent = xhr.response;
-          callback(htmlContent);
+          let result = xhr.response;
+          //Add dest world available to dropdown
+          bridgeApp.destWorlds = [];
+          result.worlds.forEach((worldAddr, i) => {
+            bridgeApp.destWorlds.push(worldAddr);
+            addDropDownOption("DestinationNetworkSelector", worldAddr, "", i);
+          });
         }
       };
-      xhr.open('POST', '/site/static_views/MigrationForm.html');
-      xhr.send();
-    }*/
+      xhr.open('POST', relayURL + '/getAvailableWorlds');
+      let requestParam = {};
+      requestParam.universe = destinationNetworkId;
+      xhr.send(requestParam);
+    }
+    let getAvailableTokenId = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
+      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
+
+
+      const xhr = new XMLHttpRequest();
+      xhr.onreadystatechange = function() {
+        if (this.readyState == 4 && this.status == 200) {
+          let result = xhr.response;
+          //Add dest tokenId to input
+          document.getElementById("inputDestTokenID").value = result.tokenId;
+        }
+      };
+      xhr.open('POST', relayURL + '/getAvailableTokenId');
+      let requestParam = {};
+      requestParam.universe = destinationNetworkId;
+      requestParam.world = migData.destinationWorld;
+      xhr.send(requestParam);
+    }
+
 
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
     setupDropDown("RelaySelector");
     setupDropDown("DestinationNetworkSelector");
+    setupDropDown("DestinationWorldSelector");
+    addDropDownOption("DestinationWorldSelector", '0x123456789abcdef', "", '1');
 
     //Load networks
     loadNets(function () {
         //Add select options
         for (var i = 0; i < bridgeApp.networks.length; i++) {
             addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
-            addDropDownOption("DestinationNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
         }
     });
     //Load relays
@@ -354,11 +411,23 @@ export default class extends AbstractView {
       //Display next form field: arrival title + arrival dest network
       document.getElementById("ArrivalCard").style.display = 'flex';
       document.getElementById("ArrivalCardLineTitle").style.display = 'flex';
-      document.getElementById("DestNetworkCardLine").style.display = 'flex';
+      document.getElementById("DestWorldCardLine").style.display = 'flex';
+      migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
+      migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
     });
     addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
       //Display next form field: dest world
-      document.getElementById("DestWorldCardLine").style.display = 'flex';
+      document.getElementById("MigrationTypeCardLine").style.display = 'flex';
+      migData.destinationUniverseIndex = getDropDownSelectedOptionIndex("DestinationNetworkSelector");
+      migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
+
+    });
+    addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
+      //Display next form field: dest world
+      document.getElementById("DestTokenDataCard").style.display = 'flex';
+      document.getElementById("DestTokenIdCardLine").style.display = 'flex';
+      let destWorldIndex = getDropDownSelectedOptionIndex("DestinationWorldSelector");
+      migData.destinationWorld = bridgeApp.destWorlds[destWorldIndex];
     });
 
     //===Origin world input===
@@ -372,6 +441,7 @@ export default class extends AbstractView {
     //When input is unfocused, display originTokenID input
     document.getElementById("inputOGContractAddress").addEventListener('focusout', async() =>{
       document.getElementById("OriginTokenIDCardLine").style.display = 'flex';
+      migData.originWorld = document.getElementById("inputOGContractAddress").value;
     });
 
     //===Origin tokenID input===
@@ -384,19 +454,8 @@ export default class extends AbstractView {
         document.getElementById("FetchDataButton").click();
       }
     });
-
-    //===Destination world input===
-    //When return/enter key pressed in input: Display destTokenID input
-    document.getElementById("inputDestContractAddress").addEventListener('keyup', async(e) =>{
-      //Unfocus input when enter key is pressed
-      if (e.key === 'Enter' || e.keyCode === 13) {
-        document.getElementById("inputDestContractAddress").dispatchEvent(new Event("focusout"));
-      }
-    });
-    //When input is unfocused, display originTokenID input
-    document.getElementById("inputDestContractAddress").addEventListener('focusout', async() =>{
-      document.getElementById("DestTokenDataCard").style.display = 'flex';
-      document.getElementById("DestTokenIdCardLine").style.display = 'flex';
+    document.getElementById("inputOGTokenID").addEventListener('focusout', async() =>{
+      migData.originTokenId = document.getElementById("inputOGTokenID").value;
     });
 
     //===Destination tokenID input===
@@ -410,6 +469,7 @@ export default class extends AbstractView {
     //When input is unfocused, display originTokenID input
     document.getElementById("inputDestTokenID").addEventListener('focusout', async() =>{
       document.getElementById("DestOwnerCardLine").style.display = 'flex';
+      migData.destinationTokenId = document.getElementById("inputDestTokenID").value;
     });
 
     //===Destination owner input===
@@ -423,6 +483,7 @@ export default class extends AbstractView {
     //When input is unfocused, display originTokenID input
     document.getElementById("inputDestOwner").addEventListener('focusout', async() =>{
       document.getElementById("CompleteMigrationCard").style.display = 'flex';
+      migData.destinationOwner = document.getElementById("inputDestOwner").value;
     });
 
     //Setting token data retrieval
@@ -440,11 +501,14 @@ export default class extends AbstractView {
       this.classList.add('Selected');
       //Display next form field: relay drop down
       document.getElementById("MigrationRelayCardLine").style.display = 'flex';
+      migData.migrationType = model.MintOUIMigrationType;
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       this.classList.add('Selected');
+      document.getElementById("MigrationRelayCardLine").style.display = 'flex';
+      migData.migrationType = model.RedeemIOUMigrationType;
     });
 
     //Setting token data retrieval
@@ -458,6 +522,7 @@ export default class extends AbstractView {
     });
 
   }
+
 
   async getHtml(callback){
     const xhr = new XMLHttpRequest();
