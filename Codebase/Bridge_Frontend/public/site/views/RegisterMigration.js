@@ -23,6 +23,7 @@ export default class extends AbstractView {
 
   async getHtml(callback){
     const xhr = new XMLHttpRequest();
+    xhr.responseType = 'text';
     xhr.onreadystatechange = function() {
       if (this.readyState == 4 && this.status == 200) {
         let htmlContent = xhr.response;

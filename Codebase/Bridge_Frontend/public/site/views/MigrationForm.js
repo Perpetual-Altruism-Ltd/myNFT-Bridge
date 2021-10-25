@@ -88,12 +88,10 @@ export default class extends AbstractView {
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
         console.log("Network switch done.");
-        //Display next form step: ogWorld input
-        document.getElementById("OriginWorldCardLine").style = 'display: flex;';
+        //Display next form field: ogWorld input
+        document.getElementById("OriginWorldCardLine").style.display = 'flex';
       }).catch((res) => {
         console.log("Network switch canceled or error");
-        //HERE
-        document.getElementById("OriginWorldCardLine").style = 'display: none;';
         alert("Please accept the metamask switch network prompt in order to change to desired network");
       });
     }
@@ -166,8 +164,10 @@ export default class extends AbstractView {
         contracts.originalChainERC721MetadataContract = new window.web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
 
         //Display token data card
-        document.getElementById("TokenDataCard").style = 'display: flex;';
-        document.getElementById("MigrationCard").style = 'display: flex;';
+        document.getElementById("TokenDataCard").style.display = 'flex';
+        document.getElementById("MigrationCard").style.display = 'flex';
+        document.getElementById("MigrationCardLineTitle").style.display = 'flex';
+        document.getElementById("MigrationTypeCardLine").style.display = 'flex';
 
     	  //Get the Contract Name
         let getContractName = async function () {
@@ -233,11 +233,9 @@ export default class extends AbstractView {
         			} else {
         				document.getElementById("OGTokenURI").innerHTML = "Not Specified";
         			}
-
-                } catch (err) {
+            } catch (err) {
         			console.log(err);
         			console.log("Could not get tokenURI() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-
         		}
         }
         getTokenURI();
@@ -303,14 +301,6 @@ export default class extends AbstractView {
     setupDropDown("OriginNetworkSelector");
     setupDropDown("RelaySelector");
     setupDropDown("DestinationNetworkSelector");
-    //Prompt user to connect to new chain selected from origin network selector
-    addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
-      let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
-      console.log("Switching to network id " + chainIDSelected);
-      promptSwitchChain(chainIDSelected);//TOCHECK metamask support only?.
-      document.getElementById("DepartureCard").style = 'display: flex;';
-
-    });
 
     //Load networks
     loadNets(function () {
@@ -334,13 +324,122 @@ export default class extends AbstractView {
     //Auto connect to metamask if wallet exists
     setTimeout(endLoadMetamaskConnection, 1000);
 
+    //Listeners & Callback
+    //When new origin network selected : Prompt user to connect to new chain selected
+    addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
+      let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
+      console.log("Switching to network id " + chainIDSelected);
+      //document.getElementById("OriginWorldCardLine").style.display = 'none';
+      //Hide all following elements
+      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      elementsToHide.forEach(function(elem) {
+        elem.style.display = 'none';
+      });
+      promptSwitchChain(chainIDSelected);//TOCHECK metamask support only?.
+    });
+    addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
+      //Display next form field: arrival title + arrival dest network
+      document.getElementById("ArrivalCard").style.display = 'flex';
+      document.getElementById("ArrivalCardLineTitle").style.display = 'flex';
+      document.getElementById("DestNetworkCardLine").style.display = 'flex';
+    });
+    addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
+      //Display next form field: dest world
+      document.getElementById("DestWorldCardLine").style.display = 'flex';
+    });
 
-    //Setting up interface interactions
+    //===Origin world input===
+    //When return/enter key pressed in input: Display ogTokenID input
+    document.getElementById("inputOGContractAddress").addEventListener('keyup', async(e) =>{
+      //Unfocus input when enter key is pressed
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        document.getElementById("inputOGContractAddress").dispatchEvent(new Event("focusout"));
+      }
+    });
+    //When input is unfocused, display originTokenID input
+    document.getElementById("inputOGContractAddress").addEventListener('focusout', async() =>{
+      document.getElementById("OriginTokenIDCardLine").style.display = 'flex';
+    });
+
+    //===Origin tokenID input===
+    //When return/enter key pressed in input: Display ogTokenID input
+    document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
+      //Unfocus input when enter key is pressed
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        document.getElementById("inputOGTokenID").dispatchEvent(new Event("focusout"));
+        //Trigger Fetch data button
+        document.getElementById("FetchDataButton").click();
+      }
+    });
+
+    //===Destination world input===
+    //When return/enter key pressed in input: Display destTokenID input
+    document.getElementById("inputDestContractAddress").addEventListener('keyup', async(e) =>{
+      //Unfocus input when enter key is pressed
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        document.getElementById("inputDestContractAddress").dispatchEvent(new Event("focusout"));
+      }
+    });
+    //When input is unfocused, display originTokenID input
+    document.getElementById("inputDestContractAddress").addEventListener('focusout', async() =>{
+      document.getElementById("DestTokenDataCard").style.display = 'flex';
+      document.getElementById("DestTokenIdCardLine").style.display = 'flex';
+    });
+
+    //===Destination tokenID input===
+    //When return/enter key pressed in input: Display destTokenID input
+    document.getElementById("inputDestTokenID").addEventListener('keyup', async(e) =>{
+      //Unfocus input when enter key is pressed
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        document.getElementById("inputDestTokenID").dispatchEvent(new Event("focusout"));
+      }
+    });
+    //When input is unfocused, display originTokenID input
+    document.getElementById("inputDestTokenID").addEventListener('focusout', async() =>{
+      document.getElementById("DestOwnerCardLine").style.display = 'flex';
+    });
+
+    //===Destination owner input===
+    //When return/enter key pressed in input: Display destTokenID input
+    document.getElementById("inputDestOwner").addEventListener('keyup', async(e) =>{
+      //Unfocus input when enter key is pressed
+      if (e.key === 'Enter' || e.keyCode === 13) {
+        document.getElementById("inputDestOwner").dispatchEvent(new Event("focusout"));
+      }
+    });
+    //When input is unfocused, display originTokenID input
+    document.getElementById("inputDestOwner").addEventListener('focusout', async() =>{
+      document.getElementById("CompleteMigrationCard").style.display = 'flex';
+    });
+
+    //Setting token data retrieval
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
       //Load metadata from chain: token URI, symbole, name
       loadOgTokenData();
     });
 
+    //Migration type buttons
+    document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
+    document.getElementById("IOUMigrationButton").addEventListener('click', function() {
+      //Unselect the previously selected button.
+      let selected = this.parentNode.querySelector(".Selected");
+      if(selected != undefined){selected.classList.remove('Selected');}
+      this.classList.add('Selected');
+      //Display next form field: relay drop down
+      document.getElementById("MigrationRelayCardLine").style.display = 'flex';
+    });
+    document.getElementById("RedeemButton").addEventListener('click', function() {
+      let selected = this.parentNode.querySelector(".Selected");
+      if(selected != undefined){selected.classList.remove('Selected');}
+      this.classList.add('Selected');
+    });
+
+    //Setting token data retrieval
+    document.getElementById("FetchDataButton").addEventListener('click', async() =>{
+      //Load metadata from chain: token URI, symbole, name
+      loadOgTokenData();
+    });
+    //Setup rooting
     document.getElementById("CompleteButton").addEventListener('click', async() =>{
       model.navigateTo("/register_migration");
     });

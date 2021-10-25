@@ -1,15 +1,24 @@
 /*============Views===========*/
 /*Initial view */
 #ConnectedAddrCard,
-#DepartureCard,
-#OriginWorldCardLine,
-#OriginTokenIDCardLine,
+#DepartureCard,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,
-#MigrationCard,
-#ArrivalCard,
+#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
+#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard{
+  /*-webkit-transition: max-height .25s ease;
+  -moz-transition: max-height .25s ease;
+  transition: max-height .25s ease;
+  overflow: visible;*/
   display: none;
 }
+/* COME BACK LATER ON SMOOTH TRANSITION
+.Hidden{
+  max-height: 0vh;
+  overflow: hidden;
+}
+document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
+*/
 
 *,
 *::before,
@@ -81,7 +90,7 @@
   text-decoration: none;
   transition: 0.5s;
   background-image: linear-gradient(to right, #3e287a 0%, #af1540 100%);
-  background-size: 200% auto;
+  background-size: 201% auto;
   color: #fff;
   white-space: nowrap;
 }
@@ -92,10 +101,12 @@
   background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
 }
 .ColoredButton:disabled, .ColoredButton[disabled]{
-  background-image: linear-gradient(to right, #ccc 0%, #ccc 100%);
+  background-image: linear-gradient(to right, #bbb 0%, #bbb 100%);
+  /*Do not set bg-image : none; bg-color: #bbb. it causes a threshold during the switch from disabled to enabled and reverse */
+
 }
-.ColoredButton:target{
-  background-image: linear-gradient(to right, #df3580 0%, #df3580 100%);
+.ColoredButton.Selected{
+  background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
 }
 
 /*Container for several elements lines placed one under the other  */

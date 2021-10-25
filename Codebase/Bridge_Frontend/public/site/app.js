@@ -48,15 +48,41 @@ const router = async () => {
 
       /*Controller: update view */
       let view = new match.route.view(getParams(match));
-      //Get and display the view's html
-      view.getHtml(htmlContent => {
-        //Code to execute once the HTML content is retrieved from server
-        //Display it in whitesheet
-        document.getElementById("WhiteSheet").innerHTML = htmlContent;
-        //Run the code associated to this view
-        view.initCode(Model);
-      })
 
+      //Get and display the view's html
+      //If MigrationForm already loaded, filled up by user and hidden:
+      //User come back from  registration page, and want to edit migration form data.
+      //So disaply migration form already filled up
+      let migrationFormCard = document.getElementById("MigrationFormDisplay");
+      let registrationCard = document.getElementById("RegistrationDisplay");
+      if(match.route.path == "/migration_form" && migrationFormCard != undefined && registrationCard != undefined){
+        //Remove migration registration card
+        document.getElementById("WhiteSheet").removeChild(registrationCard);
+        //Show up migration form card
+        migrationFormCard.style.display = 'flex';
+        //Run the code associated to this view (migration_form)
+        //view.initCode(Model);
+      }
+      else{
+        view.getHtml(htmlContent => {
+          //Display content in whitesheet
+          //If page is register_migration: add its html content below migration form not to loose user filled data
+          //And hide migration form
+          if(match.route.path == "/register_migration" && migrationFormCard != undefined){
+            migrationFormCard.style.display = 'none';
+            //document.getElementById("WhiteSheet").innerHTML += htmlContent;
+            //Careful, innerHTML += will unlink all javascript code. No event listeners...
+            console.log(htmlContent);
+            let whiteSheetLastElement = document.getElementById("CompleteMigrationCard");
+            whiteSheetLastElement.insertAdjacentHTML("afterend", String(htmlContent));
+            //ISSUE HERE WITH STRING
+          }else{
+            document.getElementById("WhiteSheet").innerHTML = htmlContent;
+          }
+          //Run the code associated to this view
+          view.initCode(Model);
+        });
+      }
 }
 
 const navigateTo = url => {

@@ -105,18 +105,18 @@
 
   <!-- Migration card -->
   <div class="Card" id="MigrationCard">
-    <div class="CardLine CardTitle"><div class="LineElement">Migration</div></div>
+    <div class="CardLine CardTitle" id="MigrationCardLineTitle"><div class="LineElement">Migration</div></div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="MigrationTypeCardLine">
       <div class="LineElement TextElement">Migration type:</div>
       <div class="MigrationButtonLine">
-        <button class="ColoredButton" id="FullMigrationButton" onclick="fullMigrationButtonClick();">Full migration</button>
-        <button class="ColoredButton" id="IOUMigrationButton" onclick="IOUMigrationButtonClick();">Mint IOU</button>
-        <button class="ColoredButton" id="RedeemButton" onclick="redeemButtonClick();">Redeem IOU</button>
+        <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
+        <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
+        <button class="ColoredButton" id="RedeemButton">Redeem IOU</button>
       </div>
     </div>
 
-    <div class="CardLine">
+    <div class="CardLine" id=MigrationRelayCardLine>
       <div class="LineElement TextElement">Migration relay:</div>
       <!-- Custom drop down selector -->
       <div class="LineElement">
@@ -138,9 +138,9 @@
 
   <!-- Arrival card -->
   <div class="Card" id="ArrivalCard">
-    <div class="CardLine CardTitle">Arrival</div>
+    <div class="CardLine CardTitle" id="ArrivalCardLineTitle">Arrival</div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="DestNetworkCardLine">
       <div class="LineElement TextElement">Destination network:</div>
       <div class="LineElement">
         <!-- Custom drop down selector -->
@@ -157,13 +157,13 @@
       </div>
     </div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="DestWorldCardLine">
       <div class="LineElement TextElement">Destination ERC721 contract:</div>
       <div class="LineElement"><input class="TextInput InputElement" onChange="destContractChanged();" id="inputDestContractAddress"></div>
     </div>
 
 
-    <div class="Card">
+    <div class="Card" id="DestTokenDataCard">
       <div class="CardLine">
         <div class="LineElement TextElement">Token Contract Name:</div>
         <div class="LineElement DataText" id="DestContractName"></div>
@@ -175,12 +175,12 @@
       </div>
     </div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="DestTokenIdCardLine">
       <div class="LineElement TextElement">Destination token ID:</div>
       <div class="LineElement"><input class="TextInput InputElement" id="inputDestTokenID"></div>
     </div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="DestOwnerCardLine">
       <div class="LineElement TextElement">Destination owner:</div>
       <div class="LineElement"><input class="TextInput InputElement" id="inputDestOwner"></div>
     </div>
