@@ -15,15 +15,6 @@ class Client {
         Logger.info(`New client generated with id ${this.id}`)
     }
 
-    waitForApproval(universe, contract, tokenId){
-        this.step = 'waitForApproval'
-        const ethereum = new Ethereum()
-        ethereum.listenForOperator(contract, tokenId)
-        ethereum.once('operatorSetted', data => {
-            this.step = 'operatorApproved'
-        })
-    }
-
     async annonceToBridge() {
         this.step = 'annonceToBridge';
         const ethereum = new Ethereum(this.universe.rpc);
