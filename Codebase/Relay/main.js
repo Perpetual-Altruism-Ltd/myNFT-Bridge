@@ -132,7 +132,27 @@ app.post('/initMigration', async (req, res) => {
     await client.transferToBridge(originUniverse)
 })
 
+// TODO : add this function/endpoint to the documentation (step n°18)
 app.post('/pollingMigration', (req, res) => {
+    const { error } = JoiSchemas.pollingMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /pollingMigration" })
+        Logger.error("Bad parameters given to /pollingMigration")
+        return
+    }
+    const client = clientList[req.body.migrationId];
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' });
+    }
+    if(client.migrationHash) {
+        return res.json({
+                migrationHash: client.migrationHash
+            });
+    }
+})
+
+app.post('/pollingEscrow', (req, res) => {
     const { error } = JoiSchemas.pollingMigration.validate(req.body)
     if(error){
         res.status(400)
@@ -146,8 +166,7 @@ app.post('/pollingMigration', (req, res) => {
     }
     if(client.escrowHash) {
         return res.json({
-                escrowHash: client.escrowHash,
-                migrationSignature: client.migrationSignature
+                escrowHash: client.escrowHash
             });
     }
 })

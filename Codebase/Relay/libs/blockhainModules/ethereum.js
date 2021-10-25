@@ -88,8 +88,13 @@ class Ethereum extends EventEmitter {
             ];
     
             try {
-                await web3Contract.methods.migrateToERC721IOU(...data).send();
-                resolve(true);
+                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: signee } }, (err, data) => {
+                    const migrationHash = data?.returnValues?.migrationHash;
+                    if(migrationHash)
+                        return resolve(migrationHash);
+                    return reject("Can't retrieve the migration hash");
+                })
+                web3Contract.methods.migrateToERC721IOU(...data).send();
             } catch(e) {
                 reject(e);
             }

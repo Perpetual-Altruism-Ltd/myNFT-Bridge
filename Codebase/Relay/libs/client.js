@@ -3,7 +3,7 @@ const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
 
 class Client {
-    constructor(migrationData, migrationSignature){
+    constructor(migrationData, migrationSignature, originUniverse){
         this.id = Uuid.v4()
         this.date = (new Date()).getTime()
         this.step = 'registered'
@@ -27,7 +27,15 @@ class Client {
     async annonceToBridge() {
         this.step = 'annonceToBridge';
         const ethereum = new Ethereum(this.universe.rpc);
-        await ethereum.migrateToERC721IOU(this.migrationData, this.migrationSignature);
+        try {
+            const migrationHash = await ethereum.migrateToERC721IOU(this.migrationData, this.migrationSignature);
+            if(!migrationHash) {
+                throw 'Undefined migrationHash';
+            }
+            this.migrationHash = migrationHash;
+        } catch(e) {
+            Logger.info(`Can't annonce intent to migrate to the departure bridge`);
+        }
     }
 
     async transferToBridge() {
