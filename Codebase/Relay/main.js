@@ -175,6 +175,9 @@ app.post('/pollingEscrow', (req, res) => {
             escrowHash: client.escrowHash
         })
     }
+    res.json({
+        status: "No escrow hash yet"
+    })
 })
 
 app.post('/closeMigration', async (req, res) => {
