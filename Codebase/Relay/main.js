@@ -130,6 +130,9 @@ app.post('/initMigration', async (req, res) => {
 
     // Transferring token to departure bridge
     await client.transferToBridge(originUniverse)
+
+    // Update escrow hash
+    await client.updateEscrowHash();
 })
 
 // TODO : add this function/endpoint to the documentation (step n°18)
@@ -153,11 +156,11 @@ app.post('/pollingMigration', (req, res) => {
 })
 
 app.post('/pollingEscrow', (req, res) => {
-    const { error } = JoiSchemas.pollingMigration.validate(req.body)
-    if(error){
+    const { error } = JoiSchemas.pollingEscrow.validate(req.body)
+    if(error) {
         res.status(400)
-        res.send({ status: "Bad parameters given to /pollingMigration" })
-        Logger.error("Bad parameters given to /pollingMigration")
+        res.send({ status: "Bad parameters given to /pollingEscrow" })
+        Logger.error("Bad parameters given to /pollingEscrow")
         return
     }
     const client = clientList[req.body.migrationId];
