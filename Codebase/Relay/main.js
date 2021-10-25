@@ -121,7 +121,8 @@ app.post('/initMigration', async (req, res) => {
     const client = new Client(
         migrationData,  
         originUniverse,
-        destinationUniverse
+        destinationUniverse,
+        db
     )
     clientList[client.id] = client
     res.json({
@@ -130,6 +131,29 @@ app.post('/initMigration', async (req, res) => {
 
     // Calling departure bridge
     await client.annonceToBridge(originUniverse)
+})
+
+// TODO : add this function/endpoint to the documentation (step n°18)
+app.post('/pollingMigration', (req, res) => {
+    const { error } = JoiSchemas.pollingMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /pollingMigration" })
+        Logger.error("Bad parameters given to /pollingMigration")
+        return
+    }
+    const client = clientList[req.body.migrationId]
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' })
+    }
+    if(client.migrationHash) {
+        return res.json({
+            migrationHash: client.migrationHash
+        })
+    }
+    res.json({
+        status: "No migration hash yet"
+    })
 })
 
 app.post('/continueMigration', async (req, res) => {
@@ -161,29 +185,6 @@ app.post('/continueMigration', async (req, res) => {
         })
         Logger.error(err)
     }
-})
-
-// TODO : add this function/endpoint to the documentation (step n°18)
-app.post('/pollingMigration', (req, res) => {
-    const { error } = JoiSchemas.pollingMigration.validate(req.body)
-    if(error){
-        res.status(400)
-        res.send({ status: "Bad parameters given to /pollingMigration" })
-        Logger.error("Bad parameters given to /pollingMigration")
-        return
-    }
-    const client = clientList[req.body.migrationId]
-    if(!client) {
-        return res.status(400).json({ error : 'Unknown migrationId' })
-    }
-    if(client.migrationHash) {
-        return res.json({
-            migrationHash: client.migrationHash
-        })
-    }
-    res.json({
-        status: "No migration hash yet"
-    })
 })
 
 app.post('/pollingEscrow', (req, res) => {
@@ -220,12 +221,24 @@ app.post('/closeMigration', async (req, res) => {
     if(!client) {
         return res.status(400).json({ error : 'Unknown migrationId' })
     }
-    
-    //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
 
+    try{
+        // Check if escrow hash is valid before doing anything
+        await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
 
+        //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
+        await client.closeMigration()
 
-    // Call destination bridge migrateFromIOUERC721ToERC721
+        // Call origin bridge migrateFromIOUERC721ToERC721
+        await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+
+        res.status(200).send({})
+    }catch(err){
+        res.status(500).send({
+            error: "Unexpected error on the server."
+        })
+        Logger.error(err)
+    }
 })
 
 app.post('/pollingEndMigration', (req, res) => {

@@ -86,7 +86,7 @@ class Ethereum extends EventEmitter {
                 migrationData.destinationWorld,
                 migrationData.destinationTokenId,
                 migrationData.destinationOwner,
-                migrationData.originOwner
+                migrationData.originOwnerbloc
             ]
     
             try {
@@ -106,6 +106,23 @@ class Ethereum extends EventEmitter {
                 reject(e)
             }
         })
+    }
+
+    async registerEscrowHashSignature(migrationData, migrationHash, escrowHashSigned) {
+        const web3Contract = new this.web3Instance.eth.Contract(
+            BridgeAbi,
+            migrationData.originBridge,
+            {
+                from: this.web3Instance.eth.defaultAccount,
+                gas: 8000000
+            }
+        )
+
+        const data = [
+            migrationHash,
+            escrowHashSigned
+        ]
+        await web3Contract.methods.registerEscrowHashSignature(...data).send()
     }
 
     /* ==== Arrival Bridge Interractions  ==== */
@@ -138,10 +155,10 @@ class Ethereum extends EventEmitter {
         bytes calldata _migrationHashSigned
     )
      */
-    migrateFromIOUERC721ToERC721(migrationData, migrationHashSignature){
+    async migrateFromIOUERC721ToERC721(migrationData, migrationHashSignature, blockTimestamp) {
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
-            migrationData.originWorld,
+            migrationData.destinationBridge,
             {
                 from: this.web3Instance.eth.defaultAccount,
                 gas: 8000000
@@ -163,8 +180,10 @@ class Ethereum extends EventEmitter {
             migrationData.destinationTokenId,
             migrationData.destinationOwner,
             originOwner,
-
+            blockTimestamp,
+            migrationHashSignature
         ]
+        return await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
     }
 
 }

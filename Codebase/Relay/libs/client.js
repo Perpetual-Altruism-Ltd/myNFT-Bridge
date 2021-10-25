@@ -3,10 +3,11 @@ const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
 
 class Client {
-    constructor(migrationData, originUniverse, destinationUniverse){
+    constructor(migrationData, originUniverse, destinationUniverse, db){
         this.id = Uuid.v4()
         this.date = (new Date()).getTime()
         this.step = 'registered'
+        this.db = db
 
         this.migrationData = migrationData
         this.originUniverse = originUniverse
@@ -33,6 +34,7 @@ class Client {
 
     async transferToBridge(migrationHashSignature) {
         this.step = 'transferToBridge';
+        this.migrationHashSignature = migrationHashSignature
         const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
         await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
@@ -42,16 +44,24 @@ class Client {
         )
     }
 
-    async finishMigration(migrationHashSignature) {
+    async closeMigration() {
         this.step = 'closeMigration'
-        await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, migrationHashSignature)
+        this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
     }
     
-    async registerTransferOnOriginBridge(){
-        //registerEscrowHashSignature
+    async registerTransferOnOriginBridge(escrowHashSigned){
+        this.step = 'registerTransferOnOriginBridge'
+        await this.originEthereumConnection.registerEscrowHashSignature(this.migrationData, this.migrationHash, escrowHashSigned)
+    }
+
+    async verifyEscrowHashSigned(escrowHashSigned) {
+        this.step = 'verifyEscrowHashSigned'
+        const owner = await this.originEthereumConnection.verifySignature(this.escrowHash, escrowHashSigned);
+        return owner == this.migrationData.originOwner;
     }
 
     async updateEscrowHash() {
+        this.step = 'updateEscrowHash'
         if(this.migrationHash) {
             this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
         } else {

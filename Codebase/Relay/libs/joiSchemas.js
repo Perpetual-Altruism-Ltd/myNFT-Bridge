@@ -37,7 +37,7 @@ const schemas = {
     }),
     closeMigration: Joi.object({
         migrationId: Joi.string().required(),
-        mintingSignature: Joi.string().required()
+        escrowHashSignature: Joi.string().required()
     }),
     pollingEndMigration: Joi.object({
         migrationId: Joi.string().required(),
