@@ -1,6 +1,6 @@
 # List of queries
 
-## /getAvailableWorlds [type GET]
+## /getAvailableWorlds [type POST]
 
 ### Description
 
@@ -22,7 +22,7 @@ Given an universe, the relay give back its available destination ERC721 contract
 }
 ```
 
-## /getAvailableTokenId [type GET]
+## /getAvailableTokenId [type POST]
 
 ### Description
 
@@ -75,7 +75,7 @@ The relay make sure the univers and contract are referenced and usable. If there
 }
 ```
 
-## /pollingMigration [type GET]
+## /pollingMigration [type POST]
 
 ### Input parameters
 
