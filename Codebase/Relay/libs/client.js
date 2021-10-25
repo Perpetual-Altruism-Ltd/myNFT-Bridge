@@ -40,7 +40,7 @@ class Client {
 
     async transferToBridge() {
         this.step = 'transferToBridge';
-        this.web3Instance.utils.sha3(JSON.stringify(migrationData))
+        this.web3Instance.utils.sha3(JSON.stringify(this.migrationData))
         const ethereum = new Ethereum(this.universe.rpc)
         const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature)
         this.escrowHash = await ethereum.safeTransferFrom(
