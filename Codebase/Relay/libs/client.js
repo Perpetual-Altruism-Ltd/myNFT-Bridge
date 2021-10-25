@@ -28,27 +28,27 @@ class Client {
         this.step = 'annonceToBridge';
         const ethereum = new Ethereum(this.universe.rpc);
         try {
-            const migrationHash = await ethereum.migrateToERC721IOU(this.migrationData, this.migrationSignature);
+            const migrationHash = await ethereum.migrateToERC721IOU(this.migrationData, this.migrationSignature)
             if(!migrationHash) {
-                throw 'Undefined migrationHash';
+                throw 'Undefined migrationHash'
             }
-            this.migrationHash = migrationHash;
+            this.migrationHash = migrationHash
         } catch(e) {
-            Logger.info(`Can't annonce intent to migrate to the departure bridge`);
+            Logger.info(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
 
     async transferToBridge() {
         this.step = 'transferToBridge';
         this.web3Instance.utils.sha3(JSON.stringify(migrationData))
-        const ethereum = new Ethereum(this.universe.rpc);
-        const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature);
+        const ethereum = new Ethereum(this.universe.rpc)
+        const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature)
         this.escrowHash = await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
             owner, 
             this.originUniverse.bridgeAdress, 
             this.migrationData.originTokenId
-        );        
+        )
     }
 
 }

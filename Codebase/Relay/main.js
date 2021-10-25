@@ -108,10 +108,10 @@ app.post('/initMigration', async (req, res) => {
         Logger.error("Bad parameters given to /initMigration")
         return
     }
-    const { migrationData, migrationSignature } = req.body;
-    const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse);
+    const { migrationData, migrationSignature } = req.body
+    const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
     if(!originUniverse) {
-        throw "Can't find this universe";
+        throw "Can't find this universe"
     }
 
     // Returning migration_id
@@ -119,11 +119,11 @@ app.post('/initMigration', async (req, res) => {
         migrationData, 
         migrationSignature, 
         originUniverse
-    );
-    clientList[client.id] = client;
+    )
+    clientList[client.id] = client
     res.json({
         migrationId: client.id
-    });
+    })
 
     // Calling departure bridge
     await client.annonceToBridge(originUniverse)
@@ -141,14 +141,14 @@ app.post('/pollingMigration', (req, res) => {
         Logger.error("Bad parameters given to /pollingMigration")
         return
     }
-    const client = clientList[req.body.migrationId];
+    const client = clientList[req.body.migrationId]
     if(!client) {
-        return res.status(400).json({ error : 'Unknown migrationId' });
+        return res.status(400).json({ error : 'Unknown migrationId' })
     }
     if(client.migrationHash) {
         return res.json({
-                migrationHash: client.migrationHash
-            });
+            migrationHash: client.migrationHash
+        })
     }
 })
 
@@ -162,12 +162,12 @@ app.post('/pollingEscrow', (req, res) => {
     }
     const client = clientList[req.body.migrationId];
     if(!client) {
-        return res.status(400).json({ error : 'Unknown migrationId' });
+        return res.status(400).json({ error : 'Unknown migrationId' })
     }
     if(client.escrowHash) {
         return res.json({
-                escrowHash: client.escrowHash
-            });
+            escrowHash: client.escrowHash
+        })
     }
 })
 
@@ -189,19 +189,19 @@ app.post('/pollingEndMigration', (req, res) => {
         Logger.error("Bad parameters given to /pollingEndMigration")
         return
     }
-    const client = clientList[req.body.migrationId];
+    const client = clientList[req.body.migrationId]
     if(!client) {
-        return res.status(400).json({ error : 'Unknown migrationId' });
+        return res.status(400).json({ error : 'Unknown migrationId' })
     }
     if(client.creationTransferHash) {
         return res.json({
-                "migrationStatus":"Ok",
-                "transactionHash": client.creationTransferHash
-            });
+            "migrationStatus":"Ok",
+            "transactionHash": client.creationTransferHash
+        })
     }
     return res.json({
         "migrationStatus":"Running"
-    });
+    })
 })
 
 app.get('/getMigrationPaths', (req, res) => {
