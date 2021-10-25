@@ -108,17 +108,20 @@ app.post('/initMigration', async (req, res) => {
         Logger.error("Bad parameters given to /initMigration")
         return
     }
-    const { migrationData, migrationSignature } = req.body
+    const { migrationData } = req.body
     const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
-    if(!originUniverse) {
-        throw "Can't find this universe"
-    }
+    if(!originUniverse) 
+        throw "Can't find origin universe"
+    const destinationUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.destinationUniverse)
+    if(!destinationUniverse) 
+        throw "Can't find destination universe"
+
 
     // Returning migration_id
     const client = new Client(
-        migrationData, 
-        migrationSignature, 
-        originUniverse
+        migrationData,  
+        originUniverse,
+        destinationUniverse
     )
     clientList[client.id] = client
     res.json({
@@ -127,12 +130,37 @@ app.post('/initMigration', async (req, res) => {
 
     // Calling departure bridge
     await client.annonceToBridge(originUniverse)
+})
 
-    // Transferring token to departure bridge
-    await client.transferToBridge(originUniverse)
+app.post('/continueMigration', async (req, res) => {
+    const { error } = JoiSchemas.continueMigration.validate(req.body)
+    if(error){
+        res.status(400)
+        res.send({ status: "Bad parameters given to /continueMigration" })
+        Logger.error("Bad parameters given to /continueMigration")
+        return
+    }
+    const client = clientList[req.body.migrationId]
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' })
+    }
 
-    // Update escrow hash
-    await client.updateEscrowHash();
+    try{
+        // Transferring token to departure bridge
+        await client.transferToBridge(req.body.migrationHashSignature)
+
+        // Update escrow hash
+        await client.updateEscrowHash()
+
+        res.status(200).send({
+            status: "Migration continuing."
+        })
+    }catch(err){
+        res.status(500).send({
+            error: "Unexpected error on the server."
+        })
+        Logger.error(err)
+    }
 })
 
 // TODO : add this function/endpoint to the documentation (step n°18)
@@ -188,6 +216,16 @@ app.post('/closeMigration', async (req, res) => {
         Logger.error("Bad parameters given to /closeMigration")
         return
     }
+    const client = clientList[req.body.migrationId]
+    if(!client) {
+        return res.status(400).json({ error : 'Unknown migrationId' })
+    }
+    
+    //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
+
+
+
+    // Call destination bridge migrateFromIOUERC721ToERC721
 })
 
 app.post('/pollingEndMigration', (req, res) => {

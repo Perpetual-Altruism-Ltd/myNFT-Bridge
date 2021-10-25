@@ -3,37 +3,37 @@ const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
 
 class Client {
-    constructor(migrationData, migrationSignature, originUniverse){
+    constructor(migrationData, originUniverse, destinationUniverse){
         this.id = Uuid.v4()
         this.date = (new Date()).getTime()
         this.step = 'registered'
 
-        this.migrationData = migrationData;
-        this.migrationSignature = migrationSignature;
-        this.originUniverse = originUniverse;
+        this.migrationData = migrationData
+        this.originUniverse = originUniverse
+        this.destinationUniverse = destinationUniverse
+
+        this.originEthereumConnection = new Ethereum(this.originUniverse.rpc)
+        this.destinationEthereumConnection = new Ethereum(this.destinationUniverse.rpc)
 
         Logger.info(`New client generated with id ${this.id}`)
     }
 
     async annonceToBridge() {
         this.step = 'annonceToBridge';
-        const ethereum = new Ethereum(this.universe.rpc);
         try {
-            const migrationHash = await ethereum.migrateToERC721IOU(this.migrationData, this.migrationSignature)
-            if(!migrationHash) {
+            const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(this.migrationData)
+            if(!migrationHash) 
                 throw 'Undefined migrationHash'
-            }
             this.migrationHash = migrationHash
+            this.blockTimestamp = blockTimestamp
         } catch(e) {
             Logger.info(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
 
-    async transferToBridge() {
+    async transferToBridge(migrationHashSignature) {
         this.step = 'transferToBridge';
-        this.web3Instance.utils.sha3(JSON.stringify(migrationData))
-        const ethereum = new Ethereum(this.universe.rpc)
-        const owner = await ethereum.verifySignature(this.migrationData, this.migrationSignature)
+        const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
         await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
@@ -42,9 +42,18 @@ class Client {
         )
     }
 
+    async finishMigration(migrationHashSignature) {
+        this.step = 'closeMigration'
+        await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, migrationHashSignature)
+    }
+    
+    async registerTransferOnOriginBridge(){
+        //registerEscrowHashSignature
+    }
+
     async updateEscrowHash() {
         if(this.migrationHash) {
-            this.escrowHash = await ethereum.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
+            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
         } else {
             throw "Invalid migrationHash"
         }

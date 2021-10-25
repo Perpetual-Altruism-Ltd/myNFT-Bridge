@@ -56,13 +56,13 @@ The relay make sure the univers and contract are referenced and usable. If there
         "originUniverse": "0x00",
         "originWorld": "0x00",
         "originTokenId": "123",
+        "originOwner": "0x00",
         "destinationUniverse": "0x00",
         "destinationBridge": "0x00",
         "destinationWorld": "0x00",
         "destinationTokenId": "123",
         "destinationOwner": "0x00"
     },
-    "migrationSignature": "0x00",
     "operatorHash": "0x00",
 }
 ```
@@ -96,6 +96,26 @@ The relay make sure the univers and contract are referenced and usable. If there
 
 ```
 
+## /continueMigration [type POST]
+
+### Input parameters
+
+```json
+{
+    "migrationId": "12345",
+    "migrationHashSignature": "0x00"
+}
+```
+
+### Result
+
+```json
+{
+    "migrationId": "12345"
+}
+```
+
+
 ## /pollingEscrow [type POST]
 
 ### Input parameters
@@ -125,7 +145,7 @@ The relay make sure the univers and contract are referenced and usable. If there
 ```json
 {
     "migrationId": "12345",
-    "mintingSignature": "0x00",
+    "escrowHashSignature": "0x00",
 }
 ```
 

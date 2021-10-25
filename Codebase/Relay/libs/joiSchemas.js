@@ -18,12 +18,16 @@ const schemas = {
             originUniverse: Joi.string().required(),
             originWorld: Joi.string().required(),
             originTokenId: Joi.string().required(),
+            originOwner: Joi.string().required(),
             destinationUniverse: Joi.string().required(),
             destinationWorld: Joi.string().required(),
             destinationTokenId: Joi.string().required()
         }).required(),
-        migrationSignature: Joi.string().required(),
         operatorHash: Joi.string().required(),
+    }),
+    continueMigration: Joi.object({
+        migrationId: Joi.string().required(),
+        migrationHashSignature: Joi.string().required()
     }),
     pollingMigration: Joi.object({
         migrationId: Joi.string().required(),
