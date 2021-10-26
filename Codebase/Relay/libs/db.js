@@ -1,12 +1,25 @@
 const Loki = require('lokijs')
 
 class Db {
-    constructor(){
-        this.dbInstance = new Loki('db', { autoload: true })
-        this.dbCollections = {
-            premintedTokens: (this.dbInstance.getCollection('premintedTokens') === null) ? this.dbInstance.addCollection('premintedTokens') : this.dbInstance.getCollection('premintedTokens'),
-            mintedIOU: (this.dbInstance.getCollection('mintedIOU') === null) ? this.dbInstance.addCollection('mintedIOU') : this.dbInstance.getCollection('mintedIOU')
-        }
+    constructor(){}
+
+    init(){
+        return new Promise((resolve, reject) => {
+            const autoloadCallback = () => {
+                this.collections = {
+                    premintedTokens: (this.instance.getCollection('premintedTokens') === null) ? this.instance.addCollection('premintedTokens') : this.instance.getCollection('premintedTokens'),
+                    mintedIOU: (this.instance.getCollection('mintedIOU') === null) ? this.instance.addCollection('mintedIOU') : this.instance.getCollection('mintedIOU')
+                }
+                resolve()
+            }
+
+            this.instance = new Loki('db.json', { 
+                autosave: true
+                , autosaveInterval: 100
+                , autoload: true
+                , autoloadCallback: autoloadCallback 
+            })
+        })
     }
 }
 
