@@ -78,27 +78,27 @@ class Ethereum extends EventEmitter {
     }
 
     /* ==== Departure Bridge Interractions  ==== */
-    migrateToERC721IOU(migrationData) {
+    migrateToERC721IOU(originBridge, migrationData) {
         return new Promise(async (resolve, reject) => {
             const web3Contract = new this.web3Instance.eth.Contract(
                 BridgeAbi,
-                migrationData.originWorld,
+                originBridge,
                 {
                     from: this.web3Instance.eth.defaultAccount,
                     gas: 8000000
                 }
             )
-    
+
             const data = [
                 migrationData.originWorld,
                 parseInt(migrationData.originTokenId),
-                migrationData.destinationUniverse, // eg : "Moonbeam"
+                this.web3Instance.utils.asciiToHex(migrationData.destinationUniverse), // eg : "Moonbeam"
                 migrationData.destinationBridge,
                 migrationData.destinationWorld,
-                migrationData.destinationTokenId,
+                this.web3Instance.utils.asciiToHex(migrationData.destinationTokenId),
                 migrationData.destinationOwner,
                 migrationData.originOwner
-            ]
+            ];
     
             try {
                 web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: migrationData.originOwner } }, async (err, data) => {
@@ -119,10 +119,10 @@ class Ethereum extends EventEmitter {
         })
     }
 
-    async registerEscrowHashSignature(migrationData, migrationHash, escrowHashSigned) {
+    async registerEscrowHashSignature(originBridge, migrationData, migrationHash, escrowHashSigned) {
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
-            migrationData.originBridge,
+            originBridge,
             {
                 from: this.web3Instance.eth.defaultAccount,
                 gas: 8000000
@@ -137,35 +137,6 @@ class Ethereum extends EventEmitter {
     }
 
     /* ==== Arrival Bridge Interractions  ==== */
-
-    /**
-     * 
-     * 
-     * "migrationData": {
-        "originUniverse": "0x00",
-        "originWorld": "0x00",
-        "originTokenId": "123",
-        "destinationUniverse": "0x00",
-        "destinationBridge": "0x00",
-        "destinationWorld": "0x00",
-        "destinationTokenId": "123",
-        "destinationOwner"migrationData
-
-    
-     * (
-        bytes32 _originUniverse,
-        bytes32 _originBridge, 
-        bytes32 _originWorld, 
-        bytes32 _originTokenId, 
-        bytes32 _originOwner, 
-        address _destinationWorld,
-        uint256 _destinationTokenId,
-        address _destinationOwner,
-        address _signee,
-        bytes32 _height,
-        bytes calldata _migrationHashSigned
-    )
-     */
     async migrateFromIOUERC721ToERC721(migrationData, migrationHashSignature, blockTimestamp) {
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
@@ -195,6 +166,13 @@ class Ethereum extends EventEmitter {
             migrationHashSignature
         ]
         return await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
+    }
+
+    /**
+     * Utilities functions
+     */
+    convertArrayToHex(arr) {
+        return arr.map(elt => this.web3Instance.utils.asciiToHex(elt))
     }
 
 }

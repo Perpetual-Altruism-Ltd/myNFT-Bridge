@@ -22,12 +22,15 @@ class Client {
     async annonceToBridge() {
         this.step = 'annonceToBridge';
         try {
-            const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(this.migrationData)
+            const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(
+                this.originUniverse.bridgeAdress,
+                this.migrationData)
             if(!migrationHash) 
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
             this.blockTimestamp = blockTimestamp
         } catch(e) {
+            console.log(e);
             Logger.info(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
@@ -51,7 +54,11 @@ class Client {
     
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
-        await this.originEthereumConnection.registerEscrowHashSignature(this.migrationData, this.migrationHash, escrowHashSigned)
+        await this.originEthereumConnection.registerEscrowHashSignature(
+            this.originUniverse.bridgeAdress,
+            this.migrationData,
+            this.migrationHash,
+            escrowHashSigned)
     }
 
     async verifyEscrowHashSigned(escrowHashSigned) {
