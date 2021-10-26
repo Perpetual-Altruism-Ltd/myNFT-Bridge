@@ -45,6 +45,7 @@ class Client {
         this.db.collections.clients.update(this.dbObject)
 
         try {
+            Logger.info(`Announcing to bridge the intent to migrate a token`)
             const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(
                 this.originUniverse.bridgeAdress,
                 this.migrationData
@@ -59,7 +60,7 @@ class Client {
             this.db.collections.clients.update(this.dbObject)
         } catch(e) {
             console.log(e);
-            Logger.info(`Can't annonce intent to migrate to the departure bridge`)
+            Logger.error(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
 
