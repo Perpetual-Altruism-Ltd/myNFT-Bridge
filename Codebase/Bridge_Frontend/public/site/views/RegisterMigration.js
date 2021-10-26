@@ -15,33 +15,6 @@ export default class extends AbstractView {
     let migData = model.migrationData;
     let account = window.web3.currentProvider.selectedAddress;
 
-    //Cookies management
-    function createCookie(name, value, days) {
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-            var expires = "; expires=" + date.toGMTString();
-        } else {
-            var expires = "";
-        }
-        // document.cookie = name + "=" + value + expires + "; path=/; secure; samesite=strict";
-        document.cookie = name + "=" + value + expires + ";path=/; SameSite=Strict; Secure";
-    }
-    function readCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ')
-                c = c.substring(1, c.length);
-            if (c.indexOf(nameEQ) == 0)
-                return c.substring(nameEQ.length, c.length);
-        }
-        return null;
-    }
-    function eraseCookie(name) {
-        createCookie(name, "", -1);
-    }
 
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
@@ -81,7 +54,7 @@ export default class extends AbstractView {
         if (this.readyState == 4 && this.status == 200) {
           let migId = xhr.response;
           //Add migrationID as cookie
-          createCookie("migrationId", migId, 31);
+          model.createCookie("migrationId", migId, 31);
           console.log("MigrationId: " + migId);
         }
       };
