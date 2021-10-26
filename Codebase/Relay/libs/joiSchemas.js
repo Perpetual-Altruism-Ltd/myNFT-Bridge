@@ -44,6 +44,9 @@ const schemas = {
     pollingEndMigration: Joi.object({
         migrationId: Joi.string().required(),
     }),
+    cancelMigration: Joi.object({
+        migrationId: Joi.string().required(),
+    }),
 }
 
 module.exports = schemas

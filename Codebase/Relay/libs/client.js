@@ -26,7 +26,7 @@ class Client {
                 this.originUniverse.bridgeAdress,
                 this.migrationData
             )
-            if(!migrationHash) 
+            if(!migrationHash)
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
             this.blockTimestamp = blockTimestamp
@@ -43,7 +43,7 @@ class Client {
         await ethereum.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
-            this.originUniverse.bridgeAdress, 
+            this.originUniverse.bridgeAdress,
             this.migrationData.originTokenId
         )
     }
@@ -52,7 +52,7 @@ class Client {
         this.step = 'closeMigration'
         this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
     }
-    
+
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
         await this.originEthereumConnection.registerEscrowHashSignature(
@@ -75,6 +75,16 @@ class Client {
         } else {
             throw "Invalid migrationHash"
         }
+    }
+
+    async transferBackOriginToken(){
+      const originOwner = this.migrationData.originOwner;
+      await ethereum.safeTransferFrom(
+          this.migrationData.originWorld,
+          this.originUniverse.bridgeAdress,
+          originOwner,
+          this.migrationData.originTokenId
+      )
     }
 
 }

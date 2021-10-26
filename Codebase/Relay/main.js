@@ -15,13 +15,13 @@ const main = async () => {
 
     const clientList = {}
     const universesRpc = {}
-    
+
     function connectRpc(){
         Conf.universes.forEach(universe => {
             universesRpc[universe.uniqueId] = new Ethereum(universe.rpc)
         })
     }
-    
+
     function premintStock(){
         Conf.universes.forEach(universe => {
             const ethereum = universesRpc[universe.uniqueId]
@@ -32,9 +32,9 @@ const main = async () => {
                     if(premintedTokens.length < 2){
                         try{
                             const tokenId = await ethereum.premintToken(world.address)
-                            db.collections.premintedTokens.insert({ 
-                                tokenId, 
-                                universe: universe.uniqueId, 
+                            db.collections.premintedTokens.insert({
+                                tokenId,
+                                universe: universe.uniqueId,
                                 world: world.address,
                                 used: false
                             })
@@ -46,15 +46,15 @@ const main = async () => {
             })
         })
     }
-    
+
     connectRpc()
-    
+
     premintStock()
-    
+
     const app = Express()
-    
+
     app.use(Express.json())
-    
+
     app.post('/getAvailableWorlds', (req, res) => {
         const { error } = JoiSchemas.getAvailableWorlds.validate(req.body)
         if(error){
@@ -63,7 +63,7 @@ const main = async () => {
             Logger.error("Bad parameters given to /getAvailableWorlds")
             return
         }
-    
+
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
         if(universe) {
             const addresses = universe.worlds.map(elt => elt.address);
@@ -73,7 +73,7 @@ const main = async () => {
         }
         return res.status(400).json({ error : 'Universe Not Found' });
     })
-    
+
     app.post('/getAvailableTokenId', async (req, res) => {
         const { error } = JoiSchemas.getAvailableTokenId.validate(req.body)
         if(error){
@@ -82,20 +82,20 @@ const main = async () => {
             Logger.error("Bad parameters given to /getAvailableTokenId")
             return
         }
-    
+
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
-    
+
         const premintedTokens = db.collections.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
-    
+
         const ethereum = universesRpc[universe.uniqueId]
-    
+
         let tokenId
-    
+
         if(premintedTokens.length === 0){
             tokenId = await ethereum.premintToken(req.body.world)
-            db.collections.premintedTokens.insert({ 
-                tokenId, 
-                universe: universe.uniqueId, 
+            db.collections.premintedTokens.insert({
+                tokenId,
+                universe: universe.uniqueId,
                 world: req.body.world,
                 used: true
             })
@@ -104,10 +104,10 @@ const main = async () => {
             premintedTokens[0].used = true
             db.collections.premintedTokens.update(premintedTokens[0])
         }
-    
+
         res.json({ "tokenId" : tokenId })
     })
-    
+
     app.post('/initMigration', async (req, res) => {
         const { error } = JoiSchemas.initMigration.validate(req.body)
         if(error){
@@ -118,16 +118,16 @@ const main = async () => {
         }
         const { migrationData } = req.body
         const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
-        if(!originUniverse) 
+        if(!originUniverse)
             throw "Can't find origin universe"
         const destinationUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.destinationUniverse)
-        if(!destinationUniverse) 
+        if(!destinationUniverse)
             throw "Can't find destination universe"
-    
-    
+
+
         // Returning migration_id
         const client = new Client(
-            migrationData,  
+            migrationData,
             originUniverse,
             destinationUniverse,
             db
@@ -136,11 +136,11 @@ const main = async () => {
         res.json({
             migrationId: client.id
         })
-    
+
         // Calling departure bridge
         await client.annonceToBridge(originUniverse)
     })
-    
+
     // TODO : add this function/endpoint to the documentation (step n°18)
     app.post('/pollingMigration', (req, res) => {
         const { error } = JoiSchemas.pollingMigration.validate(req.body)
@@ -163,7 +163,7 @@ const main = async () => {
             status: "No migration hash yet"
         })
     })
-    
+
     app.post('/continueMigration', async (req, res) => {
         const { error } = JoiSchemas.continueMigration.validate(req.body)
         if(error){
@@ -176,15 +176,15 @@ const main = async () => {
         if(!client) {
             return res.status(400).json({ error : 'Unknown migrationId' })
         }
-    
+
         try{
             res.status(200).send({
                 status: "Migration continuing."
             })
-    
+
             // Transferring token to departure bridge
             await client.transferToBridge(req.body.migrationHashSignature)
-    
+
             // Update escrow hash
             await client.updateEscrowHash()
         }catch(err){
@@ -194,7 +194,7 @@ const main = async () => {
             Logger.error(err)
         }
     })
-    
+
     app.post('/pollingEscrow', (req, res) => {
         const { error } = JoiSchemas.pollingEscrow.validate(req.body)
         if(error) {
@@ -216,7 +216,7 @@ const main = async () => {
             status: "No escrow hash yet"
         })
     })
-    
+
     app.post('/closeMigration', async (req, res) => {
         const { error } = JoiSchemas.closeMigration.validate(req.body)
         if(error){
@@ -229,17 +229,17 @@ const main = async () => {
         if(!client) {
             return res.status(400).json({ error : 'Unknown migrationId' })
         }
-    
+
         try{
             res.status(200).send({
                 "status": "Minting of the token initiated"
             })
             // Check if escrow hash is valid before doing anything
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
-    
+
             //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
             await client.closeMigration()
-    
+
             // Call origin bridge migrateFromIOUERC721ToERC721
             await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
         }catch(err){
@@ -249,7 +249,7 @@ const main = async () => {
             Logger.error(err)
         }
     })
-    
+
     app.post('/pollingEndMigration', (req, res) => {
         const { error } = JoiSchemas.pollingEndMigration.validate(req.body)
         if(error){
@@ -272,7 +272,32 @@ const main = async () => {
             "migrationStatus":"Running"
         })
     })
-    
+
+    app.post('/cancelMigration', (req, res) => {
+        const { error } = JoiSchemas.cancelMigration.validate(req.body)
+        if(error){
+            res.status(400)
+            res.send({ status: "Bad parameters given to /pollingEndMigration" })
+            Logger.error("Bad parameters given to /pollingEndMigration")
+            return
+        }
+        const client = clientList[req.body.migrationId]
+        if(!client) {
+            return res.status(400).json({ error : 'Unknown migrationId' })
+        }
+        //Cancellation only possible if step is in ["annonceToBridge", "transferToBridge", ]
+        if(client.step == 'registered' || client.step == 'annonceToBridge' || client.step == 'transferToBridge') {
+            client.transferBackOriginToken();
+
+            return res.json({
+                "status":"Migration stopped. Origin token sent back to owner."
+            })
+        }
+        return res.json({
+            "status":"Migration already confirmed"
+        })
+    })
+
     app.listen(Conf.port, () => {
         Logger.info(`Web server listening on port ${Conf.port}`)
     })
