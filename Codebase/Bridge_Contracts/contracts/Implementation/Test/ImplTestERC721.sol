@@ -22,7 +22,7 @@ contract ImplTestERC721 is ERC721 {
     mapping(uint256 => address) internal preminters; //Each token preminter
 
     // Total number of minted token
-    uint256 internal mintedTokens;
+    uint256 public mintedTokens;
 
     //Set the owner as the smart contract creator
     constructor(){
