@@ -1,7 +1,7 @@
 const Logger = require('../winston.js')('Ethereum')
 const Web3 = require('web3')
 const Conf = require('../../conf')
-const ERC721Abi = require('../../abis/erc721abi')
+const ERC721Abi = require('../../abis/erc721')
 const BridgeAbi = {};
 const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
@@ -9,7 +9,8 @@ const EventEmitter = require('events')
 class Ethereum extends EventEmitter {
     constructor(rpc) {
         super()
-        this.web3Provider = new Web3.providers.WebsocketProvider(rpc)
+        this.rpc = rpc
+        this.web3Provider = new Web3.providers.WebsocketProvider(this.rpc)
         this.web3Instance = new Web3(this.web3Provider)
         this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
         this.web3Instance.eth.defaultAccount = this.web3Wallet.address
@@ -28,11 +29,11 @@ class Ethereum extends EventEmitter {
             contractAddress, 
             { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
         );
-        
+
         const tx = await contract.methods.premintFor(this.web3Wallet.address).send();
         const tokenId = await contract.methods.mintedTokens().call()
-        Logger.info(`Preminted a token ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
-        
+        Logger.info(`Preminted a token on ${this.rpc} ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
+          
         return tokenId
     }
 

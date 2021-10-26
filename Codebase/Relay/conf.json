@@ -1,5 +1,5 @@
 {
-    "relayPrivateKey": "da9e35763dc2a817d791c0bbe558c4169b44d2b7791f8956e369ce91ba3caf37",
+    "relayPrivateKey": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8",
     "ipfsApiUrl": "http://localhost:5001/api/v0",
     "port": 3000,
     "migrationPaths": [
@@ -30,11 +30,29 @@
 			"networkID":4,
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/",
+			"explorer" : "https://rinkeby.etherscan.io/",
             "operatorAddress": "0x00",
             "worlds": [
                 {
-                    "address": "0x6A4970ff1B0fa051dCA1314801b36e8D245702f0",
+                    "address": "0x3C126842E3Fb192225cE2A7aFc9011C9Ff10F204",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+		},
+        {
+			"name":"Ethereum Testnet Ropsten",
+            "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+			"chainID": 3,
+			"networkID":3,
+			"uniqueId": "0xeb4fb0d1",
+			"bridgeAdress": "0x53900E23973DB0862D880D0bcdfeF5b6e99e74ED",
+			"explorer" : "https://ropsten.etherscan.io/",
+            "operatorAddress": "0x00",
+            "worlds": [
+                {
+                    "address": "0xa26528c97F513804395BD999c31FefAdD5B84640",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
