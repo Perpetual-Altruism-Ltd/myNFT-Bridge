@@ -26,7 +26,7 @@ class Client {
         this.destinationEthereumConnection = destinationUniverseRpc
 
         if(!id)
-            this.db.collections.client.insert({
+            this.db.collections.clients.insert({
                 id: this.id,
                 step: this.step,
                 migrationData: this.migrationData,
