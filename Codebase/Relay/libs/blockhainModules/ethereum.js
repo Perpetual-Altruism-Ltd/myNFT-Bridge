@@ -101,19 +101,12 @@ class Ethereum extends EventEmitter {
             ];
     
             try {
-                /*
-                let options = {
-                    filter: {
-                        value: [],
-                    },
-                    fromBlock: 0
-                };
-                web3Contract.events.MigrationDeparturePreRegisteredERC721IOU(options)
-                .on('data', event => console.log(event))
-                */
-                
-                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', async (err, data) => {
-                    const migrationHash = data?.returnValues?.migrationHash;
+                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { 
+                    filter: { 
+                        _signee: this.hexToBytes32(migrationData.originOwner) 
+                    } 
+                }, async (err, data) => {
+                    const migrationHash = data?.returnValues?._migrationHash;
                     if(migrationHash){
                         resolve({
                             migrationHash,
