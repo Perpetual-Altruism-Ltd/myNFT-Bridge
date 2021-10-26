@@ -145,16 +145,15 @@ function initConnector() {
 }
 
 /** Local function called when a connection/disconnection is engaged to update the frontend */
-async function connection(desc) {
+async function connection(callback) {
 	initConnector();
 	setDisabledConnectButtons(true);
 
 	if (await connector.connection()) {
 		connectedButton.innerHTML = "Disconnect " + providerConnected;
 		web3 = connector.web3;
-    //Display connected addr + departure cards
-    document.getElementById("ConnectedAddrCard").style = 'display: flex;';
-    document.getElementById("DepartureCard").style = 'display: flex;';
+    
+    callback();
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");

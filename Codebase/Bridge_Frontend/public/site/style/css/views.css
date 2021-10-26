@@ -64,9 +64,9 @@ document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
   width: 15em;
   height: 15em;
   color: #12132b;
-  -webkit-animation:loading-circle_spin 10s linear infinite;
-  -moz-animation:loading-circle_spin 10s linear infinite;
-  animation:loading-circle_spin 10s linear infinite;
+  -webkit-animation:loading-circle_spin 15s linear infinite;
+  -moz-animation:loading-circle_spin 15s linear infinite;
+  animation:loading-circle_spin 15s linear infinite;
 }
 @-moz-keyframes loading-circle_spin { 100% { -moz-transform: rotate(360deg); } }
 @-webkit-keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); } }

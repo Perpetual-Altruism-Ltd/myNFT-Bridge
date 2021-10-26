@@ -81,41 +81,6 @@ export default class extends AbstractView {
 
       };
     };
-
-    //Update global var (model) and display once new network is selected
-    let onChainSwitchedSuccess = function(){
-      //Display next form field: ogWorld input
-      document.getElementById("OriginWorldCardLine").style.display = 'flex';
-
-      //Set origin network in the object migData to access it later in the migration process
-      migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-      migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
-
-      //Show the available destination networks for the ogNet selected
-      for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
-        let destNetId = target.networkId
-        let targetNet = {};
-        for(const network of bridgeApp.networks){
-          if(network.networkID == destNetId)
-            targetNet = network;
-        }
-        addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
-      }
-    }
-
-    //Define functions which interact with blockchains
-    let promptSwitchChain = async function (ID) {
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
-      }).then((res) =>{
-        console.log("Network switch done.");
-        onChainSwitchedSuccess();
-      }).catch((res) => {
-        console.log("Network switch canceled or error");
-        alert("Please accept the metamask switch network prompt in order to change to desired network");
-      });
-    }
     let loadERC721ABI = async function () {
         let pathERC721ABI = '/ABI/ERC721.json';
         try {
@@ -158,6 +123,42 @@ export default class extends AbstractView {
             lert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
         };
     };
+
+    //Update global var (model) and display once new network is selected
+    let onChainSwitchedSuccess = function(){
+      //Display next form field: ogWorld input
+      document.getElementById("OriginWorldCardLine").style.display = 'flex';
+
+      //Set origin network in the object migData to access it later in the migration process
+      migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+      migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
+
+      //Show the available destination networks for the ogNet selected
+      for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
+        let destNetId = target.networkId
+        let targetNet = {};
+        for(const network of bridgeApp.networks){
+          if(network.networkID == destNetId)
+            targetNet = network;
+        }
+        addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
+      }
+    }
+
+    //Define functions which interact with blockchains or wallet
+    let promptSwitchChain = async function (ID) {
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+      }).then((res) =>{
+        console.log("Network switch done.");
+        onChainSwitchedSuccess();
+      }).catch((res) => {
+        console.log("Network switch canceled or error");
+        prefillOriginNetwork();
+        alert("Please accept the metamask switch network prompt in order to change to desired network");
+      });
+    }
     //Loading a token metadata from chain
     let loadOgTokenData = async function () {
 
@@ -312,7 +313,13 @@ export default class extends AbstractView {
                 connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
                 connectedButton = connectMetaMaskButton;
                 providerConnected = "MetaMask";
-                connection();
+                connection(function(){
+                  //Display connected addr + departure cards
+                  document.getElementById("ConnectedAddrCard").style = 'display: flex;';
+                  document.getElementById("DepartureCard").style = 'display: flex;';
+                  //Prefill origin network
+                  prefillOriginNetwork();
+                });
             } else {
                 connector.disconnection();
             }
@@ -365,6 +372,21 @@ export default class extends AbstractView {
       xhr.send(requestParam);
     }
 
+    //Prefill functions
+    //Prefill origin network with the one the user is connected to
+    let prefillOriginNetwork = function(){
+      let connectedChainId = parseInt(window.web3.currentProvider.chainId);
+      //If user connected to a chain trough his wallet: prefill and show next form field
+      if(connectedChainId != undefined){
+        bridgeApp.networks.forEach((net, i) => {
+          if(net.chainID == connectedChainId){
+            selectDropDownOptionByIndex("OriginNetworkSelector", i);
+            //Show next form field
+            onChainSwitchedSuccess();
+          }
+        });
+      }
+    }
 
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
