@@ -28,7 +28,12 @@ const main = async () => {
             universe.worlds.forEach(async world => {
                 while(true){
                     await sleep(1000)
-                    const premintedTokens = db.collections.premintedTokens.find({ universe: universe.uniqueId, world: world.address, used: false })
+                    const premintedTokens = db.collections.premintedTokens.find({ 
+                        universe: universe.uniqueId
+                        , world: world.address
+                        , givenToClient: false
+                        , used: false 
+                    })
                     if(premintedTokens.length < 2){
                         try{
                             const tokenId = await ethereum.premintToken(world.address)
@@ -36,6 +41,7 @@ const main = async () => {
                                 tokenId, 
                                 universe: universe.uniqueId, 
                                 world: world.address,
+                                givenToClient: false,
                                 used: false
                             })
                         }catch(err){
@@ -46,10 +52,27 @@ const main = async () => {
             })
         })
     }
+
+    function populateClientList(){
+        const clients = db.collections.clients.find()
+        clients.forEach(client => {
+            clientList[client.id] = new Client(
+                client.migrationData
+                , client.originUniverse
+                , client.destinationUniverse
+                , universesRpc[client.originUniverse.uniqueId]
+                , universesRpc[client.destinationUniverse.uniqueId]
+                , db
+                , client.id
+                , client.step)
+        })
+    }
     
     connectRpc()
     
     premintStock()
+
+    populateClientList()
     
     const app = Express()
     
@@ -85,7 +108,12 @@ const main = async () => {
     
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
     
-        const premintedTokens = db.collections.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
+        const premintedTokens = db.collections.premintedTokens.find({ 
+            universe: universe.uniqueId
+            , world: req.body.world
+            , givenToClient: false
+            , used: false 
+        })
     
         const ethereum = universesRpc[universe.uniqueId]
     
@@ -97,11 +125,11 @@ const main = async () => {
                 tokenId, 
                 universe: universe.uniqueId, 
                 world: req.body.world,
-                used: true
+                givenToClient: true
             })
         }else{
             tokenId = premintedTokens[0].tokenId
-            premintedTokens[0].used = true
+            premintedTokens[0].givenToClient = true
             db.collections.premintedTokens.update(premintedTokens[0])
         }
     
@@ -130,12 +158,12 @@ const main = async () => {
             migrationData,  
             originUniverse,
             destinationUniverse,
+            universesRpc[originUniverse.uniqueId],
+            universesRpc[destinationUniverse.uniqueId],
             db
         )
         clientList[client.id] = client
-        res.json({
-            migrationId: client.id
-        })
+        res.json({ migrationId: client.id })
     
         // Calling departure bridge
         await client.annonceToBridge(originUniverse)

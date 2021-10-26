@@ -3,24 +3,47 @@ const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
 
 class Client {
-    constructor(migrationData, originUniverse, destinationUniverse, db){
-        this.id = Uuid.v4()
+    constructor(
+        migrationData
+        , originUniverse
+        , destinationUniverse
+        , originUniverseRpc
+        , destinationUniverseRpc
+        , db
+        , id
+        , step
+    ){
+        this.id = id ? id : Uuid.v4()
         this.date = (new Date()).getTime()
-        this.step = 'registered'
+        this.step = step ? step : 'registered'
         this.db = db
 
         this.migrationData = migrationData
         this.originUniverse = originUniverse
         this.destinationUniverse = destinationUniverse
 
-        this.originEthereumConnection = new Ethereum(this.originUniverse.rpc)
-        this.destinationEthereumConnection = new Ethereum(this.destinationUniverse.rpc)
+        this.originEthereumConnection = originUniverseRpc
+        this.destinationEthereumConnection = destinationUniverseRpc
 
-        Logger.info(`New client generated with id ${this.id}`)
+        if(!id)
+            this.db.collections.client.insert({
+                id: this.id,
+                step: this.step,
+                migrationData: this.migrationData,
+                originUniverse: this.originUniverse,
+                destinationUniverse: this.destinationUniverse
+            })
+
+        this.dbObject = this.db.collections.client.findOne({ id: this.id })
+
+        Logger.info(id ? `Existing client reloaded with id ${this.id} at step ${this.step}` : `New client generated with id ${this.id}`)
     }
 
     async annonceToBridge() {
         this.step = 'annonceToBridge';
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
         try {
             const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(
                 this.originUniverse.bridgeAdress,
@@ -30,6 +53,10 @@ class Client {
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
             this.blockTimestamp = blockTimestamp
+            
+            this.dbObject.migrationHash = this.migrationHash
+            this.dbObject.blockTimestamp = this.blockTimestamp
+            this.db.collections.clients.update(this.dbObject)
         } catch(e) {
             console.log(e);
             Logger.info(`Can't annonce intent to migrate to the departure bridge`)
@@ -38,6 +65,9 @@ class Client {
 
     async transferToBridge(migrationHashSignature) {
         this.step = 'transferToBridge';
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
         this.migrationHashSignature = migrationHashSignature
         const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
         await ethereum.safeTransferFrom(
@@ -50,11 +80,17 @@ class Client {
 
     async closeMigration() {
         this.step = 'closeMigration'
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+        
         this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
     }
     
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
         await this.originEthereumConnection.registerEscrowHashSignature(
             this.originUniverse.bridgeAdress,
             this.migrationData,
@@ -64,14 +100,23 @@ class Client {
 
     async verifyEscrowHashSigned(escrowHashSigned) {
         this.step = 'verifyEscrowHashSigned'
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
         const owner = await this.originEthereumConnection.verifySignature(this.escrowHash, escrowHashSigned);
         return owner == this.migrationData.originOwner;
     }
 
     async updateEscrowHash() {
         this.step = 'updateEscrowHash'
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+        
         if(this.migrationHash) {
             this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
+            
+            this.dbObject.escrowHash = this.escrowHash
+            this.db.collections.clients.update(this.dbObject)
         } else {
             throw "Invalid migrationHash"
         }
