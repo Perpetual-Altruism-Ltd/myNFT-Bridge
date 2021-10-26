@@ -87,11 +87,11 @@ class Ethereum extends EventEmitter {
                 migrationData.destinationWorld,
                 migrationData.destinationTokenId,
                 migrationData.destinationOwner,
-                migrationData.originOwnerbloc
+                migrationData.originOwner
             ]
     
             try {
-                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: signee } }, async (err, data) => {
+                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: migrationData.originOwner } }, async (err, data) => {
                     const migrationHash = data?.returnValues?.migrationHash;
                     if(migrationHash){ 
                         resolve({

@@ -73,22 +73,24 @@ app.post('/getAvailableTokenId', async (req, res) => {
     const premintedTokens = db.dbCollections.premintedTokens.find({ universe: universe.uniqueId, world: req.body.world, used: false })
 
     const ethereum = new Ethereum(universe.rpc)
+    
+    let tokenId;
 
-    if(premintedTokens.length === 0){
-        const tokenId = await ethereum.premintToken(req.body.universe, req.body.world)
+    if(premintedTokens.length === 0) {
+        tokenId = await ethereum.premintToken(req.body.world)
         db.dbCollections.premintedTokens.insert({ 
             tokenId, 
             universe: universe.uniqueId, 
             world: req.body.world,
             used: true
         })
-    }else{
-        const token = premintedTokens[0].tokenId
+    } else {
+        tokenId = premintedTokens[0].tokenId
         premintedTokens[0].used = true
-        db.dbCollections.premintedTokens.update(premintedToken[0])
+        db.dbCollections.premintedTokens.update(premintedTokens[0])
     }
 
-    res.json({ "tokenId" : token })
+    res.json({ "tokenId" : tokenId })
 })
 
 app.post('/initMigration', async (req, res) => {
