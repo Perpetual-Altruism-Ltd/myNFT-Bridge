@@ -34,7 +34,7 @@ class Client {
                 destinationUniverse: this.destinationUniverse
             })
 
-        this.dbObject = this.db.collections.client.findOne({ id: this.id })
+        this.dbObject = this.db.collections.clients.findOne({ id: this.id })
 
         Logger.info(id ? `Existing client reloaded with id ${this.id} at step ${this.step}` : `New client generated with id ${this.id}`)
     }
