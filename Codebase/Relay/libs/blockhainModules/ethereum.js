@@ -5,10 +5,12 @@ const ERC721Abi = require('../../abis/erc721')
 const BridgeAbi = require('../../abis/bridge')
 const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
+const { sleep } = require('../utils')
 
 class Ethereum extends EventEmitter {
     constructor(rpc) {
         super()
+        this.running = false
         this.rpc = rpc
         this.web3Provider = new Web3.providers.WebsocketProvider(this.rpc)
         this.web3Instance = new Web3(this.web3Provider)
@@ -23,18 +25,26 @@ class Ethereum extends EventEmitter {
      * @param {string} contractAddress : Address of the contract to interact with
      */
     async premintToken(contractAddress) {
-        const networkId = await this.web3Instance.eth.net.getId();    
-        const contract = new this.web3Instance.eth.Contract(
-            ERC721IOUAbi,
-            contractAddress, 
-            { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
-        );
-
-        const tx = await contract.methods.premintFor(this.web3Wallet.address).send();
-        const tokenId = await contract.methods.mintedTokens().call()
-        Logger.info(`Preminted a token on ${this.rpc} ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
-          
-        return tokenId
+        while(this.running) await sleep(100)
+        this.running = true
+        try{
+            const networkId = await this.web3Instance.eth.net.getId();    
+            const contract = new this.web3Instance.eth.Contract(
+                ERC721IOUAbi,
+                contractAddress, 
+                { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
+            );
+    
+            const tx = await contract.methods.premintFor(this.web3Wallet.address).send();
+            const tokenId = await contract.methods.mintedTokens().call()
+            Logger.info(`Preminted a token on ${this.rpc} ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
+    
+            this.running = false
+            return tokenId
+        }catch(err){
+            this.running = false
+            throw err
+        }
     }
 
     verifySignature(messageHash, signature) {
