@@ -92,18 +92,29 @@ class Ethereum extends EventEmitter {
             const data = [
                 migrationData.originWorld,
                 parseInt(migrationData.originTokenId),
-                this.web3Instance.utils.asciiToHex(migrationData.destinationUniverse), // eg : "Moonbeam"
-                migrationData.destinationBridge,
-                migrationData.destinationWorld,
-                this.web3Instance.utils.asciiToHex(migrationData.destinationTokenId),
-                migrationData.destinationOwner,
-                migrationData.originOwner
+                this.stringToBytes32(migrationData.destinationUniverse), // eg : "Moonbeam"
+                this.hexToBytes32(migrationData.destinationBridge),
+                this.hexToBytes32(migrationData.destinationWorld),
+                this.stringToBytes32(migrationData.destinationTokenId),
+                this.hexToBytes32(migrationData.destinationOwner),
+                this.hexToBytes32(migrationData.originOwner)
             ];
     
             try {
-                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { filter: { _signee: migrationData.originOwner } }, async (err, data) => {
+                /*
+                let options = {
+                    filter: {
+                        value: [],
+                    },
+                    fromBlock: 0
+                };
+                web3Contract.events.MigrationDeparturePreRegisteredERC721IOU(options)
+                .on('data', event => console.log(event))
+                */
+                
+                web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', async (err, data) => {
                     const migrationHash = data?.returnValues?.migrationHash;
-                    if(migrationHash){ 
+                    if(migrationHash){
                         resolve({
                             migrationHash,
                             blockTimestamp: (await this.web3Instance.eth.getBlock(data.blockNumber)).timestamp
@@ -173,6 +184,13 @@ class Ethereum extends EventEmitter {
      */
     convertArrayToHex(arr) {
         return arr.map(elt => this.web3Instance.utils.asciiToHex(elt))
+    }
+    stringToBytes32(string) {
+        return this.web3Instance.utils.padLeft(
+            this.web3Instance.utils.asciiToHex(string), 64);
+    }
+    hexToBytes32(string) {
+        return this.web3Instance.utils.padLeft(string, 64);
     }
 
 }

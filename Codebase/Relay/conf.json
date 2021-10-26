@@ -29,7 +29,7 @@
 			"chainID": 4,
 			"networkID":4,
 			"uniqueId": "0x07dac20e",
-			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
 			"explorer" : "https://rinkeby.etherscan.io/",
             "operatorAddress": "0x00",
             "worlds": [
@@ -47,7 +47,7 @@
 			"chainID": 3,
 			"networkID":3,
 			"uniqueId": "0xeb4fb0d1",
-			"bridgeAdress": "0x53900E23973DB0862D880D0bcdfeF5b6e99e74ED",
+			"bridgeAdress": "0xaD1470177625E63Ee460Fc29C64b8CBaC78C5176",
 			"explorer" : "https://ropsten.etherscan.io/",
             "operatorAddress": "0x00",
             "worlds": [

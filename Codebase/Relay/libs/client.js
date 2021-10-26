@@ -24,7 +24,8 @@ class Client {
         try {
             const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(
                 this.originUniverse.bridgeAdress,
-                this.migrationData)
+                this.migrationData
+            )
             if(!migrationHash) 
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
