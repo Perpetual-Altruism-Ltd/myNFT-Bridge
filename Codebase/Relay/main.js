@@ -188,9 +188,11 @@ const main = async () => {
             // Update escrow hash
             await client.updateEscrowHash()
         }catch(err){
-            res.status(500).send({
-                error: "Unexpected error on the server."
-            })
+            console.log(err);
+            if(!res.headersSent)
+                res.status(500).send({
+                    error: "Unexpected error on the server."
+                })
             Logger.error(err)
         }
     })

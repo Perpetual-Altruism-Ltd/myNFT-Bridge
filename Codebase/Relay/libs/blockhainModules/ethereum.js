@@ -48,7 +48,7 @@ class Ethereum extends EventEmitter {
     }
 
     verifySignature(messageHash, signature) {
-        return this.web3Instance.eth.personal.ecRecover(messageHash, signature);
+        return this.web3Instance.eth.accounts.recover(messageHash, signature);
     }
 
     async getProofOfEscrowHash(bridgeAddress, migrationHash) {
