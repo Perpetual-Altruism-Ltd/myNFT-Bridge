@@ -4,14 +4,19 @@ const Conf = require('../conf')
 
 class IPFSClient {
     constructor() {
-        this.ipfsInstance = IPFS.create({
+
+        const conf = {
             host: Conf.infuraIpfs.host,
             port: Conf.infuraIpfs.port,
-            protocol: Conf.infuraIpfs.protocol,
-            headers: {
+            protocol: Conf.infuraIpfs.protocol
+        }
+
+        if(Conf.infuraIpfs.projectId && Conf.infuraIpfs.projectSecret)
+            conf.headers = {
                 authorization: 'Basic ' + Buffer.from(Conf.infuraIpfs.projectId + ':' + Conf.infuraIpfs.projectSecret).toString('base64')
             }
-        })
+
+        this.ipfsInstance = IPFS.create(conf)
     }
 
     /**
