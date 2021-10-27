@@ -12,6 +12,7 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
     let migrationHashSigned = "";
     let account = window.web3.currentProvider.selectedAddress;
     let loadingText = document.getElementById("RegistrationLoadingText");
@@ -54,10 +55,12 @@ export default class extends AbstractView {
 
       console.log("Start listening for migration hash");
 
+      //MIG ID NOT RECEIVED
+
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.migrationHash == ""){
-        await sleep(model.listeningRefreshFrequency);
+        await sleep(model.listeningRefreshFrequency*1000);
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
@@ -71,7 +74,9 @@ export default class extends AbstractView {
         loadingText.textContent = "Couldn't retrieve migration data hash from relay.";
       }
     }
-    //migrationHashListener();//TO UNCOMMENT WHEN CORS REQ ARE POSSIBLE
+    //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user
+    //signMigrationHash() -> continueMigration() -> escrowHashListener() -> /sign_escrow
+    migrationHashListener();
 
     let signMigrationHash = async function(){
       model.migrationHash = 'blblblblbl';//FOR TEST PURPOSE
@@ -87,7 +92,6 @@ export default class extends AbstractView {
         }
       });
     }
-    signMigrationHash();
 
     let continueMigration = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
