@@ -22,7 +22,7 @@ class Forge {
     async _forgeImage(imageUri){
         const image = await Jimp.read(imageUri)
         const font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK)
-        image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'I AM AN IOU')
+        image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'IOU')
 
         return await image.getBufferAsync('image/png')
     }
