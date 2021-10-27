@@ -438,6 +438,9 @@ export default class extends AbstractView {
       document.getElementById("DestWorldCardLine").style.display = 'flex';
       migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
       migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
+
+      //Load available destination world from relay
+      getRelayAvailableWorlds();
     });
     addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
       //Display next form field: dest world
@@ -453,6 +456,9 @@ export default class extends AbstractView {
       document.getElementById("DestTokenIdCardLine").style.display = 'flex';
       let destWorldIndex = getDropDownSelectedOptionIndex("DestinationWorldSelector");
       migData.destinationWorld = bridgeApp.destWorlds[destWorldIndex];
+
+      //Load desination tokenId from relay
+      getAvailableTokenId();
     });
 
     //===Origin world input===
