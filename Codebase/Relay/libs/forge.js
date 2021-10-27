@@ -47,7 +47,7 @@ class Forge {
     async forgeIOUMetadata(originalTokenUri){
         const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
 
-        return await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata))
+        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata))).path}`
     }
 }
 

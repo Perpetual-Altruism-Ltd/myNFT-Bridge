@@ -88,9 +88,9 @@ class Client {
         this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
 
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
-
-        const forge = new Forge()
-
+        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri)
+        
+        // Here mint the IOU
     }
 
     async registerTransferOnOriginBridge(escrowHashSigned){
