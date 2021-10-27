@@ -2,6 +2,7 @@
 
 const Conf = require('./conf')
 const Express = require('express')
+const Cors = require('cors')
 const Logger = require('./libs/winston')('Main')
 const Client = require('./libs/client')
 const Ethereum = require('./libs/blockhainModules/ethereum')
@@ -75,6 +76,8 @@ const main = async () => {
     populateClientList()
 
     const app = Express()
+
+    app.use(Cors())
 
     app.use(Express.json())
 
