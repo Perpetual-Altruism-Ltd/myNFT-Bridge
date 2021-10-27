@@ -111,7 +111,7 @@ The relay make sure the univers and contract are referenced and usable. If there
 
 ```json
 {
-    "migrationId": "12345"
+    "status": "Migration continuing."
 }
 ```
 
