@@ -1,6 +1,7 @@
 const Logger = require('./winston.js')('Client')
 const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
+const Forge = require('./forge')
 
 class Client {
     constructor(
@@ -85,6 +86,11 @@ class Client {
         this.db.collections.clients.update(this.dbObject)
         
         this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
+
+        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
+
+        const forge = new Forge()
+
     }
 
     async registerTransferOnOriginBridge(escrowHashSigned){

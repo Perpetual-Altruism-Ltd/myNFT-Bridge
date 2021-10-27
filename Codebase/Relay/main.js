@@ -93,9 +93,7 @@ const main = async () => {
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
         if(universe) {
             const addresses = universe.worlds.map(elt => elt.address);
-            return res.json({
-                "worlds" : addresses
-            });
+            return res.json({ "worlds" : addresses });
         }
         return res.status(400).json({ error : 'Universe Not Found' });
     })

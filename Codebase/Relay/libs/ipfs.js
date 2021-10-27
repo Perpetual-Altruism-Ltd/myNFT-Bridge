@@ -4,7 +4,14 @@ const Conf = require('../conf')
 
 class IPFSClient {
     constructor() {
-        this.ipfsInstance = IPFS.create(Conf.ipfsApiUrl)
+        this.ipfsInstance = IPFS.create({
+            host: Conf.infuraIpfs.host,
+            port: Conf.infuraIpfs.port,
+            protocol: Conf.infuraIpfs.protocol,
+            headers: {
+                authorization: 'Basic ' + Buffer.from(Conf.infuraIpfs.projectId + ':' + Conf.infuraIpfs.projectSecret).toString('base64')
+            }
+        })
     }
 
     /**
@@ -12,7 +19,7 @@ class IPFSClient {
      * @param {JSON Object} json 
      */
     async addJsonObj(json) {
-        return await this.ipfsInstance.add({ path: "/hello", content:JSON.stringify(json) });
+        return await this.ipfsInstance.add(JSON.stringify(json))
     }
 
     /**
@@ -20,8 +27,8 @@ class IPFSClient {
      * @param {string} path : path of the file on IPFS (ex : '/tmp/myfile.jpg' will make the file available on {URL}{CID}/myfile.jpg path)
      * @param {Uint8Array | Blob | String | Iterable<Uint8Array> | Iterable<number> | AsyncIterable<Uint8Array> | ReadableStream<Uint8Array>} content : file content
      */
-    async addFileObj(path, content) {
-        return await this.ipfsInstance.add({ path, content });
+    async addFileObj(content) {
+        return await this.ipfsInstance.add(content);
     }
 
     /**

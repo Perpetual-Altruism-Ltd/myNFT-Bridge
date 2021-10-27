@@ -1,6 +1,6 @@
 const Jimp = require('jimp')
 const IPFS = require('./ipfs')
-
+const Axios = require('axios')
 
 class Forge {
     constructor(){
@@ -12,7 +12,7 @@ class Forge {
      * @param {Buffer} imageBuffer : The buffer of data containing the image
      */
     async _uploadImage(imageBuffer){
-        return await this.ipfsClient.addFileObj(null, imageBuffer)
+        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addFileObj(imageBuffer)).path}`
     }
 
     /**
@@ -24,7 +24,7 @@ class Forge {
         const font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK)
         image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'I AM AN IOU')
 
-        return image.getBuffer('image/jpg')
+        return await image.getBufferAsync('image/png')
     }
 
     /**
@@ -42,10 +42,12 @@ class Forge {
 
     /**
      * Forge IOU NFT metadata from original NFT metadata
-     * @param {JSON Object} originalMetadata 
+     * @param {string} originalTokenUri 
      */
-    async forgeIOUMetadata(originalMetadata){
-        return await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalMetadata))
+    async forgeIOUMetadata(originalTokenUri){
+        const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
+
+        return await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata))
     }
 }
 
