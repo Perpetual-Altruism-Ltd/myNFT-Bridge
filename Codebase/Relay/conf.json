@@ -4,8 +4,8 @@
         "host": "ipfs.infura.io",
         "port": 5001,
         "protocol": "https",
-        "projectId": "xxx",
-        "projectSecret": "xxxx"
+        "projectId": "",
+        "projectSecret": ""
     },
     "port": 3000,
     "migrationPaths": [
