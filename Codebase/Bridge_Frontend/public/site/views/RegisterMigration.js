@@ -66,30 +66,36 @@ export default class extends AbstractView {
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let migId = xhr.response;
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/initMigration';
+      options.data.migrationData = {};
+      options.data.migrationData.originUniverse = migData.originUniverse;
+      options.data.migrationData.originWorld = migData.originWorld;
+      options.data.migrationData.originTokenId = migData.originTokenId;
+      options.data.migrationData.originOwner = migData.originOwner;
+      options.data.migrationData.destinationUniverse = migData.destinationUniverse;
+      options.data.migrationData.destinationBridge = migData.destinationBridgeAddr;
+      options.data.migrationData.destinationWorld = migData.destinationWorld;
+      options.data.migrationData.destinationTokenId = migData.destinationTokenId;
+      options.data.migrationData.destinationOwner = migData.destinationOwner;
+      options.data.operatorHash = "0x00";//Not used yet
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
+          let migId = response.data.migrationId;
+          console.log("Migration initiated with migrationId: " + migId);
           //Add migrationID as cookie
           model.createCookie("migrationId", migId, 31);
-          console.log("MigrationId: " + migId);
-        }
-      };
-      xhr.open('POST', relayURL + '/initMigration');
-      let requestParam = {};
-      requestParam.migrationData = {};
-      requestParam.migrationData.originUniverse = migData.originUniverse;
-      requestParam.migrationData.originWorld = migData.originWorld;
-      requestParam.migrationData.originTokenId = migData.originTokenId;
-      requestParam.migrationData.originOwner = migData.originOwner;
-      requestParam.migrationData.destinationUniverse = migData.destinationUniverse;
-      requestParam.migrationData.destinationBridge = migData.destinationBridgeAddr;
-      requestParam.migrationData.destinationWorld = migData.destinationWorld;
-      requestParam.migrationData.destinationTokenId = migData.destinationTokenId;
-      requestParam.migrationData.destinationOwner = migData.destinationOwner;
-      requestParam.operatorHash = "0x00";//Not used yet
+        }else{console.log(response.status + ' : ' + response.statusText);}
 
-      xhr.send(requestParam);
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
 
     //Display migration data from model.migData

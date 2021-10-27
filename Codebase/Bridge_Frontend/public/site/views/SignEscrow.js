@@ -35,22 +35,28 @@ export default class extends AbstractView {
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/closeMigration';
+      options.data.migrationId = model.readCookie("migrationId");
+      options.data.migrationHashSignature = escrowHashSigned;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
           //Move to mint_Token page
           model.navigateTo("/mint_token");
         }else{
-          stateMessage.textContent = "Relay not responding.";
-          console.log(this.status);
+          loadingText.textContent = "Relay not responding.";
+          console.log(response.status + ' : ' + response.statusText);
         }
-      };
-      xhr.open('POST', relayURL + '/closeMigration');
-      let requestParam = {};
-      requestParam.migrationId = model.readCookie("migrationId");
-      requestParam.escrowHashSignature = escrowHashSigned;
 
-      xhr.send(requestParam);
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
 
     //Ask user to sign escrow hash. Once done, call /closeMigration on relay. Once HTTP OK received, move to mint_token

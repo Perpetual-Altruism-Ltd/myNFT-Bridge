@@ -124,12 +124,12 @@ export default class extends AbstractView {
         };
     };
 
-    //Update global var (model) and display once new network is selected
+    //Update global var (i.e. model) and display avilable dest net once new network is selected
     let onChainSwitchedSuccess = function(){
       //Display next form field: ogWorld input
       document.getElementById("OriginWorldCardLine").style.display = 'flex';
 
-      //Set origin network in the object migData to access it later in the migration process
+      //Save origin network in the object migData to access it later during the migration process
       migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
       migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
 
@@ -334,44 +334,63 @@ export default class extends AbstractView {
     let getRelayAvailableWorlds = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
+      //Retrieve dest network unique id
+      //Careful: this is the index in the list of available networks. Not the list of all networks from network_list.json
+      let destinationNetworkIndex = migData.destinationUniverseIndex;
+      let availableDestinationNetworkList = bridgeApp.networks[migData.originUniverseIndex].targetList;
+      let destNetworkId = availableDestinationNetworkList[destinationNetworkIndex].networkId;
+      let destNetworkUniqueId = "";
+      //Search for the newtorkUniqueId from the networkId
+      for(const network of bridgeApp.networks){
+        if(network.networkID == destNetworkId)
+          destNetworkUniqueId = network.uniqueId;
+      }
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let result = xhr.response;
-          //Add dest world available to dropdown
+      var options = {
+        method: 'POST',
+        url: 'http://127.0.0.1:3000/getAvailableWorlds',
+        headers: {'Content-Type': 'application/json'},
+        data: {universe: ''}
+      };
+      options.data.universe = destNetworkUniqueId;
+
+      axios.request(options).then(function (response) {
+        //Add dest world available to dropdown and model.bridgeApp
+        console.log("Available worlds: " + response.data.worlds);
+        if(response.status == 200 && response.data.worlds){
           bridgeApp.destWorlds = [];
-          result.worlds.forEach((worldAddr, i) => {
+          response.data.worlds.forEach((worldAddr, i) => {
             bridgeApp.destWorlds.push(worldAddr);
-            addDropDownOption("DestinationNetworkSelector", worldAddr, "", i);
+            addDropDownOption("DestinationWorldSelector", worldAddr, "", i);
           });
         }
-      };
-      xhr.open('POST', relayURL + '/getAvailableWorlds');
-      let requestParam = {};
-      requestParam.universe = destinationNetworkId;
-      xhr.send(requestParam);
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
     let getAvailableTokenId = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let result = xhr.response;
-          //Add dest tokenId to input
-          document.getElementById("inputDestTokenID").value = result.tokenId;
-        }
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
       };
-      xhr.open('POST', relayURL + '/getAvailableTokenId');
-      let requestParam = {};
-      requestParam.universe = destinationNetworkId;
-      requestParam.world = migData.destinationWorld;
-      xhr.send(requestParam);
+      options.url = relayURL + '/getAvailableTokenId';
+      options.data.universe = destinationNetworkId;
+      options.data.world = migData.destinationWorld;
+
+      axios.request(options).then(function (response) {
+        if(response.status != 200){console.log(response.status + response.statusText);}
+        console.log("Available tokenId: " + response.data.tokenId);
+        //Add dest tokenId to input
+        document.getElementById("inputDestTokenID").value = response.tokenId;
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
 
     //Prefill functions
@@ -395,7 +414,7 @@ export default class extends AbstractView {
     setupDropDown("RelaySelector");
     setupDropDown("DestinationNetworkSelector");
     setupDropDown("DestinationWorldSelector");
-    addDropDownOption("DestinationWorldSelector", '0x123456789abcdef', "", '1');
+    //addDropDownOption("DestinationWorldSelector", '0x123456789abcdef', "", '1');//FOR TEST PURPOSE
 
     //Load networks
     loadNets(function () {
@@ -423,13 +442,23 @@ export default class extends AbstractView {
     addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
       let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
       console.log("Switching to network id " + chainIDSelected);
-      //document.getElementById("OriginWorldCardLine").style.display = 'none';
+
+      //Clear drop downs
+      //clearDropDownOptions("RelaySelector");
+      clearDropDownOptions("DestinationNetworkSelector");
+      clearDropDownOptions("DestinationWorldSelector");
+
+      //Reset migration buttons. Unselect the previously selected button.
+      let migButtonsCard = document.getElementById("MigrationTypeCardLine");
+      let selected = migButtonsCard.querySelector(".Selected");
+      if(selected != undefined){selected.classList.remove('Selected');}
+
       //Hide all following elements
       let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
       elementsToHide.forEach(function(elem) {
         elem.style.display = 'none';
       });
-      promptSwitchChain(chainIDSelected);//TOCHECK metamask support only?.
+      promptSwitchChain(chainIDSelected);
     });
     addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
       //Display next form field: arrival title + arrival dest network
@@ -529,6 +558,7 @@ export default class extends AbstractView {
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
+      //Select the clicked button
       this.classList.add('Selected');
       //Display next form field: relay drop down
       document.getElementById("MigrationRelayCardLine").style.display = 'flex';
@@ -558,6 +588,8 @@ export default class extends AbstractView {
     });
     //Setup rooting
     document.getElementById("CompleteButton").addEventListener('click', async() =>{
+      console.log('===Migration Data===');
+      console.log(migData);
       model.navigateTo("/register_migration");
     });
 

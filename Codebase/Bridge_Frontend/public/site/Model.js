@@ -32,7 +32,7 @@ model.migrationData.destinationOwner = "";
 model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
 
-model.listeningTimeOut = 60; //seconds
+model.listeningTimeOut = 180; //seconds
 model.listeningRefreshFrequency = 3;//seconds
 
 model.migrationHash = "";

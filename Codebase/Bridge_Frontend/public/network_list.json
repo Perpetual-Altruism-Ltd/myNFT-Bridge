@@ -17,7 +17,7 @@
 			"uniqueId": "0xeb4fb0d1",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 1}]
+			"targetList": [{"relayIds": [1], "networkId": 1}, {"relayIds": [1], "networkId": 4}]
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
@@ -26,7 +26,7 @@
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://rinkeby.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 1}]
+			"targetList": [{"relayIds": [1], "networkId": 1}, {"relayIds": [1], "networkId": 4}]
 		},
 		{
 			"name":"Ethereum Testnet Goerli",

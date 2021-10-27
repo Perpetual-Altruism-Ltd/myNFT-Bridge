@@ -26,32 +26,44 @@ export default class extends AbstractView {
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let res = xhr.response;
+      //Create HTTP request
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/pollingMigration';
+      options.data.migrationId = model.readCookie("migrationId");
+
+      let requestCallback = function(response){
+        if(response.status == 200){
+          let res = response.data;
           //If migration Hash received from relay
           if(res.migrationHash != undefined){
             model.migrationHash = res.migrationHash;
             console.log("Migration hash received: " + model.migrationHash);
 
-            loadingText.textContent = "Please sign the migration data hash to agree for the migration.";
+            loadingText.textContent = "Please sign the migration data hash to continue the migration.";
 
             //Then sign migration hash
             signMigrationHash();
           }
-        }
-      };
-      xhr.open('POST', relayURL + '/pollingMigration');
-      let requestParam = {};
-      requestParam.migrationId = model.readCookie("migrationId");
+        }else{console.log(response.status + ' : ' + response.statusText);}
+      }
+
+      console.log("Start listening for migration hash");
 
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.migrationHash == ""){
         await sleep(model.listeningRefreshFrequency);
         //Ask relay for migration hash
-        xhr.send(requestParam);
+        axios.request(options).then(function (response) {
+          requestCallback(response);
+        }).catch(function (error) {
+          console.error(error);
+        });
       }
 
       //If timeout: error message
@@ -82,22 +94,28 @@ export default class extends AbstractView {
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/continueMigration';
+      options.data.migrationId = model.readCookie("migrationId");
+      options.data.migrationHashSignature = migrationHashSigned;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
           //start listening relay for escrow hash
           escrowHashListener();
         }else{
           loadingText.textContent = "Relay not responding.";
-          console.log(this.status);
+          console.log(response.status + ' : ' + response.statusText);
         }
-      };
-      xhr.open('POST', relayURL + '/continueMigration');
-      let requestParam = {};
-      requestParam.migrationId = model.readCookie("migrationId");
-      requestParam.migrationHashSignature = migrationHashSigned;
 
-      xhr.send(requestParam);
+      }).catch(function (error) {
+        console.error(error);
+      });
     }
 
     let escrowHashListener = async function(){
@@ -106,10 +124,18 @@ export default class extends AbstractView {
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
       let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
-      const xhr = new XMLHttpRequest();
-      xhr.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-          let res = xhr.response;
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/pollingMigration';
+      options.data.migrationId = model.readCookie("migrationId");
+
+      let requestCallback = function(response){
+        if(response.status == 200){
+          let res = response.data;
           //If migration Hash received from relay
           if(res.escrowHash != undefined){
             model.escrowHash = res.escrowHash;
@@ -118,18 +144,21 @@ export default class extends AbstractView {
             //Then move to signEscrow page
             model.navigateTo("/sign_escrow");
           }
-        }
-      };
-      xhr.open('POST', relayURL + '/pollingEscrow');
-      let requestParam = {};
-      requestParam.migrationId = model.readCookie("migrationId");
+        }else{console.log(response.status + ' : ' + response.statusText);}
+      }
+
+      console.log("Start listening for escrow hash");
 
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.escrowHash == ""){
         await sleep(model.listeningRefreshFrequency);
         //Ask relay for migration hash
-        xhr.send(requestParam);
+        axios.request(options).then(function (response) {
+          requestCallback(response);
+        }).catch(function (error) {
+          console.error(error);
+        });
       }
 
       //If timeout: error message
