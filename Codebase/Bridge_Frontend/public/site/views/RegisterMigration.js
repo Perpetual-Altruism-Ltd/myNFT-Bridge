@@ -70,7 +70,7 @@ export default class extends AbstractView {
       requestParam.migrationData.destinationWorld = migData.destinationWorld;
       requestParam.migrationData.destinationTokenId = migData.destinationTokenId;
       requestParam.migrationData.destinationOwner = migData.destinationOwner;
-      requestParam.operatorHash = "0x00";
+      requestParam.operatorHash = "0x00";//Not used yet
 
       xhr.send(requestParam);
     }
