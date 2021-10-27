@@ -15,35 +15,52 @@ export default class extends AbstractView {
     let migData = model.migrationData;
     let account = window.web3.currentProvider.selectedAddress;
 
-
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
         let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
         let originTokenId = parseInt(migData.originTokenId, 16);
-        console.log("Asking user " + account + " to grant relay " + relayOgNetworkAddr + " as an operator of the token " + originTokenId);
+        console.log("Asking user " + account + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 
         contracts.originalChainERC721Contract.methods.approve(relayOgNetworkAddr, originTokenId)
-        .send({from: account, gas:30000})
+        .send({from: account, gas:100000}, function(error, transactionHash){
+          //Function called when user accept or reject relay's operator approval
+          if(error){
+            console.log('Approval rejected by user');
+            alert("Please approve the relay as an operator for this NFT.");
+          }
+          else{
+            console.log('Approval accepted by user');
+            //If approval accepted by user: go to next page
+            model.navigateTo("/escrow_token");
+          }
+        })
         .then((res) => {
+          //Function called when transaction accepted on blockchain. Will be executed when page EscrowToken is displayed
           console.log("Relay is now an operator");
-          console.log(res);
+
+          //Call /initMigration from Relay
+          initMigration();
 
           let loadingText = document.getElementById("RegistrationLoadingText");
-          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Waiting for the relay to proceed to the token transfert.";}
+          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Waiting for the migration to be registered on blockchain.";}
         }).catch((res) => {
           console.log("Operator approval canceled or error");
           console.log(res);
 
-          alert("Please approve the relay as an operator for this NFT. You must be to owner of that token.");
+          let loadingText = document.getElementById("RegistrationLoadingText");
+          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Error during relay operator approval.";}
+
+          alert("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner if " + migData.originOwner);
         });
       }catch(err){
         console.log("Error when setting relay as an operator: " + err);
       }
     }
 
-    //relay's backend interactions
+    //relay's backend interactions.
+    //Will be executed on EscrowToken page
     let initMigration = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
@@ -64,9 +81,9 @@ export default class extends AbstractView {
       requestParam.migrationData.originUniverse = migData.originUniverse;
       requestParam.migrationData.originWorld = migData.originWorld;
       requestParam.migrationData.originTokenId = migData.originTokenId;
-      requestParam.migrationData.originOwner = "0x00";
+      requestParam.migrationData.originOwner = migData.originOwner;
       requestParam.migrationData.destinationUniverse = migData.destinationUniverse;
-      requestParam.migrationData.destinationBridge = "0x00";
+      requestParam.migrationData.destinationBridge = migData.destinationBridgeAddr;
       requestParam.migrationData.destinationWorld = migData.destinationWorld;
       requestParam.migrationData.destinationTokenId = migData.destinationTokenId;
       requestParam.migrationData.destinationOwner = migData.destinationOwner;
@@ -79,6 +96,7 @@ export default class extends AbstractView {
     document.getElementById("OGNetworkRegistrationDisp").textContent = migData.originUniverse;
     document.getElementById("OGContractAddressRegistrationDisp").textContent = migData.originWorld;
     document.getElementById("OGTokenIDRegistrationDisp").textContent = migData.originTokenId;
+    document.getElementById("OGTokenOwnerRegistrationDisp").textContent = migData.originOwner;
     document.getElementById("TokenNameRegistrationDisp").textContent = migData.originTokenName;
 
     document.getElementById("MigrationTypeRegistrationDisp").textContent = migData.migrationType;
@@ -95,7 +113,6 @@ export default class extends AbstractView {
     });
     document.getElementById("RegisterButton").addEventListener('click', async() =>{
       grantRelayOperatorPrivilege();
-      //model.navigateTo("/escrow_token");
     });
   }
 

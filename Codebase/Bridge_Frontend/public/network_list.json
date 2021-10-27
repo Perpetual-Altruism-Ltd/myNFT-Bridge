@@ -25,7 +25,7 @@
 			"networkID":4,
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/",
+			"explorer" : "https://rinkeby.etherscan.io/",
 			"targetList": [{"relayIds": [1], "networkId": 1}]
 		},
 		{

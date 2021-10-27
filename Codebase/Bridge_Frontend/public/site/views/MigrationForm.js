@@ -233,8 +233,10 @@ export default class extends AbstractView {
         			} else {
         				document.getElementById("OGTokenOwner").innerHTML = "Not Specified";
         			}
+              //Add origin token owner to migData
+              migData.originOwner = document.getElementById("OGTokenOwner").innerHTML;
 
-                } catch (err) {
+            } catch (err) {
         			console.log(err);
         			console.log("Could not get ownerOf() for: contractAddress" + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
 
@@ -442,6 +444,7 @@ export default class extends AbstractView {
       document.getElementById("MigrationTypeCardLine").style.display = 'flex';
       migData.destinationUniverseIndex = getDropDownSelectedOptionIndex("DestinationNetworkSelector");
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
+      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
     });
     addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
@@ -535,6 +538,15 @@ export default class extends AbstractView {
 
     //Setting token data retrieval
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
+      //First, clear previous data.
+      document.getElementById("OGContractName").innerHTML = "";
+      document.getElementById("OGContractSymbol").innerHTML = "";
+      document.getElementById("OGTokenOwner").innerHTML = "";
+      document.getElementById("OGTokenURI").innerHTML = "";
+      document.getElementById("OGTokenMetaName").textContent = "";
+      document.getElementById("OGTokenMetaDesc").textContent = "";
+      document.getElementById("OGTokenMetaImagePath").innerHTML = "";
+
       //Load metadata from chain: token URI, symbole, name
       loadOgTokenData();
     });
