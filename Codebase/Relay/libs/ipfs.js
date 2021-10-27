@@ -12,7 +12,7 @@ class IPFSClient {
      * @param {JSON Object} json 
      */
     async addJsonObj(json) {
-        return await this.ipfsInstance.add(JSON.stringify(json));
+        return await this.ipfsInstance.add({ path: "/hello", content:JSON.stringify(json) });
     }
 
     /**

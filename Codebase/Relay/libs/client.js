@@ -124,13 +124,17 @@ class Client {
     }
 
     async transferBackOriginToken(){
-      const originOwner = this.migrationData.originOwner;
-      await ethereum.safeTransferFrom(
-          this.migrationData.originWorld,
-          this.originUniverse.bridgeAdress,
-          originOwner,
-          this.migrationData.originTokenId
-      )
+        this.step = "canceled"
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
+        const originOwner = this.migrationData.originOwner;
+        await ethereum.safeTransferFrom(
+            this.migrationData.originWorld,
+            this.originUniverse.bridgeAdress,
+            originOwner,
+            this.migrationData.originTokenId
+        )
     }
 
 }

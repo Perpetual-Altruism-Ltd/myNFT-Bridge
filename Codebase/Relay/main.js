@@ -307,8 +307,8 @@ const main = async () => {
         const { error } = JoiSchemas.cancelMigration.validate(req.body)
         if(error){
             res.status(400)
-            res.send({ status: "Bad parameters given to /pollingEndMigration" })
-            Logger.error("Bad parameters given to /pollingEndMigration")
+            res.send({ status: "Bad parameters given to /cancelMigration" })
+            Logger.error("Bad parameters given to /cancelMigration")
             return
         }
         const client = clientList[req.body.migrationId]

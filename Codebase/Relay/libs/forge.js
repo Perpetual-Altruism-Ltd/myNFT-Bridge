@@ -1,5 +1,5 @@
 const Jimp = require('jimp')
-const IPFS = require('./ipfsClient')
+const IPFS = require('./ipfs')
 
 
 class Forge {
