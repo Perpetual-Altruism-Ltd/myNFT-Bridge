@@ -40,7 +40,7 @@
             "operatorAddress": "0x00",
             "worlds": [
                 {
-                    "address": "0x3C126842E3Fb192225cE2A7aFc9011C9Ff10F204",
+                    "address": "0xB75124A197A0449ea38706cf10eC5100D4ec9aB5",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
