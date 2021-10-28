@@ -32,7 +32,6 @@ const main = async () => {
                     const premintedTokens = db.collections.premintedTokens.find({
                         universe: universe.uniqueId
                         , world: world.address
-                        , givenToClient: false
                         , used: false
                     })
                     if(premintedTokens.length < 2){
@@ -42,7 +41,6 @@ const main = async () => {
                                 tokenId,
                                 universe: universe.uniqueId,
                                 world: world.address,
-                                givenToClient: false,
                                 used: false
                             })
                         }catch(err){
@@ -132,11 +130,11 @@ const main = async () => {
                 tokenId,
                 universe: universe.uniqueId,
                 world: req.body.world,
-                givenToClient: true
+                used: true
             })
         }else{
             tokenId = premintedTokens[0].tokenId
-            premintedTokens[0].givenToClient = true
+            premintedTokens[0].used = true
             db.collections.premintedTokens.update(premintedTokens[0])
         }
 
