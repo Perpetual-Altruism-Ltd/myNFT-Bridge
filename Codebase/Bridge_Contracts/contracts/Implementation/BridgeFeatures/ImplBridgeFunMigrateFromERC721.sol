@@ -40,7 +40,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The verification parameter allowing to check which fork was the escrow made on. Usually 
     /// equals to blockhash(block.number - 1) ^ bytes32(uint(uint160(address(block.coinbase))
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -52,11 +52,11 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external override {
         
         //Reconstruct the escrow hash
-        bytes32 escrowHash = generateMigrationHashArtificialLocalIOUIncoming(
+        bytes32 migrationHash = generateMigrationHashArtificialLocalIOUIncoming(
                 _originUniverse,
                 _originBridge,
                 _originWorld,
@@ -70,10 +70,15 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         );
 
         //Check that the escrow hash have been legitimately signed for this relay
-        checkEscrowSignature(_signee, escrowHash, _relayedMigrationHashSigned);
+        checkSignedHash(_signee, migrationHash, _migrationHashSigned);
 
-        if(migrationOperator[escrowHash] != address(0)){
-            require(migrationOperator[escrowHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
+        //Build a potential old migration hash if the token is being redeemed
+        bytes32 oldMigrationHash = latestRegisteredMigration[keccak256(abi.encodePacked(_destinationWorld, _destinationTokenId))]; 
+
+        if(migrationOperator[oldMigrationHash] != address(0)){
+            require(isEscrowHashVerified[oldMigrationHash], "This token has not been unlocked by the relay with a signed escrowhash");
+
+            require(migrationOperator[oldMigrationHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
         }
 
         //Try to get the current token owner
@@ -123,7 +128,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain appended with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -135,10 +140,202 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external override {
 
     }
+
+
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will assume that the owner that has initated the migration depositing 
+    /// the token in the bridge is the _signee of the escrowhash
+    /// @param _migrationHash The hash of the migration you want to register as redeemable
+    /// @param _escrowHashSigned The emitted _escrowHash signed by the previous token owner
+    function registerEscrowHashSignature(bytes32 _migrationHash, bytes calldata _escrowHashSigned) external {
+        require(!isEscrowHashVerified[_migrationHash], "This escrowhash has already been verified");
+
+        //Check that the escrow hash have been legitimately signed for this relay
+        checkSignedHash(
+            migrationInitialOwner[_migrationHash], //signee assuming it's ex-owner
+            escrowHashOfMigrationHash[_migrationHash], // escrowhash
+            _escrowHashSigned);
+
+        isEscrowHashVerified[_migrationHash] = true;
+    }
+
+
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will regenerate the migrationHash to match it with the escrowHash signed
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// @param _destinationUniverse  An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.. 
+    /// @param _destinationBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height at which the origin token was put in escrow in this bridge
+    /// @param _escrowHashSigned The emitted _escrowHash signed by _signee 
+    function registerEscrowHashSignature( 
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight,
+        bytes calldata _escrowHashSigned
+    ) external {
+
+        bytes32 migrationHash = generateMigrationHashArtificialLocal(      
+            _originWorld, 
+            _originTokenId, 
+            _originOwner,
+            _destinationUniverse,
+            _destinationBridge,
+            _destinationWorld,
+            _destinationTokenId,
+            _destinationOwner,
+            _signee,
+            _originHeight
+        );
+
+        require(!isEscrowHashVerified[migrationHash], "This escrowhash has already been verified");
+        require(migrationInitialOwner[migrationHash] == _originOwner, "The migration hash data do not match _originOwner");
+
+        //Check that the escrow hash have been legitimately signed for this relay
+        checkSignedHash(
+            _signee,
+            escrowHashOfMigrationHash[migrationHash], // escrowhash
+            _escrowHashSigned);
+
+        //Allow the token to be transferred to whoever the relay designate as recipient post migration
+        isEscrowHashVerified[migrationHash] = true;
+    }
+
+    /// @notice Send back a token to it's previous owner in case a relay do not wish to complete the migration
+    /// @dev This function will throw if the migration is considered redeemable or not called by the relay
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// @param _destinationUniverse  An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.. 
+    /// @param _destinationBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height at which the origin token was put in escrow in this bridge
+    function cancelMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight
+    ) external {
+
+        bytes32 migrationHash = generateMigrationHashArtificial(   
+            true, //_isIOU
+            localUniverse, //_originUniverse
+            bytes32(uint(uint160(address(this)))), //_originBridge
+            bytes32(uint(uint160(_originWorld))), // _originWorld, 
+            bytes32(_originTokenId), // _originTokenId, 
+            bytes32(uint(uint160(_originOwner))), // _originOwner,
+            _destinationUniverse, // _destinationUniverse,
+            _destinationBridge, // _destinationBridge,
+            _destinationWorld, // _destinationWorld,
+            _destinationTokenId, // _destinationTokenId,
+            _destinationOwner, // _destinationOwner,
+            bytes32(uint(uint160(_signee))), // _signee,
+            _originHeight // _originHeight
+        ); 
+            
+        require(msg.sender == migrationOperator[migrationHash], "Only the operating relay can cancel a migration");
+        require(!isEscrowHashVerified[migrationHash], "The escrowhash has already been verified");
+
+        //Send back the token to the original owner
+        ERC721(_originWorld).safeTransferFrom(address(this), migrationInitialOwner[migrationHash], _originTokenId);
+
+    }
+
+
+    /// @notice Query if a relay can migrate back a token in escrow with the bridge
+    /// @dev Will return true if the migration is considered redeemable (ie : the relay validated the escrowhash)
+    /// @param _migrationHash The migration hash of the token you wish to query
+    function isMigrationRedeemable(bytes32 _migrationHash) external view returns(bool){
+        return isEscrowHashVerified[_migrationHash];
+    }
+
+
+    /// @notice Query if a relay can migrate back a token in escrow with the bridge
+    /// @dev Will return true if the migration is considered redeemable (ie : the relay validated the escrowhash)
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// @param _destinationUniverse  An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.. 
+    /// @param _destinationBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height at which the origin token was put in escrow in this bridge
+    function isMigrationRedeemable(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight) external view returns(bool){
+
+        bytes32 migrationHash = generateMigrationHashArtificial(   
+            true, //_isIOU
+            localUniverse, //_originUniverse
+            bytes32(uint(uint160(address(this)))), //_originBridge
+            bytes32(uint(uint160(_originWorld))), // _originWorld, 
+            bytes32(_originTokenId), // _originTokenId, 
+            bytes32(uint(uint160(_originOwner))), // _originOwner,
+            _destinationUniverse, // _destinationUniverse,
+            _destinationBridge, // _destinationBridge,
+            _destinationWorld, // _destinationWorld,
+            _destinationTokenId, // _destinationTokenId,
+            _destinationOwner, // _destinationOwner,
+            bytes32(uint(uint160(_signee))), // _signee,
+            _originHeight // _originHeight
+        ); 
+
+        return isEscrowHashVerified[migrationHash];
+    }
+
 
 
 
@@ -171,6 +368,38 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             _height
         );
     }
+
+    function generateMigrationHashArtificialLocal(      
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight) internal view returns (bytes32){
+        
+        return (
+            generateMigrationHashArtificial(   
+                true, //_isIOU
+                localUniverse, //_originUniverse
+                bytes32(uint(uint160(address(this)))), //_originBridge
+                bytes32(uint(uint160(_originWorld))), // _originWorld, 
+                bytes32(_originTokenId), // _originTokenId, 
+                bytes32(uint(uint160(_originOwner))), // _originOwner,
+                _destinationUniverse, // _destinationUniverse,
+                _destinationBridge, // _destinationBridge,
+                _destinationWorld, // _destinationWorld,
+                _destinationTokenId, // _destinationTokenId,
+                _destinationOwner, // _destinationOwner,
+                bytes32(uint(uint160(_signee))), // _signee,
+                _originHeight // _originHeight
+            )
+        );
+    }
+
 
 
     //Generate a migration hash
@@ -208,37 +437,20 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
             );
     }
     
-//Generate the domain separator for V4 sign
-        struct EIP712Domain {
-            string name;
-            string version;
-        }
 
-	    bytes32 public constant EIP712_DOMAIN_TYPEHASH = keccak256("EIP712Domain(string name,string version)");
-        bytes32 constant DOMAIN_SEPARATOR = keccak256(abi.encode(EIP712_DOMAIN_TYPEHASH, keccak256("MyNft"), keccak256("1")));
-        
-    // HashStruct for the message
-        struct HashStruct {
-		bytes32 escrowHash;
-	    }
-	    bytes32 public constant MESSAGE_TYPEHASH = keccak256("HashStruct(bytes32 escrowHash)");
 
-/// TODO : Change to sign V4, see implementation in gasless cryptograph
-    function checkEscrowSignature(
+    function checkSignedHash(
         address _signee,
-        bytes32 escrowHash,
-        bytes calldata _relayedMigrationHashSigned
+        bytes32 _hashToSign,
+        bytes calldata _hashSigned
     ) internal pure {
-        
-        HashStruct memory hashStruct = HashStruct(escrowHash); 
         
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
-            "\x19\x01",
-            DOMAIN_SEPARATOR,
-            keccak256(abi.encode(MESSAGE_TYPEHASH, hashStruct.escrowHash)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+            "\x19Ethereum Signed Message:\n32",
+            _hashToSign //The escrowHash emitted by the departure bridge is hashed with the current relay public address
         ));  
-        require(recoverSigner(message, _relayedMigrationHashSigned) == _signee, "The migration data signed by the signee do not match the inputed data");
+        require(recoverSigner(message, _hashSigned) == _signee, "The hash to be signed by _signee does not match the signed hash");
     }
 
     /// signature methods.

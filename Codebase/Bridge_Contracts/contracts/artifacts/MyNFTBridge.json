@@ -52,16 +52,21 @@
 			"acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)": "ece34ef9",
 			"acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)": "4e641890",
 			"accrediteRelay(address,address)": "42787bc6",
+			"cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)": "a36bcac0",
 			"generateMigrationHashERC721Full(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "0eb55f08",
 			"generateMigrationHashERC721IOU(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "c25b0c09",
 			"getProofOfEscrowHash(bytes32)": "f57dc650",
 			"isAccreditedRelay(address,address)": "69491d1b",
 			"isMigrationPreRegisteredERC721(bytes32)": "5ceb78e1",
+			"isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)": "3f70ae40",
+			"isMigrationRedeemable(bytes32)": "6a3e3fe9",
 			"migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": "69f0e0c4",
 			"migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)": "94696e78",
 			"migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "d0c1d38b",
 			"migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)": "ea841b47",
-			"onERC721Received(address,address,uint256,bytes)": "150b7a02"
+			"onERC721Received(address,address,uint256,bytes)": "150b7a02",
+			"registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)": "afa7926f",
+			"registerEscrowHashSignature(bytes32,bytes)": "d010767b"
 		}
 	},
 	"abi": [
@@ -451,6 +456,64 @@
 		{
 			"inputs": [
 				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originHeight",
+					"type": "bytes32"
+				}
+			],
+			"name": "cancelMigration",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
 					"internalType": "bytes32",
 					"name": "_originUniverse",
 					"type": "bytes32"
@@ -661,6 +724,89 @@
 		{
 			"inputs": [
 				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originHeight",
+					"type": "bytes32"
+				}
+			],
+			"name": "isMigrationRedeemable",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				}
+			],
+			"name": "isMigrationRedeemable",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
 					"internalType": "bytes32",
 					"name": "_originUniverse",
 					"type": "bytes32"
@@ -712,7 +858,7 @@
 				},
 				{
 					"internalType": "bytes",
-					"name": "_relayedMigrationHashSigned",
+					"name": "_migrationHashSigned",
 					"type": "bytes"
 				}
 			],
@@ -775,7 +921,7 @@
 				},
 				{
 					"internalType": "bytes",
-					"name": "_relayedMigrationHashSigned",
+					"name": "_migrationHashSigned",
 					"type": "bytes"
 				}
 			],
@@ -911,6 +1057,87 @@
 					"type": "bytes4"
 				}
 			],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "_originWorld",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "_originTokenId",
+					"type": "uint256"
+				},
+				{
+					"internalType": "address",
+					"name": "_originOwner",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationUniverse",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationBridge",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationWorld",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationTokenId",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_destinationOwner",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "address",
+					"name": "_signee",
+					"type": "address"
+				},
+				{
+					"internalType": "bytes32",
+					"name": "_originHeight",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_escrowHashSigned",
+					"type": "bytes"
+				}
+			],
+			"name": "registerEscrowHashSignature",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "_migrationHash",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes",
+					"name": "_escrowHashSigned",
+					"type": "bytes"
+				}
+			],
+			"name": "registerEscrowHashSignature",
+			"outputs": [],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		}

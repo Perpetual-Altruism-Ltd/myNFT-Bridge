@@ -32,7 +32,6 @@ const main = async () => {
                     const premintedTokens = db.collections.premintedTokens.find({
                         universe: universe.uniqueId
                         , world: world.address
-                        , givenToClient: false
                         , used: false
                     })
                     if(premintedTokens.length < 2){
@@ -42,7 +41,6 @@ const main = async () => {
                                 tokenId,
                                 universe: universe.uniqueId,
                                 world: world.address,
-                                givenToClient: false,
                                 used: false
                             })
                         }catch(err){
@@ -108,6 +106,12 @@ const main = async () => {
         }
 
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+        if(!universe){
+            res.status(400)
+            res.send({ status: `Can't find universe ${req.body.universe}` })
+            Logger.error(`Can't find universe ${req.body.universe}`)
+            return
+        }
 
         const premintedTokens = db.collections.premintedTokens.find({
             universe: universe.uniqueId
@@ -126,11 +130,11 @@ const main = async () => {
                 tokenId,
                 universe: universe.uniqueId,
                 world: req.body.world,
-                givenToClient: true
+                used: true
             })
         }else{
             tokenId = premintedTokens[0].tokenId
-            premintedTokens[0].givenToClient = true
+            premintedTokens[0].used = true
             db.collections.premintedTokens.update(premintedTokens[0])
         }
 
@@ -147,12 +151,19 @@ const main = async () => {
         }
         const { migrationData } = req.body
         const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
-        if(!originUniverse)
-            throw "Can't find origin universe"
+        if(!originUniverse){
+            res.status(400)
+            res.send({ status: `Can't find origin universe ${migrationData.originUniverse}` })
+            Logger.error(`Can't find origin universe ${migrationData.originUniverse}`)
+            return
+        }
         const destinationUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.destinationUniverse)
-        if(!destinationUniverse)
-            throw "Can't find destination universe"
-
+        if(!destinationUniverse){
+            res.status(400)
+            res.send({ status: `Can't find destination universe ${migrationData.destinationUniverse}` })
+            Logger.error(`Can't find destination universe ${migrationData.destinationUniverse}`)
+            return
+        }
 
         // Returning migration_id
         const client = new Client(
@@ -217,7 +228,6 @@ const main = async () => {
             // Update escrow hash
             await client.updateEscrowHash()
         }catch(err){
-            console.log(err);
             if(!res.headersSent)
                 res.status(500).send({
                     error: "Unexpected error on the server."
@@ -274,9 +284,10 @@ const main = async () => {
             // Call origin bridge migrateFromIOUERC721ToERC721
             await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
         }catch(err){
-            res.status(500).send({
-                error: "Unexpected error on the server."
-            })
+            if(!res.headersSent)
+                res.status(500).send({
+                    error: "Unexpected error on the server."
+                })
             Logger.error(err)
         }
     })
@@ -316,7 +327,7 @@ const main = async () => {
         if(!client) {
             return res.status(400).json({ error : 'Unknown migrationId' })
         }
-        //Cancellation only possible if step is in ["annonceToBridge", "transferToBridge", ]
+        //Cancellation only possible if step is in ["transferToBridge", ]
         if(client.step == 'registered' || client.step == 'annonceToBridge' || client.step == 'transferToBridge') {
             client.transferBackOriginToken();
 
@@ -324,6 +335,7 @@ const main = async () => {
                 "status":"Migration stopped. Origin token sent back to owner."
             })
         }
+        else if(client.step == "closeMigration")
         return res.json({
             "status":"Migration already confirmed"
         })
