@@ -38,7 +38,7 @@ export default class extends AbstractView {
           let res = response.data;
           //If token transfered to destination owner
           if(res.migrationStatus == "Ok"){
-            model.destinationTokenTransfertTxHash = res.transactionHash.transactionHash;
+            model.destinationTokenTransfertTxHash = res.transactionHash;
             console.log("Migration ended !");
             console.log(res);
             loadingText.textContent = "Migration ended ! The token has been transferred to the destination owner.";
