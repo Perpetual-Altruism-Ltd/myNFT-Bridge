@@ -216,7 +216,6 @@ const main = async () => {
             // Update escrow hash
             await client.updateEscrowHash()
         }catch(err){
-            console.log(err);
             if(!res.headersSent)
                 res.status(500).send({
                     error: "Unexpected error on the server."
@@ -267,15 +266,18 @@ const main = async () => {
             // Check if escrow hash is valid before doing anything
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
     
+            // Call origin bridge migrateFromIOUERC721ToERC721
+            await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+            
             //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
             await client.closeMigration()
     
-            // Call origin bridge migrateFromIOUERC721ToERC721
-            await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
         }catch(err){
-            res.status(500).send({
-                error: "Unexpected error on the server."
-            })
+            console.log(err);
+            if(!res.headersSent)
+                res.status(500).send({
+                    error: "Unexpected error on the server."
+                })
             Logger.error(err)
         }
     })

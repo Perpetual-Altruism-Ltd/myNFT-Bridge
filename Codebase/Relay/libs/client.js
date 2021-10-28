@@ -71,7 +71,7 @@ class Client {
 
         this.migrationHashSignature = migrationHashSignature
         const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
-        await ethereum.safeTransferFrom(
+        await this.originEthereumConnection.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
             this.originUniverse.bridgeAdress, 
@@ -84,7 +84,12 @@ class Client {
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
         
-        this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
+        this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
+            this.originUniverse.bridgeAdress,
+            this.migrationData,
+            this.migrationHashSignature,
+            this.blockTimestamp
+        )
     }
     
     async registerTransferOnOriginBridge(escrowHashSigned){
@@ -114,8 +119,7 @@ class Client {
         this.db.collections.clients.update(this.dbObject)
         
         if(this.migrationHash) {
-            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
-            
+            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.originUniverse.bridgeAdress, this.migrationHash);
             this.dbObject.escrowHash = this.escrowHash
             this.db.collections.clients.update(this.dbObject)
         } else {

@@ -91,15 +91,17 @@ class Ethereum extends EventEmitter {
 
             const data = [
                 migrationData.originWorld,
-                parseInt(migrationData.originTokenId),
-                this.stringToBytes32(migrationData.destinationUniverse), // eg : "Moonbeam"
+                this.web3Instance.utils.toBN(parseInt(migrationData.originTokenId)),
+                this.hexToBytes32(migrationData.destinationUniverse), // eg : "Moonbeam"
                 this.hexToBytes32(migrationData.destinationBridge),
                 this.hexToBytes32(migrationData.destinationWorld),
-                this.stringToBytes32(migrationData.destinationTokenId),
+                this.numberToBytes32(migrationData.destinationTokenId),
                 this.hexToBytes32(migrationData.destinationOwner),
                 this.hexToBytes32(migrationData.originOwner)
             ];
     
+            console.log('DATA TO SEND : ', data);
+
             try {
                 web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', { 
                     filter: { 
@@ -108,9 +110,11 @@ class Ethereum extends EventEmitter {
                 }, async (err, data) => {
                     const migrationHash = data?.returnValues?._migrationHash;
                     if(migrationHash){
+                        const block = await this.web3Instance.eth.getBlock(data.blockNumber);
+                        console.log('Block : ', block);
                         resolve({
                             migrationHash,
-                            blockTimestamp: (await this.web3Instance.eth.getBlock(data.blockNumber)).timestamp
+                            blockTimestamp: block.timestamp
                         })
                         return
                     }
@@ -141,7 +145,7 @@ class Ethereum extends EventEmitter {
     }
 
     /* ==== Arrival Bridge Interractions  ==== */
-    async migrateFromIOUERC721ToERC721(migrationData, migrationHashSignature, blockTimestamp) {
+    async migrateFromIOUERC721ToERC721(originBridge, migrationData, migrationHashSignature, blockTimestamp) {
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             migrationData.destinationBridge,
@@ -151,24 +155,34 @@ class Ethereum extends EventEmitter {
             }
         )
 
-        const originOwner = await this.verifySignature(
-            this.web3Instance.utils.sha3(JSON.stringify(migrationData)),
-            migrationHashSignature
-        )
+        /*
+                    const data = [
+                migrationData.originWorld,
+                parseInt(migrationData.originTokenId),
+                this.stringToBytes32(migrationData.destinationUniverse), // eg : "Moonbeam"
+                this.hexToBytes32(migrationData.destinationBridge),
+                this.hexToBytes32(migrationData.destinationWorld),
+                this.stringToBytes32(migrationData.destinationTokenId),
+                this.hexToBytes32(migrationData.destinationOwner),
+                this.hexToBytes32(migrationData.originOwner)
+            ];
+                */
 
         const data = [
-            migrationData.originUniverse,
-            Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse).bridgeAddress,
-            migrationData.originWorld,
-            migrationData.originTokenId,
-            originOwner,
+            this.hexToBytes32(migrationData.originUniverse),
+            this.hexToBytes32(originBridge),
+            this.hexToBytes32(migrationData.originWorld),
+            this.numberToBytes32(migrationData.originTokenId),
+            this.hexToBytes32(migrationData.originOwner),
             migrationData.destinationWorld,
-            migrationData.destinationTokenId,
+            this.web3Instance.utils.toBN(parseInt(migrationData.destinationTokenId)),
             migrationData.destinationOwner,
-            originOwner,
-            blockTimestamp,
+            migrationData.originOwner,
+            this.numberToBytes32(blockTimestamp),
             migrationHashSignature
         ]
+        console.log('>>> DATA : ', data);
+        console.log('<<< DATA');
         return await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
     }
 
@@ -180,10 +194,15 @@ class Ethereum extends EventEmitter {
     }
     stringToBytes32(string) {
         return this.web3Instance.utils.padLeft(
-            this.web3Instance.utils.asciiToHex(string), 64);
+            this.web3Instance.utils.asciiToHex(string), 64)
+    }
+    numberToBytes32(number) {
+        return this.web3Instance.utils.padLeft(
+            this.web3Instance.utils.numberToHex(
+                this.web3Instance.utils.toBN(parseInt(number))), 64)
     }
     hexToBytes32(string) {
-        return this.web3Instance.utils.padLeft(string, 64);
+        return this.web3Instance.utils.padLeft(string, 64)
     }
 
 }
