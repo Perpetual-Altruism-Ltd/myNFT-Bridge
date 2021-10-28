@@ -35,7 +35,7 @@ model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
 
 model.listeningTimeOut = 180; //seconds
-model.listeningRefreshFrequency = 15;//seconds
+model.listeningRefreshFrequency = 5;//seconds
 
 model.migrationHash = "";
 model.escrowHash = "";

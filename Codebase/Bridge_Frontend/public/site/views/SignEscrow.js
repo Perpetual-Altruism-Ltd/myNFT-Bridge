@@ -12,19 +12,22 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
     let escrowHashSigned = "";
+    let account = window.web3.currentProvider.selectedAddress;
     let stateMessage = document.getElementById("StateMessage");
 
     let signEscrowHash = async function(){
-      window.web3.eth.sign(model.escrowHash, account, function(err,res){
-        //If user refused to sign
-        if(err){
-          stateMessage.textContent = "Signature refused.";
-        }else{
-          escrowHashSigned = res;
-          //Send escrowHashSigned to relay
-          closeMigration();
-        }
+      //Ask the wallet to prompt user to sign data
+      window.ethereum.request({ method: 'personal_sign', params: [ model.escrowHash, account ] })
+      .then((res) =>{
+        console.log("Escrow hash signed: " + res);
+        escrowHashSigned = res;
+        //Send escrowHashSigned to relay
+        closeMigration();
+      }).catch((res) => {
+        stateMessage.textContent = "Signature refused.";
+        console.log("Signature error: " + res);
       });
     }
 
@@ -40,7 +43,7 @@ export default class extends AbstractView {
       };
       options.url = relayURL + '/closeMigration';
       options.data.migrationId = model.readCookie("migrationId");
-      options.data.migrationHashSignature = escrowHashSigned;
+      options.data.escrowHashSignature = escrowHashSigned;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){

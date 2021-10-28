@@ -493,7 +493,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Codebase/Bridge_Contracts/contracts/Implementation/Test/ImplTestERC721.sol": "ImplTestERC721"
+			"Test/ImplTestERC721.sol": "ImplTestERC721"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -507,7 +507,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"Codebase/Bridge_Contracts/contracts/Implementation/ERC721.sol": {
+		"ERC721.sol": {
 			"keccak256": "0x65dd41da5d50472d6ef2a8c76d102396a351f3813b2a1afadd736937e9f8ee98",
 			"license": "CC0-1.0",
 			"urls": [
@@ -515,7 +515,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"Codebase/Bridge_Contracts/contracts/Implementation/Test/ImplTestERC721.sol": {
+		"Test/ImplTestERC721.sol": {
 			"keccak256": "0x650bf3488a01728460f99e28ad59c9dc47af9d3075443ab929fca9da5b438d59",
 			"license": "Unlicense",
 			"urls": [

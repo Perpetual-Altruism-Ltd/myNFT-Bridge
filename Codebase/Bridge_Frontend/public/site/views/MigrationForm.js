@@ -1,5 +1,7 @@
 import AbstractView from './AbstractView.js';
 
+//0x343da20c010148b4E4D4D3203e7c445E0a7468A4
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -394,6 +396,9 @@ export default class extends AbstractView {
         migData.destinationTokenId = '0x' + parseInt(response.data.tokenId).toString(16);
         //Add dest tokenId to input
         document.getElementById("inputDestTokenID").value = migData.destinationTokenId;
+
+        //Display next migration form field
+        document.getElementById("inputDestTokenID").dispatchEvent(new Event("focusout"));
       }).catch(function (error) {
         console.error(error);
       });
@@ -413,6 +418,18 @@ export default class extends AbstractView {
           }
         });
       }
+    }
+
+    //Display functions
+    let clearTokenData = function(){
+      document.getElementById("TokenErrorMessage").style.display = 'none';
+      document.getElementById("OGContractName").innerHTML = "";
+      document.getElementById("OGContractSymbol").innerHTML = "";
+      document.getElementById("OGTokenOwner").innerHTML = "";
+      document.getElementById("OGTokenURI").innerHTML = "";
+      document.getElementById("OGTokenMetaName").textContent = "";
+      document.getElementById("OGTokenMetaDesc").textContent = "";
+      document.getElementById("OGTokenMetaImagePath").innerHTML = "";
     }
 
     //Setup custom selector
@@ -450,14 +467,7 @@ export default class extends AbstractView {
       console.log("Switching to network id " + chainIDSelected);
 
       //CLEAR PREVIOUS DATA
-      //First, clear previous data.
-      document.getElementById("OGContractName").innerHTML = "";
-      document.getElementById("OGContractSymbol").innerHTML = "";
-      document.getElementById("OGTokenOwner").innerHTML = "";
-      document.getElementById("OGTokenURI").innerHTML = "";
-      document.getElementById("OGTokenMetaName").textContent = "";
-      document.getElementById("OGTokenMetaDesc").textContent = "";
-      document.getElementById("OGTokenMetaImagePath").innerHTML = "";
+      clearTokenData();
       //Clear drop downs
       //clearDropDownOptions("RelaySelector");
       clearDropDownOptions("DestinationNetworkSelector");
@@ -623,6 +633,7 @@ export default class extends AbstractView {
 
     //Setting token data retrieval
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
+      clearTokenData();
       //Load metadata from chain: token URI, symbole, name
       loadOgTokenData();
     });

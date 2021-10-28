@@ -43,7 +43,7 @@ export default class extends AbstractView {
             model.migrationHash = res.migrationHash;
             console.log("Migration hash received: " + model.migrationHash);
 
-            loadingText.textContent = "Please sign the migration data hash to continue the migration.";
+            loadingText.textContent = "Please sign the migration hash to continue the migration.";
 
             //Then sign migration hash
             signMigrationHash();
@@ -67,6 +67,7 @@ export default class extends AbstractView {
         });
 
         await sleep(model.listeningRefreshFrequency*1000);
+        i++;
       }
 
       //If timeout: error message
@@ -79,15 +80,30 @@ export default class extends AbstractView {
     migrationHashListener();
 
     let signMigrationHash = async function(){
-      window.web3.eth.sign(model.migrationHash, account, function(err,res){
+      //TO DELETE
+      /*window.web3.eth.sign(model.migrationHash, account, function(err,res){
         //If user refused to sign
         if(err){
           loadingText.textContent = "Signature refused. Start migration again ?";
         }else{
+          console.log("sign() signature: " + res);
           loadingText.textContent = "Sending signature to relay.";
-          migrationHashSigned = res;
-          continueMigration();
+          // migrationHashSigned = res;
+          //continueMigration();
         }
+      });*/
+
+      //personal_sign
+      window.ethereum.request({ method: 'personal_sign', params: [ model.migrationHash, account ] })
+      .then((res) =>{
+        console.log("Migration hash signed: " + res);
+        loadingText.textContent = "Sending signature to relay.";
+        migrationHashSigned = res;
+
+        continueMigration();
+      }).catch((res) => {
+        loadingText.textContent = "Signature refused. Start migration again ?";
+        console.log("Signature error: " + res);
       });
     }
 
@@ -115,6 +131,7 @@ export default class extends AbstractView {
         }
 
       }).catch(function (error) {
+        loadingText.textContent = "Wrong /continueMigration request.";
         console.error(error);
       });
     }
@@ -148,7 +165,7 @@ export default class extends AbstractView {
       }
 
       console.log("Start listening for escrow hash");
-      setTimeout(() => { loadingText.textContent = "Waiting for your NFT to be transferred into the bridge."; }, 5000);
+      setTimeout(() => { loadingText.textContent = "Waiting for your NFT to be transferred into the origin bridge."; }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
@@ -161,6 +178,7 @@ export default class extends AbstractView {
         });
 
         await sleep(model.listeningRefreshFrequency*1000);
+        i++;
       }
 
       //If timeout: error message

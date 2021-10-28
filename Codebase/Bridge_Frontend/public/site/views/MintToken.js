@@ -12,6 +12,7 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
     let loadingText = document.getElementById("MigrationLoadingText");
 
     function sleep(ms) {
@@ -29,7 +30,7 @@ export default class extends AbstractView {
         headers: {'Content-Type': 'application/json'},
         data: {}
       };
-      options.url = relayURL + '/pollingMigration';
+      options.url = relayURL + '/pollingEndMigration';
       options.data.migrationId = model.readCookie("migrationId");
 
       let requestCallback = function(response){
@@ -37,30 +38,36 @@ export default class extends AbstractView {
           let res = response.data;
           //If token transfered to destination owner
           if(res.migrationStatus == "Ok"){
-            model.destinationTokenTransfertTxHash = res.transactionHash;
+            model.destinationTokenTransfertTxHash = res.transactionHash.transactionHash;
             console.log("Migration ended !");
+            console.log(res);
+            loadingText.textContent = "Migration ended ! The token has been transferred to the destination owner.";
 
             //Then move to migration_finished page to display link to chain explorer for the token transfert transaction
-            model.navigateTo("/migration_finished");
+            setTimeout(function () {model.navigateTo("/migration_finished");}, 3000);
           }
         }else{console.log(response.status + ' : ' + response.statusText);}
       }
 
+      console.log("Start listening for destination token transfert to owner");
+
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
-        await sleep(model.listeningRefreshFrequency);
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
           console.error(error);
         });
+
+        await sleep(model.listeningRefreshFrequency*1000);
+        i++;
       }
 
       //If timeout: error message
       if(model.destinationTokenTransfertTxHash == ""){
-        loadingText.textContent = "Couldn't retrieve transaction hash of destination token transfert.";
+        loadingText.textContent = "Couldn't retrieve transaction hash of the destination token transfer to owner.";
       }
     }
     //Start listening for end migration from relay. Once ended, move to mig_finished page
