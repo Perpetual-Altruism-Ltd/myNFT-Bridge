@@ -1,6 +1,7 @@
 const Logger = require('./winston.js')('Client')
 const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
+const Forge = require('./forge')
 
 class Client {
     constructor(
@@ -50,7 +51,7 @@ class Client {
                 this.originUniverse.bridgeAdress,
                 this.migrationData
             )
-            if(!migrationHash) 
+            if(!migrationHash)
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
             this.blockTimestamp = blockTimestamp
@@ -73,7 +74,7 @@ class Client {
         await this.originEthereumConnection.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
-            this.originUniverse.bridgeAdress, 
+            this.originUniverse.bridgeAdress,
             this.migrationData.originTokenId
         )
     }
@@ -82,15 +83,18 @@ class Client {
         this.step = 'closeMigration'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
-        
         this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
             this.originUniverse.bridgeAdress,
             this.migrationData,
             this.migrationHashSignature,
             this.blockTimestamp
         )
+        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
+        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri)
+        
+        // Here mint the IOU
     }
-    
+
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
         this.dbObject.step = this.step
@@ -124,6 +128,20 @@ class Client {
         } else {
             throw "Invalid migrationHash"
         }
+    }
+
+    async transferBackOriginToken(){
+        this.step = "canceled"
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
+        const originOwner = this.migrationData.originOwner;
+        await ethereum.safeTransferFrom(
+            this.migrationData.originWorld,
+            this.originUniverse.bridgeAdress,
+            originOwner,
+            this.migrationData.originTokenId
+        )
     }
 
 }

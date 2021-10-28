@@ -76,6 +76,8 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
         //PUSH of tOwner for gas optimization
         address tOwner = ERC721(_originWorld).ownerOf(_originTokenId);
+
+        // Note that if the bridge own the token, registering a new migration is not possible
         require(
             msg.sender == tOwner || 
             ERC721(_originWorld).isApprovedForAll(tOwner, msg.sender) ||

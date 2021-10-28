@@ -28,12 +28,12 @@
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "",
+						"name": "_operator",
 						"type": "address"
 					},
 					{
 						"internalType": "address",
-						"name": "",
+						"name": "_from",
 						"type": "address"
 					},
 					{
@@ -66,6 +66,8 @@
 				"onERC721Received(address,address,uint256,bytes)": {
 					"details": "The ERC721 smart contract calls this function on the recipient after a `transfer`. This function MAY throw to revert and reject the transfer. Return of other than the magic value MUST result in the transaction being reverted.",
 					"params": {
+						"_from": "The address which previously owned the token",
+						"_operator": "The address which called `safeTransferFrom` function",
 						"_tokenId": "The NFT identifier which is being transferred _param _data Additional data with no specified format"
 					},
 					"returns": {
@@ -80,7 +82,7 @@
 			"kind": "user",
 			"methods": {
 				"onERC721Received(address,address,uint256,bytes)": {
-					"notice": "Handle the receipt of an NFTThe contract address is always the message sender. _param _operator The address which called `safeTransferFrom` function _param _from The address which previously owned the token"
+					"notice": "Handle the receipt of an NFTThe contract address is always the message sender."
 				}
 			},
 			"notice": "Handle the safeTransfers of NFT to the bridge",
@@ -104,11 +106,11 @@
 	},
 	"sources": {
 		"contracts/Implementation/BridgeFeatures/ImplERC721TokenReceiver.sol": {
-			"keccak256": "0xe01ebb667b214498df9939cfba8010de0cbf6ffbda02972f849b2ff95d8ab930",
+			"keccak256": "0x08ff616dbbfd5e7d0cd8fca42ea9f74db623b1812e480053286034a0fccd2fa6",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://d23bab89e436c4a67ad6863bb26785c1f58c6288090e52fc548c2b6e72c00ee0",
-				"dweb:/ipfs/QmZthcKg3iiByHEVfqvXztCxzpmJUgwgSK4uQjEntCtyHh"
+				"bzz-raw://ccd9ed74d3ea83111a79c9ef0f5570d207b579fe596364151e8b6df16ac15150",
+				"dweb:/ipfs/QmQubLSksDGx3RE3yrMBFEZcVsqowvT6r45chXyMXYcCfZ"
 			]
 		},
 		"contracts/Implementation/ERC721.sol": {
@@ -120,11 +122,11 @@
 			]
 		},
 		"contracts/Implementation/ImplMemoryStructure.sol": {
-			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"keccak256": "0x6def2852bd98a8a5f352ad59abf1649c753379f7b0c4dd4d2f457d684de706ed",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
-				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+				"bzz-raw://13369ab20cfdd3b06a9b8285c1db3cb3cb8ac395e0ce8d9cc76b17461c993ea0",
+				"dweb:/ipfs/Qmf9RDNfsB7cPsHWZhErbtN8h5BKT3wjko4dSBHD6gCnXm"
 			]
 		}
 	},

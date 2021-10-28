@@ -168,6 +168,19 @@ class Ethereum extends EventEmitter {
         return await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
     }
 
+    async getTokenUri(contract, tokenId){
+        const web3Contract = new this.web3Instance.eth.Contract(
+            ERC721Abi,
+            contract,
+            {
+                from: this.web3Instance.eth.defaultAccount,
+                gas: 8000000
+            }
+        )
+
+        return await web3Contract.methods.tokenURI(tokenId).call()
+    }
+
     /**
      * Utilities functions
      */

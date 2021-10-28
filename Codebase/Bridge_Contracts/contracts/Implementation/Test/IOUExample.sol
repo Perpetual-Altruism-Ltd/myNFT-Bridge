@@ -21,6 +21,8 @@ contract IOUExample is ERC721 {
 
     mapping(uint256 => address) internal preminters; //Each token preminter
 
+    mapping(uint256 => string) internal tokenUris; // Each token uri
+
     // Total number of minted token
     uint256 public mintedTokens;
 
@@ -42,6 +44,13 @@ contract IOUExample is ERC721 {
 
         emit Transfer(address(0x0), msg.sender, mintedTokens);
         return mintedTokens;
+    }
+
+    function setTokenUri (uint256 _tokenId, string calldata tokenUri) external {
+        require(owner == msg.sender, "Only the smart contract owner set tokens uri");
+        require(tokenOwners[_tokenId] == address(0), "Token must not be transferred to a owner");
+        
+        tokenUris[_tokenId] = tokenUri;
     }
 
     function mint (uint256 _tokenID) external returns(uint256){
@@ -285,8 +294,8 @@ contract IOUExample is ERC721 {
     ///  Metadata JSON Schema".
     function tokenURI(uint256 _tokenId) external view returns(string memory){
         require(tokenOwners[_tokenId] != address(0), "This token is not minted");
-        return string(abi.encodePacked("http://127.0.0.1/tokens/", addressToString(address(this)), "/", uint2str(_tokenId)));
 
+        return tokenUris[_tokenId];
     }
     
         /// @notice Convert an Ethereum address to a human readable string

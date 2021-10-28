@@ -63,6 +63,11 @@ contract ImplMemoryStructure {
     mapping(address => mapping(address => bool)) internal isAccreditedRelayForWorld; // (world => relay => isAccredited)
 
     //Mapping storing who was the operator that put the token inside the relay
-    mapping(bytes32 => address) internal migrationOperator;  // escrowHash => operator address
- 
+    mapping(bytes32 => address) internal migrationOperator;  // migrationHash => operator address
+
+    //Mapping storing who was the previous owner before the migration
+    mapping(bytes32 => address) internal migrationInitialOwner;  // migrationHash => previous Owner address
+
+    //Mapping storing if an escrowash has been validated for the original migration
+    mapping(bytes32 => bool) internal isEscrowHashVerified;  // migrationHash => isEscrowHashVerified
 }
