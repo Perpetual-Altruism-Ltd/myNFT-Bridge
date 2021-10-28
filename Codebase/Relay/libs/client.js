@@ -59,7 +59,6 @@ class Client {
             this.dbObject.blockTimestamp = this.blockTimestamp
             this.db.collections.clients.update(this.dbObject)
         } catch(e) {
-            console.log(e);
             Logger.error(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
