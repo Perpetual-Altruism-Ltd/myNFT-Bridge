@@ -92,7 +92,7 @@ class Client {
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
         const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri)
         
-        // Here mint the IOU
+        await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId)
     }
 
     async registerTransferOnOriginBridge(escrowHashSigned){
