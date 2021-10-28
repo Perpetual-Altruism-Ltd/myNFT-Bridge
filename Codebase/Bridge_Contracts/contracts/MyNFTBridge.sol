@@ -326,7 +326,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromIOUERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -338,7 +338,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
     ) external;
 
 
@@ -368,7 +368,7 @@ interface MyNFTBridgeERC721toERC721Arrival {
     /// A relay unable to lie on _signee from the departure bridge to here is a trustless relay
     /// @param _height The height at which the origin token was put in escrow in the origin universe.
     /// Usually the block.timestamp, but different universes have different metrics
-    /// @param _relayedMigrationHashSigned The _escrowHash of the origin chain, hashed with the relay public address then signed by _signee
+    /// @param _migrationHashSigned The _migrationHash of the origin chain, signed by _signee
     function migrateFromFullERC721ToERC721(
         bytes32 _originUniverse,
         bytes32 _originBridge, 
@@ -380,11 +380,101 @@ interface MyNFTBridgeERC721toERC721Arrival {
         address _destinationOwner,
         address _signee,
         bytes32 _height,
-        bytes calldata _relayedMigrationHashSigned
+        bytes calldata _migrationHashSigned
+    ) external;
+
+    /// @notice Send back a token to it's previous owner in case a relay do not wish to complete the migration
+    /// @dev This function will throw if the migration is considered redeemable or not called by the relay
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// @param _destinationUniverse  An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.. 
+    /// @param _destinationBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height at which the origin token was put in escrow in this bridge
+    function cancelMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight
     ) external;
 
 
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will assume that the owner that has initated the migration depositing 
+    /// the token in the bridge is the _signee of the escrowhash
+    function registerEscrowHashSignature(bytes32 _migrationHash, bytes calldata _escrowHashSigned) external;
+
+    /// @notice Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
+    /// @dev This function will regenerate the migrationHash to match it with the escrowHash signed
+    function registerEscrowHashSignature( 
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight,
+        bytes calldata _escrowHashSigned
+    ) external;
+
+    
+    /// @notice Query if a relay can migrate back a token in escrow with the bridge
+    /// @dev Will return true if the migration is considered redeemable (ie : the relay validated the escrowhash)
+    /// @param _migrationHash The migration hash of the token you wish to query
+    function isMigrationRedeemable(bytes32 _migrationHash) external view returns(bool);
+
+    /// @notice Query if a relay can migrate back a token in escrow with the bridge
+    /// @dev Will return true if the migration is considered redeemable (ie : the relay validated the escrowhash)
+    /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
+    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
+    /// @param _originOwner An array of 32 bytes representing the original owner of the migrated token . 
+    /// @param _destinationUniverse  An array of 32 bytes representing the destination universe. 
+    /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.. 
+    /// @param _destinationBridge An array of 32 bytes representing the origin bridge. If the origin
+    /// bridge is on an EVM, it is most likely an address.
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// If the destination bridge is on an EVM, it is most likely an address.
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// If the destination world is on an EVM, it is most likely an address.
+    /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
+    /// If the owner has access to a private key, it should be the owner.
+    /// @param _originHeight The height at which the origin token was put in escrow in this bridge
+    function isMigrationRedeemable(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight
+    ) external view returns(bool);
+
 }
+    
 
 /// @author Guillaume Gonnaud 2021
 /// @title MyNFTBridgeControl

@@ -658,11 +658,11 @@
 	},
 	"sources": {
 		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunMigrateToERC721.sol": {
-			"keccak256": "0xcb440f2c0126bcb1ddd58670416f5f51e3d36625b8f8feca61922b4a21c8d63c",
+			"keccak256": "0x0c9962e2c52d1c6363aa330ecf74430eafdf673d66d7d387d4fde013c4b08fc6",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://409e995c999223544f1c522f51b192357d42595eca15d860bbdf5eb485e4ca08",
-				"dweb:/ipfs/QmQRh6NjJ7briCt89DQ9MEkp85XsvhuzYBhLM7nDcxva9p"
+				"bzz-raw://e14d922b507229d9dc21c191f0c14517f86b824b86c612807a3ebe113700ba49",
+				"dweb:/ipfs/QmTS3gmMLykTApXujXuAm85TR2SB8vaZJFHfepktj4Q3yB"
 			]
 		},
 		"contracts/Implementation/ERC721.sol": {
@@ -674,19 +674,19 @@
 			]
 		},
 		"contracts/Implementation/ImplMemoryStructure.sol": {
-			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"keccak256": "0x6def2852bd98a8a5f352ad59abf1649c753379f7b0c4dd4d2f457d684de706ed",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
-				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+				"bzz-raw://13369ab20cfdd3b06a9b8285c1db3cb3cb8ac395e0ce8d9cc76b17461c993ea0",
+				"dweb:/ipfs/Qmf9RDNfsB7cPsHWZhErbtN8h5BKT3wjko4dSBHD6gCnXm"
 			]
 		},
 		"contracts/MyNFTBridge.sol": {
-			"keccak256": "0x548b63eaa0b0dd8c9da6069c19b5240f72b221e72a14727a3317aacec3058dd8",
+			"keccak256": "0xd24b9f9c053f4a48c6ebb93242fe8116ad8d87f886f593e5b278c8fd7bc4c87e",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://515ed2436cc565d967afc2ca8afc8062075be21ecb505e48800fda0505e84a47",
-				"dweb:/ipfs/QmS6AccCSUBi383tgdqwEegTkmDKjxRaGdpKScY7geGukF"
+				"bzz-raw://848c7207ad8c7a4213f05fdb2332e757d776c1bfd0353da9212ddcebc4e5bb45",
+				"dweb:/ipfs/QmQVN6mSRL7eMZN7tMjeNAKc6eguba12xH1oRLDqa9hFvj"
 			]
 		}
 	},

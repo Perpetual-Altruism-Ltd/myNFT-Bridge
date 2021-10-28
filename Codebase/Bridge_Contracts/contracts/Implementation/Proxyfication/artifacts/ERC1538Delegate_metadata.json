@@ -110,18 +110,18 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
 		"contracts/Implementation/ImplMemoryStructure.sol": {
-			"keccak256": "0xfb0bb24fc49ef8661f3a194ea431f8bee9f8881cb33c1ac0ec514f4b6c00b321",
+			"keccak256": "0x6def2852bd98a8a5f352ad59abf1649c753379f7b0c4dd4d2f457d684de706ed",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://0510f0496b46589d85634128dee397ccb344b82f0f4fedd26908f1ccdaa1c5f6",
-				"dweb:/ipfs/QmbFpGXCUPCHKCWfg5AUq1z3o8ypb2aTzSsHo9ZDV7CSLo"
+				"bzz-raw://13369ab20cfdd3b06a9b8285c1db3cb3cb8ac395e0ce8d9cc76b17461c993ea0",
+				"dweb:/ipfs/Qmf9RDNfsB7cPsHWZhErbtN8h5BKT3wjko4dSBHD6gCnXm"
 			]
 		},
 		"contracts/Implementation/Proxyfication/ERC1538.sol": {

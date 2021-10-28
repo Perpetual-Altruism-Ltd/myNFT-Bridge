@@ -20,13 +20,13 @@ contract ImplERC721TokenReceiver is ImplMemoryStructure, ERC721TokenReceiver {
     /// recipient after a `transfer`. This function MAY throw to revert and reject the transfer. Return
     /// of other than the magic value MUST result in the transaction being reverted.
     /// @notice The contract address is always the message sender.
-    /// _param _operator The address which called `safeTransferFrom` function
-    /// _param _from The address which previously owned the token
+    /// @param _operator The address which called `safeTransferFrom` function
+    /// @param _from The address which previously owned the token
     /// @param _tokenId The NFT identifier which is being transferred
     /// _param _data Additional data with no specified format
     /// @return `bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))` unless throwing
     /// bytes4(keccak256("onERC721Received(address,address,uint256,bytes)")) === 0x150b7a02
-    function onERC721Received(address _operator , address  /*_from*/, uint256 _tokenId, bytes calldata  /*_data*/) external override returns(bytes4){
+    function onERC721Received(address _operator , address  _from, uint256 _tokenId, bytes calldata  /*_data*/) external override returns(bytes4){
 
         // PUSH the migration hash
         bytes32 migrationHash = latestRegisteredMigration[keccak256(abi.encodePacked(msg.sender, _tokenId))];
@@ -49,7 +49,11 @@ contract ImplERC721TokenReceiver is ImplMemoryStructure, ERC721TokenReceiver {
         escrowHashOfMigrationHash[migrationHash] = escrowHash;
 
         //Allow the operator to withdraw the token
-        migrationOperator[escrowHash] = _operator;
+        require(migrationOperator[migrationHash] == address(0), "The token have already been deposited for this migration. Please register a new migration.");
+        migrationOperator[migrationHash] = _operator;
+
+        //migrationInitialOwner
+        migrationInitialOwner[migrationHash] = _from;
 
         //Remove the pre-registration of the migration for the token
         delete latestRegisteredMigration[keccak256(abi.encodePacked(msg.sender, _tokenId))];
