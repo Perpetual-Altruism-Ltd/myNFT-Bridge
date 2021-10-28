@@ -16,8 +16,6 @@ export default class extends AbstractView {
     let stateMessage = document.getElementById("StateMessage");
 
     let signEscrowHash = async function(){
-      model.escrowHash = 'blblblblbl';//FOR TEST PURPOSE
-
       window.web3.eth.sign(model.escrowHash, account, function(err,res){
         //If user refused to sign
         if(err){
@@ -33,7 +31,6 @@ export default class extends AbstractView {
     let closeMigration = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       var options = {
         method: 'POST',

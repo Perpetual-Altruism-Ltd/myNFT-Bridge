@@ -25,7 +25,6 @@ export default class extends AbstractView {
       //Construct XHR request
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       //Create HTTP request
       var options = {
@@ -35,7 +34,6 @@ export default class extends AbstractView {
         data: {}
       };
       options.url = relayURL + '/pollingMigration';
-      options.data.migrationId = model.readCookie("migrationId");
 
       let requestCallback = function(response){
         if(response.status == 200){
@@ -55,18 +53,20 @@ export default class extends AbstractView {
 
       console.log("Start listening for migration hash");
 
-      //MIG ID NOT RECEIVED
-
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.migrationHash == ""){
-        await sleep(model.listeningRefreshFrequency*1000);
+        //Refresh migrationId from cookies. Waiting the return of the /initMigration request
+        let migId = model.readCookie("migrationId");
+        options.data.migrationId = migId;
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
           console.error(error);
         });
+
+        await sleep(model.listeningRefreshFrequency*1000);
       }
 
       //If timeout: error message
@@ -79,14 +79,12 @@ export default class extends AbstractView {
     migrationHashListener();
 
     let signMigrationHash = async function(){
-      model.migrationHash = 'blblblblbl';//FOR TEST PURPOSE
-
       window.web3.eth.sign(model.migrationHash, account, function(err,res){
         //If user refused to sign
         if(err){
-          loadingText.textContent = "Signature refused.";
+          loadingText.textContent = "Signature refused. Start migration again ?";
         }else{
-          loadingText.textContent = "Sending migration data hash signed to relay";
+          loadingText.textContent = "Sending signature to relay.";
           migrationHashSigned = res;
           continueMigration();
         }
@@ -96,7 +94,6 @@ export default class extends AbstractView {
     let continueMigration = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       var options = {
         method: 'POST',
@@ -126,7 +123,6 @@ export default class extends AbstractView {
       //Construct XHR request
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       var options = {
         method: 'POST',
@@ -134,7 +130,7 @@ export default class extends AbstractView {
         headers: {'Content-Type': 'application/json'},
         data: {}
       };
-      options.url = relayURL + '/pollingMigration';
+      options.url = relayURL + '/pollingEscrow';
       options.data.migrationId = model.readCookie("migrationId");
 
       let requestCallback = function(response){
@@ -152,17 +148,19 @@ export default class extends AbstractView {
       }
 
       console.log("Start listening for escrow hash");
+      setTimeout(() => { loadingText.textContent = "Waiting for your NFT to be transferred into the bridge."; }, 5000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.escrowHash == ""){
-        await sleep(model.listeningRefreshFrequency);
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
           console.error(error);
         });
+
+        await sleep(model.listeningRefreshFrequency*1000);
       }
 
       //If timeout: error message

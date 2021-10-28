@@ -22,7 +22,6 @@ export default class extends AbstractView {
       //Construct XHR request
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       var options = {
         method: 'POST',

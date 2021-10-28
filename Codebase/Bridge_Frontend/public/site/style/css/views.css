@@ -2,7 +2,7 @@
 /*Initial view */
 #ConnectedAddrCard,
 #DepartureCard,#OriginWorldCardLine,#OriginTokenIDCardLine,
-#TokenDataCard,
+#TokenDataCard,#TokenErrorMessage,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
 #ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard{
@@ -24,6 +24,11 @@ document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
 *::before,
 *::after {
   box-sizing: border-box;
+}
+
+.ErrorText{
+  font-weight: bold;
+  color: #ab0707;
 }
 
 .TextInput{

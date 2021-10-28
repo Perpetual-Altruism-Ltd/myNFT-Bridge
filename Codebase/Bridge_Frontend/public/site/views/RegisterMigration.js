@@ -32,6 +32,9 @@ export default class extends AbstractView {
           }
           else{
             console.log('Approval accepted by user');
+            //Delete cookies from previous migration
+            model.eraseCookie("migrationId");
+
             //If approval accepted by user: go to next page
             model.navigateTo("/escrow_token");
           }
@@ -44,7 +47,7 @@ export default class extends AbstractView {
           initMigration();
 
           let loadingText = document.getElementById("RegistrationLoadingText");
-          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Waiting for the migration to be registered on blockchain.";}
+          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Waiting for the migration to be registered on origin blockchain.";}
         }).catch((res) => {
           console.log("Operator approval canceled or error");
           console.log(res);
@@ -64,7 +67,6 @@ export default class extends AbstractView {
     let initMigration = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-      let destinationNetworkId = bridgeApp.networks[migData.destinationUniverseIndex].networkID.toString(16);
 
       var options = {
         method: 'POST',
@@ -74,11 +76,11 @@ export default class extends AbstractView {
       };
       options.url = relayURL + '/initMigration';
       options.data.migrationData = {};
-      options.data.migrationData.originUniverse = migData.originUniverse;
+      options.data.migrationData.originUniverse = migData.originUniverseUniqueId;
       options.data.migrationData.originWorld = migData.originWorld;
       options.data.migrationData.originTokenId = migData.originTokenId;
       options.data.migrationData.originOwner = migData.originOwner;
-      options.data.migrationData.destinationUniverse = migData.destinationUniverse;
+      options.data.migrationData.destinationUniverse = migData.destinationUniverseUniqueId;
       options.data.migrationData.destinationBridge = migData.destinationBridgeAddr;
       options.data.migrationData.destinationWorld = migData.destinationWorld;
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;

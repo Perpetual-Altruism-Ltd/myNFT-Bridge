@@ -121,7 +121,7 @@ Model.readCookie = function(name) {
     return null;
 }
 Model.eraseCookie = function(name) {
-    createCookie(name, "", -1);
+    Model.createCookie(name, "", -1);
 }
 
 //Initialize javascript context for all views

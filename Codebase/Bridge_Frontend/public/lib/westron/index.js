@@ -18,6 +18,9 @@ const connectFortmaticButton = document.querySelector(".connectFortmatic");
 const connectVenlyButton = document.querySelector(".connectVenly");
 const connectCoinbaseButton = document.querySelector(".connectCoinbase");
 
+let connectionCallback = function(){console.log("No callback defined yet");};
+
+
 // Button click listener
 connectMetaMaskButton.addEventListener("click", async () => {
 	if (connector == null || !connector.isConnected) {
@@ -152,8 +155,7 @@ async function connection(callback) {
 	if (await connector.connection()) {
 		connectedButton.innerHTML = "Disconnect " + providerConnected;
 		web3 = connector.web3;
-    
-    callback();
+    connectionCallback();
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");
