@@ -36,7 +36,7 @@ const main = async () => {
                     })
                     if(premintedTokens.length < 2){
                         try{
-                            const tokenId = await ethereum.premintToken(world.address)
+                            const tokenId = await ethereum.premintToken(world.address, universe.bridgeAdress)
                             db.collections.premintedTokens.insert({
                                 tokenId,
                                 universe: universe.uniqueId,
@@ -125,7 +125,7 @@ const main = async () => {
         let tokenId
 
         if(premintedTokens.length === 0){
-            tokenId = await ethereum.premintToken(req.body.world)
+            tokenId = await ethereum.premintToken(req.body.world, universe.bridgeAdress)
             db.collections.premintedTokens.insert({
                 tokenId,
                 universe: universe.uniqueId,

@@ -24,7 +24,7 @@ class Ethereum extends EventEmitter {
      * Premint a token on the blockchain
      * @param {string} contractAddress : Address of the contract to interact with
      */
-    async premintToken(contractAddress) {
+    async premintToken(contractAddress, bridgeAddress) {
         while(this.running) await sleep(100)
         this.running = true
         try{
@@ -35,7 +35,7 @@ class Ethereum extends EventEmitter {
                 { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
             );
     
-            const tx = await contract.methods.premintFor(this.web3Wallet.address).send();
+            const tx = await contract.methods.premintFor(bridgeAddress).send();
             const tokenId = await contract.methods.mintedTokens().call()
             Logger.info(`Preminted a token on ${this.rpc} ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
     
