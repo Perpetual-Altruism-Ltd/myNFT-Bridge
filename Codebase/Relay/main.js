@@ -108,6 +108,12 @@ const main = async () => {
         }
 
         const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+        if(!universe){
+            res.status(400)
+            res.send({ status: `Can't find universe ${req.body.universe}` })
+            Logger.error(`Can't find universe ${req.body.universe}`)
+            return
+        }
 
         const premintedTokens = db.collections.premintedTokens.find({
             universe: universe.uniqueId
@@ -147,12 +153,19 @@ const main = async () => {
         }
         const { migrationData } = req.body
         const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
-        if(!originUniverse)
-            throw "Can't find origin universe"
+        if(!originUniverse){
+            res.status(400)
+            res.send({ status: `Can't find origin universe ${migrationData.originUniverse}` })
+            Logger.error(`Can't find origin universe ${migrationData.originUniverse}`)
+            return
+        }
         const destinationUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.destinationUniverse)
-        if(!destinationUniverse)
-            throw "Can't find destination universe"
-
+        if(!destinationUniverse){
+            res.status(400)
+            res.send({ status: `Can't find destination universe ${migrationData.destinationUniverse}` })
+            Logger.error(`Can't find destination universe ${migrationData.destinationUniverse}`)
+            return
+        }
 
         // Returning migration_id
         const client = new Client(
