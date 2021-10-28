@@ -327,7 +327,7 @@ const main = async () => {
         if(!client) {
             return res.status(400).json({ error : 'Unknown migrationId' })
         }
-        //Cancellation only possible if step is in ["annonceToBridge", "transferToBridge", ]
+        //Cancellation only possible if step is in ["transferToBridge", ]
         if(client.step == 'registered' || client.step == 'annonceToBridge' || client.step == 'transferToBridge') {
             client.transferBackOriginToken();
 
@@ -335,6 +335,7 @@ const main = async () => {
                 "status":"Migration stopped. Origin token sent back to owner."
             })
         }
+        else if(client.step == "closeMigration")
         return res.json({
             "status":"Migration already confirmed"
         })
