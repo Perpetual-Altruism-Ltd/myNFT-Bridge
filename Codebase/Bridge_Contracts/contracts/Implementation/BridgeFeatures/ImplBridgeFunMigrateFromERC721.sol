@@ -448,7 +448,7 @@ contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridg
         //Generate the message that was outputed by eth_sign
         bytes32 message = keccak256(abi.encodePacked(
             "\x19Ethereum Signed Message:\n32",
-            keccak256(abi.encode(_hashToSign)) //The escrowHash emitted by the departure bridge is hashed with the current relay public address
+            _hashToSign //The escrowHash emitted by the departure bridge is hashed with the current relay public address
         ));  
         require(recoverSigner(message, _hashSigned) == _signee, "The hash to be signed by _signee does not match the signed hash");
     }

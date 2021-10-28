@@ -60,7 +60,6 @@ class Client {
             this.dbObject.blockTimestamp = this.blockTimestamp
             this.db.collections.clients.update(this.dbObject)
         } catch(e) {
-            console.log(e);
             Logger.error(`Can't annonce intent to migrate to the departure bridge`)
         }
     }
@@ -72,7 +71,7 @@ class Client {
 
         this.migrationHashSignature = migrationHashSignature
         const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
-        await ethereum.safeTransferFrom(
+        await this.originEthereumConnection.safeTransferFrom(
             this.migrationData.originWorld,
             owner,
             this.originUniverse.bridgeAdress,
@@ -84,13 +83,16 @@ class Client {
         this.step = 'closeMigration'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
-        
-        this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(this.migrationData, this.migrationHashSignature, this.blockTimestamp)
-
+        this.creationTransferHash = await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
+            this.originUniverse.bridgeAdress,
+            this.migrationData,
+            this.migrationHashSignature,
+            this.blockTimestamp
+        )
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
         const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri)
         
-        // Here mint the IOU
+        await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId)
     }
 
     async registerTransferOnOriginBridge(escrowHashSigned){
@@ -120,8 +122,7 @@ class Client {
         this.db.collections.clients.update(this.dbObject)
         
         if(this.migrationHash) {
-            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.migrationData.originWorld, this.migrationHash)
-            
+            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.originUniverse.bridgeAdress, this.migrationHash);
             this.dbObject.escrowHash = this.escrowHash
             this.db.collections.clients.update(this.dbObject)
         } else {
