@@ -247,8 +247,7 @@ export default class extends AbstractView {
                 errorMsg.innerHTML = "You are not the owner of this NFT. You can't migrate it.";
 
                 document.getElementById("TokenErrorMessage").style.display = 'flex';
-                document.getElementById("MigrationCardLineTitle").style.display = 'none';
-                document.getElementById("DestNetworkCardLine").style.display = 'none';
+                hideFormFieldsFromMigrationCard();
               }
 
             } catch (err) {
@@ -430,6 +429,13 @@ export default class extends AbstractView {
       document.getElementById("OGTokenMetaName").textContent = "";
       document.getElementById("OGTokenMetaDesc").textContent = "";
       document.getElementById("OGTokenMetaImagePath").innerHTML = "";
+    }
+    let hideFormFieldsFromMigrationCard = function(){
+      //Hide all elements following departure card
+      let elementsToHide = document.querySelectorAll("#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      elementsToHide.forEach(function(elem) {
+        elem.style.display = 'none';
+      });
     }
 
     //Setup custom selector
