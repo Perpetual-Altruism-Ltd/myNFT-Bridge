@@ -20,7 +20,7 @@ export default class extends AbstractView {
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
         let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
-        let originTokenId = parseInt(migData.originTokenId, 16);
+        let originTokenId = parseInt(migData.originTokenId);
         console.log("Asking user " + account + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 
         contracts.originalChainERC721Contract.methods.approve(relayOgNetworkAddr, originTokenId)
