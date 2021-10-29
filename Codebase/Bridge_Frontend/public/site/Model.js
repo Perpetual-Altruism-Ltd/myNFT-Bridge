@@ -42,4 +42,6 @@ model.escrowHash = "";
 
 model.destinationTokenTransfertTxHash = "";
 
+model.isRedeem = false;
+
 export default model;
