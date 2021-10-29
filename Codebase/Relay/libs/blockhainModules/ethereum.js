@@ -52,6 +52,8 @@ class Ethereum extends EventEmitter {
     }
 
     async getProofOfEscrowHash(bridgeAddress, migrationHash) {
+        while(this.running) await sleep(100)
+        this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             bridgeAddress,
@@ -61,10 +63,13 @@ class Ethereum extends EventEmitter {
             }
         )
         const escrowHash = await web3Contract.methods.getProofOfEscrowHash(migrationHash).call();
+        this.running = false
         return escrowHash;
     }
 
     async safeTransferFrom(contract, from, to, tokenId) {
+        while(this.running) await sleep(100)
+        this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             ERC721Abi,
             contract,
@@ -74,12 +79,16 @@ class Ethereum extends EventEmitter {
             }
         )
         const escrowHash = await web3Contract.methods.safeTransferFrom(from, to, tokenId).send()
+        this.running = false
         return escrowHash
     }
 
     /* ==== Departure Bridge Interractions  ==== */
     migrateToERC721IOU(originBridge, migrationData) {
         return new Promise(async (resolve, reject) => {
+            while(this.running) await sleep(100)
+            this.running = true
+
             const web3Contract = new this.web3Instance.eth.Contract(
                 BridgeAbi,
                 originBridge,
@@ -113,8 +122,10 @@ class Ethereum extends EventEmitter {
                             migrationHash,
                             blockTimestamp: block.timestamp
                         })
+                        this.running = false
                         return
                     }
+                    this.running = false
                     reject("Can't retrieve the migration hash")
                 })
                 web3Contract.methods.migrateToERC721IOU(...data).send()
@@ -125,6 +136,9 @@ class Ethereum extends EventEmitter {
     }
 
     async registerEscrowHashSignature(originBridge, migrationData, migrationHash, escrowHashSigned) {
+        while(this.running) await sleep(100)
+        this.running = true
+
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             originBridge,
@@ -139,10 +153,14 @@ class Ethereum extends EventEmitter {
             escrowHashSigned
         ]
         await web3Contract.methods.registerEscrowHashSignature(...data).send()
+
+        this.running = false
     }
 
     /* ==== Arrival Bridge Interractions  ==== */
     async migrateFromIOUERC721ToERC721(originBridge, migrationData, migrationHashSignature, blockTimestamp) {
+        while(this.running) await sleep(100)
+        this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             migrationData.destinationBridge,
@@ -165,7 +183,11 @@ class Ethereum extends EventEmitter {
             this.numberToBytes32(blockTimestamp),
             migrationHashSignature
         ]
-        return await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
+        const result = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
+
+        this.running = false
+        
+        return result
     }
 
     async getTokenUri(contract, tokenId){
