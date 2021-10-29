@@ -585,11 +585,11 @@
 			]
 		},
 		"Codebase/Bridge_Contracts/contracts/Implementation/Test/IOUExample.sol": {
-			"keccak256": "0x13d47b0734da33a3ee70937b5ce02f32f8b85d930c5315f40e7e8ce798318a59",
+			"keccak256": "0x65a8fd14ed0ca51431962c63a07cd6794e65325903fbcbb38ab41b59da4ef272",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://4af6aa144b4e18d21d3b2f99f8f0040e9ffd0694de09d3676d17b7ebdcf5a4e9",
-				"dweb:/ipfs/QmSw36KoJY2pLcH4EUxPm1xzqqjKub77KqaWYByYKRgRV1"
+				"bzz-raw://67116e65c84348e1fc554b9e27870d569da1b06149922bb4699f9b28098c53de",
+				"dweb:/ipfs/QmPT6TbxM6e6zB6TPfByekaiXgcThnydZq6rvNpcbpudic"
 			]
 		}
 	},

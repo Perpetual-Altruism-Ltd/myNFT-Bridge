@@ -282,7 +282,9 @@ contract IOUExample is ERC721 {
         //Clean the token approved address
         tokenOperator[_tokenId] == address(0x0);
 
-        balanceOfToken[_from] = balanceOfToken[_from] - 1;
+        if(_from != address(0x0)){
+            balanceOfToken[_from] = balanceOfToken[_from] - 1;   
+        }
         balanceOfToken[_to] = balanceOfToken[_to] + 1;
 
         //Emit the transfer event
