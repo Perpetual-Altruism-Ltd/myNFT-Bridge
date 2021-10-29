@@ -1,7 +1,7 @@
 import AbstractView from './AbstractView.js';
 
-//0x343da20c010148b4E4D4D3203e7c445E0a7468A4
-
+//0xf181e8B385FE770C78e3B848F321998F78b0d73e
+//0xbf21e21414554dB734C9f86835D51B57136BC35b
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -309,15 +309,27 @@ export default class extends AbstractView {
                       console.log(resp);
 
                       if(isOUIToken(ogTokenMetaData)){
-                        console.log("This token is an IOU of token " + ogTokenMetaData.originTokenId + ", from world " + ogTokenMetaData.originWorld + " from universe " + ogTokenMetaData.originUniverse);
+                        console.log("This token is an IOU of token " + ogTokenMetaData.migrationData.originTokenId + ", from world " + ogTokenMetaData.migrationData.originWorld + " from universe " + ogTokenMetaData.migrationData.originUniverse);
                         //Prefill fields
                         //destuniv
-                        selectDropDownOptionByUniqueID("DestinationNetworkSelector", ogTokenMetaData.originUniverse);
+                        selectDropDownOptionByUniqueID("DestinationNetworkSelector", ogTokenMetaData.migrationData.originUniverse);
                         //destworld
-                        addDropDownOption("DestinationWorldSelector", ogTokenMetaData.originWorld, "", "1");
+                        addDropDownOption("DestinationWorldSelector", ogTokenMetaData.migrationData.originWorld, "", "1");
                         selectDropDownOptionByIndex("DestinationWorldSelector", 0);
                         //destTokenId
-                        document.getElementById("DestTokenID").textContent = ogTokenMetaData.originTokenId;
+                        document.getElementById("DestTokenID").textContent = ogTokenMetaData.migrationData.originTokenId;
+                        //ADD DATA TO MIGDATA
+                        migData.destinationUniverseUniqueId  = ogTokenMetaData.migrationData.originUniverse;
+                        bridgeApp.networks.forEach((univ, i) => {
+                          if(univ.uniqueId == migData.destinationUniverseUniqueId){
+                            migData.destinationUniverseIndex = i;
+                            migData.destinationUniverse = univ.name;
+                          }
+                        });
+                        
+                        migData.destinationWorld  = ogTokenMetaData.migrationData.originWorld;
+                        migData.destinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
+                        migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
                         //show all elements
                         let elementsToHide = document.querySelectorAll("#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
