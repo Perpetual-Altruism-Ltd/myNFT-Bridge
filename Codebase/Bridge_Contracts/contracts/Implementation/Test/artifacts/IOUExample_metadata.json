@@ -184,6 +184,11 @@
 						"internalType": "uint256",
 						"name": "_tokenID",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_tokenUri",
+						"type": "string"
 					}
 				],
 				"name": "mint",
@@ -584,12 +589,12 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"Codebase/Bridge_Contracts/contracts/Implementation/Test/IOUExample.sol": {
-			"keccak256": "0x65a8fd14ed0ca51431962c63a07cd6794e65325903fbcbb38ab41b59da4ef272",
+		"Test/IOUExample.sol": {
+			"keccak256": "0xa069790fb946a4d2b14819fc8ebdea7b823b3e8fe85a4e93ac2f2cef736fde97",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://67116e65c84348e1fc554b9e27870d569da1b06149922bb4699f9b28098c53de",
-				"dweb:/ipfs/QmPT6TbxM6e6zB6TPfByekaiXgcThnydZq6rvNpcbpudic"
+				"bzz-raw://a23f3c490a669754e8e3e74531a33e370b910cf5fd52aba235d32c4c618eda36",
+				"dweb:/ipfs/QmdYy2HGuLBM2Eh8nuvmiUkZUfVCtVKrrVoWabEYY8CN74"
 			]
 		}
 	},
