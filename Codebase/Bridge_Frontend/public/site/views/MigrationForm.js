@@ -614,6 +614,7 @@ export default class extends AbstractView {
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
+      model.isRedeem = false;
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
@@ -624,6 +625,7 @@ export default class extends AbstractView {
       migData.migrationType = model.MintOUIMigrationType;
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
+      model.isRedeem = true;
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       this.classList.add('Selected');

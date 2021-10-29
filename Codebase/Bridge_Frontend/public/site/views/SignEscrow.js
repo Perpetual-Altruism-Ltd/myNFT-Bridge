@@ -41,7 +41,7 @@ export default class extends AbstractView {
         headers: {'Content-Type': 'application/json'},
         data: {}
       };
-      options.url = relayURL + '/closeMigration';
+      options.url = relayURL + (model.isRedeem) ? '/closeRedeemMigration' : '/closeMigration';
       options.data.migrationId = model.readCookie("migrationId");
       options.data.escrowHashSignature = escrowHashSigned;
 
