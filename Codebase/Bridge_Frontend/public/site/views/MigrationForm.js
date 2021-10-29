@@ -149,6 +149,14 @@ export default class extends AbstractView {
       }
     }
 
+    let isOUIToken = function(metadata){
+      return metadata.migrationData != undefined
+      && metadata.migrationData.originUniverse != undefined
+      && metadata.migrationData.originWorld != undefined
+      && metadata.migrationData.originTokenId != undefined;
+    }
+
+
     //Define functions which interact with blockchains or wallet
     let promptSwitchChain = async function (ID) {
       window.ethereum.request({
@@ -299,6 +307,24 @@ export default class extends AbstractView {
                       var resp = xhr.response;
                       ogTokenMetaData = JSON.parse(resp);
                       console.log(resp);
+
+                      if(isOUIToken(ogTokenMetaData)){
+                        console.log("This token is an IOU of token " + ogTokenMetaData.originTokenId + ", from world " + ogTokenMetaData.originWorld + " from universe " + ogTokenMetaData.originUniverse);
+                        //Prefill fields
+                        //destuniv
+                        selectDropDownOptionByUniqueID("DestinationNetworkSelector", ogTokenMetaData.originUniverse);
+                        //destworld
+                        addDropDownOption("DestinationWorldSelector", ogTokenMetaData.originWorld, "", "1");
+                        selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+                        //destTokenId
+                        document.getElementById("DestTokenID").textContent = ogTokenMetaData.originTokenId;
+
+                        //show all elements
+                        let elementsToHide = document.querySelectorAll("#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+                        elementsToHide.forEach(function(elem) {
+                          elem.style.display = 'flex';
+                        });
+                      }
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
                       document.getElementById("OGTokenMetaDesc").textContent = ogTokenMetaData.description;
