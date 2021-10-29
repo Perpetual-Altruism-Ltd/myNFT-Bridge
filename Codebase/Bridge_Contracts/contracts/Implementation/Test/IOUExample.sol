@@ -263,9 +263,12 @@ contract IOUExample is ERC721 {
 
 
         } else { //If requiring minting
+            
             require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
-            require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
-            require(msg.sender == owner, "only this smart contract owner can premint tokens");
+            require(msg.sender == preminters[_tokenId], "_tokenId has not be approved for minting by msg.sender");
+            //require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
+            //require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
+            //require(msg.sender == owner, "only this smart contract owner can premint tokens");
         }
 
         //Prevent 0x0 burns
