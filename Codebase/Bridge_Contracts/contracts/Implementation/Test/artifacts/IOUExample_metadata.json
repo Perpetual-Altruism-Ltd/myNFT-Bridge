@@ -562,7 +562,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Codebase/Bridge_Contracts/contracts/Implementation/Test/IOUExample.sol": "IOUExample"
+			"Test/IOUExample.sol": "IOUExample"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -570,13 +570,13 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
+			"enabled": false,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
-		"Codebase/Bridge_Contracts/contracts/Implementation/ERC721.sol": {
+		"ERC721.sol": {
 			"keccak256": "0x65dd41da5d50472d6ef2a8c76d102396a351f3813b2a1afadd736937e9f8ee98",
 			"license": "CC0-1.0",
 			"urls": [
@@ -584,7 +584,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"Codebase/Bridge_Contracts/contracts/Implementation/Test/IOUExample.sol": {
+		"Test/IOUExample.sol": {
 			"keccak256": "0x13d47b0734da33a3ee70937b5ce02f32f8b85d930c5315f40e7e8ce798318a59",
 			"license": "Unlicense",
 			"urls": [

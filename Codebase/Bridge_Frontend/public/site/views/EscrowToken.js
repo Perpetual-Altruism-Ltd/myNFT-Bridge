@@ -59,12 +59,14 @@ export default class extends AbstractView {
         //Refresh migrationId from cookies. Waiting the return of the /initMigration request
         let migId = model.readCookie("migrationId");
         options.data.migrationId = migId;
-        //Ask relay for migration hash
-        axios.request(options).then(function (response) {
-          requestCallback(response);
-        }).catch(function (error) {
-          console.error(error);
-        });
+        //Ask relay for migration hash, only if migId retrieve from /initMigration
+        if(migId != null && migId != undefined){
+          axios.request(options).then(function (response) {
+            requestCallback(response);
+          }).catch(function (error) {
+            console.error(error);
+          });
+        }
 
         await sleep(model.listeningRefreshFrequency*1000);
         i++;
