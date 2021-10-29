@@ -53,12 +53,13 @@ contract IOUExample is ERC721 {
         tokenUris[_tokenId] = tokenUri;
     }
 
-    function mint (uint256 _tokenID) external returns(uint256){
+    function mint (uint256 _tokenID, string calldata _tokenUri) external returns(uint256){
 
         require(owner == msg.sender, "Only the smart contract owner can mint tokens");
         require((preminters[_tokenID] == address(0) || preminters[_tokenID] == msg.sender) && tokenOwners[_tokenID] == address(0), "This token is already minted");
         mintedTokens = mintedTokens + 1;
         tokenOwners[_tokenID] = msg.sender;
+        tokenUris[_tokenID] = _tokenUri;
         emit Transfer(address(0x0), msg.sender, _tokenID);
         return _tokenID;
     }
