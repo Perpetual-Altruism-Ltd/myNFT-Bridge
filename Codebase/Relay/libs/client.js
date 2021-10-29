@@ -83,16 +83,18 @@ class Client {
         this.step = 'closeMigration'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
+
+        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
+        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
+        
+        await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
+
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
             this.originUniverse.bridgeAdress,
             this.migrationData,
             this.migrationHashSignature,
             this.blockTimestamp
         )).transactionHash
-        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
-        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
-        
-        await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
     }
 
     async registerTransferOnOriginBridge(escrowHashSigned){
