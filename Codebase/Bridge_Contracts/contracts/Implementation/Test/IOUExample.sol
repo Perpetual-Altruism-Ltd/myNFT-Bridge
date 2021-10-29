@@ -60,6 +60,7 @@ contract IOUExample is ERC721 {
         mintedTokens = mintedTokens + 1;
         tokenOwners[_tokenID] = msg.sender;
         tokenUris[_tokenID] = _tokenUri;
+        balanceOfToken[msg.sender] = balanceOfToken[msg.sender] + 1;
         emit Transfer(address(0x0), msg.sender, _tokenID);
         return _tokenID;
     }
