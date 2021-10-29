@@ -207,7 +207,7 @@ export default class extends AbstractView {
 
                 } catch (err) {
         			console.log(err);
-        			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+        			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
         		}
         }
         getContractName();
@@ -248,6 +248,8 @@ export default class extends AbstractView {
 
                 document.getElementById("TokenErrorMessage").style.display = 'flex';
                 hideFormFieldsFromMigrationCard();
+              }else{//If user is the owner, show it next to owner address.
+                document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you !)</span>';
               }
 
             } catch (err) {
@@ -392,12 +394,13 @@ export default class extends AbstractView {
       axios.request(options).then(function (response) {
         if(response.status != 200){console.log(response.status + response.statusText);}
         console.log("Available tokenId: " + response.data.tokenId);
-        migData.destinationTokenId = '0x' + parseInt(response.data.tokenId).toString(16);
+        migData.destinationTokenId = response.data.tokenId;
         //Add dest tokenId to input
-        document.getElementById("inputDestTokenID").value = migData.destinationTokenId;
+        document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
 
         //Display next migration form field
-        document.getElementById("inputDestTokenID").dispatchEvent(new Event("focusout"));
+        document.getElementById("DestOwnerCardLine").style.display = 'flex';
+        migData.destinationTokenId = document.getElementById("DestTokenID").textContent;
       }).catch(function (error) {
         console.error(error);
       });
@@ -570,7 +573,7 @@ export default class extends AbstractView {
     });
 
     //===Origin tokenID input===
-    //When return/enter key pressed in input: Display ogTokenID input
+    //When return/enter key pressed in input: Display dest owner input
     document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
@@ -580,25 +583,16 @@ export default class extends AbstractView {
       }
     });
     document.getElementById("inputOGTokenID").addEventListener('focusout', async() =>{
-      migData.originTokenId = document.getElementById("inputOGTokenID").value;
-    });
-
-    //===Destination tokenID input===
-    //When return/enter key pressed in input: Display destTokenID input
-    document.getElementById("inputDestTokenID").addEventListener('keyup', async(e) =>{
-      //Unfocus input when enter key is pressed
-      if (e.key === 'Enter' || e.keyCode === 13) {
-        document.getElementById("inputDestTokenID").dispatchEvent(new Event("focusout"));
+      let inputVal = document.getElementById("inputOGTokenID").value;
+      if(inputVal.startsWith('0x')){
+        migData.originTokenId = parseInt(inputVal, 16).toString();
+      }else{
+        migData.originTokenId = inputVal;
       }
-    });
-    //When input is unfocused, display originTokenID input
-    document.getElementById("inputDestTokenID").addEventListener('focusout', async() =>{
-      document.getElementById("DestOwnerCardLine").style.display = 'flex';
-      migData.destinationTokenId = document.getElementById("inputDestTokenID").value;
     });
 
     //===Destination owner input===
-    //When return/enter key pressed in input: Display destTokenID input
+    //When return/enter key pressed in input: Display complete button
     document.getElementById("inputDestOwner").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
