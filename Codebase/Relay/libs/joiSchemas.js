@@ -41,6 +41,10 @@ const schemas = {
         migrationId: Joi.string().required(),
         escrowHashSignature: Joi.string().required()
     }),
+    closeRedeemMigration: Joi.object({
+        migrationId: Joi.string().required(),
+        escrowHashSignature: Joi.string().required()
+    }),
     pollingEndMigration: Joi.object({
         migrationId: Joi.string().required(),
     }),

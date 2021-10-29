@@ -293,11 +293,11 @@ const main = async () => {
     })
 
     app.post('/closeRedeemMigration', async (req, res) => {
-        const { error } = JoiSchemas.closeMigration.validate(req.body)
+        const { error } = JoiSchemas.closeRedeemMigration.validate(req.body)
         if(error){
             res.status(400)
-            res.send({ status: "Bad parameters given to /closeMigration" })
-            Logger.error("Bad parameters given to /closeMigration")
+            res.send({ status: "Bad parameters given to /closeRedeemMigration" })
+            Logger.error("Bad parameters given to /closeRedeemMigration")
             return
         }
         const client = clientList[req.body.migrationId]
@@ -307,7 +307,7 @@ const main = async () => {
 
         try{
             res.status(200).send({
-                "status": "Minting of the token initiated"
+                "status": "Redeem of the token initiated"
             })
             // Check if escrow hash is valid before doing anything
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
