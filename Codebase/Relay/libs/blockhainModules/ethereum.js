@@ -183,7 +183,7 @@ class Ethereum extends EventEmitter {
 
     async setTokenUri(contract, tokenId, tokenUri){
         const web3Contract = new this.web3Instance.eth.Contract(
-            ERC721Abi,
+            ERC721IOUAbi,
             contract,
             {
                 from: this.web3Instance.eth.defaultAccount,
