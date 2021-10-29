@@ -44,6 +44,12 @@
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
+                },
+                {
+                    "address": "0xF34Ed4CbF4675764021276A9153CBF9bd7bd4854",
+                    "name": "MyContractURIWOrking",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
                 }
             ]
 		},
