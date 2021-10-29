@@ -85,7 +85,7 @@ class Client {
         this.db.collections.clients.update(this.dbObject)
 
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
-        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
+        const IOUMetadataUrl = await (new Forge(this.db)).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
         
         await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
 

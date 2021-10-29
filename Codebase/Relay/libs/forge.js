@@ -3,8 +3,9 @@ const IPFS = require('./ipfs')
 const Axios = require('axios')
 
 class Forge {
-    constructor(){
-        this.ipfsClient = new IPFS()        
+    constructor(db){
+        this.ipfsClient = new IPFS()
+        this.db = db
     }
 
     /**
@@ -51,8 +52,12 @@ class Forge {
      */
     async forgeIOUMetadata(originalTokenUri, migrationData){
         const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
+        const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
+        const ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
 
-        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata, migrationData))).path}`
+        this.db.collections.mintedIOU.insert({ url: ipfsUrl, metadata: forgedMetadata })
+
+        return ipfsUrl
     }
 }
 
