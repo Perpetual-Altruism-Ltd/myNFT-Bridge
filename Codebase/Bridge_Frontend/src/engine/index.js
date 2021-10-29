@@ -7,7 +7,7 @@ var conf = require('../../conf');
 
 /* Redirect all routes to our "index.html" file */
 router.get("/*", (req, res) => {
-  res.sendFile(resolve("public/site/display", "index.html"));
+  res.sendFile(resolve("public/site/static_views", "index.html"));
 });
 
 // ======= EXPORT THE ROUTER =========================

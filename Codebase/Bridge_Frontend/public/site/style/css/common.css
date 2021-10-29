@@ -1,0 +1,144 @@
+body{
+    font-family: 'Sequel Sans',sans-serif;
+}
+
+.bg_container{
+    position: fixed;
+    left: 0;
+    right:0;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* TOP RIGHT COLOR: #3e287a
+BOTTOM RIGHT COLOR: #af1540
+TOP LEFT COLOR: #12132b*/
+.bg_gradient{
+    height: 100%;
+    width: 100%;
+    background-image: url('../../medias/gradientBackground.svg');
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+}
+
+.big-circle{
+    position: absolute;
+    left: 10vh;
+    top: -47px;
+    width: 110vh;
+    height: 110vh;
+    color: #96134e;
+    -webkit-animation:big-circle_spin 360s linear infinite;
+    -moz-animation:big-circle_spin 360s linear infinite;
+    animation:big-circle_spin 360s linear infinite;
+}
+
+@-moz-keyframes big-circle_spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes big-circle_spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes big-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+.imgassetpreview{
+    width: 400px;
+}
+
+.content-pillar{
+    width: 70%;
+    margin-left: 15%;
+    font-family: 'Sequel Sans',sans-serif;
+}
+
+.mynftBridgeTitle{
+    margin-top: 50px;
+    margin-bottom: 10px;
+    color: #fff;
+    font-size: 3.13rem;
+    line-height: 3.69rem;
+    font-weight: 600;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.whitesheet{
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 1em;
+    margin: 1em;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-between;
+    gap: 2em 0em;
+}
+
+.topBanner{
+    margin-top: 30px;
+    display: flex;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.mynftLogoTop{
+    width: 120px;
+    height: 40px;
+    background-image: url('../../medias/myNFTWhiteLogo.svg');
+}
+
+.bannerButtonSectionRight{
+    display: flex;
+    justify-content: flex-end;
+    width: calc(100% - 120px);
+}
+
+.clickableRoundButton{
+    padding: 8px 16px;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 30px;
+    background-color: #fff;
+    -webkit-transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);
+    transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);
+    color: #333;
+    font-size: .88rem;
+    line-height: 1.5rem;
+    text-decoration: none;
+}
+
+.formfield{
+    width: 350px;
+    height: 54px;
+    margin-right: 0;
+    margin-bottom: 0;
+    padding: 16px 32px 16px 22px;
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+    border: 1px solid #3e276c;
+    border-radius: 30px;
+    font-size: 1rem;
+    line-height: 1.38rem;
+}
+
+.formfield:focus {
+    border-color: #96134e;
+}
+
+#ConnectionCenter{
+    flex-flow: row wrap;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    gap: 0.5em 2em;
+}

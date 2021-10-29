@@ -42,7 +42,6 @@ License: none (public domain) */
 .select-wrapper {
      position: relative;
      user-select: none;
-     min-width: 28em;
 }
 .select {
      position: relative;

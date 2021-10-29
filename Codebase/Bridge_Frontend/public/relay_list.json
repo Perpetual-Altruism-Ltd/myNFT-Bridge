@@ -1,15 +1,14 @@
 {
 	"relays": [
-
 		{
-			"name":"MyNFT Relay",
-			"url": "migration.mynft.com",
-      "uniqueId": "0x6d2f0e37",
-			"relayNetworkaddr":
-				{
-					"rinkeby": "0xb3B841Df340B79778627b7fAAf1D6DD33839A473"
-				}
-
-		}
+      "id": 1,
+      "name":"Localhost Relay",
+      "url": "http://127.0.0.1:3000",
+      "operator": "Perpetual altruism",
+      "trustMecanism": "Centralised relay",
+      "description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs",
+      "publicKey": "0x343da20c010148b4E4D4D3203e7c445E0a7468A4",
+      "contact": "abc@abc.fr"
+    }
 	]
 }

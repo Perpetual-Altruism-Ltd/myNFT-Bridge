@@ -1,0 +1,184 @@
+/*============Views===========*/
+/*Initial view */
+#ConnectedAddrCard,
+#DepartureCard,#OriginWorldCardLine,#OriginTokenIDCardLine,
+#TokenDataCard,#TokenErrorMessage,
+#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
+#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,
+#CompleteMigrationCard{
+  /*-webkit-transition: max-height .25s ease;
+  -moz-transition: max-height .25s ease;
+  transition: max-height .25s ease;
+  overflow: visible;*/
+  display: none;
+}
+/* COME BACK LATER ON SMOOTH TRANSITION
+.Hidden{
+  max-height: 0vh;
+  overflow: hidden;
+}
+document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
+*/
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.ErrorText{
+  font-weight: bold;
+  color: #ab0707;
+}
+
+.TextInput{
+  background-color: transparent;/*Remove default background*/
+  border: solid 2px #555;
+  border-radius: 2em;
+  padding: 0.5em;
+  margin: 0;
+  /* width: 100%; */
+  font-family: inherit;
+  font-size: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  outline: none;/*Remove the border when focused */
+  /* min-width: 28em; */
+}
+
+.TextInput:focus{
+  border-color: #000;
+}
+
+.InputElement{
+  width: 30vw;
+}
+
+.LoadingContainer{
+  position:relative;
+  height: 15em;
+  overflow: hidden;/*Prevent the page's height to change when the loading circle is turning ;) */
+}
+.LoadingText{
+  position: absolute;
+  width: 12em;
+  text-align: center;
+}
+.LoadingCircle{
+  position: absolute;
+  width: 15em;
+  height: 15em;
+  color: #12132b;
+  -webkit-animation:loading-circle_spin 15s linear infinite;
+  -moz-animation:loading-circle_spin 15s linear infinite;
+  animation:loading-circle_spin 15s linear infinite;
+}
+@-moz-keyframes loading-circle_spin { 100% { -moz-transform: rotate(360deg); } }
+@-webkit-keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); } }
+@keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
+
+/* Careful, this css property needs to be after clickableRoundButton definition for proper overwrite*/
+.ColoredButton{
+  padding: 8px 16px;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 30px;
+  border-width: 0em;
+  font-size: .88rem;
+  line-height: 1.5rem;
+  text-decoration: none;
+  transition: 0.5s;
+  background-image: linear-gradient(to right, #3e287a 0%, #af1540 100%);
+  background-size: 200% auto;
+  color: #fff;
+  white-space: nowrap;
+}
+.ColoredButton:hover{
+  background-position: right center;
+}
+.ColoredButton:active{
+  background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
+}
+.ColoredButton:disabled, .ColoredButton[disabled]{
+  background-image: linear-gradient(to right, #bbb 0%, #bbb 100%);
+  /*Do not set bg-image : none; bg-color: #bbb. it causes a threshold during the switch from disabled to enabled and reverse */
+
+}
+.ColoredButton.Selected{
+  background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
+}
+
+/*Container for several elements lines placed one under the other  */
+.Card{
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1em 0em;
+  margin: 0vw 3vw;
+}
+
+.NoMargin{
+  margin: 0vw 0vw;
+}
+/*A card with no gap between lines */
+.CompactCard{
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+/*Represent one line contained in a Card */
+.CardLine{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 2vw;
+  align-items: center;
+}
+.CardLineNoWrap{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 2vw;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.DataDisplay{
+  align-items: flex-start;
+}
+
+.MigrationButtonLine{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 5vw;
+  justify-content: center;
+}
+
+/*Containers for one element of a card line */
+.LineElement{
+  width: 100%;
+}
+.CenteredCardLine{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 2vw;
+  align-items: center;
+  justify-content: center;
+}
+
+.CardTitle{
+  font-size: 2em;
+  margin: 2vw 0vw 0vw 0vw;/*To override CardLine margin */
+  text-align: center;
+}
+
+.TextElement{
+  max-width: 15vw;
+}
+
+.DataText{
+  font-weight: bold;
+}
