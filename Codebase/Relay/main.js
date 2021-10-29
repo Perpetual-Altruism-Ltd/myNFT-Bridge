@@ -292,6 +292,40 @@ const main = async () => {
         }
     })
 
+    app.post('/closeRedeemMigration', async (req, res) => {
+        const { error } = JoiSchemas.closeMigration.validate(req.body)
+        if(error){
+            res.status(400)
+            res.send({ status: "Bad parameters given to /closeMigration" })
+            Logger.error("Bad parameters given to /closeMigration")
+            return
+        }
+        const client = clientList[req.body.migrationId]
+        if(!client) {
+            return res.status(400).json({ error : 'Unknown migrationId' })
+        }
+
+        try{
+            res.status(200).send({
+                "status": "Minting of the token initiated"
+            })
+            // Check if escrow hash is valid before doing anything
+            await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
+
+            //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
+            await client.closeMigration()
+
+            // Call origin bridge migrateFromIOUERC721ToERC721
+            await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+        }catch(err){
+            if(!res.headersSent)
+                res.status(500).send({
+                    error: "Unexpected error on the server."
+                })
+            Logger.error(err)
+        }
+    })
+
     app.post('/pollingEndMigration', (req, res) => {
         const { error } = JoiSchemas.pollingEndMigration.validate(req.body)
         if(error){

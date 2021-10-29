@@ -97,6 +97,19 @@ class Client {
         )).transactionHash
     }
 
+    async closeRedeemMigration() {
+        this.step = 'closeRedeemMigration'
+        this.dbObject.step = this.step
+        this.db.collections.clients.update(this.dbObject)
+
+        this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
+            this.originUniverse.bridgeAdress,
+            this.migrationData,
+            this.migrationHashSignature,
+            this.blockTimestamp
+        )).transactionHash
+    }
+
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
         this.dbObject.step = this.step
