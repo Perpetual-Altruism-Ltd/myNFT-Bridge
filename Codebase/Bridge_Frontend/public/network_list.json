@@ -1,23 +1,13 @@
 {
 	"networks": [
-
-		{
-			"name":"Ethereum Mainnet",
-			"chainID": 1,
-			"networkID":1,
-			"uniqueId": "0x6d2f0e37",
-			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
-			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [2,3], "networkId": 3}]
-		},
 		{
 			"name":"Ethereum Testnet Ropsten",
 			"chainID": 3,
 			"networkID":3,
 			"uniqueId": "0xeb4fb0d1",
-			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
-			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 1}, {"relayIds": [1], "networkId": 4}]
+			"bridgeAdress": "0xaD1470177625E63Ee460Fc29C64b8CBaC78C5176",
+			"explorer" : "https://ropsten.etherscan.io/",
+			"targetList": [{"relayIds": [1], "networkId": 3}, {"relayIds": [1], "networkId": 4}]
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
@@ -26,36 +16,7 @@
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
 			"explorer" : "https://rinkeby.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 1}, {"relayIds": [1], "networkId": 4}]
-		},
-		{
-			"name":"Ethereum Testnet Goerli",
-			"chainID": 5,
-			"networkID":5,
-			"uniqueId": "0x3fbf5c9a",
-			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
-			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 42}]
-		},
-		{
-			"name":"Ethereum Testnet Kovan",
-			"chainID": 42,
-			"networkID": 42,
-			"uniqueId": "0xee0bec75",
-			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
-			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}]
-		},
-		{
-			"name":"myNFT Sidechain",
-			"chainID": 323232,
-			"networkID": 323232,
-			"uniqueId": "0xd1e94e57",
-			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
-			"explorer" : "https://etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 1}]
+			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 3}]
 		}
-
-
 	]
 }
