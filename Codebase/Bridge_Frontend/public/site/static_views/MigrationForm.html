@@ -1,0 +1,210 @@
+<!--============= Migration Form display =============-->
+<div id="MigrationFormDisplay" class="Card">
+  <!-- Connection buttons card -->
+  <div id="ConnectionCenter">
+      <button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
+      <button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
+      <button type="button" class="btn btn-primary connectWalletConnect clickableRoundButton">Connect WalletConnect</button>
+      <button type="button" class="btn btn-primary connectPortis clickableRoundButton">Connect Portis</button>
+      <button type="button" class="btn btn-primary connectBitski clickableRoundButton">Connect Bitski</button>
+      <button type="button" class="btn btn-primary connectFortmatic clickableRoundButton">Connect Fortmatic</button><br/><br/>
+      <button type="button" class="btn btn-primary connectVenly clickableRoundButton">Connect Venly (Arkane)</button>
+      <button type="button" class="btn btn-primary connectCoinbase clickableRoundButton">Connect Coinbase</button>
+  </div>
+
+  <!-- Connected address card -->
+  <div class="Card" id="ConnectedAddrCard">
+    <div class="CardLine DataDisplay">
+      <div class="LineElement TextElement">Connected address:</div>
+      <div class="LineElement DataText address"></div>
+    </div>
+  </div>
+
+  <!-- Departure card -->
+  <div class="Card" id="DepartureCard">
+    <div class="CardLine CardTitle"><div class="LineElement">Departure</div></div>
+
+    <div class="CardLine">
+      <div class="LineElement">Origin network:</div>
+      <!-- Custom drop down selector -->
+      <div class="LineElement">
+        <div class="select-wrapper InputElement" id="OriginNetworkSelector">
+          <div class="select">
+            <div class="select-trigger">
+              <span></span>
+              <div class="arrow"></div>
+            </div>
+
+            <div class="select-options">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- For column alignment purpose. Each line must have same number of elements (3 here) so that they are one on top of the other -->
+      <div class="LineElement"></div>
+    </div>
+
+    <div class="CardLine" id="OriginWorldCardLine">
+      <div class="LineElement">Origin ERC721 contract:</div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputOGContractAddress" value="0xB75124A197A0449ea38706cf10eC5100D4ec9aB5"></div>
+      <div class="LineElement"></div><!-- Same as previous empty LineElement -->
+    </div>
+
+    <div class="CardLine" id="OriginTokenIDCardLine">
+      <div class="LineElement">Origin token ID</div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" value="14"></div>
+      <div class="LineElement ColoredButtonContainer">
+        <button class="ColoredButton" id="FetchDataButton">Fetch Data</button>
+      </div>
+    </div>
+  </div> <!-- end of departure card -->
+
+  <!-- Token data card -->
+  <div class="Card" id="TokenDataCard">
+    <div class="CardLine CardTitle"><div class="LineElement">Token</div></div>
+
+    <div class="Card">
+      <div class="CenteredCardLine DataDisplay ErrorText" id="TokenErrorMessage"></div>
+    </div>
+
+    <div class="CompactCard">
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Token Contract Name:</div>
+        <div class="LineElement DataText" id="OGContractName"></div>
+      </div>
+
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Token Contract Symbol:</div>
+        <div class="LineElement DataText" id="OGContractSymbol"></div>
+      </div>
+
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Token Owner:</div>
+        <div class="LineElement DataText" id="OGTokenOwner"></div>
+      </div>
+
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Token URI:</div>
+        <div class="LineElement DataText"><a href="" target="_blank" id="OGTokenURI"></a></div>
+      </div>
+    </div>
+
+    <div class="Card NoMargin">
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Metadata Name:</div>
+        <div class="LineElement DataText" id="OGTokenMetaName"></div>
+      </div>
+
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Metadata Description:</div>
+        <div class="LineElement DataText" id="OGTokenMetaDesc"></div>
+      </div>
+
+      <div class="CardLine DataDisplay">
+        <div class="LineElement TextElement">Metadata Image:</div>
+        <div class="LineElement DataText" id="OGTokenMetaImagePath"></div>
+      </div>
+    </div>
+  </div> <!-- end of token card -->
+
+  <!-- Migration card -->
+  <div class="Card" id="MigrationCard">
+    <div class="CardLine CardTitle" id="MigrationCardLineTitle"><div class="LineElement">Migration</div></div>
+
+    <div class="CardLine" id="DestNetworkCardLine">
+      <div class="LineElement TextElement">Destination network:</div>
+      <div class="LineElement">
+        <!-- Custom drop down selector -->
+        <div class="select-wrapper InputElement" id="DestinationNetworkSelector">
+          <div class="select">
+            <div class="select-trigger">
+              <span></span>
+              <div class="arrow"></div>
+            </div>
+
+            <div class="select-options"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="CardLine" id="MigrationTypeCardLine">
+      <div class="LineElement TextElement">Migration type:</div>
+      <div class="MigrationButtonLine">
+        <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
+        <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
+        <button class="ColoredButton" id="RedeemButton">Redeem IOU</button>
+      </div>
+    </div>
+
+    <div class="CardLine" id=MigrationRelayCardLine>
+      <div class="LineElement TextElement">Migration relay:</div>
+      <!-- Custom drop down selector -->
+      <div class="LineElement">
+        <div class="select-wrapper InputElement" id="RelaySelector">
+          <div class="select">
+            <div class="select-trigger">
+              <span></span>
+              <div class="arrow"></div>
+            </div>
+
+            <div class="select-options">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end of migration card -->
+
+  <!-- Arrival card -->
+  <div class="Card" id="ArrivalCard">
+    <div class="CardLine CardTitle" id="ArrivalCardLineTitle"><div class="LineElement">Arrival</div></div>
+
+    <div class="CardLine" id="DestWorldCardLine">
+      <div class="LineElement TextElement">Destination ERC721 contract:</div>
+      <div class="LineElement">
+        <!-- Custom drop down selector -->
+        <div class="select-wrapper InputElement" id="DestinationWorldSelector">
+          <div class="select">
+            <div class="select-trigger">
+              <span></span>
+              <div class="arrow"></div>
+            </div>
+
+            <div class="select-options"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="Card" id="DestTokenDataCard">
+      <div class="CardLine">
+        <div class="LineElement TextElement">Token Contract Name:</div>
+        <div class="LineElement DataText" id="DestContractName"></div>
+      </div>
+
+      <div class="CardLine">
+        <div class="LineElement TextElement">Token Contract Symbol:</div>
+        <div class="LineElement DataText" id="DestContractSymbol"></div>
+      </div>
+    </div>
+
+    <div class="CardLine" id="DestTokenIdCardLine">
+      <div class="LineElement TextElement">Destination token ID:</div>
+      <div class="LineElement DataText" id="DestTokenID"></div>
+    </div>
+
+    <div class="CardLine" id="DestOwnerCardLine">
+      <div class="LineElement TextElement">Destination owner:</div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputDestOwner"></div>
+    </div>
+  </div><!-- end of arrival card -->
+
+  <!-- Complete button card -->
+  <div class="Card" id="CompleteMigrationCard">
+    <div class="CenteredCardLine">
+        <button class="ColoredButton" id="CompleteButton">Complete</button>
+    </div>
+  </div>
+</div><!--====== end migration form display ======-->

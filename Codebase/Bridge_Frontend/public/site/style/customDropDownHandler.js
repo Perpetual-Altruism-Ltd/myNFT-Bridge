@@ -37,6 +37,7 @@ getDropDownOptionUniqueID("CustomDropDown", 1);
 addDropDownOnChangeCallback("CustomDropDown", function(index){
   console.log("New selected item: " + index);
 })
+clearDropDownOptions("CustomDropDown");
 */
 
 
@@ -87,7 +88,7 @@ let addDropDownOption = function(wrapperId, optionText, optionDataValue, optionU
   newOption.textContent = optionText;
   //Add clickListener
   newOption.addEventListener('click', function() {
-      if (!this.classList.contains('selected')) {
+      //if (!this.classList.contains('selected')) {
         //Remove the previously selected item, if exists
         let previouslySelectedOption = this.parentNode.querySelector('.select-option.selected');
         if(previouslySelectedOption != undefined){
@@ -100,7 +101,7 @@ let addDropDownOption = function(wrapperId, optionText, optionDataValue, optionU
 
         //Call the onChange callback of the 'wrapperId' dropdown selector
         callbacks[wrapperId].onChange(getDropDownSelectedOptionIndex(wrapperId));
-      }
+      //}
   });
 
   //Add the new option to the select options list
@@ -232,4 +233,21 @@ let getDropDownOptionUniqueID = function(wrapperId, optionIndex){
   }else{
     return option.getAttribute("value");
   }
+}
+
+
+/*
+Delete all options from a drop down.
+*/
+let clearDropDownOptions = function(wrapperId){
+  let select = document.getElementById(wrapperId);
+  let options = select.querySelectorAll(".select-option");
+
+  options.forEach((opt, i) => {
+    opt.remove();
+  });
+
+  //Remove select trigger title
+  select.querySelector('.select-trigger span').textContent = "";
+
 }

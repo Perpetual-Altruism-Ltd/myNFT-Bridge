@@ -3,7 +3,7 @@ let connectedButton = null;
 let providerConnected = "";
 // Button declarations
 window.onload = function() {
-    if(!window.location.hash){ 
+    if(!window.location.hash){
         window.location = window.location + '#loaded';
 		  window.location.href = window.location.href
     }
@@ -17,6 +17,9 @@ const connectBitskiButton = document.querySelector(".connectBitski");
 const connectFortmaticButton = document.querySelector(".connectFortmatic");
 const connectVenlyButton = document.querySelector(".connectVenly");
 const connectCoinbaseButton = document.querySelector(".connectCoinbase");
+
+let connectionCallback = function(){console.log("No callback defined yet");};
+
 
 // Button click listener
 connectMetaMaskButton.addEventListener("click", async () => {
@@ -145,13 +148,14 @@ function initConnector() {
 }
 
 /** Local function called when a connection/disconnection is engaged to update the frontend */
-async function connection(desc) {
+async function connection(callback) {
 	initConnector();
 	setDisabledConnectButtons(true);
 
 	if (await connector.connection()) {
 		connectedButton.innerHTML = "Disconnect " + providerConnected;
 		web3 = connector.web3;
+    connectionCallback();
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");

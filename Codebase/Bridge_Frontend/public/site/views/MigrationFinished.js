@@ -12,6 +12,12 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
+
+    let tfTokChainExplo = document.getElementById("TransfertTokenChainExplo");
+    let destinationNetworkExplorer = bridgeApp.networks[migData.destinationUniverseIndex].explorer;
+
+    tfTokChainExplo.href = destinationNetworkExplorer + "tx/" + model.destinationTokenTransfertTxHash;
 
     document.getElementById("NewMigrationButton").addEventListener('click', async() =>{
       model.navigateTo("/migration_form");
@@ -26,7 +32,7 @@ export default class extends AbstractView {
         callback(htmlContent);
       }
     };
-    xhr.open('GET', '/site/display/MigrationFinished.html');
+    xhr.open('GET', '/site/static_views/MigrationFinished.html');
     xhr.send();
   }
 }

@@ -12,10 +12,56 @@ export default class extends AbstractView {
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
     let contracts = model.contracts;
+    let migData = model.migrationData;
+    let escrowHashSigned = "";
+    let account = window.web3.currentProvider.selectedAddress;
+    let stateMessage = document.getElementById("StateMessage");
 
+    let signEscrowHash = async function(){
+      //Ask the wallet to prompt user to sign data
+      window.ethereum.request({ method: 'personal_sign', params: [ model.escrowHash, account ] })
+      .then((res) =>{
+        console.log("Escrow hash signed: " + res);
+        escrowHashSigned = res;
+        //Send escrowHashSigned to relay
+        closeMigration();
+      }).catch((res) => {
+        stateMessage.textContent = "Signature refused.";
+        console.log("Signature error: " + res);
+      });
+    }
 
+    let closeMigration = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
+
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/closeMigration';
+      options.data.migrationId = model.readCookie("migrationId");
+      options.data.escrowHashSignature = escrowHashSigned;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
+          //Move to mint_Token page
+          model.navigateTo("/mint_token");
+        }else{
+          loadingText.textContent = "Relay not responding.";
+          console.log(response.status + ' : ' + response.statusText);
+        }
+
+      }).catch(function (error) {
+        console.error(error);
+      });
+    }
+
+    //Ask user to sign escrow hash. Once done, call /closeMigration on relay. Once HTTP OK received, move to mint_token
     document.getElementById("SignEscrowHashButton").addEventListener('click', async() =>{
-      model.navigateTo("/mint_token");
+      signEscrowHash();
     });
   }
 
@@ -27,7 +73,7 @@ export default class extends AbstractView {
         callback(htmlContent);
       }
     };
-    xhr.open('GET', '/site/display/SignEscrow.html');
+    xhr.open('GET', '/site/static_views/SignEscrow.html');
     xhr.send();
   }
 }
