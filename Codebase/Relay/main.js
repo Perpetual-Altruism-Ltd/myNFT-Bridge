@@ -313,7 +313,7 @@ const main = async () => {
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
 
             //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
-            await client.closeMigration()
+            await client.closeRedeemMigration()
 
             // Call origin bridge migrateFromIOUERC721ToERC721
             await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
