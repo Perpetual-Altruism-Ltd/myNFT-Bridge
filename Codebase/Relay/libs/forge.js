@@ -31,11 +31,16 @@ class Forge {
      * Forge IOU NFT metadata from original NFT metadata
      * @param {JSON Object} originalMetadata 
      */
-    async _forgeMetadata(originalMetadata){
+    async _forgeMetadata(originalMetadata, migrationData){
         return {
             name: `IOU of ${originalMetadata.name}`,
             description: `IOU of ${originalMetadata.description}`,
             image: await this._uploadImage(await this._forgeImage(originalMetadata.image)),
+            migrationData: {
+                originUniverse: migrationData.originUniverse,
+                originWorld: migrationData.originWorld,
+                originTokenId: migrationData.originTokenId
+            },
             from: originalMetadata
         }
     }
@@ -44,10 +49,10 @@ class Forge {
      * Forge IOU NFT metadata from original NFT metadata
      * @param {string} originalTokenUri 
      */
-    async forgeIOUMetadata(originalTokenUri){
+    async forgeIOUMetadata(originalTokenUri, migrationData){
         const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
 
-        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata))).path}`
+        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(await this._forgeMetadata(originalTokenMetadata, migrationData))).path}`
     }
 }
 

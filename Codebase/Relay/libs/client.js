@@ -90,7 +90,7 @@ class Client {
             this.blockTimestamp
         )).transactionHash
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
-        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri)
+        const IOUMetadataUrl = await (new Forge()).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
         
         await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
     }
