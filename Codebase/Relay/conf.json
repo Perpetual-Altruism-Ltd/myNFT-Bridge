@@ -8,46 +8,17 @@
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
     "port": 3000,
-    "migrationPaths": [
-        {
-            "from":"Ethereum Testnet Ropsten",
-            "to":"Ethereum Testnet Rinkeby",
-            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
-        },
-        {
-            "from":"Ethereum Testnet Rinkeby",
-            "to":"Ethereum Testnet Ropsten",
-            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
-        },
-        {
-            "from":"Ethereum Testnet Ropsten",
-            "to":"Ethereum Testnet Ropsten",
-            "departure_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-            "arrival_bridge":"0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5"
-        }
-    ],
     "universes": [
         {
 			"name":"Ethereum Testnet Rinkeby",
             "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-			"chainID": 4,
-			"networkID":4,
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
 			"explorer" : "https://rinkeby.etherscan.io/",
-            "operatorAddress": "0x00",
             "worlds": [
                 {
-                    "address": "0xB75124A197A0449ea38706cf10eC5100D4ec9aB5",
+                    "address": "0x04f34D9Bb1595Bc50D90953DFb593348d87faea3",
                     "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                },
-                {
-                    "address": "0xfA183aD7111f98AFEDe7A6C5Da2CB305068A731e",
-                    "name": "MyContractURIWOrking",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
                 }
@@ -56,15 +27,12 @@
         {
 			"name":"Ethereum Testnet Ropsten",
             "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-			"chainID": 3,
-			"networkID":3,
 			"uniqueId": "0xeb4fb0d1",
 			"bridgeAdress": "0xaD1470177625E63Ee460Fc29C64b8CBaC78C5176",
 			"explorer" : "https://ropsten.etherscan.io/",
-            "operatorAddress": "0x00",
             "worlds": [
                 {
-                    "address": "0xa26528c97F513804395BD999c31FefAdD5B84640",
+                    "address": "0x6f3a52ab9eA3B68302D69480Eeff0aaFc055ca96",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
