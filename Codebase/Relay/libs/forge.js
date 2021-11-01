@@ -47,7 +47,7 @@ class Forge {
     async _forgeMetadata(originalMetadata, migrationData){
         return {
             name: `IOU of ${originalMetadata.name}`,
-            description: `This token is an IOU. ${originalMetadata.description}`,
+            description: `This token is an IOU of tokenId "${migrationData.originTokenId}" on universe "${migrationData.originUniverse}" and world "${migrationData.originWorld}". ${originalMetadata.description}`,
             image: await this._uploadImage(await this._forgeImage(originalMetadata.image)),
             migrationData: {
                 originUniverse: migrationData.originUniverse,
