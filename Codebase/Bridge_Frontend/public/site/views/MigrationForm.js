@@ -1,7 +1,7 @@
 import AbstractView from './AbstractView.js';
 
-//0x343da20c010148b4E4D4D3203e7c445E0a7468A4
-
+//0xf181e8B385FE770C78e3B848F321998F78b0d73e
+//0xbf21e21414554dB734C9f86835D51B57136BC35b
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -148,6 +148,14 @@ export default class extends AbstractView {
         addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
       }
     }
+
+    let isOUIToken = function(metadata){
+      return metadata.migrationData != undefined
+      && metadata.migrationData.originUniverse != undefined
+      && metadata.migrationData.originWorld != undefined
+      && metadata.migrationData.originTokenId != undefined;
+    }
+
 
     //Define functions which interact with blockchains or wallet
     let promptSwitchChain = async function (ID) {
@@ -299,6 +307,36 @@ export default class extends AbstractView {
                       var resp = xhr.response;
                       ogTokenMetaData = JSON.parse(resp);
                       console.log(resp);
+
+                      if(isOUIToken(ogTokenMetaData)){
+                        console.log("This token is an IOU of token " + ogTokenMetaData.migrationData.originTokenId + ", from world " + ogTokenMetaData.migrationData.originWorld + " from universe " + ogTokenMetaData.migrationData.originUniverse);
+                        //Prefill fields
+                        //destuniv
+                        selectDropDownOptionByUniqueID("DestinationNetworkSelector", ogTokenMetaData.migrationData.originUniverse);
+                        //destworld
+                        addDropDownOption("DestinationWorldSelector", ogTokenMetaData.migrationData.originWorld, "", "1");
+                        selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+                        //destTokenId
+                        document.getElementById("DestTokenID").textContent = ogTokenMetaData.migrationData.originTokenId;
+                        //ADD DATA TO MIGDATA
+                        migData.destinationUniverseUniqueId  = ogTokenMetaData.migrationData.originUniverse;
+                        bridgeApp.networks.forEach((univ, i) => {
+                          if(univ.uniqueId == migData.destinationUniverseUniqueId){
+                            migData.destinationUniverseIndex = i;
+                            migData.destinationUniverse = univ.name;
+                          }
+                        });
+                        
+                        migData.destinationWorld  = ogTokenMetaData.migrationData.originWorld;
+                        migData.destinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
+                        migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
+
+                        //show all elements
+                        let elementsToHide = document.querySelectorAll("#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+                        elementsToHide.forEach(function(elem) {
+                          elem.style.display = 'flex';
+                        });
+                      }
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
                       document.getElementById("OGTokenMetaDesc").textContent = ogTokenMetaData.description;
@@ -614,6 +652,7 @@ export default class extends AbstractView {
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
+      model.isRedeem = false;
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
@@ -624,6 +663,7 @@ export default class extends AbstractView {
       migData.migrationType = model.MintOUIMigrationType;
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
+      model.isRedeem = true;
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       this.classList.add('Selected');
