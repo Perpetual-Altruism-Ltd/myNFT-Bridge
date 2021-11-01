@@ -22,8 +22,20 @@ class Forge {
      */
     async _forgeImage(imageUri){
         const image = await Jimp.read(imageUri)
-        const font = await Jimp.loadFont(Jimp.FONT_SANS_14_BLACK)
-        image.print(font, image.getWidth() - 100, image.getHeight() - 30, 'IOU')
+        // Resize original image
+        image.resize(512, 512)
+        // Generate text
+        const textImage = new Jimp(70, 40, 'transparent')
+        const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
+        textImage.print(font, 7, 3, 'IOU')
+        // Change text color to red
+        textImage.color([{ apply: 'xor', params: ['#ff0000'] }])
+        // Generate white background for text
+        const whiteImage = new Jimp(70, 40, 'white')
+        // Add text to white background
+        whiteImage.blit(textImage, 0, 0)
+        // Insert text to original image
+        image.blit(whiteImage, 512 - 90, 512 - 60)
 
         return await image.getBufferAsync('image/png')
     }
