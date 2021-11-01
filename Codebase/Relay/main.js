@@ -138,6 +138,8 @@ const main = async () => {
             db.collections.premintedTokens.update(premintedTokens[0])
         }
 
+        Logger.info(`Preminted token id ${tokenId} sent to client.`)
+
         res.json({ "tokenId" : tokenId })
     })
 
@@ -176,6 +178,8 @@ const main = async () => {
         )
         clientList[client.id] = client
         res.json({ migrationId: client.id })
+
+        Logger.info(`Client id ${client.id} inited migration from universe ${migrationData.originUniverse}, world ${migrationData.originWorld}, tokenId ${migrationData.originTokenId} to ${migrationData.destinationUniverse}, world ${migrationData.destinationWorld}, tokenId ${migrationData.destinationTokenId}.`)
 
         // Calling departure bridge
         await client.annonceToBridge(originUniverse)
@@ -221,6 +225,8 @@ const main = async () => {
             res.status(200).send({
                 status: "Migration continuing."
             })
+
+            Logger.info(`Client id ${client.id} signed migration hash.`)
 
             // Transferring token to departure bridge
             await client.transferToBridge(req.body.migrationHashSignature)
@@ -275,6 +281,9 @@ const main = async () => {
             res.status(200).send({
                 "status": "Minting of the token initiated"
             })
+
+            Logger.info(`Client id ${client.id} signed escrow hash for minting an IOU.`)
+
             // Check if escrow hash is valid before doing anything
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
 
@@ -309,6 +318,9 @@ const main = async () => {
             res.status(200).send({
                 "status": "Redeem of the token initiated"
             })
+
+            Logger.info(`Client id ${client.id} signed escrow hash for redeeming an IOU.`)
+
             // Check if escrow hash is valid before doing anything
             await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
 
