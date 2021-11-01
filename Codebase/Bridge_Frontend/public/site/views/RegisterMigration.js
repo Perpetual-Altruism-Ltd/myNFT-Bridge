@@ -13,7 +13,21 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
     let migData = model.migrationData;
-    let account = window.web3.currentProvider.selectedAddress;
+    let userAccount = "";
+
+    //Define functions which interact with blockchains or wallet
+    let promptSwitchChain = async function (ID) {
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+      }).then((res) =>{
+        console.log("Network switch done.");
+        grantRelayOperatorPrivilege();
+      }).catch((res) => {
+        console.log("Network switch canceled or error");
+        alert("Please accept the metamask switch network prompt in order to continue your NFT migration.");
+      });
+    }
 
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
@@ -21,10 +35,10 @@ export default class extends AbstractView {
         let selectedRelayIndex = migData.migrationRelayIndex;
         let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
         let originTokenId = parseInt(migData.originTokenId);
-        console.log("Asking user " + account + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
+        console.log("Ask user " + userAccount + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 
         contracts.originalChainERC721Contract.methods.approve(relayOgNetworkAddr, originTokenId)
-        .send({from: account, gas:100000}, function(error, transactionHash){
+        .send({from: userAccount, gas:100000}, function(error, transactionHash){
           //Function called when user accept or reject relay's operator approval
           if(error){
             console.log('Approval rejected by user');
@@ -55,7 +69,7 @@ export default class extends AbstractView {
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){loadingText.textContent = "Error during relay operator approval.";}
 
-          alert("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner if " + migData.originOwner);
+          alert("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
         });
       }catch(err){
         console.log("Error when setting relay as an operator: " + err);
@@ -120,7 +134,22 @@ export default class extends AbstractView {
       model.navigateTo("/migration_form");
     });
     document.getElementById("RegisterButton").addEventListener('click', async() =>{
-      grantRelayOperatorPrivilege();
+      //refresh user wallet account
+      userAccount = window.web3.currentProvider.selectedAddress;
+
+      //If not right account connected to wallet
+      if(userAccount != migData.originOwner){
+        alert("The NFT owner is " + migData.originOwner + ". Please connect to this account through your wallet.");
+      }
+      //Else, check wallet connected network, and prompt user to switch if wrong network.
+      else if(parseInt(window.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
+        alert("The NFT you want to migrate is on the blochain " + migData.originUniverse + ". Please change the network you are connected to with your wallet.");
+        promptSwitchChain('0x' + migData.originNetworkId.toString(16));
+      }
+      //Else: everything OK, launch migration registration
+      else{
+        grantRelayOperatorPrivilege();
+      }
     });
   }
 
