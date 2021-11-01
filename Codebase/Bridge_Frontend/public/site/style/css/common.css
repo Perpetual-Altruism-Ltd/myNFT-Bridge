@@ -142,3 +142,7 @@ TOP LEFT COLOR: #12132b*/
     justify-content: center;
     gap: 0.5em 2em;
 }
+
+#OriginTokenURICardLine{
+  word-break: break-all;
+}

@@ -31,6 +31,13 @@ model.migrationData.destinationWorld = "";
 model.migrationData.destinationTokenId = "";
 model.migrationData.destinationOwner = "";
 
+model.migrationData.metadataDestinationUniverseUniqueId = "";
+model.migrationData.metadataDestinationUniverseIndex = 0;
+model.migrationData.metadataDestinationUniverse = "";
+model.migrationData.metadataDestinationWorld = "";
+model.migrationData.metadataDestinationTokenId = "";
+model.migrationData.metadataDestinationBridgeAddr = "";
+
 model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
 

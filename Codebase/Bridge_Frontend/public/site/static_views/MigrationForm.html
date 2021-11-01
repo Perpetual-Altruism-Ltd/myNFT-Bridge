@@ -52,7 +52,7 @@
 
     <div class="CardLine" id="OriginTokenIDCardLine">
       <div class="LineElement">Origin token ID:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" value="14"></div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID"></div>
       <div class="LineElement ColoredButtonContainer">
         <button class="ColoredButton" id="FetchDataButton">Fetch Data</button>
       </div>
@@ -68,28 +68,28 @@
     </div>
 
     <div class="CompactCard">
-      <div class="CardLine DataDisplay">
+      <div class="CardLine DataDisplay" id="OriginWorldNameCardLine">
         <div class="LineElement TextElement">Token Contract Name:</div>
         <div class="LineElement DataText" id="OGContractName"></div>
       </div>
 
-      <div class="CardLine DataDisplay">
+      <div class="CardLine DataDisplay" id="OriginWorldSymbolCardLine">
         <div class="LineElement TextElement">Token Contract Symbol:</div>
         <div class="LineElement DataText" id="OGContractSymbol"></div>
       </div>
 
-      <div class="CardLine DataDisplay">
+      <div class="CardLine DataDisplay" id="OriginTokenOwnerCardLine">
         <div class="LineElement TextElement">Token Owner:</div>
         <div class="LineElement DataText" id="OGTokenOwner"></div>
       </div>
 
-      <div class="CardLine DataDisplay">
+      <div class="CardLine DataDisplay" id="OriginTokenURICardLine">
         <div class="LineElement TextElement">Token URI:</div>
         <div class="LineElement DataText"><a href="" target="_blank" id="OGTokenURI"></a></div>
       </div>
     </div>
 
-    <div class="Card NoMargin">
+    <div class="Card NoMargin" id="MetadataCard">
       <div class="CardLine DataDisplay">
         <div class="LineElement TextElement">Metadata Name:</div>
         <div class="LineElement DataText" id="OGTokenMetaName"></div>
@@ -133,7 +133,7 @@
       <div class="MigrationButtonLine">
         <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
         <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
-        <button class="ColoredButton" id="RedeemButton">Redeem IOU</button>
+        <button class="ColoredButton" id="RedeemButton" disabled>Redeem IOU</button>
       </div>
     </div>
 
@@ -178,16 +178,14 @@
       </div>
     </div>
 
-    <div class="Card" id="DestTokenDataCard">
-      <div class="CardLine">
-        <div class="LineElement TextElement">Token contract name:</div>
-        <div class="LineElement DataText" id="DestContractName"></div>
-      </div>
+    <div class="CardLine" id="DestWorldNameCardLine">
+      <div class="LineElement TextElement">Token contract name:</div>
+      <div class="LineElement DataText" id="DestContractName"></div>
+    </div>
 
-      <div class="CardLine">
-        <div class="LineElement TextElement">Token contract symbol:</div>
-        <div class="LineElement DataText" id="DestContractSymbol"></div>
-      </div>
+    <div class="CardLine" id="DestWorldSymbolCardLine">
+      <div class="LineElement TextElement">Token contract symbol:</div>
+      <div class="LineElement DataText" id="DestContractSymbol"></div>
     </div>
 
     <div class="CardLine" id="DestTokenIdCardLine">

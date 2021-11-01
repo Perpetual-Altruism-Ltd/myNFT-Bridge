@@ -2,6 +2,8 @@ import AbstractView from './AbstractView.js';
 
 //0xf181e8B385FE770C78e3B848F321998F78b0d73e
 //0xbf21e21414554dB734C9f86835D51B57136BC35b
+//Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
+
 export default class extends AbstractView {
   constructor(params) {
     super(params);
@@ -16,7 +18,7 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let ogTokenMetaData = model.ogTokenMetaData;
     let migData = model.migrationData;
-    let account = window.web3.currentProvider.selectedAddress;
+    //let account = window.web3.currentProvider.selectedAddress;
 
     //Define functions to load data from server
     let loadNets = async function (_callback) {
@@ -149,13 +151,16 @@ export default class extends AbstractView {
       }
     }
 
-    let isOUIToken = function(metadata){
-      return metadata.migrationData != undefined
-      && metadata.migrationData.originUniverse != undefined
-      && metadata.migrationData.originWorld != undefined
-      && metadata.migrationData.originTokenId != undefined;
+    let isIOUToken = function(metadata){
+      if(metadata != null && metadata != undefined){
+        return metadata.migrationData != undefined
+        && metadata.migrationData.originUniverse != undefined
+        && metadata.migrationData.originWorld != undefined
+        && metadata.migrationData.originTokenId != undefined;
+      }else{
+        return false;
+      }
     }
-
 
     //Define functions which interact with blockchains or wallet
     let promptSwitchChain = async function (ID) {
@@ -171,7 +176,7 @@ export default class extends AbstractView {
         alert("Please accept the metamask switch network prompt in order to change to desired network");
       });
     }
-    //Loading a token metadata from chain
+    //Load a token metadata from chain
     let loadOgTokenData = async function () {
 
         //First we check that we have a connected wallet
@@ -205,89 +210,100 @@ export default class extends AbstractView {
 
     	  //Get the Contract Name
         let getContractName = async function () {
-            try {
-        			let content = await contracts.originalChainERC721MetadataContract.methods.name().call();
-        			if(content != null){
-        				document.getElementById("OGContractName").innerHTML = content;
-        			} else {
-        				document.getElementById("OGContractName").innerHTML = "Not Specified";
-        			}
+          let content = "";
+          try {
+      			content = await contracts.originalChainERC721MetadataContract.methods.name().call();
+          } catch (err) {
+      			console.log(err);
+      			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
+      		}
 
-                } catch (err) {
-        			console.log(err);
-        			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
-        		}
+          //Display or not the html element
+          if(content != ""){
+            document.getElementById("OGContractName").innerHTML = content;
+            showCardLine("OriginWorldNameCardLine", true);
+          } else {
+            showCardLine("OriginWorldNameCardLine", false);
+          }
         }
         getContractName();
 
     	  //Get the Contract Symbol
         let getContractSymbol = async function () {
-            try {
-        			let content = await contracts.originalChainERC721MetadataContract.methods.symbol().call();
-        			if(content != null){
-        				document.getElementById("OGContractSymbol").innerHTML = content;
-        			} else {
-        				document.getElementById("OGContractSymbol").innerHTML = "Not Specified";
-        			}
-            } catch (err) {
-        			console.log(err);
-        			console.log("Could not get symbol() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-        		}
+          let content = "";
+          try {
+      			content = await contracts.originalChainERC721MetadataContract.methods.symbol().call();
+          } catch (err) {
+      			console.log(err);
+      			console.log("Could not get symbol() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      		}
+          //Display or not the ctrc symbol
+          if(content != ""){
+            document.getElementById("OGContractSymbol").innerHTML = content;
+            showCardLine("OriginWorldSymbolCardLine", true);
+          } else {//Else hide the contract symbol line
+            showCardLine("OriginWorldSymbolCardLine", false);
+          }
         }
         getContractSymbol();
 
         //Get the Token owner
         let getTokenOwner = async function () {
-            try {
-        			let content = await contracts.originalChainERC721Contract.methods.ownerOf(document.getElementById("inputOGTokenID").value).call();
-        			if(content != null){
-        				document.getElementById("OGTokenOwner").innerHTML = content;
-        			} else {
-        				document.getElementById("OGTokenOwner").innerHTML = "Not Specified";
-        			}
-              //Add origin token owner to migData
-              migData.originOwner = document.getElementById("OGTokenOwner").innerHTML.toLowerCase();
+          let content = "";
+          try {
+      			content = await contracts.originalChainERC721Contract.methods.ownerOf(document.getElementById("inputOGTokenID").value).call();
+          } catch (err) {
+      			console.log(err);
+      			console.log("Could not get ownerOf() for: contractAddress" + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      		}
 
-              //Handle is user is not the owner
-              if(account != migData.originOwner){
-                console.log("Connected addr: " + account + ", token owner: " + migData.originOwner);
-                let errorMsg = document.getElementById("TokenErrorMessage");
-                errorMsg.innerHTML = "You are not the owner of this NFT. You can't migrate it.";
+          //Display or not the owner
+          if(content != ""){
+            document.getElementById("OGTokenOwner").innerHTML = content;
+            showCardLine("OriginTokenOwnerCardLine", true);
+            //Add origin token owner to migData
+            migData.originOwner = content.toLowerCase();
+            //display not owner msg depending on the connected addr & tok owner
+            checkAndDisplayNotOwnerMsg();
+          } else {
+            showCardLine("OriginTokenOwnerCardLine", false);
+            //Inform user that no user was found on this NFT
+            displayNoOwnerMsg();
+          }
 
-                document.getElementById("TokenErrorMessage").style.display = 'flex';
-                hideFormFieldsFromMigrationCard();
-              }else{//If user is the owner, show it next to owner address.
-                document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you !)</span>';
-              }
-
-            } catch (err) {
-        			console.log(err);
-        			console.log("Could not get ownerOf() for: contractAddress" + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-        		}
         }
         getTokenOwner();
 
     	  //Get the Token URI
         let getTokenURI = async function () {
-            try {
-        			let content = await contracts.originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
-        			if(content != null){
-        				document.getElementById("OGTokenURI").innerHTML = content;
-                console.log(content);
-        				document.getElementById("OGTokenURI").href = content;
+          let content = "";
+          try {
+      			content = await contracts.originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
+          } catch (err) {
+      			console.log(err);
+      			console.log("Could not get tokenURI() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      		}
 
-                loadOgTokenMetaData();
-        			} else {
-        				document.getElementById("OGTokenURI").innerHTML = "Not Specified";
-        			}
-            } catch (err) {
-        			console.log(err);
-        			console.log("Could not get tokenURI() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
-        		}
+          if(content != ""){
+            //Display tokenURI
+            document.getElementById("OGTokenURI").innerHTML = content;
+            console.log("TokenURI: " + content);
+            document.getElementById("OGTokenURI").href = content;
+            showCardLine("OriginTokenURICardLine", true);
+
+            //Load and display metadata from JSON file
+            showCard("MetadataCard", true);
+            loadOgTokenMetaData();
+          } else {
+            //Hide TokenURI display
+            showCardLine("OriginTokenURICardLine", false);
+            //Hide all metadata fields display
+            showCard("MetadataCard", false);
+          }
         }
         getTokenURI();
     };
-    //Loading token metadata from TokenURI
+    //Load token metadata from TokenURI
     let loadOgTokenMetaData = async function () {
       let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
 
@@ -308,34 +324,24 @@ export default class extends AbstractView {
                       ogTokenMetaData = JSON.parse(resp);
                       console.log(resp);
 
-                      if(isOUIToken(ogTokenMetaData)){
+                      //If token is an IOU, extract data from the json metadata file into migData object
+                      if(isIOUToken(ogTokenMetaData)){
                         console.log("This token is an IOU of token " + ogTokenMetaData.migrationData.originTokenId + ", from world " + ogTokenMetaData.migrationData.originWorld + " from universe " + ogTokenMetaData.migrationData.originUniverse);
-                        //Prefill fields
-                        //destuniv
-                        selectDropDownOptionByUniqueID("DestinationNetworkSelector", ogTokenMetaData.migrationData.originUniverse);
-                        //destworld
-                        addDropDownOption("DestinationWorldSelector", ogTokenMetaData.migrationData.originWorld, "", "1");
-                        selectDropDownOptionByIndex("DestinationWorldSelector", 0);
-                        //destTokenId
-                        document.getElementById("DestTokenID").textContent = ogTokenMetaData.migrationData.originTokenId;
-                        //ADD DATA TO MIGDATA
-                        migData.destinationUniverseUniqueId  = ogTokenMetaData.migrationData.originUniverse;
+
+                        //Save all data from NFT => IOU migration into migData
+                        migData.metadataDestinationUniverseUniqueId  = ogTokenMetaData.migrationData.originUniverse;
+                        //retrieve the index & name of the universe from its uniqueID
                         bridgeApp.networks.forEach((univ, i) => {
-                          if(univ.uniqueId == migData.destinationUniverseUniqueId){
-                            migData.destinationUniverseIndex = i;
-                            migData.destinationUniverse = univ.name;
+                          if(univ.uniqueId == migData.metadataDestinationUniverseUniqueId){
+                            migData.metadataDestinationUniverseIndex = i;
+                            migData.metadataDestinationUniverse = univ.name;
                           }
                         });
-                        
-                        migData.destinationWorld  = ogTokenMetaData.migrationData.originWorld;
-                        migData.destinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
-                        migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
-                        //show all elements
-                        let elementsToHide = document.querySelectorAll("#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
-                        elementsToHide.forEach(function(elem) {
-                          elem.style.display = 'flex';
-                        });
+                        migData.metadataDestinationWorld  = ogTokenMetaData.migrationData.originWorld;
+                        migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
+                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAdress
+                        console.log(migData);
                       }
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
@@ -344,13 +350,12 @@ export default class extends AbstractView {
                       migData.originTokenName = ogTokenMetaData.name;
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
-                      if(ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
+                      console.log(ext4);
+                      if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
                       } else if(ogTokenMetaData.image != null) {
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '>';
                       }
-
-
                   }
               };
               xhr.send();
@@ -360,6 +365,48 @@ export default class extends AbstractView {
           };
       }
     };
+    //Load destination contract name and symbol
+    let loadDestTokenData = async function(){
+
+      try{
+        destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputDestContractAddress").value);
+        destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputDestContractAddress").value);
+      }catch(err){
+        document.getElementById("DestContractName").innerHTML = "Unable to connect to contract.";
+        document.getElementById("DestContractSymbol").innerHTML = "Unable to connect to contract.";
+      }
+
+      let getContractName = async function () {
+          try {
+            let content = await destChainERC721MetadataContract.methods.name().call();
+            if(content != null){
+              document.getElementById("DestContractName").innerHTML = content;
+            } else {
+              document.getElementById("DestContractName").innerHTML = "Not Specified";
+            }
+          } catch (err) {
+            console.log(err);
+            console.log("Could not get name() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+          }
+      }
+      getContractName();
+
+      //Get the Contract Symbol
+      let getContractSymbol = async function () {
+         try {
+           let content = await destChainERC721MetadataContract.methods.symbol().call();
+           if(content != null){
+             document.getElementById("DestContractSymbol").innerHTML = content;
+           } else {
+             document.getElementById("DestContractSymbol").innerHTML = "Not Specified";
+           }
+         } catch (err) {
+           console.log(err);
+           console.log("Could not get symbol() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+         }
+       }
+       getContractSymbol();
+    }
 
     //Connect to metamask if wallet installed
     var endLoadMetamaskConnection = async function () {
@@ -432,13 +479,12 @@ export default class extends AbstractView {
       axios.request(options).then(function (response) {
         if(response.status != 200){console.log(response.status + response.statusText);}
         console.log("Available tokenId: " + response.data.tokenId);
-        migData.destinationTokenId = response.data.tokenId;
-        //Add dest tokenId to input
-        document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
 
-        //Display next migration form field
-        document.getElementById("DestOwnerCardLine").style.display = 'flex';
-        migData.destinationTokenId = document.getElementById("DestTokenID").textContent;
+        //Save tokenID into migData
+        migData.destinationTokenId = response.data.tokenId;
+
+        //Display tokenID
+        document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
       }).catch(function (error) {
         console.error(error);
       });
@@ -470,13 +516,44 @@ export default class extends AbstractView {
       document.getElementById("OGTokenMetaName").textContent = "";
       document.getElementById("OGTokenMetaDesc").textContent = "";
       document.getElementById("OGTokenMetaImagePath").innerHTML = "";
+
+      //Also disable redeem button by default
+      document.getElementById("RedeemButton").disabled = true;
     }
     let hideFormFieldsFromMigrationCard = function(){
       //Hide all elements following departure card
-      let elementsToHide = document.querySelectorAll("#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      let elementsToHide = document.querySelectorAll("#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
       elementsToHide.forEach(function(elem) {
         elem.style.display = 'none';
       });
+    }
+    let checkAndDisplayNotOwnerMsg = function(){
+      //Refresh connected addr
+      let account = window.web3.currentProvider.selectedAddress;
+      //Handle if user is not the owner
+      if(account != migData.originOwner){
+        console.log("Connected addr: " + account + ", token owner: " + migData.originOwner);
+        let errorMsg = document.getElementById("TokenErrorMessage");
+        errorMsg.innerHTML = "You are not the owner of this NFT. You can't migrate it.";
+
+        document.getElementById("TokenErrorMessage").style.display = 'flex';
+        hideFormFieldsFromMigrationCard();
+      }else{//If user is the owner, show it next to owner address.
+        document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you !)</span>';
+      }
+    }
+    let displayNoOwnerMsg = function(){
+      let errorMsg = document.getElementById("TokenErrorMessage");
+      errorMsg.innerHTML = "No owner could be found for this NFT.";
+
+      document.getElementById("TokenErrorMessage").style.display = 'flex';
+      hideFormFieldsFromMigrationCard();
+    }
+    let showCard = function(id, disp){
+      document.getElementById(id).style = (disp ? "display:flex;" : "display:none;")
+    }
+    let showCardLine = function(id, disp){
+      showCard(id, disp);
     }
 
     //Setup custom selector
@@ -484,7 +561,12 @@ export default class extends AbstractView {
     setupDropDown("RelaySelector");
     setupDropDown("DestinationNetworkSelector");
     setupDropDown("DestinationWorldSelector");
-    //addDropDownOption("DestinationWorldSelector", '0x123456789abcdef', "", '1');//FOR TEST PURPOSE
+
+    //Clear drop down from possibly previous data
+    clearDropDownOptions("OriginNetworkSelector");
+    clearDropDownOptions("RelaySelector");
+    clearDropDownOptions("DestinationNetworkSelector");
+    clearDropDownOptions("DestinationWorldSelector");
 
     //Load networks
     loadNets(function () {
@@ -526,7 +608,7 @@ export default class extends AbstractView {
       if(selected != undefined){selected.classList.remove('Selected');}
 
       //Hide all following elements
-      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
       elementsToHide.forEach(function(elem) {
         elem.style.display = 'none';
       });
@@ -534,21 +616,33 @@ export default class extends AbstractView {
       promptSwitchChain(chainIDSelected);
     });
     addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
-      //Display next form field: arrival title + arrival dest network
-      document.getElementById("ArrivalCard").style.display = 'flex';
-      document.getElementById("ArrivalCardLineTitle").style.display = 'flex';
-      document.getElementById("DestWorldCardLine").style.display = 'flex';
-      migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
-      migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
+      //if MINT IOU
+      if(migData.migrationType == model.MintOUIMigrationType){
+        //Display next form field: arrival title + arrival dest network
+        document.getElementById("ArrivalCard").style.display = 'flex';
+        document.getElementById("ArrivalCardLineTitle").style.display = 'flex';
+        document.getElementById("DestWorldCardLine").style.display = 'flex';
+        migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
+        migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
 
-      //Load available destination world from relay
-      getRelayAvailableWorlds();
+        //Load available destination world from relay
+        getRelayAvailableWorlds();
+      }
+      //Else REDEEM
+      else if(migData.migrationType == model.RedeemIOUMigrationType){
+        //SHOW all next form field which are prefilled
+        let elementsToShow = document.querySelectorAll("#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+        elementsToShow.forEach(function(elem) {
+          elem.style.display = 'flex';
+        });
+      }
     });
     addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
       //CLEAR PREVIOUS DATA
       //First, clear previous data.
       document.getElementById("DestContractName").innerHTML = "";
       document.getElementById("DestContractSymbol").innerHTML = "";
+
       //Reset migration buttons. Unselect the previously selected button.
       let migButtonsCard = document.getElementById("MigrationTypeCardLine");
       let selected = migButtonsCard.querySelector(".Selected");
@@ -558,13 +652,10 @@ export default class extends AbstractView {
       //load available relay from network_list and relay_list
 
       //HIDE form fields further than one step from dest network drop down
-      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
       elementsToHide.forEach(function(elem) {
         elem.style.display = 'none';
       });
-
-      //DISPLAY next form field: migration type buttons
-      document.getElementById("MigrationTypeCardLine").style.display = 'flex';
 
       //SAVE data to migData object
       //This index is relative to the list of destination networks which is different from the list of all networks.
@@ -584,13 +675,35 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = destUnivUniqueId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
       migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
+
+      //Display
+      //If dest network is the one from metadata of IOU token, enable redeem button
+      if(migData.destinationUniverseUniqueId == migData.metadataDestinationUniverseUniqueId){
+        document.getElementById("RedeemButton").disabled = false;
+      }else{
+        document.getElementById("RedeemButton").disabled = true;
+      }
+      //DISPLAY next form field: migration type buttons
+      document.getElementById("MigrationTypeCardLine").style.display = 'flex';
     });
     addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
-      //Display next form field: dest world
-      document.getElementById("DestTokenDataCard").style.display = 'flex';
-      document.getElementById("DestTokenIdCardLine").style.display = 'flex';
+      //Load dest world info
+      //loadDestTokenData():
+
+      //Show dest world infos
+      /*showCardLine("DestWorldNameCardLine", true);
+      showCardLine("DestWorldSymbolCardLine", true);*/
+      showCardLine("DestTokenIdCardLine", true);
+
+      //Save destWorld addr into migData object
       let destWorldIndex = getDropDownSelectedOptionIndex("DestinationWorldSelector");
       migData.destinationWorld = bridgeApp.destWorlds[destWorldIndex];
+
+      //Display next form field: dest owner input
+      document.getElementById("DestOwnerCardLine").style.display = 'flex';
+
+      //Display loading text for tokenID
+      document.getElementById("DestTokenID").textContent = "Fetching...";
 
       //Load desination tokenId from relay
       getAvailableTokenId();
@@ -643,32 +756,56 @@ export default class extends AbstractView {
       migData.destinationOwner = document.getElementById("inputDestOwner").value;
     });
 
-    //Setting token data retrieval
-    document.getElementById("FetchDataButton").addEventListener('click', async() =>{
-      //Load metadata from chain: token URI, symbole, name
-      loadOgTokenData();
-    });
-
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
       model.isRedeem = false;
+
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       //Select the clicked button
       this.classList.add('Selected');
+
       //Display next form field: relay drop down
       document.getElementById("MigrationRelayCardLine").style.display = 'flex';
       migData.migrationType = model.MintOUIMigrationType;
+
+      //Hide further form field if ever displayed
+      let elementsToHide = document.querySelectorAll("#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
+      elementsToHide.forEach(function(elem) {
+        elem.style.display = 'none';
+      });
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
-      model.isRedeem = true;
+      //Add migration type to migData object
+      migData.migrationType = model.RedeemIOUMigrationType;
+      model.isRedeem = true;//Same, to delete
+
+      //Select button, & hold it pressed
       let selected = this.parentNode.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       this.classList.add('Selected');
-      document.getElementById("MigrationRelayCardLine").style.display = 'flex';
-      migData.migrationType = model.RedeemIOUMigrationType;
+
+      //Fill migData object with migration data from metadata: destNet, world, tokenId
+      migData.destinationUniverseUniqueId = migData.metadataDestinationUniverseUniqueId;
+      migData.destinationUniverseIndex = migData.metadataDestinationUniverseIndex;
+      migData.destinationUniverse = migData.metadataDestinationUniverse;
+      migData.destinationWorld = migData.metadataDestinationWorld;
+      migData.destinationTokenId = migData.metadataDestinationTokenId;
+      migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
+
+      //PREFILL fields
+      //destuniv
+      selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.destinationUniverseUniqueId);
+      //destworld
+      addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
+      selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+      //destTokenId
+      document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
+
+      //Show relay selector
+      showCardLine("MigrationRelayCardLine", true);
     });
 
     //Setting token data retrieval
