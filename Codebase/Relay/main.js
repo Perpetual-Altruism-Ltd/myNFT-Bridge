@@ -10,6 +10,7 @@ const JoiSchemas = require('./libs/joiSchemas')
 const Db = require('./libs/db')
 const { sleep } = require('./libs/utils')
 const Axios = require('axios')
+const RateLimit = require("express-rate-limit");
 
 const main = async () => {
     const db = new Db()
@@ -25,6 +26,15 @@ const main = async () => {
     }
 
     function premintStock(){
+        const deliveredNotMintedTokens = db.collections.premintedTokens.find({
+            delivered: true
+            , minted: false
+        })
+        deliveredNotMintedTokens.forEach(token => {
+            token.delivered = false
+            db.collections.premintedTokens.update(token)
+        })
+
         Conf.universes.forEach(universe => {
             const ethereum = universesRpc[universe.uniqueId]
             universe.worlds.forEach(async world => {
@@ -33,16 +43,18 @@ const main = async () => {
                     const premintedTokens = db.collections.premintedTokens.find({
                         universe: universe.uniqueId
                         , world: world.address
-                        , used: false
+                        , delivered: false
+                        , minted: false
                     })
                     if(premintedTokens.length < 2){
                         try{
                             const tokenId = await ethereum.premintToken(world.address, universe.bridgeAdress)
                             db.collections.premintedTokens.insert({
-                                tokenId,
-                                universe: universe.uniqueId,
-                                world: world.address,
-                                used: false
+                                tokenId
+                                , universe: universe.uniqueId
+                                , world: world.address
+                                , delivered: false
+                                , minted: false
                             })
                         }catch(err){
                             Logger.error(`Can't premint a token on ${ethereum.rpc}.`)
@@ -97,7 +109,13 @@ const main = async () => {
         return res.status(400).json({ error : 'Universe Not Found' });
     })
 
-    app.post('/getAvailableTokenId', async (req, res) => {
+    const getAvailableTokenIdLimiter = RateLimit({
+        windowMs: 60 * 1000, // 60 second window
+        max: 1, // start blocking after 5 requests
+        message: { error : "Too many preminted tokens requested. Try again after one minute." }
+    });
+
+    app.post('/getAvailableTokenId', getAvailableTokenIdLimiter, async (req, res) => {
         const { error } = JoiSchemas.getAvailableTokenId.validate(req.body)
         if(error){
             res.status(400)
@@ -114,32 +132,33 @@ const main = async () => {
             return
         }
 
-        const premintedTokens = db.collections.premintedTokens.find({
+        const premintedToken = db.collections.premintedTokens.findOne({
             universe: universe.uniqueId
             , world: req.body.world
-            , givenToClient: false
-            , used: false
+            , delivered: false
+            , minted: false
         })
 
         const ethereum = universesRpc[universe.uniqueId]
 
         let tokenId
 
-        if(premintedTokens.length === 0){
+        if(!premintedToken){
             tokenId = await ethereum.premintToken(req.body.world, universe.bridgeAdress)
             db.collections.premintedTokens.insert({
-                tokenId,
-                universe: universe.uniqueId,
-                world: req.body.world,
-                used: true
+                tokenId
+                , universe: universe.uniqueId
+                , world: req.body.world
+                , delivered: true
+                , minted: false
             })
         }else{
-            tokenId = premintedTokens[0].tokenId
-            premintedTokens[0].used = true
-            db.collections.premintedTokens.update(premintedTokens[0])
+            tokenId = premintedToken.tokenId
+            premintedToken.delivered = true
+            db.collections.premintedTokens.update(premintedToken)
         }
 
-        Logger.info(`Preminted token id ${tokenId} sent to client.`)
+        Logger.info(`Preminted token id ${tokenId} delivered to client.`)
 
         res.json({ "tokenId" : tokenId })
     })
@@ -322,6 +341,10 @@ const main = async () => {
 
             //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
             await client.closeMigration()
+
+            const premintedToken = db.collections.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
+            premintedToken.minted = true
+            db.collections.premintedTokens.update(premintedToken)
 
             // Call origin bridge migrateFromIOUERC721ToERC721
             await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
