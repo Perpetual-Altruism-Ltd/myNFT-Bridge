@@ -543,8 +543,16 @@ export default class extends AbstractView {
       //TODO
     }
 
-    //reload westron lib to handle wallet connection. Essentially, this sets the callback of connection buttons
-    //reloadWestron(); SEE THIS LATER; CERTAINLY TODELETE
+    //Display connected account addr
+    userAccount = window.web3.currentProvider.selectedAddress;
+    document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+    if(userAccount != ""){
+      //Show origin network drop down
+      showCard("DepartureCard", true);
+      showCardLine("OriginNetworkCardLine", true);
+      //Prefill origin network
+      prefillOriginNetwork();
+    }
 
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
@@ -695,7 +703,6 @@ export default class extends AbstractView {
         //Display next form field: dest owner input
         showCardLine("DestOwnerCardLine", true);
         //Prefill destTokenOwner with the current connected address
-        let account = window.web3.currentProvider.selectedAddress;
         document.getElementById("inputDestOwner").value = userAccount;
 
         //Display loading text for tokenID
