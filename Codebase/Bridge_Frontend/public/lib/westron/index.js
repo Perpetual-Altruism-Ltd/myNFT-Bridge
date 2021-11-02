@@ -20,7 +20,7 @@ const connectFortmaticButton = document.querySelector(".connectFortmatic");
 const connectVenlyButton = document.querySelector(".connectVenly");
 const connectCoinbaseButton = document.querySelector(".connectCoinbase");
 
-let connectionCallback = function(){console.log("No callback defined yet");};
+//let connectionCallback = function(){console.log("No callback defined yet");};
 
 
 // Button click listener
@@ -133,19 +133,19 @@ function initConnector() {
 		connectedButton.disabled = false;
 
 		const accounts = await connector.web3.eth.getAccounts();
-		document.querySelector(".address").innerHTML = accounts[0];
+		//document.querySelector(".address").innerHTML = accounts[0];
 	};
 
 	connector.onDisconnection = () => {
 		setDisabledConnectButtons(false);
-		document.querySelector(".address").innerHTML = "";
+		//document.querySelector(".address").innerHTML = "";
 		connectedButton.innerHTML = "Connect " + providerConnected;
 		connectedButton = null;
 		providerConnected = "";
 	};
 
 	connector.onAccountChanged = (account) => {
-		document.querySelector(".address").innerHTML = account;
+		//document.querySelector(".address").innerHTML = account;
 	};
 }
 
@@ -157,7 +157,8 @@ async function connection(callback) {
 	if (await connector.connection()) {
 		connectedButton.innerHTML = "Disconnect " + providerConnected;
 		web3 = connector.web3;
-    connectionCallback();
+
+    if(callback){callback();}
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");

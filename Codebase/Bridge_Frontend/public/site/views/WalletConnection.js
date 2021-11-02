@@ -18,13 +18,13 @@ export default class extends AbstractView {
     var endLoadMetamaskConnection = async function () {
       //Set wallet connection callback for Westron lib
       //DO I NEED A CALLBACK ? WILL IT ACCESS THIS CONTEXT ?
-      connectionCallback = function(){
+      /*connectionCallback = function(){
         //Display connected addr + departure cards
         document.getElementById("ConnectedAddrCard").style = 'display: flex;';
         document.getElementById("DepartureCard").style = 'display: flex;';
         //Prefill origin network
         prefillOriginNetwork();
-      }
+      }*/
 
       //Connecting to metmask if injected
       if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
@@ -32,7 +32,9 @@ export default class extends AbstractView {
               connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
               connectedButton = connectMetaMaskButton;
               providerConnected = "MetaMask";
-              connection();
+              connection(function(){
+                model.navigateTo('/migration_form');
+              });
           } else {
               connector.disconnection();
           }
