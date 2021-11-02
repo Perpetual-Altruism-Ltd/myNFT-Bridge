@@ -1,4 +1,5 @@
 const Logger = require('./winston.js')('Client')
+const { Axios } = require('axios')
 const Uuid = require('uuid')
 const Ethereum = require('./blockhainModules/ethereum')
 const Forge = require('./forge')
@@ -40,7 +41,7 @@ class Client {
         Logger.info(id ? `Existing client reloaded with id ${this.id} at step ${this.step}` : `New client generated with id ${this.id}`)
     }
 
-    async annonceToBridge() {
+    async annonceToBridge(){
         this.step = 'annonceToBridge';
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
@@ -64,7 +65,7 @@ class Client {
         }
     }
 
-    async transferToBridge(migrationHashSignature) {
+    async transferToBridge(migrationHashSignature){
         this.step = 'transferToBridge';
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
@@ -79,7 +80,7 @@ class Client {
         )
     }
 
-    async closeMigration() {
+    async closeMigration(){
         this.step = 'closeMigration'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
@@ -97,7 +98,7 @@ class Client {
         )).transactionHash
     }
 
-    async closeRedeemMigration() {
+    async closeRedeemMigration(){
         this.step = 'closeRedeemMigration'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
@@ -122,7 +123,7 @@ class Client {
             escrowHashSigned)
     }
 
-    async verifyEscrowHashSigned(escrowHashSigned) {
+    async verifyEscrowHashSigned(escrowHashSigned){
         this.step = 'verifyEscrowHashSigned'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)
@@ -131,7 +132,7 @@ class Client {
         return owner == this.migrationData.originOwner;
     }
 
-    async updateEscrowHash() {
+    async updateEscrowHash(){
         this.step = 'updateEscrowHash'
         this.dbObject.step = this.step
         this.db.collections.clients.update(this.dbObject)

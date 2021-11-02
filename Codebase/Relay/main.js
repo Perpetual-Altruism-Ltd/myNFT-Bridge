@@ -9,6 +9,7 @@ const Ethereum = require('./libs/blockhainModules/ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
 const Db = require('./libs/db')
 const { sleep } = require('./libs/utils')
+const Axios = require('axios')
 
 const main = async () => {
     const db = new Db()
@@ -167,6 +168,37 @@ const main = async () => {
             return
         }
 
+        const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
+        if(!destinationWorld){
+            res.status(400)
+            res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
+            Logger.error(`Can't find destination world ${migrationData.destinationWorld}`)
+            return
+        }
+
+        if(req.body.redeem){
+            const originWorld = originUniverse.worlds.find(world => world.address == migrationData.originWorld)
+            if(!originWorld){
+                res.status(400)
+                res.send({ status: `Can't find origin world ${migrationData.originWorld}` })
+                Logger.error(`Can't find origin world ${migrationData.originWorld}`)
+                return
+            }
+            const originUniverseRpc = universesRpc[originUniverse.uniqueId]
+            
+            const tokenUri = await originUniverseRpc.getTokenUri(migrationData.originWorld, migrationData.originTokenId)
+            const tokenMetadata = (await Axios.get(tokenUri)).data
+            
+            if(migrationData.destinationUniverse != tokenMetadata.migrationData.originUniverse
+                || migrationData.destinationWorld != tokenMetadata.migrationData.originWorld
+                || migrationData.destinationTokenId != tokenMetadata.migrationData.originTokenId){
+                    res.status(400)
+                    res.send({ status: `Token metadata mismatch provided informations.` })
+                    Logger.error(`Token metadata mismatch provided informations.`)
+                    return
+                }
+        }
+
         // Returning migration_id
         const client = new Client(
             migrationData,
@@ -177,6 +209,7 @@ const main = async () => {
             db
         )
         clientList[client.id] = client
+        
         res.json({ migrationId: client.id })
 
         Logger.info(`Client id ${client.id} inited migration from universe ${migrationData.originUniverse}, world ${migrationData.originWorld}, tokenId ${migrationData.originTokenId} to ${migrationData.destinationUniverse}, world ${migrationData.destinationWorld}, tokenId ${migrationData.destinationTokenId}.`)

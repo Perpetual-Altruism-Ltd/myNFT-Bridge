@@ -25,6 +25,7 @@ const schemas = {
             destinationTokenId: Joi.string().required(),
             destinationOwner: Joi.string().required()
         }).required(),
+        redeem: Joi.bool().required(),
         operatorHash: Joi.string().required(),
     }),
     continueMigration: Joi.object({
