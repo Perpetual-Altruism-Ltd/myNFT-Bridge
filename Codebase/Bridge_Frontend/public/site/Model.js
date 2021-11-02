@@ -50,6 +50,7 @@ model.escrowHash = "";
 
 model.destinationTokenTransfertTxHash = "";
 
+model.disconnectWallet = false;
 model.isRedeem = false;
 
 export default model;

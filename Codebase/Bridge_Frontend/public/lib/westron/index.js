@@ -1,6 +1,7 @@
 let connector = null;
 let connectedButton = null;
 let providerConnected = "";
+
 // Button declarations
 //COMMENTED BY NICO. LET COMMENTED UNLESS IT HAS ANY UTILITY...
 /*window.onload = function() {

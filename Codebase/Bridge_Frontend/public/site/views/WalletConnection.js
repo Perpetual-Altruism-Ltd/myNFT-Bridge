@@ -41,8 +41,16 @@ export default class extends AbstractView {
       }
     }
 
-    //Load westron lib, to add the behaviour to connection buttons
-    loadWestron();
+    //If user want to disconnect his wallet, call disconnect from westron lib
+    if(model.disconnectWallet){
+      connector.disconnection();
+      loadWestron();
+
+      model.disconnectWallet = false;
+    }else{
+      //Load westron lib, to add the behaviour to connection buttons
+      loadWestron();
+    }
 
     //Auto connect to metamask if wallet exists
     setTimeout(endLoadMetamaskConnection, 1000);
