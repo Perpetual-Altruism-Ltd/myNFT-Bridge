@@ -40,15 +40,8 @@
             ]
 		},
 		{
-			"name":"Ethereum Testnet Goerli",
-			"chainID": 5,
-			"networkID":5,
-			"uniqueId": "0x3fbf5c9a",
-			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-			"explorer" : "https://etherscan.io/"
-		},
-		{
 			"name":"Ethereum Testnet Kovan",
+			"rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"chainID": 42,
 			"networkID": 42,
 			"uniqueId": "0xee0bec75",
@@ -56,7 +49,17 @@
 			"explorer" : "https://kovan.etherscan.io/"
 		},
 		{
+			"name":"Ethereum Testnet Goerli",
+			"rpc": "wss://goerli.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+			"chainID": 5,
+			"networkID":5,
+			"uniqueId": "0x3fbf5c9a",
+			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+			"explorer" : "https://etherscan.io/"
+		},
+		{
 			"name":"myNFT Sidechain",
+			"rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"chainID": 323232,
 			"networkID": 323232,
 			"uniqueId": "0xd1e94e57",
