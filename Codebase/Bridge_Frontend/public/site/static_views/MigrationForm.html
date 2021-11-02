@@ -1,23 +1,17 @@
 <!--============= Migration Form display =============-->
 <div id="MigrationFormDisplay" class="Card">
-  <!-- Connection buttons card -->
-  <div id="ConnectionCenter">
-      <button type="button" class="btn btn-primary connectMetaMask clickableRoundButton">Connect MetaMask</button>
-      <button type="button" class="btn btn-primary connectTorus clickableRoundButton">Connect Torus</button>
-      <button type="button" class="btn btn-primary connectWalletConnect clickableRoundButton">Connect WalletConnect</button>
-      <button type="button" class="btn btn-primary connectPortis clickableRoundButton">Connect Portis</button>
-      <button type="button" class="btn btn-primary connectBitski clickableRoundButton">Connect Bitski</button>
-      <button type="button" class="btn btn-primary connectFortmatic clickableRoundButton">Connect Fortmatic</button><br/><br/>
-      <button type="button" class="btn btn-primary connectVenly clickableRoundButton">Connect Venly (Arkane)</button>
-      <button type="button" class="btn btn-primary connectCoinbase clickableRoundButton">Connect Coinbase</button>
-  </div>
+
 
   <!-- Connected address card -->
   <div class="Card" id="ConnectedAddrCard">
     <div class="CardLine DataDisplay">
       <div class="LineElement TextElement">Connected address:</div>
       <div class="LineElement DataText address"></div>
+      <div class="LineElement ColoredButtonContainer">
+        <button class="ColoredButton" id="FetchDataButton">Disconnect wallet</button>
+      </div>
     </div>
+
   </div>
 
   <!-- Departure card -->
