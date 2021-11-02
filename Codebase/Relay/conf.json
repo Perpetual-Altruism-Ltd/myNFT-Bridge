@@ -65,12 +65,6 @@
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
             "worlds": [
-                {
-                    "address": "0x6f3a52ab9eA3B68302D69480Eeff0aaFc055ca96",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                }
             ]
 		},
 		{
@@ -82,12 +76,6 @@
 			"bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
 			"explorer" : "https://etherscan.io/",
             "worlds": [
-                {
-                    "address": "0x6f3a52ab9eA3B68302D69480Eeff0aaFc055ca96",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                }
             ]
 		}
     ]
