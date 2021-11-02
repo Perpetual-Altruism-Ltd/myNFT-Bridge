@@ -41,6 +41,9 @@ export default class extends AbstractView {
       }
     }
 
+    //Load westron lib, to add the behaviour to connection buttons
+    loadWestron();
+
     //Auto connect to metamask if wallet exists
     setTimeout(endLoadMetamaskConnection, 1000);
   }
