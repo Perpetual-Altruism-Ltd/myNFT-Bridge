@@ -128,7 +128,11 @@ class Ethereum extends EventEmitter {
                     this.running = false
                     reject("Can't retrieve the migration hash")
                 })
-                web3Contract.methods.migrateToERC721IOU(...data).send()
+                try{
+                    await web3Contract.methods.migrateToERC721IOU(...data).send()
+                }catch(err){
+                    console.log(err)
+                }
             } catch(e) {
                 reject(e)
             }

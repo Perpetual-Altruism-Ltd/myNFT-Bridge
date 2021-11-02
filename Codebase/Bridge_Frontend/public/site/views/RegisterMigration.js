@@ -100,6 +100,7 @@ export default class extends AbstractView {
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;
       options.data.migrationData.destinationOwner = migData.destinationOwner;
       options.data.operatorHash = "0x00";//Not used yet
+      options.data.redeem = model.isRedeem;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
