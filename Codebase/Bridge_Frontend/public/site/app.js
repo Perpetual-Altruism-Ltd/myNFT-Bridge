@@ -8,11 +8,13 @@ import MigrationFinished from './views/MigrationFinished.js';
 
 import Model from './Model.js';
 
+//Launch the static server: sudo http-server ./public/ -p 85 -c-1
+
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
 const router = async () => {
       const routes = [
-          { path: "/migration_form", view: MigrationForm },
+          { path: "/", view: MigrationForm },
           { path: "/register_migration", view: RegisterMigration },
           { path: "/escrow_token", view: EscrowToken },
           { path: "/sign_escrow", view: SignEscrow },
@@ -35,7 +37,9 @@ const router = async () => {
               route: routes[0],
               result: [location.pathname]
           };
+          history.pushState(null, null, '/');
       }
+      console.log(match);
 
       const getParams = match => {
         const values = match.result.slice(1);
@@ -52,6 +56,7 @@ const router = async () => {
       view.getHtml(htmlContent => {
         document.getElementById("WhiteSheet").innerHTML = htmlContent;
         //Run the code associated to this view
+        console.log("");
         view.initCode(Model);
       });
 
