@@ -2,12 +2,14 @@ let connector = null;
 let connectedButton = null;
 let providerConnected = "";
 // Button declarations
-window.onload = function() {
+//COMMENTED BY NICO. LET COMMENTED UNLESS IT HAS ANY UTILITY...
+/*window.onload = function() {
     if(!window.location.hash){
         window.location = window.location + '#loaded';
 		  window.location.href = window.location.href
     }
-}
+}*/
+
 const connectMetaMaskButton = document.querySelector(".connectMetaMask");
 const connectTorusButton = document.querySelector(".connectTorus");
 const connectWalletConnectButton = document.querySelector(".connectWalletConnect");
