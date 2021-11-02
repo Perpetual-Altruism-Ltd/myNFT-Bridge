@@ -543,17 +543,6 @@ export default class extends AbstractView {
       //TODO
     }
 
-    //Display connected account addr
-    userAccount = window.web3.currentProvider.selectedAddress;
-    document.getElementById("ConnectedAccountAddr").textContent = userAccount;
-    if(userAccount != ""){
-      //Show origin network drop down
-      showCard("DepartureCard", true);
-      showCardLine("OriginNetworkCardLine", true);
-      //Prefill origin network
-      prefillOriginNetwork();
-    }
-
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
     setupDropDown("RelaySelector");
@@ -565,6 +554,26 @@ export default class extends AbstractView {
     clearDropDownOptions("RelaySelector");
     clearDropDownOptions("DestinationNetworkSelector");
     clearDropDownOptions("DestinationWorldSelector");
+
+    //Display connected account addr
+    userAccount = window.web3.currentProvider.selectedAddress;
+    if(userAccount != "" && window.web3.eth != undefined){
+      console.log("Westron lib loaded.");
+      document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+      //Show origin network drop down
+      showCard("DepartureCard", true);
+      showCardLine("OriginNetworkCardLine", true);
+
+      //Prefill origin network
+      setTimeout(prefillOriginNetwork, 1000);
+    }
+    else{
+      document.getElementById("ConnectedAccountAddr").textContent = "Wallet not connected. Redirect to connection page.";
+      console.log("Westron lib not loaded. Redirecting to wallet_connection");
+      model.navigateTo('wallet_connection');
+      return;//To stop javascript execution in initCode() function
+    }
 
     //Load networks
     loadNets(function () {
@@ -757,6 +766,11 @@ export default class extends AbstractView {
     document.getElementById("inputDestOwner").addEventListener('focusout', async() =>{
       document.getElementById("CompleteMigrationCard").style.display = 'flex';
       migData.destinationOwner = document.getElementById("inputDestOwner").value;
+    });
+
+    //Disconnect wallet button
+    document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
+      
     });
 
     //Migration type buttons

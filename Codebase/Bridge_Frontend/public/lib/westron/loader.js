@@ -17,5 +17,5 @@ let loadWestron = function(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	loadWestron();
+	//loadWestron();
 });
