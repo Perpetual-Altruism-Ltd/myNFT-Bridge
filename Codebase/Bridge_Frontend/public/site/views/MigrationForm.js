@@ -3,6 +3,7 @@ import AbstractView from './AbstractView.js';
 //0xf181e8B385FE770C78e3B848F321998F78b0d73e
 //0xbf21e21414554dB734C9f86835D51B57136BC35b
 //Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
+//Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
 
 export default class extends AbstractView {
   constructor(params) {
@@ -770,7 +771,10 @@ export default class extends AbstractView {
 
     //Disconnect wallet button
     document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
-      
+      //HERE
+      //OR RELOAD APP
+      model.disconnectWallet = true;
+      model.navigateTo('wallet_connection');
     });
 
     //Migration type buttons
