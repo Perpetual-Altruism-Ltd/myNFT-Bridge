@@ -493,7 +493,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Test/ImplTestERC721.sol": "ImplTestERC721"
+			"contracts/Implementation/Test/ImplTestERC721.sol": "ImplTestERC721"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -501,26 +501,26 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": false,
+			"enabled": true,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
-		"ERC721.sol": {
-			"keccak256": "0x65dd41da5d50472d6ef2a8c76d102396a351f3813b2a1afadd736937e9f8ee98",
+		"contracts/Implementation/ERC721.sol": {
+			"keccak256": "0xa6297f1856dad920fce8fd672cdc844ea5a8ab0ed28046ccdc717500ea75de23",
 			"license": "CC0-1.0",
 			"urls": [
-				"bzz-raw://863d2d6f435040b6ea5148f81d13ae96afb415461e9adc27b20c798a82b4557a",
-				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
+				"bzz-raw://38b70fd581a954de06eb47d6b0a92fdf32618a0787dbf7c6ac3a8f0efe238b44",
+				"dweb:/ipfs/QmTs8qdLPSYK3kGPb9Rt2eSJVczKBuYcZXeRZXdFPj2Kbp"
 			]
 		},
-		"Test/ImplTestERC721.sol": {
-			"keccak256": "0x650bf3488a01728460f99e28ad59c9dc47af9d3075443ab929fca9da5b438d59",
+		"contracts/Implementation/Test/ImplTestERC721.sol": {
+			"keccak256": "0x1343d6a862c6390c81ab3579057c00aea764dc147fb12c4a4a348db6f21eeb8b",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://9d815bccebe217b304dc28fff66aa4f317daa1b03f447ae55433f229b695704a",
-				"dweb:/ipfs/QmYq61F7HqhiCwnn85RZs1DC7hk3KjQj5Dv3b8pjsTeGdT"
+				"bzz-raw://5daa4595003220479c0d985575b1a165daea4469fab0ea5f172880c51ccfa99f",
+				"dweb:/ipfs/QmbM17TKYFz4YuTLSVk2CA6GVuDw3uWqUEybr5qGfpE1TF"
 			]
 		}
 	},
