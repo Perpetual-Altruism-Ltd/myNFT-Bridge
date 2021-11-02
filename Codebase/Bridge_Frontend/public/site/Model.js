@@ -15,6 +15,7 @@ model.ogTokenMetaData = {};
 model.migrationData = {};
 model.migrationData.originUniverseIndex = 0;
 model.migrationData.originUniverseUniqueId = "";
+model.migrationData.originNetworkId = "";//Blochain ID
 model.migrationData.originUniverse = "";
 model.migrationData.originWorld = "";
 model.migrationData.originTokenId = "";

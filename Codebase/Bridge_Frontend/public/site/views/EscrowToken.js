@@ -74,7 +74,7 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.migrationHash == ""){
-        loadingText.textContent = "Couldn't retrieve migration data hash from relay.";
+        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Contact our team.";
       }
     }
     //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user
@@ -82,19 +82,6 @@ export default class extends AbstractView {
     migrationHashListener();
 
     let signMigrationHash = async function(){
-      //TO DELETE
-      /*window.web3.eth.sign(model.migrationHash, account, function(err,res){
-        //If user refused to sign
-        if(err){
-          loadingText.textContent = "Signature refused. Start migration again ?";
-        }else{
-          console.log("sign() signature: " + res);
-          loadingText.textContent = "Sending signature to relay.";
-          // migrationHashSigned = res;
-          //continueMigration();
-        }
-      });*/
-
       //personal_sign
       window.ethereum.request({ method: 'personal_sign', params: [ model.migrationHash, account ] })
       .then((res) =>{
@@ -104,7 +91,7 @@ export default class extends AbstractView {
 
         continueMigration();
       }).catch((res) => {
-        loadingText.textContent = "Signature refused. Start migration again ?";
+        loadingText.textContent = "Any issue? Contact our team.";
         console.log("Signature error: " + res);
       });
     }
@@ -128,12 +115,11 @@ export default class extends AbstractView {
           //start listening relay for escrow hash
           escrowHashListener();
         }else{
-          loadingText.textContent = "Relay not responding.";
+          loadingText.textContent = "Relay not responding. Contact our team.";
           console.log(response.status + ' : ' + response.statusText);
         }
 
       }).catch(function (error) {
-        loadingText.textContent = "Wrong /continueMigration request.";
         console.error(error);
       });
     }
@@ -167,7 +153,7 @@ export default class extends AbstractView {
       }
 
       console.log("Start listening for escrow hash");
-      setTimeout(() => { loadingText.textContent = "Waiting for your NFT to be transferred into the origin bridge."; }, 3000);
+      setTimeout(() => { loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge."; }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
@@ -185,7 +171,7 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.escrowHash == ""){
-        loadingText.textContent = "Couldn't retrieve escrow hash from relay.";
+        loadingText.textContent = "Couldn't retrieve escrow hash from relay. Contact our team.";
       }
     }
 
