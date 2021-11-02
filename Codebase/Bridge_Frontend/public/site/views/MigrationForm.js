@@ -22,7 +22,7 @@ export default class extends AbstractView {
     //This var is not refreshed after this step on purpose.
     let userAccount = "";
 
-    //Define functions to load data from server
+    //Load data from server: static files like conf and ABIs
     let loadNets = async function (_callback) {
         bridgeApp.networks = [];
         bridgeApp.net = {};
@@ -153,18 +153,6 @@ export default class extends AbstractView {
         addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
       }
     }
-
-    let isIOUToken = function(metadata){
-      if(metadata != null && metadata != undefined){
-        return metadata.migrationData != undefined
-        && metadata.migrationData.originUniverse != undefined
-        && metadata.migrationData.originWorld != undefined
-        && metadata.migrationData.originTokenId != undefined;
-      }else{
-        return false;
-      }
-    }
-
     //Define functions which interact with blockchains or wallet
     let promptSwitchChain = async function (ID) {
       window.ethereum.request({
@@ -411,28 +399,15 @@ export default class extends AbstractView {
        }
        getContractSymbol();
     }
-
-    //Connect to metamask if wallet installed
-    var endLoadMetamaskConnection = async function () {
-      //Set wallet connection callback for Westron lib
-      connectionCallback = function(){
-        //Display connected addr + departure cards
-        document.getElementById("ConnectedAddrCard").style = 'display: flex;';
-        document.getElementById("DepartureCard").style = 'display: flex;';
-        //Prefill origin network
-        prefillOriginNetwork();
-      }
-
-      //Connecting to metmask if injected
-      if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
-          if (connector == null || !connector.isConnected) {
-              connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
-              connectedButton = connectMetaMaskButton;
-              providerConnected = "MetaMask";
-              connection();
-          } else {
-              connector.disconnection();
-          }
+    //Check if the metadata json file represent an IOU
+    let isIOUToken = function(metadata){
+      if(metadata != null && metadata != undefined){
+        return metadata.migrationData != undefined
+        && metadata.migrationData.originUniverse != undefined
+        && metadata.migrationData.originWorld != undefined
+        && metadata.migrationData.originTokenId != undefined;
+      }else{
+        return false;
       }
     }
 
@@ -559,6 +534,18 @@ export default class extends AbstractView {
       showCard(id, disp);
     }
 
+    //Tell weather user come with migData object already filled up or not.
+    let isMigDataAlreadyFilled = function(){
+      //TODO
+    }
+    //Prefill all form fields
+    let prefillMigFormWithMigData = function(){
+      //TODO
+    }
+
+    //reload westron lib to handle wallet connection. Essentially, this sets the callback of connection buttons
+    //reloadWestron(); SEE THIS LATER; CERTAINLY TODELETE
+
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
     setupDropDown("RelaySelector");
@@ -589,8 +576,6 @@ export default class extends AbstractView {
     loadERC721ABI();
     //Load ERC721 Metadata ABI
     loadERC721MetadataABI();
-    //Auto connect to metamask if wallet exists
-    setTimeout(endLoadMetamaskConnection, 1000);
 
     //Listeners & Callback
     //When new origin network selected : Prompt user to connect to new chain selected

@@ -1,4 +1,5 @@
 /* This is the Controller in MVC architecture*/
+import WalletConnection from './views/WalletConnection.js';
 import MigrationForm from './views/MigrationForm.js';
 import RegisterMigration from './views/RegisterMigration.js';
 import EscrowToken from './views/EscrowToken.js';
@@ -8,10 +9,13 @@ import MigrationFinished from './views/MigrationFinished.js';
 
 import Model from './Model.js';
 
+//Launch the static server: sudo http-server ./public/ -p 85 -c-1
+
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
 const router = async () => {
       const routes = [
+          { path: "/wallet_connection", view: WalletConnection },
           { path: "/migration_form", view: MigrationForm },
           { path: "/register_migration", view: RegisterMigration },
           { path: "/escrow_token", view: EscrowToken },
@@ -28,13 +32,13 @@ const router = async () => {
       });
 
       let match = potentialMatches.find(potentialMatch => potentialMatch.result !== null);
-
       /* Route not found - return first route OR a specific "not-found" route */
       if (!match) {
           match = {
               route: routes[0],
               result: [location.pathname]
           };
+          history.pushState(null, null, '/wallet_connection');
       }
 
       const getParams = match => {
@@ -52,6 +56,7 @@ const router = async () => {
       view.getHtml(htmlContent => {
         document.getElementById("WhiteSheet").innerHTML = htmlContent;
         //Run the code associated to this view
+
         view.initCode(Model);
       });
 

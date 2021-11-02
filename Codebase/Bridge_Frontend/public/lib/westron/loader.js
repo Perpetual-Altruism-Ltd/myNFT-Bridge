@@ -4,7 +4,7 @@
 	- ConnectorManager.js
 	- web3.js
 */
-document.addEventListener("DOMContentLoaded", () => {
+let loadWestron = function(){
 	var index = document.createElement("script");
 	index.setAttribute("type","text/javascript");
 	index.setAttribute("src","/lib/westron/index.js");
@@ -14,4 +14,8 @@ document.addEventListener("DOMContentLoaded", () => {
 	ConnectorManager.setAttribute("type","text/javascript");
 	ConnectorManager.setAttribute("src","/lib/westron/ConnectorManager.js");
 	document.body.appendChild(ConnectorManager);
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+	loadWestron();
 });

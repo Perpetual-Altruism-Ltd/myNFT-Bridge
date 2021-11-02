@@ -46,7 +46,7 @@ export default class extends AbstractView {
           }
           else{
             console.log('Approval accepted by user');
-            //Delete cookies from previous migration
+            //Delete cookies from previous migration, to let place to the new one which will me
             model.eraseCookie("migrationId");
 
             //If approval accepted by user: go to next page

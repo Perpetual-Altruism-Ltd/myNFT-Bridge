@@ -12,6 +12,7 @@ app.enable('trust proxy');
 
 logger.stream = {
     write: function (message, encoding) {
+      console.log("WINSTON LOG: " + message + ', ' + encoding);
         logger.info(message);
     }
 };
