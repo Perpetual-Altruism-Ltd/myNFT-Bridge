@@ -95,6 +95,10 @@ TOP LEFT COLOR: #12132b*/
     width: calc(100% - 120px);
 }
 
+button {
+    cursor:pointer;
+}
+
 .clickableRoundButton{
     padding: 8px 16px;
     -webkit-box-pack: center;
@@ -113,7 +117,6 @@ TOP LEFT COLOR: #12132b*/
     font-size: .88rem;
     line-height: 1.5rem;
     text-decoration: none;
-    cursor:pointer;
 }
 
 .formfield{
