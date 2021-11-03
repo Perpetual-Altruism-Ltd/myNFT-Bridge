@@ -13,7 +13,7 @@
 			"name":"Ethereum Testnet Rinkeby",
             "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
 			"uniqueId": "0x07dac20e",
-			"bridgeAdress": "0xD1443FC2D6FA6D6fFc9852C4b1aD61E2BC120c2a",
+			"bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
 			"explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {

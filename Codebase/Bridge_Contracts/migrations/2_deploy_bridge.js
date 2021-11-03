@@ -1,7 +1,6 @@
 const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
 const ERC1538Delegate = artifacts.require("ERC1538Delegate");
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
-const ImplTestERC721 = artifacts.require("ImplTestERC721");
 
 const ImplMyNFTBridgeFunInit = artifacts.require("ImplMyNFTBridgeFunInit");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
@@ -43,7 +42,7 @@ module.exports = async(deployer, network, accounts) => {
         "ImplMyNFTBridgeFunInit"
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
-    await instancedInit.init("0xee0bec75"); //Replace localhost with whatever you are deploying on
+    await instancedInit.init("0x07dac20e"); //Replace localhost with whatever you are deploying on
 
     //Adding ImplERC721TokenReceiver features
     console.log("Adding ERC721TokenReceiver features...");
@@ -59,13 +58,13 @@ module.exports = async(deployer, network, accounts) => {
     await deployer.deploy(ImplMyNFTBridgeFunMigrateToERC721);
     await instancedProxy.updateContract(
         ImplMyNFTBridgeFunMigrateToERC721.address, 
-        "isMigrationPreRegisteredERC721(bytes32)getProofOfEscrowHash(bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)", 
+        "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)isMigrationPreRegisteredERC721(bytes32)getProofOfEscrowHash(bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)", 
         "ImplMyNFTBridgeFunMigrateToERC721 Pt1"
     );
 
     await instancedProxy.updateContract(
         ImplMyNFTBridgeFunMigrateToERC721.address,
-        "generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)", 
+        "migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)", 
         "ImplMyNFTBridgeFunMigrateToERC721 Pt2"
     );
 
@@ -73,11 +72,8 @@ module.exports = async(deployer, network, accounts) => {
     await deployer.deploy(ImplMyNFTBridgeFunMigrateFromERC721);
     await instancedProxy.updateContract(
         ImplMyNFTBridgeFunMigrateFromERC721.address, 
-        "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)	registerEscrowHashSignature(bytes32,bytes)registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)isMigrationRedeemable(bool)isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)",
+        "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)registerEscrowHashSignature(bytes32,bytes)registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)isMigrationRedeemable(bool)isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)",
         "ImplMyNFTBridgeFunMigrateFromERC721 Pt1"
     );
-
-    console.log("Deploying the ERC721 test contract");
-    await deployer.deploy(ImplTestERC721);
 
 }

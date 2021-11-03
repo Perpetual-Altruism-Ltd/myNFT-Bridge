@@ -9,7 +9,7 @@ const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunM
 
 exports.setup = async function(accounts){
 
-    console.log("Setting up a clean test environement");
+    console.log("Setting up a clean test environment");
 
     let bridgeBuilder = accounts[0];
 
@@ -42,24 +42,24 @@ exports.setup = async function(accounts){
 
     // ----------- Initializing the briges ----------------
 
-    //ALPHA
+    //ALPHA (0x1)
     await alpha_instancedProxyBridge.updateContract(
         logic_ImplMyNFTBridgeFunInit.address, 
-        "init(string)", 
+        "init(uint256)", 
         "ImplMyNFTBridgeFunInit"
     );
     let alpha_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(alpha_instancedProxyBridge.address);
-    await alpha_instancedProxyBridgeInit.init("ALPHA");
+    await alpha_instancedProxyBridgeInit.init("0x1");
 
     
-    //BETA
+    //BETA (0x2)
     await beta_instancedProxyBridge.updateContract(
         logic_ImplMyNFTBridgeFunInit.address, 
-        "init(string)", 
+        "init(uint256)", 
         "ImplMyNFTBridgeFunInit"
     );
     let beta_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(beta_instancedProxyBridge.address);
-    await beta_instancedProxyBridgeInit.init("BETA");
+    await beta_instancedProxyBridgeInit.init("0x2");
 
     //Adding their other features to the bridges
 
@@ -106,8 +106,13 @@ exports.setup = async function(accounts){
     //Creating the token contracts
     let alpha_Tokens = await ImplTestERC721.new();
     let beta_Tokens = await ImplTestERC721.new();
-  
 
+    return ({
+        bridge_1 : alpha_proxyBridge,
+        bridge_2 : beta_proxyBridge,
+        erc721_token : alpha_Tokens,
+        erc721_iou : beta_Tokens
+    })
 
 }
 
