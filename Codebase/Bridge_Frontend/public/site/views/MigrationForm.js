@@ -517,7 +517,13 @@ export default class extends AbstractView {
 
     //Display functions
     let clearTokenData = function(){
-      document.getElementById("TokenErrorMessage").style.display = 'none';
+      showCardLine("TokenErrorMessage", false);
+      showCardLine("OriginWorldNameCardLine", false);
+      showCardLine("OriginWorldSymbolCardLine", false);
+      showCardLine("OriginTokenOwnerCardLine", false);
+      showCardLine("OriginTokenURICardLine", false);
+      showCardLine("MetadataCard", false);
+
       document.getElementById("OGContractName").innerHTML = "";
       document.getElementById("OGContractSymbol").innerHTML = "";
       document.getElementById("OGTokenOwner").innerHTML = "";
@@ -651,6 +657,7 @@ export default class extends AbstractView {
       selectDropDownOptionByIndex("RelaySelector", migData.migrationRelayIndex);
 
       //Prefill destWorld
+      console.log(migData.destinationWorld);
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //Prefill destTokenId
@@ -830,18 +837,22 @@ export default class extends AbstractView {
     document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
-        document.getElementById("inputOGTokenID").dispatchEvent(new Event("focusout"));
-        //Trigger Fetch data button
-        document.getElementById("FetchDataButton").click();
+        document.getElementById("inputOGTokenID").dispatchEvent(new Event("change"));
       }
     });
-    document.getElementById("inputOGTokenID").addEventListener('focusout', async() =>{
+    document.getElementById("inputOGTokenID").addEventListener('change', async() =>{
       let inputVal = document.getElementById("inputOGTokenID").value;
       if(inputVal.startsWith('0x')){
         migData.originTokenId = parseInt(inputVal, 16).toString();
       }else{
         migData.originTokenId = inputVal;
       }
+
+      //Clear previous token datas
+      clearTokenData();
+
+      //Trigger Fetch data button
+      document.getElementById("FetchDataButton").click();
     });
 
     //===Destination owner input===
@@ -860,8 +871,6 @@ export default class extends AbstractView {
 
     //Disconnect wallet button
     document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
-      //HERE
-      //OR RELOAD APP
       model.disconnectWallet = true;
       model.navigateTo('wallet_connection');
     });
@@ -909,11 +918,7 @@ export default class extends AbstractView {
       migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
 
       //PREFILL fields
-      //destuniv
-      //selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.destinationUniverseUniqueId);
       //destworld
-      console.log(migData.destinationWorld);
-      //ISSUE HERE
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //destTokenId

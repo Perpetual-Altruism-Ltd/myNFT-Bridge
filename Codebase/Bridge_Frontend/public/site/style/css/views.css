@@ -1,9 +1,9 @@
 /*============Views===========*/
 /*Initial view */
 #DepartureCard,#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
-#TokenDataCard,#TokenErrorMessage,
+#TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
-#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,
+#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard{
   /*-webkit-transition: max-height .25s ease;
   -moz-transition: max-height .25s ease;
