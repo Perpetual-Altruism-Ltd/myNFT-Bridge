@@ -17,7 +17,7 @@
 			"explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x04f34D9Bb1595Bc50D90953DFb593348d87faea3",
+                    "address": "0xf609Ff037BdDA6749cf02651f04f584d8D51d276",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
