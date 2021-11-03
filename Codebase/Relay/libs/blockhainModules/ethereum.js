@@ -224,17 +224,35 @@ class Ethereum extends EventEmitter {
     /**
      * Utilities functions
      */
-    checkIfErc721(contract) {
-        const web3Contract = new this.web3Instance.eth.Contract(
-            ERC165Abi,
-            contract,
-            {
-                from: this.web3Instance.eth.defaultAccount,
-                gas: 8000000
-            }
-        )
-
-        return await web3Contract.methods.supportsInterface("0x80ac58cd").call() // ERC721 Identifier
+    async isErc721(contract) {
+        try {
+            const web3Contract = new this.web3Instance.eth.Contract(
+                ERC165Abi,
+                contract,
+                {
+                    from: this.web3Instance.eth.defaultAccount,
+                    gas: 8000000
+                }
+            )
+            return await web3Contract.methods.supportsInterface("0x80ac58cd").call() // ERC721 Identifier
+        } catch(e) {
+            return false;
+        }
+    }
+    async isOwner(contract, tokenId, address) {
+        try {
+            const web3Contract = new this.web3Instance.eth.Contract(
+                ERC721IOUAbi,
+                contract,
+                {
+                    from: this.web3Instance.eth.defaultAccount,
+                    gas: 8000000
+                }
+            )
+            return (await web3Contract.methods.ownerOf(tokenId).call() == address)
+        } catch(e) {
+            return false;
+        }
     }
     convertArrayToHex(arr) {
         return arr.map(elt => this.web3Instance.utils.asciiToHex(elt))

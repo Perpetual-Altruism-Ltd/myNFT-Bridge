@@ -254,5 +254,19 @@ contract ImplTestERC721 is ERC721 {
         require(tokenOwners[_tokenId] != address(0), "This token is not minted");
         return string(abi.encodePacked("https://cryptograph.co/tokenuri/0x2449835e86a539ab33f5773729c0db42e89016ff"));
     }
+    
+    /// @notice Query if a contract implements an interface
+    /// @param interfaceID The interface identifier, as specified in ERC-165
+    /// @dev Interface identification is specified in ERC-165. This function
+    ///  uses less than 30,000 gas.
+    /// @return `true` if the contract implements `interfaceID` and
+    ///  `interfaceID` is not 0xffffffff, `false` otherwise
+    function supportsInterface(bytes4 interfaceID) external pure returns(bool) {
+        return (
+            interfaceID == 0x80ac58cd || //ERC721
+            interfaceID == 0x01ffc9a7 //ERC165
+        );
+        
+    }
 
 }

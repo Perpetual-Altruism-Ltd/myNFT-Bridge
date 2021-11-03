@@ -196,13 +196,23 @@ const main = async () => {
         }
 
         const originUniverseRpc = universesRpc[originUniverse.uniqueId]
-        const isErc721 = await originUniverseRpc.checkIfErc721(migrationData.originWorld);
-        console.log('IS ERC : ', isErc721);
+        const isErc721 = await originUniverseRpc.isErc721(migrationData.originWorld);
         if(!isErc721){
-            // res.status(400)
-            // res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
-            Logger.error(`This address is not from an ERC-721 contract`)
-            // return
+            res.status(400)
+            res.send({ status: `This address is not from an ERC-721 smartcontract` })
+            Logger.error(`This address is not from an ERC-721 smartcontract`)
+            return
+        }
+        
+        const isOwner = await originUniverseRpc.isOwner(migrationData.originWorld,
+            migrationData.originTokenId,
+            migrationData.originOwner
+        );
+        if(!isOwner){
+            res.status(400)
+            res.send({ status: `The filled address is not the owner of this ERC-721 token` })
+            Logger.error(`The filled address is not the owner of this ERC-721 token`)
+            return
         }
 
         if(req.body.redeem){
