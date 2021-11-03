@@ -4,20 +4,13 @@
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
 #ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
-#CompleteMigrationCard{
+{
   /*-webkit-transition: max-height .25s ease;
   -moz-transition: max-height .25s ease;
   transition: max-height .25s ease;
   overflow: visible;*/
   display: none;
 }
-/* COME BACK LATER ON SMOOTH TRANSITION
-.Hidden{
-  max-height: 0vh;
-  overflow: hidden;
-}
-document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
-*/
 
 *,
 *::before,
