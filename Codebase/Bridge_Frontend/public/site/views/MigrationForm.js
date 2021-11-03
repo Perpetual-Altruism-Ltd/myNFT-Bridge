@@ -154,6 +154,11 @@ export default class extends AbstractView {
         }
         addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
       }
+
+      //If migData already filled, prefill migration form
+      //Once wallet loaded, chain is switched, and dest net loaded:
+      //we can prefill all form data if user come from register_mig & clicked edit btn
+      if(isMigDataAlreadyFilled()){prefillFormWithMigData();}
     }
     //Define functions which interact with blockchains or wallet
     let promptSwitchChain = async function (ID) {
@@ -344,7 +349,6 @@ export default class extends AbstractView {
                       migData.originTokenName = ogTokenMetaData.name;
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
-                      console.log(ext4);
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
                       } else if(ogTokenMetaData.image != null) {
@@ -479,8 +483,8 @@ export default class extends AbstractView {
       showCard("DepartureCard", true);
       showCardLine("OriginNetworkCardLine", true);
 
-      //Prefill origin network
-      setTimeout(prefillOriginNetwork, 1000);
+      //Timeout to wait for wallet to be connected
+      setTimeout(prefillOriginNetwork, 500);
     }
     //autoconnect to metamask if injected
     var connectToMetamask = async function () {
@@ -508,22 +512,6 @@ export default class extends AbstractView {
         console.log("Metamask not injected. Redirecting to wallet_connection page.");
         model.navigateTo('wallet_connection');
         return;//To stop javascript execution in initCode() function
-      }
-    }
-
-    //Prefill functions
-    //Prefill origin network with the one the user is connected to
-    let prefillOriginNetwork = function(){
-      let connectedChainId = parseInt(window.web3.currentProvider.chainId);
-      //If user connected to a chain trough his wallet: prefill and show next form field
-      if(connectedChainId != undefined){
-        bridgeApp.networks.forEach((net, i) => {
-          if(net.chainID == connectedChainId){
-            selectDropDownOptionByIndex("OriginNetworkSelector", i);
-            //Show next form field
-            onChainSwitchedSuccess();
-          }
-        });
       }
     }
 
@@ -591,16 +579,84 @@ export default class extends AbstractView {
     let showCardLine = function(id, disp){
       showCard(id, disp);
     }
+    let enableRedeemBtnIfNetworkMatch = function(){
+      //If dest network is the one from metadata of IOU token, enable redeem button
+      if(migData.destinationUniverseUniqueId == migData.metadataDestinationUniverseUniqueId){
+        document.getElementById("RedeemButton").disabled = false;
+      }else{
+        document.getElementById("RedeemButton").disabled = true;
+      }
+    }
 
+    //Prefill functions
+    //Prefill origin network with the one the user is connected to
+    let prefillOriginNetwork = function(){
+      let connectedChainId = parseInt(window.web3.currentProvider.chainId);
+      //If user connected to a chain trough his wallet: prefill and show next form field
+      if(connectedChainId != undefined){
+        bridgeApp.networks.forEach((net, i) => {
+          if(net.chainID == connectedChainId){
+            selectDropDownOptionByIndex("OriginNetworkSelector", i);
+            //Show next form field
+            onChainSwitchedSuccess();
+          }
+        });
+      }
+    }
     //Tell weather user come with migData object already filled up or not.
     let isMigDataAlreadyFilled = function(){
-      //TODO
+      if(migData.originUniverseIndex &&
+        migData.originWorld &&
+        migData.originTokenId &&
+        migData.destinationUniverseIndex &&
+        migData.migrationType &&
+        migData.destinationWorld &&
+        migData.destinationTokenId &&
+        migData.destinationOwner){
+        return true;
+      }else{
+        return false;
+      }
     }
-    //Prefill all form fields
-    let prefillMigFormWithMigData = function(){
-      //Prefill ogNet, with delay to not ask user to switch network straight away.
-      setTimeout(function(){selectDropDownOptionByIndex("OriginNetworkSelector", i);}, 3000);
+    //Prefill all form fields. This function is called inside onChainSwitchedSuccess()
+    let prefillFormWithMigData = function(){
+      //OgNet is already prefilled because register_migration prompt user to switch to correct net for edit mig btn
+      //Prefill ogWorld
+      document.getElementById("inputOGContractAddress").value = migData.originWorld;
+      //Prefill ogTokenId
+      document.getElementById("inputOGTokenID").value = migData.originTokenId;
 
+      //load token meta data
+      document.getElementById("FetchDataButton").click();
+      //Prefill destNet
+      selectDropDownOptionByIndex("DestinationNetworkSelector", migData.destinationUniverseTargerListIndex);
+
+      //Enable Redeem if dest net match metadata
+      enableRedeemBtnIfNetworkMatch();
+
+      //Select migration button
+      if(migData.migrationType == model.MintOUIMigrationType){
+        //Select the Mint IOU button
+        document.getElementById("IOUMigrationButton").classList.add('Selected');
+      }
+      else if(migData.migrationType == model.MintOUIMigrationType){
+        //Enable Redeem btn
+        document.getElementById("RedeemButton").disabled = false;
+        //Select Redeem btn
+        document.getElementById("RedeemButton").classList.add('Selected');
+      }
+
+      //Select relay
+      console.log('Selecting relay: ' + migData.migrationRelayIndex);
+      selectDropDownOptionByIndex("RelaySelector", migData.migrationRelayIndex);
+
+      //Prefill destWorld
+      addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
+      selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+      //Prefill destTokenId
+      document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
+      //Prefill destTokenOwner
+      document.getElementById("inputDestOwner").value = migData.destinationOwner;
 
       //Finally display all form fields
       showAllFormFields();
@@ -612,35 +668,7 @@ export default class extends AbstractView {
     setupDropDown("DestinationNetworkSelector");
     setupDropDown("DestinationWorldSelector");
 
-    //Clear drop down from possibly previous data
-    //TODELETE
-    /*clearDropDownOptions("OriginNetworkSelector");
-    clearDropDownOptions("RelaySelector");
-    clearDropDownOptions("DestinationNetworkSelector");
-    clearDropDownOptions("DestinationWorldSelector");*/
-
-    //Display connected account addr
-    userAccount = window.web3.currentProvider.selectedAddress;
-    //If web3 already injected
-    if(userAccount != "" && window.web3.eth != undefined){
-      console.log("Westron already loaded, perfect.");
-      //Display connected addr + ogNet & prefill it
-      displayConnectedWallet();
-    }
-    //If metamask available: autoconnect without redirecting to connection page.
-    else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
-      console.log("Metamask auto connect.");
-      loadWestron();
-      setTimeout(connectToMetamask, 1000);
-    }
-    //Redirect to wallet_connection page
-    else{
-      document.getElementById("ConnectedAccountAddr").textContent = "Wallet not connected. Redirect to connection page.";
-      console.log("Westron lib not loaded. Redirecting to wallet_connection");
-      model.navigateTo('wallet_connection');
-      return;//To stop javascript execution in initCode() function
-    }
-
+    //Call Load data functions one after the other to execute form prefill when the last is finished
     //Load networks
     loadNets(function () {
         //Add select options
@@ -745,20 +773,16 @@ export default class extends AbstractView {
           destUnivUniqueId = network.uniqueId;
         }
       });
-      migData.destinationUniverseIndex = destUnivAbsoluteIndex;
+      migData.destinationUniverseIndex = destUnivAbsoluteIndex;//Index in network_list "networks" array
+      migData.destinationUniverseTargerListIndex = destUnivDropDownIndex;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = destUnivUniqueId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
       migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
-      //Display
-      //If dest network is the one from metadata of IOU token, enable redeem button
-      if(migData.destinationUniverseUniqueId == migData.metadataDestinationUniverseUniqueId){
-        document.getElementById("RedeemButton").disabled = false;
-      }else{
-        document.getElementById("RedeemButton").disabled = true;
-      }
+      //Enable redeem if network dest if same as IOU metadata origin
+      enableRedeemBtnIfNetworkMatch();
       //DISPLAY next form field: migration type buttons
-      document.getElementById("MigrationTypeCardLine").style.display = 'flex';
+      showCardLine("MigrationTypeCardLine", true);
     });
     addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
       //If not redeem: display next form field and load data from relay
@@ -886,8 +910,10 @@ export default class extends AbstractView {
 
       //PREFILL fields
       //destuniv
-      selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.destinationUniverseUniqueId);
+      //selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.destinationUniverseUniqueId);
       //destworld
+      console.log(migData.destinationWorld);
+      //ISSUE HERE
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //destTokenId
@@ -912,6 +938,30 @@ export default class extends AbstractView {
       console.log(migData);
       model.navigateTo("/register_migration");
     });
+
+    //HANDLE WALLET CONNECTION
+    userAccount = window.web3.currentProvider.selectedAddress;
+    //If web3 already injected
+    if(userAccount != "" && window.web3.eth != undefined){
+      console.log("Westron already loaded, perfect.");
+      //Display connected addr + ogNet & prefill it
+      displayConnectedWallet();
+    }
+    //If metamask available: autoconnect without redirecting to connection page.
+    else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
+      console.log("Metamask auto connect.");
+      loadWestron();
+      console.log("Westron lib loaded.");
+      setTimeout(connectToMetamask, 500);
+    }
+    //Redirect to wallet_connection page
+    else{
+      document.getElementById("ConnectedAccountAddr").textContent = "Wallet not connected. Redirect to connection page.";
+      console.log("Westron lib not loaded. Redirecting to wallet_connection");
+      model.navigateTo('wallet_connection');
+      return;//To stop javascript execution in initCode() function
+    }
+
   }
 
 

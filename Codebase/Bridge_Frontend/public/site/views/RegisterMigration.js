@@ -15,8 +15,8 @@ export default class extends AbstractView {
     let migData = model.migrationData;
     let userAccount = "";
 
-    //Define functions which interact with blockchains or wallet
-    let promptSwitchChain = async function (ID) {
+    //When user accept to switch, it will be asked to grant relay as operator of his NFT
+    let promptSwitchChainThenGrantOperator = async function (ID) {
       window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
@@ -26,6 +26,19 @@ export default class extends AbstractView {
       }).catch((res) => {
         console.log("Network switch canceled or error");
         alert("Please accept the metamask switch network prompt in order to continue your NFT migration.");
+      });
+    }
+    //Once user accept to switch, it will be redirected to migration_form
+    let promptSwitchChainThenEditForm = async function (ID) {
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+      }).then((res) =>{
+        console.log("Network switch done.");
+        model.navigateTo("/migration_form");
+      }).catch((res) => {
+        console.log("Network switch canceled or error");
+        alert("Please accept the metamask switch network prompt in order to edit your migration.");
       });
     }
 
@@ -132,7 +145,7 @@ export default class extends AbstractView {
 
     //Interface Buttons
     document.getElementById("EditMigrationButton").addEventListener('click', async() =>{
-      model.navigateTo("/migration_form");
+      promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
     });
     document.getElementById("RegisterButton").addEventListener('click', async() =>{
       //refresh user wallet account
@@ -145,7 +158,7 @@ export default class extends AbstractView {
       //Else, check wallet connected network, and prompt user to switch if wrong network.
       else if(parseInt(window.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
         alert("The NFT you want to migrate is on the blochain " + migData.originUniverse + ". Please change the network you are connected to with your wallet.");
-        promptSwitchChain('0x' + migData.originNetworkId.toString(16));
+        promptSwitchChainThenGrantOperator('0x' + migData.originNetworkId.toString(16));
       }
       //Else: everything OK, launch migration registration
       else{
