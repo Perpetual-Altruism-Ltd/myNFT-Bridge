@@ -2,6 +2,7 @@ const Logger = require('../winston.js')('Ethereum')
 const Web3 = require('web3')
 const Conf = require('../../conf')
 const ERC721Abi = require('../../abis/erc721')
+const ERC165Abi = require('../../abis/erc165')
 const BridgeAbi = require('../../abis/bridge')
 const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
@@ -223,6 +224,18 @@ class Ethereum extends EventEmitter {
     /**
      * Utilities functions
      */
+    checkIfErc721(contract) {
+        const web3Contract = new this.web3Instance.eth.Contract(
+            ERC165Abi,
+            contract,
+            {
+                from: this.web3Instance.eth.defaultAccount,
+                gas: 8000000
+            }
+        )
+
+        return await web3Contract.methods.supportsInterface("0x80ac58cd").call() // ERC721 Identifier
+    }
     convertArrayToHex(arr) {
         return arr.map(elt => this.web3Instance.utils.asciiToHex(elt))
     }

@@ -176,6 +176,16 @@ const main = async () => {
             return
         }
 
+        const originUniverseRpc = universesRpc[originUniverse.uniqueId]
+        const isErc721 = await originUniverseRpc.checkIfErc721(migrationData.originWorld);
+        console.log('IS ERC : ', isErc721);
+        if(!isErc721){
+            // res.status(400)
+            // res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
+            Logger.error(`This address is not from an ERC-721 contract`)
+            // return
+        }
+
         if(req.body.redeem){
             const originWorld = originUniverse.worlds.find(world => world.address == migrationData.originWorld)
             if(!originWorld){
@@ -184,7 +194,6 @@ const main = async () => {
                 Logger.error(`Can't find origin world ${migrationData.originWorld}`)
                 return
             }
-            const originUniverseRpc = universesRpc[originUniverse.uniqueId]
             
             const tokenUri = await originUniverseRpc.getTokenUri(migrationData.originWorld, migrationData.originTokenId)
             const tokenMetadata = (await Axios.get(tokenUri)).data
