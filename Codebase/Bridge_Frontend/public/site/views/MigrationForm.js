@@ -3,7 +3,8 @@ import AbstractView from './AbstractView.js';
 //0xf181e8B385FE770C78e3B848F321998F78b0d73e
 //0xbf21e21414554dB734C9f86835D51B57136BC35b
 //Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
-//Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
+//Kovan ERC721 contract: 0x8eCE62F22Fd38C73CB356b395A6cd79Dc05D988C
+//Token URI: https://cryptograph.co/tokenuri/0x2449835e86a539ab33f5773729c0db42e89016ff
 
 export default class extends AbstractView {
   constructor(params) {
@@ -470,6 +471,46 @@ export default class extends AbstractView {
       });
     }
 
+    //Display connected addr + disco btn + ogNet + prefill ogNet
+    let displayConnectedWallet = function(){
+      document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+      //Show origin network drop down
+      showCard("DepartureCard", true);
+      showCardLine("OriginNetworkCardLine", true);
+
+      //Prefill origin network
+      setTimeout(prefillOriginNetwork, 1000);
+    }
+    //autoconnect to metamask if injected
+    var connectToMetamask = async function () {
+      //set callback function called when a wallet is connected
+      connectionCallback = function(){
+        console.log("Wallet connected");
+        //Refresh connected addr
+        userAccount = window.web3.currentProvider.selectedAddress;
+        //Display connected addr + ogNet & prefill it
+        displayConnectedWallet();
+      };
+
+      //Connecting to metmask if injected
+      if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
+          if (connector == null || !connector.isConnected) {
+              connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
+              connectedButton = connectMetaMaskButton;
+              providerConnected = "MetaMask";
+              connection();
+          } else {
+              connector.disconnection();
+          }
+      }
+      else{
+        console.log("Metamask not injected. Redirecting to wallet_connection page.");
+        model.navigateTo('wallet_connection');
+        return;//To stop javascript execution in initCode() function
+      }
+    }
+
     //Prefill functions
     //Prefill origin network with the one the user is connected to
     let prefillOriginNetwork = function(){
@@ -502,9 +543,25 @@ export default class extends AbstractView {
     }
     let hideFormFieldsFromMigrationCard = function(){
       //Hide all elements following departure card
-      let elementsToHide = document.querySelectorAll("#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,#CompleteMigrationCard");
-      elementsToHide.forEach(function(elem) {
-        elem.style.display = 'none';
+      let cardsToHide = document.querySelectorAll("#MigrationCard,#ArrivalCard,#CompleteMigrationCard");
+      cardsToHide.forEach(function(elem) {
+        showCard(elem.id, false);
+      });
+      let cardLinesToHide = document.querySelectorAll("#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      cardLinesToHide.forEach(function(elem) {
+        showCardLine(elem.id, false);
+      });
+    }
+    let showAllFormFields = function(){
+      //Show all cards
+      let cardsToShow = document.querySelectorAll("#DepartureCard,#TokenDataCard,#MigrationCard,#ArrivalCard,#DestTokenDataCard,#CompleteMigrationCard");
+      cardsToShow.forEach(function(elem) {
+        showCard(elem.id, true);
+      });
+      //Show all cardLines
+      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      cardLinesToShow.forEach(function(elem) {
+        showCardLine(elem.id, true);
       });
     }
     let checkAndDisplayNotOwnerMsg = function(){
@@ -523,7 +580,7 @@ export default class extends AbstractView {
     }
     let displayNoOwnerMsg = function(){
       let errorMsg = document.getElementById("TokenErrorMessage");
-      errorMsg.innerHTML = "No owner could be found for this NFT.";
+      errorMsg.innerHTML = "No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.";
 
       document.getElementById("TokenErrorMessage").style.display = 'flex';
       hideFormFieldsFromMigrationCard();
@@ -541,7 +598,12 @@ export default class extends AbstractView {
     }
     //Prefill all form fields
     let prefillMigFormWithMigData = function(){
-      //TODO
+      //Prefill ogNet, with delay to not ask user to switch network straight away.
+      setTimeout(function(){selectDropDownOptionByIndex("OriginNetworkSelector", i);}, 3000);
+
+
+      //Finally display all form fields
+      showAllFormFields();
     }
 
     //Setup custom selector
@@ -551,24 +613,27 @@ export default class extends AbstractView {
     setupDropDown("DestinationWorldSelector");
 
     //Clear drop down from possibly previous data
-    clearDropDownOptions("OriginNetworkSelector");
+    //TODELETE
+    /*clearDropDownOptions("OriginNetworkSelector");
     clearDropDownOptions("RelaySelector");
     clearDropDownOptions("DestinationNetworkSelector");
-    clearDropDownOptions("DestinationWorldSelector");
+    clearDropDownOptions("DestinationWorldSelector");*/
 
     //Display connected account addr
     userAccount = window.web3.currentProvider.selectedAddress;
+    //If web3 already injected
     if(userAccount != "" && window.web3.eth != undefined){
-      console.log("Westron lib loaded.");
-      document.getElementById("ConnectedAccountAddr").textContent = userAccount;
-
-      //Show origin network drop down
-      showCard("DepartureCard", true);
-      showCardLine("OriginNetworkCardLine", true);
-
-      //Prefill origin network
-      setTimeout(prefillOriginNetwork, 1000);
+      console.log("Westron already loaded, perfect.");
+      //Display connected addr + ogNet & prefill it
+      displayConnectedWallet();
     }
+    //If metamask available: autoconnect without redirecting to connection page.
+    else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
+      console.log("Metamask auto connect.");
+      loadWestron();
+      setTimeout(connectToMetamask, 1000);
+    }
+    //Redirect to wallet_connection page
     else{
       document.getElementById("ConnectedAccountAddr").textContent = "Wallet not connected. Redirect to connection page.";
       console.log("Westron lib not loaded. Redirecting to wallet_connection");

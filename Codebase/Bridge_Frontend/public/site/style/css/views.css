@@ -30,6 +30,7 @@ document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
   color: #ab0707;
   margin-top: 1em;
   margin-bottom: 2em;
+  text-align: center;
 }
 
 .TextInput{

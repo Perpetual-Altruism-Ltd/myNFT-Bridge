@@ -129,6 +129,10 @@ Model.eraseCookie = function(name) {
     Model.createCookie(name, "", -1);
 }
 
+Model.checkAndConnectWallet = function(){
+  
+}
+
 //Initialize javascript context for all views
 initDropDownBehaviour();
 

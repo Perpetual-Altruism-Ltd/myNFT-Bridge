@@ -16,15 +16,11 @@ export default class extends AbstractView {
 
     //Connect to metamask if wallet installed
     var endLoadMetamaskConnection = async function () {
-      //Set wallet connection callback for Westron lib
-      //DO I NEED A CALLBACK ? WILL IT ACCESS THIS CONTEXT ?
-      /*connectionCallback = function(){
-        //Display connected addr + departure cards
-        document.getElementById("ConnectedAddrCard").style = 'display: flex;';
-        document.getElementById("DepartureCard").style = 'display: flex;';
-        //Prefill origin network
-        prefillOriginNetwork();
-      }*/
+      //set callback function called when a wallet is connected
+      connectionCallback = function(){
+        console.log("Wallet connected");
+        model.navigateTo('/migration_form');
+      };
 
       //Connecting to metmask if injected
       if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
@@ -32,9 +28,7 @@ export default class extends AbstractView {
               connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
               connectedButton = connectMetaMaskButton;
               providerConnected = "MetaMask";
-              connection(function(){
-                model.navigateTo('/migration_form');
-              });
+              connection();
           } else {
               connector.disconnection();
           }
@@ -42,9 +36,11 @@ export default class extends AbstractView {
     }
 
     //If user want to disconnect his wallet, call disconnect from westron lib
+    //+ set wallet connection buttons listeners. This is required as the view (HTML content) has been loaded again
     if(model.disconnectWallet){
       connector.disconnection();
-      loadWestron();
+      //set again buttons onClick functions
+      setConnectWalletButtonsListeners();
 
       model.disconnectWallet = false;
     }else{
