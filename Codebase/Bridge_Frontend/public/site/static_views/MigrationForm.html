@@ -3,12 +3,15 @@
 
 
   <!-- Connected address card -->
-  <div class="Card" id="ConnectedAddrCard">
-    <div class="CardLine DataDisplay">
-      <div class="LineElement TextElement">Connected address:</div>
-      <div class="LineElement DataText address"></div>
-      <div class="LineElement ColoredButtonContainer">
-        <button class="ColoredButton" id="FetchDataButton">Disconnect wallet</button>
+  <div class="Card" id="ConnectedWalletCard">
+    <div class="SpaceBetweenCardLine">
+      <div class=CardLine>
+        <div class="WrapContentLineElement TextElement">Connected address:</div>
+        <div class="DataText" id="ConnectedAccountAddr"></div>
+      </div>
+
+      <div class="ColoredButtonContainer">
+        <button class="ColoredButton" id="DisconnectWalletBtn">Disconnect wallet</button>
       </div>
     </div>
 
@@ -16,9 +19,9 @@
 
   <!-- Departure card -->
   <div class="Card" id="DepartureCard">
-    <div class="CardLine CardTitle"><div class="LineElement">Departure</div></div>
+    <div class="CardLine CardTitle"><div class="LineElement">Migrate NFT</div></div>
 
-    <div class="CardLine">
+    <div class="CardLine" id="OriginNetworkCardLine">
       <div class="LineElement">Origin network:</div>
       <!-- Custom drop down selector -->
       <div class="LineElement">

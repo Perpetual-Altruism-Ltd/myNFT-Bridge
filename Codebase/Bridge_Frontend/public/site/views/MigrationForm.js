@@ -3,6 +3,7 @@ import AbstractView from './AbstractView.js';
 //0xf181e8B385FE770C78e3B848F321998F78b0d73e
 //0xbf21e21414554dB734C9f86835D51B57136BC35b
 //Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
+//Rinkeby ERC721 contract: 0x04f34D9Bb1595Bc50D90953DFb593348d87faea3
 
 export default class extends AbstractView {
   constructor(params) {
@@ -543,9 +544,6 @@ export default class extends AbstractView {
       //TODO
     }
 
-    //reload westron lib to handle wallet connection. Essentially, this sets the callback of connection buttons
-    //reloadWestron(); SEE THIS LATER; CERTAINLY TODELETE
-
     //Setup custom selector
     setupDropDown("OriginNetworkSelector");
     setupDropDown("RelaySelector");
@@ -557,6 +555,26 @@ export default class extends AbstractView {
     clearDropDownOptions("RelaySelector");
     clearDropDownOptions("DestinationNetworkSelector");
     clearDropDownOptions("DestinationWorldSelector");
+
+    //Display connected account addr
+    userAccount = window.web3.currentProvider.selectedAddress;
+    if(userAccount != "" && window.web3.eth != undefined){
+      console.log("Westron lib loaded.");
+      document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+      //Show origin network drop down
+      showCard("DepartureCard", true);
+      showCardLine("OriginNetworkCardLine", true);
+
+      //Prefill origin network
+      setTimeout(prefillOriginNetwork, 1000);
+    }
+    else{
+      document.getElementById("ConnectedAccountAddr").textContent = "Wallet not connected. Redirect to connection page.";
+      console.log("Westron lib not loaded. Redirecting to wallet_connection");
+      model.navigateTo('wallet_connection');
+      return;//To stop javascript execution in initCode() function
+    }
 
     //Load networks
     loadNets(function () {
@@ -695,7 +713,6 @@ export default class extends AbstractView {
         //Display next form field: dest owner input
         showCardLine("DestOwnerCardLine", true);
         //Prefill destTokenOwner with the current connected address
-        let account = window.web3.currentProvider.selectedAddress;
         document.getElementById("inputDestOwner").value = userAccount;
 
         //Display loading text for tokenID
@@ -750,6 +767,14 @@ export default class extends AbstractView {
     document.getElementById("inputDestOwner").addEventListener('focusout', async() =>{
       document.getElementById("CompleteMigrationCard").style.display = 'flex';
       migData.destinationOwner = document.getElementById("inputDestOwner").value;
+    });
+
+    //Disconnect wallet button
+    document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
+      //HERE
+      //OR RELOAD APP
+      model.disconnectWallet = true;
+      model.navigateTo('wallet_connection');
     });
 
     //Migration type buttons

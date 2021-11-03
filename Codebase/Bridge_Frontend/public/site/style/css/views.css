@@ -1,7 +1,6 @@
 /*============Views===========*/
 /*Initial view */
-#ConnectedAddrCard,
-#DepartureCard,#OriginWorldCardLine,#OriginTokenIDCardLine,
+#DepartureCard,#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
 #ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestTokenIdCardLine,#DestOwnerCardLine,
@@ -163,12 +162,23 @@ document.querySelector('#OriginWorldCardLine').classList.toggle('Hidden');
 .LineElement{
   width: 100%;
 }
+.WrapContentLineElement{
+  width: auto;
+  white-space: nowrap;
+}
 .CenteredCardLine{
   display: flex;
   flex-flow: row nowrap;
   gap: 0vw 2vw;
   align-items: center;
   justify-content: center;
+}
+.SpaceBetweenCardLine{
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0vw 2vw;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .CardTitle{

@@ -4,6 +4,15 @@
 	- ConnectorManager.js
 	- web3.js
 */
+//Reconnect buttons with event listeners
+let reloadWestron = function(){
+	var index = document.createElement("script");
+	index.setAttribute("type","text/javascript");
+	index.setAttribute("src","/lib/westron/index.js");
+	document.body.appendChild(index);
+
+}
+
 let loadWestron = function(){
 	var index = document.createElement("script");
 	index.setAttribute("type","text/javascript");
@@ -17,5 +26,6 @@ let loadWestron = function(){
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	loadWestron();
+	//loadWestron();
+	//This function is now called on waller_connection page
 });
