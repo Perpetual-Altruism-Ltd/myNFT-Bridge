@@ -113,6 +113,7 @@ TOP LEFT COLOR: #12132b*/
     font-size: .88rem;
     line-height: 1.5rem;
     text-decoration: none;
+    cursor:pointer;
 }
 
 .formfield{
