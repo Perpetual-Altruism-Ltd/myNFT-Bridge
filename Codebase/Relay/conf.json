@@ -7,7 +7,7 @@
         "projectId": "205glgJgV59a6lg5A3w9qCWCS8k",
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
-    "port": 3000,
+    "port": 5000,
     "universes": [
         {
 			"name":"Ethereum Testnet Rinkeby",
@@ -17,22 +17,7 @@
 			"explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x04f34D9Bb1595Bc50D90953DFb593348d87faea3",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                }
-            ]
-		},
-        {
-			"name":"Ethereum Testnet Ropsten",
-            "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-			"uniqueId": "0xeb4fb0d1",
-			"bridgeAdress": "0xaD1470177625E63Ee460Fc29C64b8CBaC78C5176",
-			"explorer" : "https://ropsten.etherscan.io/",
-            "worlds": [
-                {
-                    "address": "0x6f3a52ab9eA3B68302D69480Eeff0aaFc055ca96",
+                    "address": "0x924756C374D9dC49d2EcFb85D99eB1e8bDF346eB",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
@@ -49,7 +34,7 @@
 			"explorer" : "https://kovan.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x8eCE62F22Fd38C73CB356b395A6cd79Dc05D988C",
+                    "address": "0x3974bC768132006C7b70CbcD66F44729129f6117",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"

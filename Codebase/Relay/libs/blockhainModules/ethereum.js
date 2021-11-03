@@ -249,7 +249,10 @@ class Ethereum extends EventEmitter {
                     gas: 8000000
                 }
             )
-            return (await web3Contract.methods.ownerOf(tokenId).call() == address)
+            
+            const ownerOf = (await web3Contract.methods.ownerOf(tokenId).call()).toLowerCase()
+            address = address.toLowerCase()
+            return (ownerOf == address)
         } catch(e) {
             return false;
         }
