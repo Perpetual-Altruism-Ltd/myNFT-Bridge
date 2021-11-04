@@ -213,7 +213,6 @@ export default class extends AbstractView {
         //Display token data card
         showCardLine("TokenDataCard", true);
         showCardLine("MigrationCard", true);
-        showCardLine("MigrationCardLineTitle", true);
         showCardLine("DestNetworkCardLine", true);
         showCard("CompleteMigrationCard", true);//Display complete button
 
@@ -276,8 +275,10 @@ export default class extends AbstractView {
             checkAndDisplayNotOwnerMsg();
           } else {
             showCardLine("OriginTokenOwnerCardLine", false);
+            migData.originOwner = "";
             //Inform user that no owner was found on this NFT
             displayNoOwnerMsg();
+            refreshCompleteBtnEnabled();
           }
 
         }
@@ -296,12 +297,18 @@ export default class extends AbstractView {
           if(content != ""){
             //Display tokenURI
             document.getElementById("OGTokenURI").innerHTML = content;
-            console.log("TokenURI: " + content);
             document.getElementById("OGTokenURI").href = content;
+            console.log("TokenURI: " + content);
             showCardLine("OriginTokenURICardLine", true);
 
             //Load and display metadata from JSON file
+            //Show token metadata attributes
             showCard("MetadataCard", true);
+            //Display "Fetching..." message
+            document.getElementById("OGTokenMetaName").textContent = "Fetching...";
+            document.getElementById("OGTokenMetaDesc").textContent = "Fetching...";
+            document.getElementById("OGTokenMetaImagePath").innerHTML = "Fetching...";
+            //Load metadata from tokenURI
             loadOgTokenMetaData();
           } else {
             //Hide TokenURI display
@@ -363,6 +370,9 @@ export default class extends AbstractView {
                       } else if(ogTokenMetaData.image != null) {
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '>';
                       }
+
+                      //enable or not redeem btn depending on the type of token (iou or not)
+                      enableRedeemBtnIfNetworkMatch();
                   }
               };
               xhr.send();
@@ -558,7 +568,7 @@ export default class extends AbstractView {
       cardsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
-      let cardLinesToHide = document.querySelectorAll("#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let cardLinesToHide = document.querySelectorAll("#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       cardLinesToHide.forEach(function(elem) {
         showCardLine(elem.id, false);
       });
@@ -575,7 +585,7 @@ export default class extends AbstractView {
         showCard(elem.id, true);
       });
       //Show all cardLines
-      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       cardLinesToShow.forEach(function(elem) {
         showCardLine(elem.id, true);
       });
@@ -600,7 +610,7 @@ export default class extends AbstractView {
       errorMsg.innerHTML = "No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.";
 
       showCardLine("TokenErrorMessage", true);
-      hideFormFieldsFromMigrationCard();
+      //hideFormFieldsFromMigrationCard();
     }
     let displayContractErrorMsg = function(){
       let errorMsg = document.getElementById("TokenErrorMessage");
@@ -624,7 +634,8 @@ export default class extends AbstractView {
       }
     }
     let refreshCompleteBtnEnabled = function(){
-      document.getElementById("CompleteButton").disabled = !isMigDataFilled();
+      userAccount = window.web3.currentProvider.selectedAddress;
+      document.getElementById("CompleteButton").disabled = !isMigDataFilled() || (migData.originOwner != userAccount);
     }
 
     //Prefill functions
@@ -782,7 +793,6 @@ export default class extends AbstractView {
       if(migData.migrationType == model.MintOUIMigrationType){
         //Display next form field: arrival title + arrival dest network
         showCardLine("ArrivalCard", true);
-        showCardLine("ArrivalCardLineTitle", true);
         showCardLine("DestWorldCardLine", true);
 
         //Load available destination world from relay
@@ -791,7 +801,7 @@ export default class extends AbstractView {
       //Else REDEEM: display all following form fields and prefill them with data from metadata
       else if(migData.migrationType == model.RedeemIOUMigrationType){
         //SHOW all next form field which are prefilled
-        let elementsToShow = document.querySelectorAll("#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+        let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
         elementsToShow.forEach(function(elem) {
           showCard(elem.id, true);
         });
@@ -820,7 +830,7 @@ export default class extends AbstractView {
       //load available relay from network_list and relay_list
 
       //HIDE form fields further than one step from dest network drop down
-      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
@@ -969,7 +979,7 @@ export default class extends AbstractView {
       model.isRedeem = false;
 
       //Hide further form field if ever displayed
-      let elementsToHide = document.querySelectorAll("#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToHide = document.querySelectorAll("#ArrivalCard,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });

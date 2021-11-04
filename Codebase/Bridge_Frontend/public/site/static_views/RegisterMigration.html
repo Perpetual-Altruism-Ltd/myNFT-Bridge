@@ -2,13 +2,13 @@
 <div id="RegistrationDisplay" class="Card">
   <div class="Card" >
     <div class="CardLine CardTitle"><div class="LineElement">Register migration</div></div>
-    <div class="CenteredCardLine">Please verify the migration informations and register it before it can be executed</div>
+    <div class="CenteredCardLine HorizMargin">Please verify the migration informations and register it before it can be executed</div>
   </div>
 
   <!-- Registration data Card -->
   <div class="Card">
     <!-- Departure data -->
-    <div class="CompactCard">
+    <div class="Card HorizSmallMargin">
       <div class="CardLineNoWrap DataDisplay">
         <div class="LineElement TextElement">Origin universe:</div>
         <div class="LineElement DataText" id="OGNetworkRegistrationDisp"></div>
@@ -36,7 +36,7 @@
     </div>
 
     <!-- Migration data display -->
-    <div class="CompactCard">
+    <div class="Card HorizSmallMargin">
       <div class="CardLineNoWrap DataDisplay">
         <div class="LineElement TextElement">Migration type:</div>
         <div class="LineElement DataText" id="MigrationTypeRegistrationDisp"></div>
@@ -49,7 +49,7 @@
     </div>
 
     <!-- Destination data display  -->
-    <div class="CompactCard">
+    <div class="Card HorizSmallMargin">
       <div class="CardLineNoWrap DataDisplay">
         <div class="LineElement TextElement">Destination universe:</div>
         <div class="LineElement DataText" id="DestNetworkRegistrationDisp"></div>
@@ -74,12 +74,9 @@
 
   <!-- Registration buttons card -->
   <div class="Card">
-    <div class="CenteredCardLine">
-        <button type="button" class="btn btn-primary clickableRoundButton" id="EditMigrationButton">Edit</button>
-    </div>
-
-    <div class="CenteredCardLine">
-        <button type="button" class="ColoredButton" id="RegisterButton">Register</button>
+    <div class="CenteredCardLine HorizMargin">
+      <button type="button" class="ColoredButton" id="RegisterButton">Register</button>
+      <button type="button" class="btn btn-primary clickableRoundButton" id="EditMigrationButton">Edit</button>
     </div>
   </div><!-- End of registration buttons card -->
 
