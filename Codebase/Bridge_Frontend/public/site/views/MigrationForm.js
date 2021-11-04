@@ -765,7 +765,7 @@ export default class extends AbstractView {
       if(selected != undefined){selected.classList.remove('Selected');}
 
       //Hide all following elements, except destination and relay
-      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage");
+      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage,#ArrivalCard,#MigrationCard,#CompleteMigrationCard");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
