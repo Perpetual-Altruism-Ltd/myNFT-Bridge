@@ -40,7 +40,6 @@ export default class extends AbstractView {
           if(res.migrationStatus == "Ok"){
             model.destinationTokenTransfertTxHash = res.transactionHash;
             console.log("Migration ended !");
-            console.log(res);
             loadingText.textContent = "Migration ended ! The token has been transferred to the destination owner.";
 
             //Then move to migration_finished page to display link to chain explorer for the token transfert transaction

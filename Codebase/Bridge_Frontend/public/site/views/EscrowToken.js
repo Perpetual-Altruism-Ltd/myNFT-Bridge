@@ -22,7 +22,7 @@ export default class extends AbstractView {
     }
 
     let migrationHashListener = async function(){
-      //Construct XHR request
+      //Construct request
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
 

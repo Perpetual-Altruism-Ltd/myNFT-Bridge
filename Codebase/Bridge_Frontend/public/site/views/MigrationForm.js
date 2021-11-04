@@ -201,14 +201,21 @@ export default class extends AbstractView {
         }
 
         //Instanciate an ERC721 contract at the address
-        contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, document.getElementById("inputOGContractAddress").value);
-        contracts.originalChainERC721MetadataContract = new window.web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
-
+        try{
+          contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, document.getElementById("inputOGContractAddress").value);
+          contracts.originalChainERC721MetadataContract = new window.web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputOGContractAddress").value);
+        }
+        catch(err){
+          console.log("Contract instanciation error: " + err);
+          displayContractErrorMsg();
+          return;
+        }
         //Display token data card
-        document.getElementById("TokenDataCard").style.display = 'flex';
-        document.getElementById("MigrationCard").style.display = 'flex';
-        document.getElementById("MigrationCardLineTitle").style.display = 'flex';
-        document.getElementById("DestNetworkCardLine").style.display = 'flex';
+        showCardLine("TokenDataCard", true);
+        showCardLine("MigrationCard", true);
+        showCardLine("MigrationCardLineTitle", true);
+        showCardLine("DestNetworkCardLine", true);
+        showCard("CompleteMigrationCard", true);//Display complete button
 
     	  //Get the Contract Name
         let getContractName = async function () {
@@ -216,7 +223,7 @@ export default class extends AbstractView {
           try {
       			content = await contracts.originalChainERC721MetadataContract.methods.name().call();
           } catch (err) {
-      			console.log(err);
+      			//console.log(err);
       			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
       		}
 
@@ -236,7 +243,7 @@ export default class extends AbstractView {
           try {
       			content = await contracts.originalChainERC721MetadataContract.methods.symbol().call();
           } catch (err) {
-      			console.log(err);
+      			//console.log(err);
       			console.log("Could not get symbol() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
           //Display or not the ctrc symbol
@@ -255,7 +262,7 @@ export default class extends AbstractView {
           try {
       			content = await contracts.originalChainERC721Contract.methods.ownerOf(document.getElementById("inputOGTokenID").value).call();
           } catch (err) {
-      			console.log(err);
+      			//console.log(err);
       			console.log("Could not get ownerOf() for: contractAddress" + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
 
@@ -269,7 +276,7 @@ export default class extends AbstractView {
             checkAndDisplayNotOwnerMsg();
           } else {
             showCardLine("OriginTokenOwnerCardLine", false);
-            //Inform user that no user was found on this NFT
+            //Inform user that no owner was found on this NFT
             displayNoOwnerMsg();
           }
 
@@ -282,7 +289,7 @@ export default class extends AbstractView {
           try {
       			content = await contracts.originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
           } catch (err) {
-      			console.log(err);
+      			//console.log(err);
       			console.log("Could not get tokenURI() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
 
@@ -312,7 +319,6 @@ export default class extends AbstractView {
       if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
           return;
       } else {
-          console.log("sending XHR");
           try {
               let xhr = new XMLHttpRequest();
               xhr.open('GET', OGTokenMetadataPath);
@@ -473,8 +479,15 @@ export default class extends AbstractView {
 
         //Display tokenID
         document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
+
+        //Refresh complete btn
+        refreshCompleteBtnEnabled();
       }).catch(function (error) {
         console.error(error);
+        //If "Too many requests", wait one minute before resending request
+        //Display loading text for tokenID
+        document.getElementById("DestTokenID").textContent = "Too many request to relay. Please wait 1 min before getting the token id.";
+        setTimeout(getAvailableTokenId, 60000);
       });
     }
 
@@ -485,6 +498,7 @@ export default class extends AbstractView {
       //Show origin network drop down
       showCard("DepartureCard", true);
       showCardLine("OriginNetworkCardLine", true);
+      showCard("CompleteMigrationCard", true);
 
       //Timeout to wait for wallet to be connected
       setTimeout(prefillOriginNetwork, 500);
@@ -540,7 +554,7 @@ export default class extends AbstractView {
     }
     let hideFormFieldsFromMigrationCard = function(){
       //Hide all elements following departure card
-      let cardsToHide = document.querySelectorAll("#MigrationCard,#ArrivalCard");
+      let cardsToHide = document.querySelectorAll("#MigrationCard,#ArrivalCard,#CompleteMigrationCard");
       cardsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
@@ -548,10 +562,15 @@ export default class extends AbstractView {
       cardLinesToHide.forEach(function(elem) {
         showCardLine(elem.id, false);
       });
+
+      //Empty form fields
+      document.getElementById("DestTokenID").textContent = "";
+      //Empty migdata destination var
+      resetDestinationMigrationData();
     }
     let showAllFormFields = function(){
       //Show all cards
-      let cardsToShow = document.querySelectorAll("#DepartureCard,#TokenDataCard,#MigrationCard,#ArrivalCard,#DestTokenDataCard");
+      let cardsToShow = document.querySelectorAll("#DepartureCard,#TokenDataCard,#MigrationCard,#ArrivalCard,#DestTokenDataCard,#CompleteMigrationCard");
       cardsToShow.forEach(function(elem) {
         showCard(elem.id, true);
       });
@@ -569,17 +588,25 @@ export default class extends AbstractView {
         let errorMsg = document.getElementById("TokenErrorMessage");
         errorMsg.innerHTML = "You are not the owner of this NFT. You can't migrate it.";
 
-        document.getElementById("TokenErrorMessage").style.display = 'flex';
-        hideFormFieldsFromMigrationCard();
+        showCardLine("TokenErrorMessage", true);
       }else{//If user is the owner, show it next to owner address.
         document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you !)</span>';
       }
+      //Refresh complete btn
+      refreshCompleteBtnEnabled();
     }
     let displayNoOwnerMsg = function(){
       let errorMsg = document.getElementById("TokenErrorMessage");
       errorMsg.innerHTML = "No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.";
 
-      document.getElementById("TokenErrorMessage").style.display = 'flex';
+      showCardLine("TokenErrorMessage", true);
+      hideFormFieldsFromMigrationCard();
+    }
+    let displayContractErrorMsg = function(){
+      let errorMsg = document.getElementById("TokenErrorMessage");
+      errorMsg.innerHTML = "This contract couldn't be found. Make sure you filled in a correct contract address.";
+
+      showCardLine("TokenErrorMessage", true);
       hideFormFieldsFromMigrationCard();
     }
     let showCard = function(id, disp){
@@ -597,7 +624,7 @@ export default class extends AbstractView {
       }
     }
     let refreshCompleteBtnEnabled = function(){
-      document.getElementById("CompleteButton").disabled = isMigDataFilled();
+      document.getElementById("CompleteButton").disabled = !isMigDataFilled();
     }
 
     //Prefill functions
@@ -617,13 +644,13 @@ export default class extends AbstractView {
     }
     //Tell weather user come with migData object already filled up or not.
     let isMigDataFilled = function(){
-      if(migData.originUniverseIndex &&
+      if(migData.originUniverseUniqueId &&
         migData.originWorld &&
         migData.originTokenId &&
-        migData.destinationUniverseIndex &&
+        migData.destinationUniverseUniqueId &&
         migData.migrationType &&
         migData.destinationWorld &&
-        migData.destinationTokenId &&
+        parseInt(migData.destinationTokenId) &&
         migData.destinationOwner){
         return true;
       }else{
@@ -651,7 +678,7 @@ export default class extends AbstractView {
         //Select the Mint IOU button
         document.getElementById("IOUMigrationButton").classList.add('Selected');
       }
-      else if(migData.migrationType == model.MintOUIMigrationType){
+      else if(migData.migrationType == model.RedeemIOUMigrationType){
         //Enable Redeem btn
         document.getElementById("RedeemButton").disabled = false;
         //Select Redeem btn
@@ -659,11 +686,9 @@ export default class extends AbstractView {
       }
 
       //Select relay
-      console.log('Selecting relay: ' + migData.migrationRelayIndex);
       selectDropDownOptionByIndex("RelaySelector", migData.migrationRelayIndex);
 
       //Prefill destWorld
-      console.log(migData.destinationWorld);
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //Prefill destTokenId
@@ -673,6 +698,20 @@ export default class extends AbstractView {
 
       //Finally display all form fields
       showAllFormFields();
+    }
+    //Reset destination migrationData to empty
+    let resetDestinationMigrationData = function(){
+      migData.destinationUniverseIndex = 0;//Index in network_list "networks" array
+      migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
+      migData.destinationUniverseUniqueId = "";
+      migData.destinationUniverse = "";
+      migData.destinationBridgeAddr = "";
+      resetDestWorldNTokenNOwnerMigData();
+    }
+    let resetDestWorldNTokenNOwnerMigData = function(){
+      migData.destinationWorld = "";
+      migData.destinationTokenId = "";
+      migData.destinationOwner = "";
     }
 
     //Setup custom selector
@@ -714,31 +753,37 @@ export default class extends AbstractView {
       clearDropDownOptions("DestinationNetworkSelector");
       clearDropDownOptions("DestinationWorldSelector");
 
+      //Clear ogWorld & token Id
+      document.getElementById("inputOGContractAddress").value = "";
+      document.getElementById("inputOGTokenID").value = "";
+      migData.originWorld = "";
+      migData.originTokenId = "";
+
       //Reset migration buttons. Unselect the previously selected button.
       let migButtonsCard = document.getElementById("MigrationTypeCardLine");
       let selected = migButtonsCard.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
 
-      //Hide all following elements
-      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage,#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      //Hide all following elements, except destination and relay
+      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
 
+      refreshCompleteBtnEnabled();
       promptSwitchChain(chainIDSelected);
     });
     addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
-      //Clear destWorld previous data
-      clearDropDownOptions("DestinationWorldSelector");
+      //Add relay to migData
+      migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
+      migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
 
       //if MINT IOU
       if(migData.migrationType == model.MintOUIMigrationType){
         //Display next form field: arrival title + arrival dest network
-        document.getElementById("ArrivalCard").style.display = 'flex';
-        document.getElementById("ArrivalCardLineTitle").style.display = 'flex';
-        document.getElementById("DestWorldCardLine").style.display = 'flex';
-        migData.migrationRelayIndex = getDropDownSelectedOptionIndex("RelaySelector");
-        migData.migrationRelay = bridgeApp.relays[Math.max(0, migData.migrationRelayIndex)].name;
+        showCardLine("ArrivalCard", true);
+        showCardLine("ArrivalCardLineTitle", true);
+        showCardLine("DestWorldCardLine", true);
 
         //Load available destination world from relay
         getRelayAvailableWorlds();
@@ -751,6 +796,14 @@ export default class extends AbstractView {
           showCard(elem.id, true);
         });
       }
+
+      //Prefill dest owner
+      userAccount = window.web3.currentProvider.selectedAddress;
+      //Prefill destTokenOwner with the current connected address
+      document.getElementById("inputDestOwner").value = userAccount;
+      document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
+
+      refreshCompleteBtnEnabled();
     });
     addDropDownOnChangeCallback("DestinationNetworkSelector", function(chainIndexSelected){
       //CLEAR PREVIOUS DATA
@@ -771,6 +824,13 @@ export default class extends AbstractView {
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
+
+      //Clear MigData from outdated data
+      migData.destinationTokenId = 0;
+      migData.destinationWorld = "";
+      migData.migrationRelayIndex = 0;
+      migData.migrationRelay = "";
+      document.getElementById("DestTokenID").textContent = "";
 
       //SAVE data to migData object
       //This index is relative to the list of destination networks which is different from the list of all networks.
@@ -796,6 +856,8 @@ export default class extends AbstractView {
       enableRedeemBtnIfNetworkMatch();
       //DISPLAY next form field: migration type buttons
       showCardLine("MigrationTypeCardLine", true);
+
+      refreshCompleteBtnEnabled();
     });
     addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
       //If not redeem: display next form field and load data from relay
@@ -813,9 +875,7 @@ export default class extends AbstractView {
         migData.destinationWorld = bridgeApp.destWorlds[destWorldIndex];
 
         //Display next form field: dest owner input
-        showCardLine("DestOwnerCardLine", true);
-        //Prefill destTokenOwner with the current connected address
-        document.getElementById("inputDestOwner").value = userAccount;
+        showCardLine("DestOwnerCardLine", true);//Owner is prefilled when relay is selected
 
         //Display loading text for tokenID
         document.getElementById("DestTokenID").textContent = "Fetching...";
@@ -827,33 +887,44 @@ export default class extends AbstractView {
     //===Origin world input===
     //When return/enter key pressed in input: Display ogTokenID input
     document.getElementById("inputOGContractAddress").addEventListener('keyup', async(e) =>{
-      //Unfocus input when enter key is pressed
+      showCardLine("OriginTokenIDCardLine", true);
+      migData.originWorld = document.getElementById("inputOGContractAddress").value;
+      //Refresh complete button at every character change in the input
+      refreshCompleteBtnEnabled();
+
       if (e.key === 'Enter' || e.keyCode === 13) {
-        document.getElementById("inputOGContractAddress").dispatchEvent(new Event("focusout"));
+        //document.getElementById("inputOGContractAddress").dispatchEvent(new Event("focusout"));
+        document.getElementById("inputOGTokenID").focus();
+        //Call change -> fetch token data
+        document.getElementById("inputOGContractAddress").dispatchEvent(new Event("change"));
       }
     });
-    //When input is unfocused, display originTokenID input
-    document.getElementById("inputOGContractAddress").addEventListener('focusout', async() =>{
-      document.getElementById("OriginTokenIDCardLine").style.display = 'flex';
-      migData.originWorld = document.getElementById("inputOGContractAddress").value;
+    document.getElementById("inputOGContractAddress").addEventListener('change', async(e) =>{
+      //Trigger Fetch data button
+      if(migData.originTokenId && document.getElementById("inputOGTokenID").value){
+        document.getElementById("FetchDataButton").click();
+      }
     });
 
     //===Origin tokenID input===
     //When return/enter key pressed in input: Display dest owner input
-    document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
+    /*document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
         document.getElementById("inputOGTokenID").dispatchEvent(new Event("change"));
       }
-    });
-    document.getElementById("inputOGTokenID").addEventListener('change', async() =>{
+    });*/
+    document.getElementById("inputOGTokenID").addEventListener('keyup', async() =>{
       let inputVal = document.getElementById("inputOGTokenID").value;
       if(inputVal.startsWith('0x')){
         migData.originTokenId = parseInt(inputVal, 16).toString();
       }else{
         migData.originTokenId = inputVal;
       }
-
+      //refresh complete btn enabled
+      refreshCompleteBtnEnabled();
+    });
+    document.getElementById("inputOGTokenID").addEventListener('change', async() =>{
       //Clear previous token datas
       clearTokenData();
 
@@ -862,14 +933,10 @@ export default class extends AbstractView {
     });
 
     //===Destination owner input===
-    //When return/enter key pressed in input: Display complete button
-    document.getElementById("inputDestOwner").addEventListener('keyup', async(e) =>{
-      //Unfocus input when enter key is pressed
-      if (e.key === 'Enter' || e.keyCode === 13) {
-        document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
-      }
-    });
     //When input is unfocused, display originTokenID input
+    document.getElementById("inputDestOwner").addEventListener('keyup', async() =>{
+      document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
+    });
     document.getElementById("inputDestOwner").addEventListener('change', async() =>{
       migData.destinationOwner = document.getElementById("inputDestOwner").value;
       refreshCompleteBtnEnabled();
@@ -884,7 +951,10 @@ export default class extends AbstractView {
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
-      model.isRedeem = false;
+      //Clear destWorld previous data
+      clearDropDownOptions("DestinationWorldSelector");
+      //Reset previous migData destination var
+      migData.destinationTokenId = "";
 
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
@@ -896,14 +966,21 @@ export default class extends AbstractView {
       //Display next form field: relay drop down
       document.getElementById("MigrationRelayCardLine").style.display = 'flex';
       migData.migrationType = model.MintOUIMigrationType;
+      model.isRedeem = false;
 
       //Hide further form field if ever displayed
       let elementsToHide = document.querySelectorAll("#ArrivalCard,#ArrivalCardLineTitle,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, false);
       });
+
+      refreshCompleteBtnEnabled();
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
+      //Clear destWorld previous data
+      clearDropDownOptions("DestinationWorldSelector");
+      //Reset previous migData destination var
+      migData.destinationTokenId = "";
 
       //Add migration type to migData object
       migData.migrationType = model.RedeemIOUMigrationType;
@@ -925,13 +1002,18 @@ export default class extends AbstractView {
 
       //PREFILL fields
       //destworld
+      console.log("Prefill dest world");
+      console.log("migData.destinationWorld: " + migData.destinationWorld);
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+      console.log(getDropDownSelectedOptionIndex("DestinationWorldSelector"));
       //destTokenId
       document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
 
       //Show relay selector
       showCardLine("MigrationRelayCardLine", true);
+
+      refreshCompleteBtnEnabled();
     });
 
     //Setting token data retrieval

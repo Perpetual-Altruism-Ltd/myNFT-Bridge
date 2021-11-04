@@ -14,12 +14,51 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let migData = model.migrationData;
 
+    let clearMigData = function(){
+      migData.originUniverseIndex = 0;
+      migData.originUniverseUniqueId = "";
+      migData.originNetworkId = "";//Blochain ID
+      migData.originUniverse = "";
+      migData.originWorld = "";
+      migData.originTokenId = "";
+      migData.originOwner = "";
+      migData.originTokenName = "";
+      migData.migrationRelayIndex = 0;
+      migData.migrationRelay = "";
+      migData.migrationType = "";
+      migData.destinationUniverseIndex = 0;//Index in network_list "networks" array
+      migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
+      migData.destinationUniverseUniqueId = "";
+      migData.destinationUniverse = "";
+      migData.destinationBridgeAddr = "";
+      migData.destinationWorld = "";
+      migData.destinationTokenId = "";
+      migData.destinationOwner = "";
+
+      migData.metadataDestinationUniverseUniqueId = "";
+      migData.metadataDestinationUniverseIndex = 0;
+      migData.metadataDestinationUniverse = "";
+      migData.metadataDestinationWorld = "";
+      migData.metadataDestinationTokenId = "";
+      migData.metadataDestinationBridgeAddr = "";
+
+      model.migrationHash = "";
+      model.escrowHash = "";
+
+      model.destinationTokenTransfertTxHash = "";
+
+      model.disconnectWallet = false;
+      model.isRedeem = false;
+    }
+
     let tfTokChainExplo = document.getElementById("TransfertTokenChainExplo");
     let destinationNetworkExplorer = bridgeApp.networks[migData.destinationUniverseIndex].explorer;
 
     tfTokChainExplo.href = destinationNetworkExplorer + "tx/" + model.destinationTokenTransfertTxHash;
 
     document.getElementById("NewMigrationButton").addEventListener('click', async() =>{
+      //clear MigrationData
+      clearMigData();
       model.navigateTo("/migration_form");
     });
   }
