@@ -56,33 +56,11 @@ contract("Testing Bridges features", async accounts => {
 			hexToBytes32(accounts[2]),
 			hexToBytes32(accounts[0])
 		];
-		/*
-		web3Contract.once('MigrationDeparturePreRegisteredERC721IOU', {
-			filter: { 
-				_signee: this.hexToBytes32(migrationData.originOwner) 
-			} 
-		}, async (err, data) => {
-			const migrationHash = data?.returnValues?._migrationHash;
-			if(migrationHash){
-				const block = await this.web3Instance.eth.getBlock(data.blockNumber);
-				resolve({
-					migrationHash,
-					blockTimestamp: block.timestamp
-				})
-				this.running = false
-				return
-			}
-			this.running = false
-			reject("Can't retrieve the migration hash")
-		})
-		*/
-		console.log(bridge_1);
 		
-		const tx = await bridge_1.migrateToERC721IOU(...data);
-		console.log(tx);
-		
-		truffleAssert.eventEmitted(tx, 'MigrationDeparturePreRegisteredERC721IOU', (ev) => {
-			return data?.returnValues?._migrationHash != undefined;
+		const tx = await bridge_1.migrateToERC721IOU(...data);		
+		truffleAssert.eventEmitted(tx, 'MigrationDeparturePreRegisteredERC721IOU', (data) => {
+			this.migrationHash = data?._migrationHash;
+			return data?._migrationHash != undefined;
 		});
 	});
 
@@ -93,4 +71,5 @@ contract("Testing Bridges features", async accounts => {
 		let tokenOwner = await this.erc721_token.ownerOf(1);
 		assert.equal(tokenOwner, this.bridge_1.address, "bridge_1 is not the token owner");
 	});
+
 });
