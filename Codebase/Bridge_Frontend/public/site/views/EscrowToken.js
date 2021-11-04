@@ -3,7 +3,7 @@ import AbstractView from './AbstractView.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle("Escrowing your NFT");
+    this.setTitle("myNFT Bridge - NFT escrow");
   }
 
   /*This function contain all the javascript code which will be executed when this view if selected */
