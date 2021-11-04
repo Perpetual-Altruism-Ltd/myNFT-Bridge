@@ -464,6 +464,31 @@ const main = async () => {
         })
     })
 
+    app.post('/getDestinationTokenMetadata', async (req, res) => {
+        const { error } = JoiSchemas.getDestinationTokenMetadata.validate(req.body)
+        if(error){
+            res.status(400)
+            res.send({ status: "Bad parameters given to /getDestinationTokenMetadata" })
+            Logger.error("Bad parameters given to /getDestinationTokenMetadata")
+            return
+        }
+        const client = clientList[req.body.migrationId]
+        if(!client) {
+            return res.status(400).json({ error : 'Unknown migrationId' })
+        }
+
+        if(!client.creationTransferHash){
+            return res.status(400).send({
+                status: "Migration isn't finished ! Can't call this route."
+            })
+        }
+
+        const tokenUri = await client.getDestinationTokenUri()
+        const tokenMetadata = (await Axios.get(tokenUri)).data
+
+        res.send(tokenMetadata)
+    })
+
     app.listen(Conf.port, () => {
         Logger.info(`Web server listening on port ${Conf.port}`)
     })

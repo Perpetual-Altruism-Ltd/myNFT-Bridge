@@ -52,6 +52,9 @@ const schemas = {
     cancelMigration: Joi.object({
         migrationId: Joi.string().required(),
     }),
+    getDestinationTokenMetadata: Joi.object({
+        migrationId: Joi.string().required(),
+    })
 }
 
 module.exports = schemas

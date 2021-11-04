@@ -160,6 +160,10 @@ class Client {
         )
     }
 
+    async getDestinationTokenUri(){
+        return await this.destinationEthereumConnection.getTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId)
+    }
+
 }
 
 module.exports = Client
