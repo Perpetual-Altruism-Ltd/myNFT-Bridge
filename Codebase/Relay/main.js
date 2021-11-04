@@ -187,12 +187,14 @@ const main = async () => {
             return
         }
 
-        const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
-        if(!destinationWorld){
-            res.status(400)
-            res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
-            Logger.error(`Can't find destination world ${migrationData.destinationWorld}`)
-            return
+        if(!req.body.redeem){
+            const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
+            if(!destinationWorld){
+                res.status(400)
+                res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
+                Logger.error(`Can't find destination world ${migrationData.destinationWorld}`)
+                return
+            }
         }
 
         const originUniverseRpc = universesRpc[originUniverse.uniqueId]

@@ -17,7 +17,7 @@
 			"explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x924756C374D9dC49d2EcFb85D99eB1e8bDF346eB",
+                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
@@ -34,7 +34,7 @@
 			"explorer" : "https://kovan.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x3974bC768132006C7b70CbcD66F44729129f6117",
+                    "address": "0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
