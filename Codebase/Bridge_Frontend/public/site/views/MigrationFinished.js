@@ -3,7 +3,7 @@ import AbstractView from './AbstractView.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle("Successfully migrated NFT !");
+    this.setTitle("myNFT Bridge - Migration successful");
   }
 
   /*This function contain all the javascript code which will be executed when this view if selected */

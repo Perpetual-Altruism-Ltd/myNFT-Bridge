@@ -3,7 +3,7 @@ import AbstractView from './AbstractView.js';
 export default class extends AbstractView {
   constructor(params) {
     super(params);
-    this.setTitle("Minting the new token");
+    this.setTitle("myNFT Bridge - Token minting");
   }
 
   /*This function contain all the javascript code which will be executed when this view if selected */
