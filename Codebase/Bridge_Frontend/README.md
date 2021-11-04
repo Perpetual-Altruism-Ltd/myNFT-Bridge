@@ -3,7 +3,13 @@ Just launch this server with an appropriate conf to allow users to migrate their
 # World address
 Sidechain test (ERC2665): 0xD277FCd0e8199b61eE9Edb87e876dA2D8B6252aF
 Mainnet (ERC2665): 0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7
-Rinkeby:
+Rinkeby: 0x34797AaF0848b0f495cE413e551335362bc793eD (ImplTestERC721)
+  0xf2E02E4ee09428755C78658a636B31a289d772B6 (IOUExemple)
+  
+Kovan: 0x3551bc5fA3333937A8c555c66640141b432d63B0 (ImplTestERC721)
+  0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd (IOUExemple)
+
+Contract addresses updated the 4/11/2021
 
 # HTTP-SERVER
 This frontend is totally static. You can launch the http server like this:
