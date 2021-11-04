@@ -464,12 +464,12 @@ const main = async () => {
         })
     })
 
-    app.post('/getDestinationTokenMetadata', async (req, res) => {
-        const { error } = JoiSchemas.getDestinationTokenMetadata.validate(req.body)
+    app.post('/getDestinationTokenUri', async (req, res) => {
+        const { error } = JoiSchemas.getDestinationTokenUri.validate(req.body)
         if(error){
             res.status(400)
-            res.send({ status: "Bad parameters given to /getDestinationTokenMetadata" })
-            Logger.error("Bad parameters given to /getDestinationTokenMetadata")
+            res.send({ status: "Bad parameters given to /getDestinationTokenUri" })
+            Logger.error("Bad parameters given to /getDestinationTokenUri")
             return
         }
         const client = clientList[req.body.migrationId]
@@ -484,9 +484,8 @@ const main = async () => {
         }
 
         const tokenUri = await client.getDestinationTokenUri()
-        const tokenMetadata = (await Axios.get(tokenUri)).data
 
-        res.send(tokenMetadata)
+        res.send({ tokenUri })
     })
 
     app.listen(Conf.port, () => {
