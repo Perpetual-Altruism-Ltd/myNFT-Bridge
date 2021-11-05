@@ -99,20 +99,20 @@ Here a description of the configuration options :
         "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
         "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
     },
-    "port": 5000,
-    "universes": [
+    "port": 5000, // The port on which the http server of the relay will listen on
+    "universes": [ // A list of universes and worlds on which your relay will be operating
         {
-            "name":"Ethereum Testnet Rinkeby",
-            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "uniqueId": "0x07dac20e",
-            "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
-            "explorer" : "https://rinkeby.etherscan.io/",
-            "worlds": [
+            "name":"Ethereum Testnet Rinkeby", // The universe name
+            "rpc": "wss://rinkeby.infura.io/ws/v3/xxx", // The websocket enabled RPC on which your relay will be operating for this universe
+            "uniqueId": "0x07dac20e", // A unique id for your universe, will be used to communicate with the frontend (should be the same each side)
+            "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242", // The bridge contract address
+            "explorer" : "https://rinkeby.etherscan.io/", // The explorer address to display transactions informations to users
+            "worlds": [ // A list of contract your relay will be using to emit IOU. One is usually enough
                 {
-                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
+                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6", // Contract address
+                    "name": "MyContract", // Contract name
+                    "tokenName": "TOKENNAME", // Token name
+                    "owner": "0x00" // Owner of the contract
                 }
             ]
         },
@@ -132,26 +132,6 @@ Here a description of the configuration options :
                     "owner": "0x00"
                 }
             ]
-        },
-        {
-            "name":"Ethereum Testnet Goerli",
-            "rpc": "wss://goerli.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "chainID": 5,
-            "networkID":5,
-            "uniqueId": "0x3fbf5c9a",
-            "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-            "explorer" : "https://etherscan.io/",
-            "worlds": []
-        },
-        {
-            "name":"myNFT Sidechain",
-            "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "chainID": 323232,
-            "networkID": 323232,
-            "uniqueId": "0xd1e94e57",
-            "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
-            "explorer" : "https://etherscan.io/",
-            "worlds": []
         }
     ]
 }
