@@ -139,12 +139,20 @@
 }
 
 /*Represent one line contained in a Card */
+.CardLineWrap{
+  display: flex;
+  flex-flow: row wrap;
+  gap: 2em 4em;
+  align-items: center;
+  justify-content: center;
+}
 .CardLine{
   display: flex;
   flex-flow: row nowrap;
   gap: 0vw 2vw;
   align-items: center;
 }
+/* No wrap for text*/
 .CardLineNoWrap{
   display: flex;
   flex-flow: row nowrap;
@@ -193,6 +201,7 @@
   font-size: 2em;
   margin: 2vw 0vw 2vw 0vw;/*To override CardLine margin */
   text-align: center;
+  color: #333;
 }
 
 .TextElement{
@@ -223,4 +232,66 @@
 
 #SignEscrowHashButton{
   margin-bottom: 5vh;
+}
+
+/* WALLET CONNECTION BUTTONS */
+#ConnectionCenter{
+  margin-bottom: 5vh;
+}
+
+/*use of absolute metrics (px) for width and height so that the icons do not adjust to screen size */
+.connectMetaMask{
+  background: url("../../medias/MetaMask_Icon.svg");
+  background-size: 80px;
+  background-position-x: 0vw;
+}
+.connectTorus{
+  background: url("../../medias/Torus_Icon.svg");
+  background-size: 80px;
+  background-position-x: 0.5vw;
+}
+.connectWalletConnect{
+  background: url("../../medias/WalletConnect_Icon.svg");
+  background-size: 80px;
+}
+.connectPortis{
+  background: url("../../medias/Portis_Icon.png");
+  background-size: 60px 80px;
+}
+.connectBitski{
+  background: url("../../medias/Bitski_Icon.svg");
+  background-size: 80px;
+}
+.connectFortmatic{
+  background: url("../../medias/Fortmatic_Icon.jpg");
+  background-size: 70px 80px;
+}
+.connectVenly{
+  background: url("../../medias/Venly_Icon.png");
+  background-size: 70px 80px;
+}
+.connectCoinbase{
+  background: url("../../medias/Coinbase_Icon.png");
+  background-size: 80px;
+}
+.requestWallet{
+  background: url("../../medias/RequestWallet_Icon.svg");
+  background-size: 60px;
+  background-color: #ccc;
+}
+
+.connectMetaMask,.connectTorus,.connectWalletConnect,.connectPortis,.connectBitski,.connectFortmatic,.connectVenly,.connectCoinbase,.requestWallet{
+  padding: 1em;
+  border-radius: 1em;
+  width: 16em;
+  height: 8em;
+  background-repeat: no-repeat;
+  font-weight: bold;
+  background-position-x: 0.75em;
+  background-position-y: center;
+  word-wrap: break-word;
+}
+
+.ConnectBtnTextContainer{
+  margin-left: 80px;
 }

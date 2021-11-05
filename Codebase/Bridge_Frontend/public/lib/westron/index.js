@@ -159,7 +159,7 @@ function initConnector() {
 	connector.onDisconnection = () => {
 		setDisabledConnectButtons(false);
 		//document.querySelector(".address").innerHTML = "";
-		if(connectedButton){connectedButton.innerHTML = "Connect " + providerConnected;}
+		if(connectedButton){connectedButton.innerHTML = "<div class='ConnectBtnTextContainer'>Connect " + providerConnected + "</div>";}
 		connectedButton = null;
 		providerConnected = "";
 	};
@@ -175,7 +175,7 @@ async function connection() {
 	setDisabledConnectButtons(true);
 
 	if (await connector.connection()) {
-		if(connectedButton){connectedButton.innerHTML = "Disconnect " + providerConnected;}
+		if(connectedButton){connectedButton.innerHTML = "<div class='ConnectBtnTextContainer'>Disconnect " + providerConnected + "</div>";}
 		web3 = connector.web3;
 
 		//Call the callback function once connected

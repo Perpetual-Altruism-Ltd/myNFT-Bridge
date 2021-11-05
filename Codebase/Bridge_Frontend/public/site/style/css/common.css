@@ -1,6 +1,8 @@
 body{
     font-family: 'Sequel Sans',sans-serif;
     line-height: 1.56rem;
+    color: #333;
+    font-weight: 400;
 }
 
 .bg_container{
@@ -101,7 +103,9 @@ button {
 }
 
 .clickableRoundButton{
-    padding: 8px 16px;
+    padding: 0.5em 1em;
+    border-radius: 30px;
+
     -webkit-box-pack: center;
     -webkit-justify-content: center;
     -ms-flex-pack: center;
@@ -110,7 +114,6 @@ button {
     -webkit-align-items: center;
     -ms-flex-align: center;
     align-items: center;
-    border-radius: 30px;
     background-color: #fff;
     -webkit-transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);
     transition: color .1s cubic-bezier(.455, .03, .515, .955),background-color .1s cubic-bezier(.455, .03, .515, .955);

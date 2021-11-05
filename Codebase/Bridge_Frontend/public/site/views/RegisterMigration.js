@@ -127,7 +127,7 @@ export default class extends AbstractView {
         if(error.response.data){
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){
-            loadingText.textContent = error.response.data + ". Please contact our team.";
+            loadingText.textContent = error.response.data.status + ". Please contact our team.";
           }
         }
         console.error(error);

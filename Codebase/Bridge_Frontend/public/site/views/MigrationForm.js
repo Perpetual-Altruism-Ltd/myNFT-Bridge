@@ -147,6 +147,8 @@ export default class extends AbstractView {
       migData.originUniverseUniqueId = bridgeApp.networks[migData.originUniverseIndex].uniqueId;
       migData.originNetworkId = bridgeApp.networks[migData.originUniverseIndex].networkID;
 
+      //Clear Destination networks before fill it again
+      clearDropDownOptions("DestinationNetworkSelector");
       //Show the available destination networks for the ogNet selected
       for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
         let destNetId = target.networkId
@@ -174,7 +176,7 @@ export default class extends AbstractView {
       }).catch((res) => {
         console.log("Network switch canceled or error");
         prefillOriginNetwork();
-        alert("Please accept the metamask switch network prompt in order to change to desired network");
+        alert("Please accept the metamask switch network prompt in order to change to your desired network");
       });
     }
     //Load a token metadata from chain
@@ -368,7 +370,7 @@ export default class extends AbstractView {
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
                       } else if(ogTokenMetaData.image != null) {
-                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '>';
+                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '</a>';
                       }
 
                       //enable or not redeem btn depending on the type of token (iou or not)
@@ -616,6 +618,7 @@ export default class extends AbstractView {
       let errorMsg = document.getElementById("TokenErrorMessage");
       errorMsg.innerHTML = "This contract couldn't be found. Make sure you filled in a correct contract address.";
 
+      showCard("TokenDataCard", true);
       showCardLine("TokenErrorMessage", true);
       hideFormFieldsFromMigrationCard();
     }
@@ -1065,6 +1068,19 @@ export default class extends AbstractView {
       return;//To stop javascript execution in initCode() function
     }
 
+    //When user come back on tab: verify ogNet & wallet net
+    window.onfocus = function(){
+      //If migration form displayed
+      if(document.getElementById("OriginNetworkSelector")){
+        //If tokens data are loaded, do not prompt switch network.
+        //Only prompt if ogNet is set
+        let originChainSelectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
+        if(!migData.originOwner && originChainSelectedIndex >= 0){
+          let chainIDSelected = '0x' + bridgeApp.networks[originChainSelectedIndex].chainID.toString(16);
+          promptSwitchChain(chainIDSelected);
+        }
+      }
+    }
   }
 
 
