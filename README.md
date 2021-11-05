@@ -135,7 +135,68 @@ Here a description of the configuration options :
         }
     ]
 }
+```
 
+### Configuration Frontend
+
+The frontend hold three configuration files :
+
+- `Codebase/Bridge_Frontend/conf.json` => Configure the port the frontend server will be listening to
+- `Codebase/Bridge_Frontend/public/network_list.json` => Configure the networks available to this frontend and which migration route the token can migrate, as well as through which relays
+- `Codebase/Bridge_Frontend/public/relay_list.json` => Configure the relay servers available to the frontend
+
+#### conf.json
+
+```js
+{
+    "port": 8080 // Which port you want the frontend server to listen to
+}
+```
+
+#### network_list.json
+
+```js
+{
+	"networks": [ // List of the networks
+		{
+			"name":"Ethereum Testnet Kovan", // Network name
+			"chainID": 42, // Chain id
+			"networkID": 42, // Network id
+			"uniqueId": "0xee0bec75", // Universe unique id
+			"bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5", // Bridge address
+			"explorer" : "https://kovan.etherscan.io/", // Explorer address
+			"targetList": [
+				{
+					"relayIds": [1], // You can go from this(42) network
+					"networkId": 4 // To this network(4) through relay id 1
+				}, 
+				{
+					"relayIds": [1], // You can go from this(42) network
+					"networkId": 42 // To this network(42) through relay id 1
+				}
+			]
+		},
+		{
+			"name":"Ethereum Testnet Rinkeby",
+			"chainID": 4,
+			"networkID": 4,
+			"uniqueId": "0x07dac20e",
+			"bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
+			"explorer" : "https://rinkeby.etherscan.io/",
+			"targetList": [
+				{
+					"relayIds": [1],
+					"networkId": 4
+				}, 
+				{
+					"relayIds": [1],
+					"networkId": 42
+				}
+			
+			]
+		}
+	]
+}
 ```
 
 
