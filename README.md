@@ -54,17 +54,42 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 
 ## Installation
 
-### Source
+### Initialisation
 
 *This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/myNFT-Bridge` project.*
 
 Clone this repository and install the required `npm` dependencies:
 
+```sh
+git clone git@github.com:Perpetual-Altruism-Ltd/myNFT-Bridge.git
 ```
-$ git clone git@github.com:Perpetual-Altruism-Ltd/myNFT-Bridge.git
-$ cd Codebase/Bridge_Contracts
-$ npm install
+
+### Relay
+
+```sh
+cd myNFT-Bridge/Codebase/Relay
+yarn
 ```
+
+### Frontend
+
+```sh
+cd myNFT-Bridge/Codebase/Bridge_Frontend
+yarn
+```
+
+### Configuration Relay
+
+THe backend hold a conf.json file here `Codebase/Relay/conf.json`. Here a description of the configuration options :
+
+```json
+
+```
+
+
+
+
+
 
 Make sure that everything has been set up correctly:
 
