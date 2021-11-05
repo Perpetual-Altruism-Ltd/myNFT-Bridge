@@ -72,7 +72,7 @@ Make sure that everything has been set up correctly:
 $ npm run test
 ```
 
-Update truffle-config.js with your credentials and network data
+Update truffle-config.js with your credentials and network data:
 ```
 networks : {
  rinkeby: {
@@ -85,12 +85,12 @@ networks : {
      },
 }
 ```
-Deploy all contracts on this network (migration/bridge/erc721/iou)
+Deploy all contracts on this network (migration/bridge/erc721/iou):
 
 ```
 $ truffle migrate rinkeby
 ```
-If you only need to deploy a bridge, you can run : 
+If you only need to deploy a bridge, you can run: 
 ```
 $ truffle migrate --from 2 --to 2
 ```
