@@ -56,7 +56,7 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 
 ### Source
 
-*This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/ERC-2665` project.*
+*This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/myNFT-Bridge` project.*
 
 Clone this repository and install the required `npm` dependencies:
 
