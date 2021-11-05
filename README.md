@@ -212,14 +212,15 @@ This project is a truffle project. There are multiple files in the contracts fol
 `Implementation`
 - [`/Implementation/ERC721.sol`](Codebase/Bridge_Contracts/contracts/Implementation/ERC721.sol): This is the base ERC-721 token interface.
 
-[`/Implementation/BridgeFeatures/`](Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures) folder contains the different functions of the bridge.
-The bridge implements the ERC-1538 proxy pattern in order to be upgradable.
+`/Implementation/BridgeFeatures/` folder contains the different functions of the bridge.
+The bridge implements the ERC-1538 proxy pattern in order to be upgradable:
 - [`ImplBridgeFunMigrateFromERC721.sol`](Codebase/Bridge_Contracts/contracts/ImplBridgeFunMigrateFromERC721.sol): This implements logic data of the arrival bridge (IOU minting / transfert / ...).
-- [`ImplERC721TokenReceiver.sol`](Codebase/Bridge_Contracts/contracts/ImplERC721TokenReceiver.sol): Handle the receipt of an NFT, the ERC721 smart contract calls this function on the recipient after a `transfer`
-- [`ImplMyNFTBridgeFunInit.sol`](Codebase/Bridge_Contracts/contracts/ImplMyNFTBridgeFunInit.sol): The implementation of a bridge initialization.
+- [`ImplERC721TokenReceiver.sol`](Codebase/Bridge_Contracts/contracts/ImplERC721TokenReceiver.sol): Handle the receipt of an NFT, the ERC721 smart contract calls this function on the recipient after a `transfer`.
+- [`ImplMyNFTBridgeFunInit.sol`](Codebase/Bridge_Contracts/contracts/ImplMyNFTBridgeFunInit.sol): This implements logic data of a bridge initialization.
 - [`ImplMyNFTBridgeFunMigrateToERC721.sol`](Codebase/Bridge_Contracts/contracts/ImplMyNFTBridgeFunMigrateToERC721.sol): This implements logic data of the departure bridge (migration intent / escrow and signature hash generation)
 
-[`/Implementation/Proxification/`](Codebase/Bridge_Contracts/contracts/Implementation/Proxification) folder contains the different functions of the ERC-1538 proxy pattern for Bridge deployment. Get more infos [here](https://eips.ethereum.org/EIPS/eip-1538)
+`/Implementation/Proxification/` folder contains the different functions of the ERC-1538 proxy pattern for Bridge deployment. Get more infos [here](https://eips.ethereum.org/EIPS/eip-1538)
+
 [`/Implementation/Test/`](Codebase/Bridge_Contracts/contracts/Implementation/Test) folder contains an implementation of a token ERC-721 and a custom ERC-721 with premint functions (IOU)
 
 ### Testing
