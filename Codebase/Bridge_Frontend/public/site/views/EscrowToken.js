@@ -74,7 +74,7 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.migrationHash == ""){
-        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Contact our team.";
+        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team.";
       }
     }
     //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user

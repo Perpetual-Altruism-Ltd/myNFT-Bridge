@@ -74,7 +74,7 @@ export default class extends AbstractView {
           initMigration();
 
           let loadingText = document.getElementById("RegistrationLoadingText");
-          if(loadingText != null && loadingText != undefined){loadingText.textContent = "Waiting for the migration to be registered on origin blockchain.";}
+          if(loadingText != null && loadingText != undefined){loadingText.textContent = "The migration is being registered on origin blockchain.";}
         }).catch((res) => {
           console.log("Operator approval canceled or error");
           console.log(res);
@@ -124,6 +124,12 @@ export default class extends AbstractView {
         }else{console.log(response.status + ' : ' + response.statusText);}
 
       }).catch(function (error) {
+        if(error.response.data){
+          let loadingText = document.getElementById("RegistrationLoadingText");
+          if(loadingText != null && loadingText != undefined){
+            loadingText.textContent = error.response.data + ". Please contact our team.";
+          }
+        }
         console.error(error);
       });
     }

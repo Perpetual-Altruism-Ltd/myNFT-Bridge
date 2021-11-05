@@ -54,11 +54,13 @@
   position:relative;
   height: 15em;
   overflow: hidden;/*Prevent the page's height to change when the loading circle is turning ;) */
+  margin-bottom: 5vh;
 }
 .LoadingText{
   position: absolute;
   width: 12em;
   text-align: center;
+  line-height: 1.56rem;
 }
 .LoadingCircle{
   position: absolute;
@@ -116,11 +118,19 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 1em 0em;
-  margin: 1vw 3vw;
+  margin: 0vw 3vw;
 }
 
 .NoMargin{
   margin: 0vw 0vw;
+}
+.HorizMargin{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+.HorizSmallMargin{
+  margin-top: 2vh;
+  margin-bottom: 2vh;
 }
 /*A card with no gap between lines */
 .CompactCard{
@@ -168,6 +178,8 @@
   gap: 0vw 2vw;
   align-items: center;
   justify-content: center;
+  /*margin-top: 5vh;
+  margin-bottom: 5vh;*/
 }
 .SpaceBetweenCardLine{
   display: flex;
@@ -179,14 +191,36 @@
 
 .CardTitle{
   font-size: 2em;
-  margin: 2vw 0vw 0vw 0vw;/*To override CardLine margin */
+  margin: 2vw 0vw 2vw 0vw;/*To override CardLine margin */
   text-align: center;
 }
 
 .TextElement{
-  max-width: 15vw;
+  max-width: 10vw;
 }
 
 .DataText{
   font-weight: bold;
+}
+
+#OriginTokenURICardLine{
+  word-break: break-all;
+}
+
+#MigrationFormDisplay{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+#CompleteMigrationCard{
+  margin-top: 5vh;
+}
+
+#NewMigrationButton{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+}
+
+#SignEscrowHashButton{
+  margin-bottom: 5vh;
 }

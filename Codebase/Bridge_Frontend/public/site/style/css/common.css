@@ -1,5 +1,6 @@
 body{
     font-family: 'Sequel Sans',sans-serif;
+    line-height: 1.56rem;
 }
 
 .bg_container{
@@ -145,8 +146,4 @@ button {
     align-content: center;
     justify-content: center;
     gap: 0.5em 2em;
-}
-
-#OriginTokenURICardLine{
-  word-break: break-all;
 }
