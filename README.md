@@ -47,6 +47,131 @@ This is an open ended question with no correct answers, only compromises. Many s
 This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:
 https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/edit?usp=sharing
 
+## Requirements
+
+* NodeJS 12+ is supported
+* Windows, Linux or macOS
+
+## Installation
+
+### Initialisation
+
+*This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/myNFT-Bridge` project.*
+
+Clone this repository and install the required `npm` dependencies:
+
+```sh
+git clone git@github.com:Perpetual-Altruism-Ltd/myNFT-Bridge.git
+```
+
+### Relay
+
+```sh
+cd myNFT-Bridge/Codebase/Relay
+yarn
+```
+
+### Frontend
+
+```sh
+cd myNFT-Bridge/Codebase/Bridge_Frontend
+yarn
+```
+
+### Configuration Relay
+
+The backend hold a conf.json file here `Codebase/Relay/conf.json`. 
+You will need :
+   - A wallet private key with fund on each of the universes you want to interact
+   - An infura account with IPFS enabled (projectId and projectSecret)
+   - A bridge deployed on each universes you want to support with the wallet given before
+   - A IOU enabled ERC721 contract on each of the IOU destination universes, deployed with the wallet given before
+
+Here a description of the configuration options :
+
+```js
+{
+    "relayPrivateKey": "xxxxx", // Your relay wallet private key (must have been used to deploy IOU and bridge contracts)
+    "infuraIpfs": { // Your infura informations
+        "host": "ipfs.infura.io", // Default value
+        "port": 5001, // Default value
+        "protocol": "https", // Default value
+        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
+        "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
+    },
+    "port": 5000, // The port on which the http server of the relay will listen on
+    "universes": [ // A list of universes and worlds on which your relay will be operating
+        {
+            "name":"Ethereum Testnet Rinkeby", // The universe name
+            "rpc": "wss://rinkeby.infura.io/ws/v3/xxx", // The websocket enabled RPC on which your relay will be operating for this universe
+            "uniqueId": "0x07dac20e", // A unique id for your universe, will be used to communicate with the frontend (should be the same each side)
+            "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242", // The bridge contract address
+            "explorer" : "https://rinkeby.etherscan.io/", // The explorer address to display transactions informations to users
+            "worlds": [ // A list of contract your relay will be using to emit IOU. One is usually enough
+                {
+                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6", // Contract address
+                    "name": "MyContract", // Contract name
+                    "tokenName": "TOKENNAME", // Token name
+                    "owner": "0x00" // Owner of the contract
+                }
+            ]
+        },
+        {
+            "name":"Ethereum Testnet Kovan",
+            "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 42,
+            "networkID": 42,
+            "uniqueId": "0xee0bec75",
+            "bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5",
+            "explorer" : "https://kovan.etherscan.io/",
+            "worlds": [
+                {
+                    "address": "0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+        }
+    ]
+}
+
+```
+
+
+
+
+
+
+Make sure that everything has been set up correctly:
+
+```
+$ npm run test
+```
+
+Update truffle-config.js with your credentials and network data:
+```
+networks : {
+ rinkeby: {
+       provider: () => new HDWalletProvider('yourprivatekey', `your_rpc_url`),
+       network_id: 4,       // (eg : 4 = Rinkeby)
+       gas: 5500000,        // Rinkeby has a lower block limit than mainnet
+       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+     },
+}
+```
+Deploy all contracts on this network (migration/bridge/erc721/iou):
+
+```
+$ truffle migrate rinkeby
+```
+If you only need to deploy a bridge, you can run: 
+```
+$ truffle migrate --from 2 --to 2
+```
+
 ## Thanks to
 
 The Web3 Foundation for supporting the creation of an NFT Migration protocol, which was the foundational work to build this NFT bridge, and to everyone who contributed to it.

@@ -14,7 +14,7 @@ class Db {
                 resolve()
             }
 
-            this.instance = new Loki('db.json', { 
+            this.instance = new Loki('db/db.json', { 
                 autosave: true
                 , autosaveInterval: 100
                 , autoload: true
