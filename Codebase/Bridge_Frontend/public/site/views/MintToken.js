@@ -14,6 +14,9 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let migData = model.migrationData;
     let loadingText = document.getElementById("MigrationLoadingText");
+    //If redeem, display specific message
+    if(migData.migrationType == model.RedeemIOUMigrationType)
+      document.getElementById("MigrationLoadingText").textContent = "Please wait for the relay to retrieve the destination token.";
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -69,9 +72,9 @@ export default class extends AbstractView {
         loadingText.textContent = "Couldn't retrieve transaction hash of the destination token transfer to owner.";
       }
     }
+
     //Start listening for end migration from relay. Once ended, move to mig_finished page
     endMigrationListener();
-    //setTimeout(() => { model.navigateTo("/migration_finished"); }, 5000);
   }
 
   async getHtml(callback){

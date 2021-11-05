@@ -2,6 +2,7 @@
 /*Initial view */
 #DepartureCard,#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
+#BreakLineCardContainer,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
 #ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard
@@ -219,6 +220,41 @@
 #MigrationFormDisplay{
   margin-top: 5vh;
   margin-bottom: 5vh;
+}
+
+#BreakLineCardContainer{
+  margin-top: 5vh;
+  margin-bottom: 5vh;
+  position: relative;
+  align-items: center;
+}
+
+#BreakLine{
+  position: absolute;
+  left: -19.5vw;
+  height: 3px;
+  background-color: #3e287a;
+  width: 98vw;
+}
+
+#DownArrow{
+  background: url("../../medias/DownArrow.svg");
+  background-size: 3em;
+  background-position-x: 0vw;
+  background-position-y: center;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+}
+
+#DownArrowContainer{
+  position: absolute;
+  top: -2.5em;
+  height: 3em;
+  width: 3em;
+  background-color: #fff;
+  margin: 1em;
+
 }
 
 #CompleteMigrationCard{

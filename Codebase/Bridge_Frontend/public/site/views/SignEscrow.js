@@ -17,6 +17,12 @@ export default class extends AbstractView {
     let account = window.web3.currentProvider.selectedAddress;
     let stateMessage = document.getElementById("StateMessage");
 
+    //If redeem, display specific message
+    if(migData.migrationType == model.RedeemIOUMigrationType){
+      document.getElementById("TransferMessage").textContent = "The IOU token was successfully transferred to the bridge.";
+      document.getElementById("SignMessage").textContent = "Please sign the escrow hash to allow the relay to give you back the token.";
+    }
+
     let signEscrowHash = async function(){
       //Ask the wallet to prompt user to sign data
       window.ethereum.request({ method: 'personal_sign', params: [ model.escrowHash, account ] })

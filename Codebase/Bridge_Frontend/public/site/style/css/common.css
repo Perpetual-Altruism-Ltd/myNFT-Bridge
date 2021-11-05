@@ -6,7 +6,7 @@ body{
 }
 
 .bg_container{
-    position: fixed;
+    position: absolute;
     left: 0;
     right:0;
     top: 0;
@@ -19,21 +19,22 @@ body{
 BOTTOM RIGHT COLOR: #af1540
 TOP LEFT COLOR: #12132b*/
 .bg_gradient{
-    height: 100%;
-    width: 100%;
+
     background-image: url('../../medias/gradientBackground.svg');
     background-repeat: no-repeat;
-    background-attachment: fixed;
+    /*background-attachment: fixed;*/
     background-size: cover;
     background-position: center;
+    height: 20em;
+    width: 100%;
 }
 
 .big-circle{
     position: absolute;
-    left: 10vh;
-    top: -47px;
-    width: 110vh;
-    height: 110vh;
+    left: 30vw;
+    top: 30px;
+    width: 40vw;
+    height: 40vw;
     color: #96134e;
     -webkit-animation:big-circle_spin 360s linear infinite;
     -moz-animation:big-circle_spin 360s linear infinite;

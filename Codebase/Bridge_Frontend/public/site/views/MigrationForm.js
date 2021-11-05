@@ -216,6 +216,7 @@ export default class extends AbstractView {
         showCardLine("TokenDataCard", true);
         showCardLine("MigrationCard", true);
         showCardLine("DestNetworkCardLine", true);
+        showCardLine("BreakLineCardContainer", true);
         showCard("CompleteMigrationCard", true);//Display complete button
 
     	  //Get the Contract Name
@@ -1025,6 +1026,15 @@ export default class extends AbstractView {
 
       //Show relay selector
       showCardLine("MigrationRelayCardLine", true);
+
+      //If relay already selected, display all form till the end !
+      if(getDropDownSelectedOptionIndex("RelaySelector") >= 0){
+        //SHOW all next form field which are prefilled
+        let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+        elementsToShow.forEach(function(elem) {
+          showCard(elem.id, true);
+        });
+      }
 
       refreshCompleteBtnEnabled();
     });
