@@ -89,7 +89,7 @@ You will need :
 
 Here a description of the configuration options :
 
-```json
+```js
 {
     "relayPrivateKey": "xxxxx", // Your relay wallet private key (must have been used to deploy IOU and bridge contracts)
     "infuraIpfs": { // Your infura informations
