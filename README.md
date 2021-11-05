@@ -47,6 +47,10 @@ This is an open ended question with no correct answers, only compromises. Many s
 This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:
 https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/edit?usp=sharing
 
+## Sequence schema
+
+![Bridge schema](https://user-images.githubusercontent.com/92730623/140541254-e1b6201a-bf2c-4814-bf66-ad6eafe9249c.png)
+
 ## Requirements
 
 * NodeJS 12+ is supported
