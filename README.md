@@ -47,6 +47,10 @@ This is an open ended question with no correct answers, only compromises. Many s
 This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:
 https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/edit?usp=sharing
 
+## Sequence schema
+
+![Bridge schema](https://user-images.githubusercontent.com/92730623/140541254-e1b6201a-bf2c-4814-bf66-ad6eafe9249c.png)
+
 ## Requirements
 
 * NodeJS 12+ is supported
@@ -54,7 +58,7 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 
 ## Installation
 
-### Initialisation
+### Initialization
 
 *This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/myNFT-Bridge` project.*
 
@@ -200,15 +204,32 @@ The frontend hold three configuration files :
 ```
 
 
+## Bridge deployment
 
+This project is a truffle project. There are multiple files in the contracts folder and you can select between:
 
+- [`MyNFTBridge.sol`](Codebase/Bridge_Contracts/contracts/MyNFTBridge.sol): This is the base bridge interface.
+`Implementation`
+- [`/Implementation/ERC721.sol`](Codebase/Bridge_Contracts/contracts/Implementation/ERC721.sol): This is the base ERC-721 token interface.
 
+`/Implementation/BridgeFeatures/` folder contains the different functions of the bridge.
+The bridge implements the ERC-1538 proxy pattern in order to be upgradable:
+- [`ImplBridgeFunMigrateFromERC721.sol`](Codebase/Bridge_Contracts/contracts/ImplBridgeFunMigrateFromERC721.sol): This implements logic data of the arrival bridge (IOU minting / transfert / ...).
+- [`ImplERC721TokenReceiver.sol`](Codebase/Bridge_Contracts/contracts/ImplERC721TokenReceiver.sol): Handle the receipt of an NFT, the ERC721 smart contract calls this function on the recipient after a `transfer`.
+- [`ImplMyNFTBridgeFunInit.sol`](Codebase/Bridge_Contracts/contracts/ImplMyNFTBridgeFunInit.sol): This implements logic data of a bridge initialization.
+- [`ImplMyNFTBridgeFunMigrateToERC721.sol`](Codebase/Bridge_Contracts/contracts/ImplMyNFTBridgeFunMigrateToERC721.sol): This implements logic data of the departure bridge (migration intent / escrow and signature hash generation)
 
+`/Implementation/Proxification/` folder contains the different functions of the ERC-1538 proxy pattern for Bridge deployment. Get more infos [here](https://eips.ethereum.org/EIPS/eip-1538)
+
+[`/Implementation/Test/`](Codebase/Bridge_Contracts/contracts/Implementation/Test) folder contains an implementation of a token ERC-721 and a custom ERC-721 with premint functions (IOU)
+
+### Testing
 Make sure that everything has been set up correctly:
 
 ```
-$ npm run test
+$ truffle test
 ```
+### Deployment
 
 Update truffle-config.js with your credentials and network data:
 ```

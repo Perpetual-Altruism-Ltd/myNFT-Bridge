@@ -4,6 +4,8 @@ const truffleAssert = require('truffle-assertions');
 const Web3 = require('web3')
 var testSetup = require("../helpers/test_setup.js");
 const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateToERC721");
+const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
+const ImplMyNFTBridgeFunMigrateFromERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateFromERC721");
 
 function numberToBytes32(number) {
 	return Web3.utils.padLeft(
@@ -43,9 +45,7 @@ contract("Testing Bridges features", async accounts => {
 	});
 
 	it(`Should announce an new tranfer of token n°1 to bridge_1`, async () => {
-		let bridge_1 = await ImplMyNFTBridgeFunMigrateToERC721.at(this.bridge_1.address);
-		// this.bridge_2 = await ERC1538Delegate.at(contracts.bridge_2);
-
+		const bridge_1 = await ImplMyNFTBridgeFunMigrateToERC721.at(this.bridge_1.address);
 		const data = [
 			this.erc721_token.address,
 			1,
@@ -56,8 +56,11 @@ contract("Testing Bridges features", async accounts => {
 			hexToBytes32(accounts[2]),
 			hexToBytes32(accounts[0])
 		];
-		
-		const tx = await bridge_1.migrateToERC721IOU(...data);		
+
+		const tx = await bridge_1.migrateToERC721IOU(...data);
+		const block = await web3.eth.getBlock(tx.receipt.blockNumber);
+		this.blockTimestamp = block.timestamp;
+
 		truffleAssert.eventEmitted(tx, 'MigrationDeparturePreRegisteredERC721IOU', (data) => {
 			this.migrationHash = data?._migrationHash;
 			return data?._migrationHash != undefined;
@@ -65,11 +68,48 @@ contract("Testing Bridges features", async accounts => {
 	});
 
 	it(`Should transfer token n°1 to bridge_1`, async () => {
-		await this.erc721_token.safeTransferFrom(accounts[0], this.bridge_1.address, 1, {
+		let bridge_1 = await ImplERC721TokenReceiver.at(this.bridge_1.address);
+		const tx = await this.erc721_token.safeTransferFrom(accounts[0], this.bridge_1.address, 1, {
 			from: accounts[1],
 		});
-		let tokenOwner = await this.erc721_token.ownerOf(1);
+		let nestedEventValues = (await truffleAssert.createTransactionResult(bridge_1, tx.tx)).logs[0].returnValues;
+		const tokenOwner = await this.erc721_token.ownerOf(1);
 		assert.equal(tokenOwner, this.bridge_1.address, "bridge_1 is not the token owner");
+		assert.equal(nestedEventValues._escrowHash != undefined, true, 'The escrow hash has not been emitted');
 	});
 
+	it(`Shoud premint IOU n°1`, async () => {
+		await this.erc721_iou.premintFor(this.bridge_2.address);
+		let tokenMinted = await this.erc721_iou.mintedTokens();
+		assert.equal(tokenMinted, 1, "The IOU token has not been preminted");
+	});
+
+	it(`Should mint and attribute IOU n°1 to account[2] on bridge_2`, async() => {
+		const bridge_2 = await ImplMyNFTBridgeFunMigrateFromERC721.at(this.bridge_2.address);
+		/*
+			const signedMessage = await web3.eth.accounts.sign(this.migrationHash, '208acdc5c18fe9a4cf723bc81c1ad9176824d2cc8dd8ff98ebfd12792fcee394');
+			const signedMessage2 = await web3.eth.sign(this.migrationHash, '0xC1027Fc6afED33548BEe9efa13158e5995a69E5e');
+			console.log('Signed message 1 : ', signedMessage.signature);
+			console.log('Signed message 2 : ', signedMessage2);
+		*/
+		let signedMessage = await web3.eth.sign(this.migrationHash, accounts[0]);
+		let v = await web3.utils.numberToHex( (await web3.utils.toBN('0x'+signedMessage.slice(-2))) + 27);
+		signedMessage = signedMessage.slice(0, -2) + v.slice(-2);
+
+		const data = [
+            hexToBytes32("0x1"),
+            hexToBytes32(this.bridge_1.address),
+            hexToBytes32(this.erc721_token.address),
+            numberToBytes32(1),
+            hexToBytes32(accounts[0]),
+            this.erc721_iou.address,
+            parseInt(1),
+            accounts[2],
+            accounts[0],
+            numberToBytes32(this.blockTimestamp),
+            signedMessage
+        ]
+
+		const tx = await bridge_2.migrateFromIOUERC721ToERC721(...data);	
+	});
 });
