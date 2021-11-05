@@ -80,9 +80,81 @@ yarn
 
 ### Configuration Relay
 
-THe backend hold a conf.json file here `Codebase/Relay/conf.json`. Here a description of the configuration options :
+The backend hold a conf.json file here `Codebase/Relay/conf.json`. 
+You will need :
+   - A wallet private key with fund on each of the universes you want to interact
+   - An infura account with IPFS enabled (projectId and projectSecret)
+   - A bridge deployed on each universes you want to support with the wallet given before
+   - A IOU enabled ERC721 contract on each of the IOU destination universes, deployed with the wallet given before
+
+Here a description of the configuration options :
 
 ```json
+{
+    "relayPrivateKey": "xxxxx", // Your relay wallet private key (must have been used to deploy IOU and bridge contracts)
+    "infuraIpfs": { // Your infura informations
+        "host": "ipfs.infura.io", // Default value
+        "port": 5001, // Default value
+        "protocol": "https", // Default value
+        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
+        "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
+    },
+    "port": 5000,
+    "universes": [
+        {
+            "name":"Ethereum Testnet Rinkeby",
+            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "uniqueId": "0x07dac20e",
+            "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
+            "explorer" : "https://rinkeby.etherscan.io/",
+            "worlds": [
+                {
+                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+        },
+        {
+            "name":"Ethereum Testnet Kovan",
+            "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 42,
+            "networkID": 42,
+            "uniqueId": "0xee0bec75",
+            "bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5",
+            "explorer" : "https://kovan.etherscan.io/",
+            "worlds": [
+                {
+                    "address": "0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+        },
+        {
+            "name":"Ethereum Testnet Goerli",
+            "rpc": "wss://goerli.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 5,
+            "networkID":5,
+            "uniqueId": "0x3fbf5c9a",
+            "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+            "explorer" : "https://etherscan.io/",
+            "worlds": []
+        },
+        {
+            "name":"myNFT Sidechain",
+            "rpc": "wss://ropsten.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 323232,
+            "networkID": 323232,
+            "uniqueId": "0xd1e94e57",
+            "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
+            "explorer" : "https://etherscan.io/",
+            "worlds": []
+        }
+    ]
+}
 
 ```
 
