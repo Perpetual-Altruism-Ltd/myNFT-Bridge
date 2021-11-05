@@ -47,6 +47,54 @@ This is an open ended question with no correct answers, only compromises. Many s
 This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:
 https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/edit?usp=sharing
 
+## Requirements
+
+* NodeJS 12+ is supported
+* Windows, Linux or macOS
+
+## Installation
+
+### Source
+
+*This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/ERC-2665` project.*
+
+Clone this repository and install the required `npm` dependencies:
+
+```
+$ git clone git@github.com:Perpetual-Altruism-Ltd/myNFT-Bridge.git
+$ cd Codebase/Bridge_Contracts
+$ npm install
+```
+
+Make sure that everything has been set up correctly:
+
+```
+$ npm run test
+```
+
+Update truffle-config.js with your credentials
+```
+networks : {
+ rinkeby: {
+       provider: () => new HDWalletProvider('yourprivatekey', `your_rpc_url`),
+       network_id: 4,       // (eg : 4 = Rinkeby)
+       gas: 5500000,        // Rinkeby has a lower block limit than mainnet
+       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+     },
+}
+```
+Deploy all contracts (migration/bridge/erc721/iou)
+
+```
+$ truffle migrate
+```
+If you only need to deploy a bridge, you can run : 
+```
+$ truffle migrate --from 2 --to 2
+```
+
 ## Thanks to
 
 The Web3 Foundation for supporting the creation of an NFT Migration protocol, which was the foundational work to build this NFT bridge, and to everyone who contributed to it.
