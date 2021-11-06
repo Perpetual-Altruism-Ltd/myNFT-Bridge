@@ -119,19 +119,19 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 1em 0em;
-  margin: 0vw 3vw;
+  margin: 0vw 1em;
 }
 
 .NoMargin{
   margin: 0vw 0vw;
 }
 .HorizMargin{
-  margin-top: 5vh;
-  margin-bottom: 5vh;
+  margin-top: 5em;
+  margin-bottom: 5em;
 }
 .HorizSmallMargin{
-  margin-top: 2vh;
-  margin-bottom: 2vh;
+  margin-top: 2em;
+  margin-bottom: 2em;
 }
 /*A card with no gap between lines */
 .CompactCard{
@@ -150,7 +150,7 @@
 .CardLine{
   display: flex;
   flex-flow: row nowrap;
-  gap: 0vw 2vw;
+  gap: 0em 2em;
   align-items: center;
 }
 /* No wrap for text*/
@@ -272,7 +272,12 @@
 
 /* WALLET CONNECTION BUTTONS */
 #ConnectionCenter{
-  margin-bottom: 5vh;
+  margin-bottom: 5em;
+  max-width: 56em;
+}
+
+#WalletConnectionDisplay{
+  align-items: center;
 }
 
 /*use of absolute metrics (px) for width and height so that the icons do not adjust to screen size */
