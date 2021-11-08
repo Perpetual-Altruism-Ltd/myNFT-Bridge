@@ -32,7 +32,7 @@
   background-color: transparent;/*Remove default background*/
   border: solid 2px #555;
   border-radius: 2em;
-  padding: 0.5em;
+  padding: 0.5em 1em;
   margin: 0;
   /* width: 100%; */
   font-family: inherit;
@@ -213,6 +213,33 @@
   font-weight: bold;
 }
 
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  font-style: italic;
+  color: #aaa;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  font-style: italic;
+  color: #aaa;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  font-style: italic;
+  color: #aaa;
+}
+:-moz-placeholder { /* Firefox 18- */
+  font-style: italic;
+  color: #aaa;
+}
+
+#ResignButtonContainer{
+  margin-top: 9em;
+  z-index: 0;
+}
+
+#HintTextStyle{
+  font-style: italic;
+  color: #aaa;
+}
+
 #OriginTokenURICardLine{
   word-break: break-all;
 }
@@ -278,41 +305,41 @@
 /*use of absolute metrics (px) for width and height so that the icons do not adjust to screen size */
 .connectMetaMask{
   background: url("../../medias/MetaMask_Icon.svg");
-  background-size: 80px;
+  background-size: 55px;
   background-position-x: 0vw;
 }
 .connectTorus{
   background: url("../../medias/Torus_Icon.svg");
-  background-size: 80px;
+  background-size: 55px;
   background-position-x: 0.5vw;
 }
 .connectWalletConnect{
   background: url("../../medias/WalletConnect_Icon.svg");
-  background-size: 80px;
+  background-size: 55px;
 }
 .connectPortis{
   background: url("../../medias/Portis_Icon.png");
-  background-size: 60px 80px;
+  background-size: 45px 55px;
 }
 .connectBitski{
   background: url("../../medias/Bitski_Icon.svg");
-  background-size: 80px;
+  background-size: 55px;
 }
 .connectFortmatic{
   background: url("../../medias/Fortmatic_Icon.jpg");
-  background-size: 70px 80px;
+  background-size: 50px 55px;
 }
 .connectVenly{
   background: url("../../medias/Venly_Icon.png");
-  background-size: 70px 80px;
+  background-size: 50px 55px;
 }
 .connectCoinbase{
   background: url("../../medias/Coinbase_Icon.png");
-  background-size: 80px;
+  background-size: 55px;
 }
 .requestWallet{
   background: url("../../medias/RequestWallet_Icon.svg");
-  background-size: 60px;
+  background-size: 40px;
   background-color: #ccc;
   border-width: 0;
 }

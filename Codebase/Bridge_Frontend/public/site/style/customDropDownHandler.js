@@ -168,6 +168,14 @@ let selectDropDownOptionByIndex = function(wrapperId, optionIndex){
 }
 
 /*
+Trigger the onclick of the drop down's option
+*/
+let triggerDropDownOnChange = function(wrapperId){
+  //Call the onChange callback of the 'wrapperId' dropdown selector
+  callbacks[wrapperId].onChange(getDropDownSelectedOptionIndex(wrapperId));
+}
+
+/*
 Retrieve the 0-starting index of the selected option from the select identified by wrapperId.
 return -1 if no option selected
 */

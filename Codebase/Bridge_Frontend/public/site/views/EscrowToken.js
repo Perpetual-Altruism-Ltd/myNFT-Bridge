@@ -21,6 +21,33 @@ export default class extends AbstractView {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
+    //Tell if model.migrationData is filled, i.e. if user come from migration_form
+    let isMigDataFilled = function(){
+      if(migData.originUniverseUniqueId &&
+        migData.originWorld &&
+        migData.originTokenId &&
+        migData.destinationUniverseUniqueId &&
+        migData.migrationType &&
+        migData.destinationWorld &&
+        parseInt(migData.destinationTokenId) &&
+        migData.destinationOwner){
+        return true;
+      }else{
+        return false;
+      }
+    }
+
+    //Loading circle style
+    let stopCircleSpinning = function(){
+      
+    }
+    let setCircleColorGreen = function(){
+
+    }
+
+    //Initially hide resign button
+    document.getElementById("ResignButton").style.display = 'none';
+
     let migrationHashListener = async function(){
       //Construct request
       let selectedRelayIndex = migData.migrationRelayIndex;
@@ -79,7 +106,12 @@ export default class extends AbstractView {
     }
     //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user
     //signMigrationHash() -> continueMigration() -> escrowHashListener() -> /sign_escrow
-    migrationHashListener();
+    if(isMigDataFilled()){
+      migrationHashListener();
+    }else {
+      //model.navigateTo('wallet_connection');
+    }
+
 
     let signMigrationHash = async function(){
       //personal_sign
@@ -91,7 +123,8 @@ export default class extends AbstractView {
 
         continueMigration();
       }).catch((res) => {
-        loadingText.textContent = "An issue? Contact our team.";
+        loadingText.textContent = "Retry to sign or contact our team if the issue persists.";
+        document.getElementById("ResignButton").style.display = 'flex';
         console.log("Signature error: " + res);
       });
     }
@@ -174,6 +207,12 @@ export default class extends AbstractView {
         loadingText.textContent = "Couldn't retrieve escrow hash from relay. Contact our team.";
       }
     }
+
+    document.getElementById("ResignButton").addEventListener('click', async() => {
+      //Hide the button itself
+      document.getElementById("ResignButton").style.display = 'none';
+      signMigrationHash();
+    })
 
     //setTimeout(() => { model.navigateTo("/sign_escrow"); }, 5000);
   }

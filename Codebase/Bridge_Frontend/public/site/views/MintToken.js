@@ -56,10 +56,7 @@ export default class extends AbstractView {
 
       //Wait until timeout or migrationHash received
       let i = 0;
-      console.log(model.destinationTokenTransfertTxHash);
-      console.log(model.listeningTimeOut/model.listeningRefreshFrequency);
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
-        console.log("Inside while loop, i = " + i);
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           console.log("requestCallback called");

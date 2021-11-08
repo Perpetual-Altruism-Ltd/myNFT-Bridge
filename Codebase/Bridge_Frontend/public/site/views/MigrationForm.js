@@ -1,5 +1,13 @@
 import AbstractView from './AbstractView.js';
 
+
+/*******************************Read before modifying code
+Inputs elements are read only.
+Therefore to modify the content of inputOGContractAddress, inputOGTokenID, inputDestOwner: call the functions set*InputValue("...")
+Call the same function to modify the content of model.migrationData.[originWorld | originTokenId | destinationOwner]
+
+****************************************************************************************/
+
 //0xf181e8B385FE770C78e3B848F321998F78b0d73e
 //0xbf21e21414554dB734C9f86835D51B57136BC35b
 //Rinkeby ERC721 contract: 0x34797AaF0848b0f495cE413e551335362bc793eD (ImplTestERC721 depl by 0xbf2),
@@ -464,6 +472,11 @@ export default class extends AbstractView {
             bridgeApp.destWorlds.push(worldAddr);
             addDropDownOption("DestinationWorldSelector", worldAddr, "", i);
           });
+          //Prefill with the 1st world
+          if(response.data.worlds.length > 0){
+            selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+            triggerDropDownOnChange("DestinationWorldSelector");
+          }
         }
       }).catch(function (error) {
         console.error(error);
@@ -501,6 +514,11 @@ export default class extends AbstractView {
         //Display loading text for tokenID
         document.getElementById("DestTokenID").textContent = "Too many request to relay. Please wait 1 min before getting the token id...";
         setTimeout(getAvailableTokenId, 60000);
+
+        //Reset dest token id
+        migData.destinationTokenId = "";
+        //Refresh complete button
+        refreshCompleteBtnEnabled();
       });
     }
 
@@ -564,7 +582,11 @@ export default class extends AbstractView {
 
       //Also disable redeem button by default
       document.getElementById("RedeemButton").disabled = true;
+
+      //Clear token metadata. (if previous token was an IOU)
+      resetTokenMetadata();
     }
+    //Show & Hide form fields
     let hideFormFieldsFromMigrationCard = function(){
       //Hide all elements following departure card
       let cardsToHide = document.querySelectorAll("#MigrationCard,#ArrivalCard,#CompleteMigrationCard");
@@ -581,6 +603,33 @@ export default class extends AbstractView {
       //Empty migdata destination var
       resetDestinationMigrationData();
     }
+    let showFormFieldsAfterOgNet = function(show){
+      //Hide all following elements
+      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#BreakLineCardContainer,#TokenDataCard,#TokenErrorMessage,#ArrivalCard,#MigrationCard,#CompleteMigrationCard");
+      elementsToHide.forEach(function(elem) {
+        showCard(elem.id, show);
+      });
+    }
+    //Show - Hide from dest network to dest owner
+    let showArrivalFormFields = function(show){
+      let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      elementsToShow.forEach(function(elem) {
+        showCard(elem.id, show);
+      });
+    }
+    let showFormFieldsAfterMigButtons = function(show){
+      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      elementsToHide.forEach(function(elem) {
+        showCard(elem.id, show);
+      });
+    }
+    let showFormFieldsAfterRelay = function(show){
+      //Hide further form field if ever displayed
+      let elementsToHide = document.querySelectorAll("#ArrivalCard,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      elementsToHide.forEach(function(elem) {
+        showCard(elem.id, show);
+      });
+    }
     let showAllFormFields = function(){
       //Show all cards
       let cardsToShow = document.querySelectorAll("#DepartureCard,#TokenDataCard,#MigrationCard,#ArrivalCard,#DestTokenDataCard,#CompleteMigrationCard");
@@ -593,6 +642,8 @@ export default class extends AbstractView {
         showCardLine(elem.id, true);
       });
     }
+
+    //Error & user messages
     let checkAndDisplayNotOwnerMsg = function(){
 
       //Handle if user is not the owner
@@ -613,7 +664,6 @@ export default class extends AbstractView {
       errorMsg.innerHTML = "No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.";
 
       showCardLine("TokenErrorMessage", true);
-      //hideFormFieldsFromMigrationCard();
     }
     let displayContractErrorMsg = function(){
       let errorMsg = document.getElementById("TokenErrorMessage");
@@ -641,31 +691,36 @@ export default class extends AbstractView {
       userAccount = window.web3.currentProvider.selectedAddress;
       document.getElementById("CompleteButton").disabled = !isMigDataFilled() || (migData.originOwner != userAccount);
     }
-    let displayInputHint = function(id, txt){
-      let input = document.getElementById(id);
-      input.style.fontStyle = 'italic';
-      input.style.color = '#aaa';
+
+
+    //Input setters.
+    //These functions make sure the input value displayed is always the same as the variable in migData
+    let setOgWorldInputValue = function(txt){
+      let input = document.getElementById("inputOGContractAddress");
+      //Set new text
       input.value = txt;
-      input.classList.add("ShowHint");
+      //Save ogWorld into migaData object
+      migData.originWorld = txt;
     }
-    let hideInputHint = function(id){
-      let input = document.getElementById(id);
-      input.style.fontStyle = 'normal';
-      input.style.color = 'inherit';
-      input.value = '';
-      input.classList.remove("ShowHint");
+    let setOgTokenIdInputValue = function(txt){
+      let input = document.getElementById("inputOGTokenID");
+      //Set new text
+      input.value = txt;
+      //Save ogWorld into migaData object
+      migData.originTokenId = txt;
     }
-    let isInputHintDisplayed = function(id){
-      return document.getElementById(id).classList.contains("ShowHint");
+    let setDestOwnerInputValue = function(txt){
+      let input = document.getElementById("inputDestOwner");
+      //Set new text
+      input.value = txt;
+      //Save ogWorld into migaData object, only if
+      migData.destinationOwner = txt;
     }
-    let displayOgWorldInputHint = function(){
-      displayInputHint("inputOGContractAddress", "Enter the contract address of the ERC721 smart contract.");
-    }
-    let displayOgTokenIdInputHint = function(){
-      displayInputHint("inputOGTokenID", "Enter the token id of the NFT you want to migrate.");
-    }
-    let displayDestOwnerInputHint = function(){
-      displayInputHint("inputDestOwner", "Enter the address who will receive the migrated token.");
+
+    //Data display
+    //These functions make sure the input value displayed is always the same as the variable in migData
+    let setOriginOwner = function(){
+      //TODO
     }
 
     //Prefill functions
@@ -702,9 +757,9 @@ export default class extends AbstractView {
     let prefillFormWithMigData = function(){
       //OgNet is already prefilled because register_migration prompt user to switch to correct net for edit mig btn
       //Prefill ogWorld
-      document.getElementById("inputOGContractAddress").value = migData.originWorld;
+      setOgWorldInputValue(migData.originWorld);
       //Prefill ogTokenId
-      document.getElementById("inputOGTokenID").value = migData.originTokenId;
+      setOgTokenIdInputValue(migData.originTokenId);
 
       //load token meta data
       document.getElementById("FetchDataButton").click();
@@ -735,7 +790,7 @@ export default class extends AbstractView {
       //Prefill destTokenId
       document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
       //Prefill destTokenOwner
-      document.getElementById("inputDestOwner").value = migData.destinationOwner;
+      setDestOwnerInputValue(migData.destinationOwner)
 
       //Finally display all form fields
       showAllFormFields();
@@ -752,7 +807,15 @@ export default class extends AbstractView {
     let resetDestWorldNTokenNOwnerMigData = function(){
       migData.destinationWorld = "";
       migData.destinationTokenId = "";
-      migData.destinationOwner = "";
+      setDestOwnerInputValue("");
+    }
+    let resetTokenMetadata = function(){
+      migData.metadataDestinationUniverseUniqueId = "";
+      migData.metadataDestinationUniverseIndex = 0;
+      migData.metadataDestinationUniverse = "";
+      migData.metadataDestinationWorld = "";
+      migData.metadataDestinationTokenId = "";
+      migData.metadataDestinationBridgeAddr = "";
     }
 
     //Setup custom selector
@@ -795,21 +858,16 @@ export default class extends AbstractView {
       clearDropDownOptions("DestinationWorldSelector");
 
       //Clear ogWorld & token Id
-      document.getElementById("inputOGContractAddress").value = "";
-      document.getElementById("inputOGTokenID").value = "";
-      migData.originWorld = "";
-      migData.originTokenId = "";
+      setOgWorldInputValue("");
+      setOgTokenIdInputValue("");
 
       //Reset migration buttons. Unselect the previously selected button.
       let migButtonsCard = document.getElementById("MigrationTypeCardLine");
       let selected = migButtonsCard.querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
 
-      //Hide all following elements, except destination and relay
-      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#TokenDataCard,#TokenErrorMessage,#ArrivalCard,#MigrationCard,#CompleteMigrationCard");
-      elementsToHide.forEach(function(elem) {
-        showCard(elem.id, false);
-      });
+      //Hide all form fields after origin network dropdown.
+      showFormFieldsAfterOgNet(false);
 
       refreshCompleteBtnEnabled();
       promptSwitchChain(chainIDSelected);
@@ -825,23 +883,21 @@ export default class extends AbstractView {
         showCardLine("ArrivalCard", true);
         showCardLine("DestWorldCardLine", true);
 
+        //Clear previous worlds retrived from relay
+        clearDropDownOptions("DestinationWorldSelector");
         //Load available destination world from relay
         getRelayAvailableWorlds();
       }
       //Else REDEEM: display all following form fields and prefill them with data from metadata
       else if(migData.migrationType == model.RedeemIOUMigrationType){
         //SHOW all next form field which are prefilled
-        let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
-        elementsToShow.forEach(function(elem) {
-          showCard(elem.id, true);
-        });
+        showArrivalFormFields(true);
       }
 
       //Prefill dest owner
       userAccount = window.web3.currentProvider.selectedAddress;
       //Prefill destTokenOwner with the current connected address
-      document.getElementById("inputDestOwner").value = userAccount;
-      document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
+      setDestOwnerInputValue(userAccount);
 
       refreshCompleteBtnEnabled();
     });
@@ -860,10 +916,7 @@ export default class extends AbstractView {
       //load available relay from network_list and relay_list
 
       //HIDE form fields further than one step from dest network drop down
-      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
-      elementsToHide.forEach(function(elem) {
-        showCard(elem.id, false);
-      });
+      showFormFieldsAfterMigButtons(false);
 
       //Clear MigData from outdated data
       migData.destinationTokenId = 0;
@@ -924,21 +977,9 @@ export default class extends AbstractView {
       }
     });
 
-    //Display input hint
-    displayOgWorldInputHint();
-    displayOgTokenIdInputHint();
-
     //===Origin world input===
     //When return/enter key pressed in input: Display ogTokenID input
     //Focus in & out, hint management
-    document.getElementById("inputOGContractAddress").addEventListener('focusin', async(e) =>{
-      if(isInputHintDisplayed("inputOGContractAddress"))
-        hideInputHint("inputOGContractAddress");
-    });
-    document.getElementById("inputOGContractAddress").addEventListener('focusout', async(e) =>{
-      if(document.getElementById("inputOGContractAddress").value == "")
-        displayOgWorldInputHint();
-    });
     document.getElementById("inputOGContractAddress").addEventListener('keyup', async(e) =>{
       //Show next form field
       showCardLine("OriginTokenIDCardLine", true);
@@ -962,14 +1003,6 @@ export default class extends AbstractView {
 
     //===Origin tokenID input===
     //When return/enter key pressed in input: Display dest owner input
-    document.getElementById("inputOGTokenID").addEventListener('focusin', async(e) =>{
-      if(isInputHintDisplayed("inputOGTokenID"))
-        hideInputHint("inputOGTokenID");
-    });
-    document.getElementById("inputOGTokenID").addEventListener('focusout', async(e) =>{
-      if(document.getElementById("inputOGTokenID").value == "")
-        displayOgTokenIdInputHint();
-    });
     /*document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
@@ -979,9 +1012,9 @@ export default class extends AbstractView {
     document.getElementById("inputOGTokenID").addEventListener('keyup', async() =>{
       let inputVal = document.getElementById("inputOGTokenID").value;
       if(inputVal.startsWith('0x')){
-        migData.originTokenId = parseInt(inputVal, 16).toString();
+        setOgTokenIdInputValue(parseInt(inputVal, 16).toString());
       }else{
-        migData.originTokenId = inputVal;
+        setOgTokenIdInputValue(inputVal);
       }
       //refresh complete btn enabled
       refreshCompleteBtnEnabled();
@@ -996,14 +1029,6 @@ export default class extends AbstractView {
 
     //===Destination owner input===
     //When input is unfocused, display originTokenID input
-    document.getElementById("inputDestOwner").addEventListener('focusin', async(e) =>{
-      if(isInputHintDisplayed("inputDestOwner"))
-        hideInputHint("inputDestOwner");
-    });
-    document.getElementById("inputDestOwner").addEventListener('focusout', async(e) =>{
-      if(document.getElementById("inputDestOwner").value == "")
-        displayDestOwnerInputHint();
-    });
     document.getElementById("inputDestOwner").addEventListener('keyup', async() =>{
       document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
     });
@@ -1038,11 +1063,8 @@ export default class extends AbstractView {
       migData.migrationType = model.MintOUIMigrationType;
       model.isRedeem = false;
 
-      //Hide further form field if ever displayed
-      let elementsToHide = document.querySelectorAll("#ArrivalCard,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
-      elementsToHide.forEach(function(elem) {
-        showCard(elem.id, false);
-      });
+      //Hide all fields after relay drop down
+      showFormFieldsAfterRelay(false);
 
       refreshCompleteBtnEnabled();
     });
@@ -1084,11 +1106,7 @@ export default class extends AbstractView {
 
       //If relay already selected, display all form till the end !
       if(getDropDownSelectedOptionIndex("RelaySelector") >= 0){
-        //SHOW all next form field which are prefilled
-        let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
-        elementsToShow.forEach(function(elem) {
-          showCard(elem.id, true);
-        });
+        showArrivalFormFields(true);
       }
 
       refreshCompleteBtnEnabled();
