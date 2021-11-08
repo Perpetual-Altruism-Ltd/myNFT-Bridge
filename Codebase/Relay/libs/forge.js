@@ -23,7 +23,8 @@ class Forge {
     async _forgeImage(imageUri){
         const image = await Jimp.read(imageUri)
         // Resize original image
-        image.resize(512, 512)
+        if(image.bitmap.height < image.bitmap.width) image.resize(512, Jimp.AUTO)
+        else image.resize(Jimp.AUTO, 512)
         // Generate text
         const textImage = new Jimp(70, 40, 'transparent')
         const font = await Jimp.loadFont(Jimp.FONT_SANS_32_BLACK)
@@ -35,7 +36,7 @@ class Forge {
         // Add text to white background
         whiteImage.blit(textImage, 0, 0)
         // Insert text to original image
-        image.blit(whiteImage, 512 - 90, 512 - 60)
+        image.blit(whiteImage, image.bitmap.width - 90, image.bitmap.height - 60)
 
         return await image.getBufferAsync('image/png')
     }
