@@ -91,7 +91,7 @@ export default class extends AbstractView {
 
         continueMigration();
       }).catch((res) => {
-        loadingText.textContent = "Any issue? Contact our team.";
+        loadingText.textContent = "An issue? Contact our team.";
         console.log("Signature error: " + res);
       });
     }
@@ -153,7 +153,7 @@ export default class extends AbstractView {
       }
 
       console.log("Start listening for escrow hash");
-      setTimeout(() => { loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge."; }, 3000);
+      setTimeout(() => { loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge..."; }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;

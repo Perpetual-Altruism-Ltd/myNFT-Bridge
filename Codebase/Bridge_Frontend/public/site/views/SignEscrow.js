@@ -20,7 +20,7 @@ export default class extends AbstractView {
     //If redeem, display specific message
     if(migData.migrationType == model.RedeemIOUMigrationType){
       document.getElementById("TransferMessage").textContent = "The IOU token was successfully transferred to the bridge.";
-      document.getElementById("SignMessage").textContent = "Please sign the escrow hash to allow the relay to give you back the token.";
+      document.getElementById("SignMessage").textContent = "Please sign the escrow hash to allow the relay to send you the token back.";
     }
 
     let signEscrowHash = async function(){
@@ -53,6 +53,7 @@ export default class extends AbstractView {
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
+          console.log(options.url + ' answer received. Moving to mint_token');
           //Move to mint_Token page
           model.navigateTo("/mint_token");
         }else{

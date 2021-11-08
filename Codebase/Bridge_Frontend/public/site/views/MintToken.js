@@ -15,8 +15,9 @@ export default class extends AbstractView {
     let migData = model.migrationData;
     let loadingText = document.getElementById("MigrationLoadingText");
     //If redeem, display specific message
-    if(migData.migrationType == model.RedeemIOUMigrationType)
-      document.getElementById("MigrationLoadingText").textContent = "Please wait for the relay to retrieve the destination token.";
+    if(migData.migrationType == model.RedeemIOUMigrationType){
+      loadingText.textContent = "Please wait for the relay to retrieve the destination token...";
+    }
 
     function sleep(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -55,9 +56,13 @@ export default class extends AbstractView {
 
       //Wait until timeout or migrationHash received
       let i = 0;
+      console.log(model.destinationTokenTransfertTxHash);
+      console.log(model.listeningTimeOut/model.listeningRefreshFrequency);
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
+        console.log("Inside while loop, i = " + i);
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
+          console.log("requestCallback called");
           requestCallback(response);
         }).catch(function (error) {
           console.error(error);

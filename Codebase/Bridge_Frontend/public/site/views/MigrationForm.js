@@ -499,7 +499,7 @@ export default class extends AbstractView {
         console.error(error);
         //If "Too many requests", wait one minute before resending request
         //Display loading text for tokenID
-        document.getElementById("DestTokenID").textContent = "Too many request to relay. Please wait 1 min before getting the token id.";
+        document.getElementById("DestTokenID").textContent = "Too many request to relay. Please wait 1 min before getting the token id...";
         setTimeout(getAvailableTokenId, 60000);
       });
     }
@@ -640,6 +640,15 @@ export default class extends AbstractView {
     let refreshCompleteBtnEnabled = function(){
       userAccount = window.web3.currentProvider.selectedAddress;
       document.getElementById("CompleteButton").disabled = !isMigDataFilled() || (migData.originOwner != userAccount);
+    }
+    let displayInputHint = function(id, txt){
+      let input = document.getElementById(id);
+      input.style.fontStyle = 'italic';
+      input.style.color = '#aaa';
+      input.value = txt;
+    }
+    let hideInputHint = function(id){
+
     }
 
     //Prefill functions
@@ -898,6 +907,9 @@ export default class extends AbstractView {
       }
     });
 
+    //Display input hint
+    //displayInputHint("inputOGContractAddress", "Enter the contract address of the ERC721 smart contract.");
+
     //===Origin world input===
     //When return/enter key pressed in input: Display ogTokenID input
     document.getElementById("inputOGContractAddress").addEventListener('keyup', async(e) =>{
@@ -1020,7 +1032,6 @@ export default class extends AbstractView {
       console.log("migData.destinationWorld: " + migData.destinationWorld);
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
-      console.log(getDropDownSelectedOptionIndex("DestinationWorldSelector"));
       //destTokenId
       document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
 

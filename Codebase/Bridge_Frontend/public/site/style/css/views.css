@@ -130,8 +130,8 @@
   margin-bottom: 5em;
 }
 .HorizSmallMargin{
-  margin-top: 2em;
-  margin-bottom: 2em;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 /*A card with no gap between lines */
 .CompactCard{
@@ -217,11 +217,6 @@
   word-break: break-all;
 }
 
-#MigrationFormDisplay{
-  margin-top: 5vh;
-  margin-bottom: 5vh;
-}
-
 #BreakLineCardContainer{
   margin-top: 5vh;
   margin-bottom: 5vh;
@@ -231,7 +226,7 @@
 
 #BreakLine{
   position: absolute;
-  left: -19.5vw;
+  left: -21.5vw;
   height: 3px;
   background-color: #3e287a;
   width: 98vw;
@@ -319,6 +314,10 @@
   background: url("../../medias/RequestWallet_Icon.svg");
   background-size: 60px;
   background-color: #ccc;
+  border-width: 0;
+}
+.requestWallet:active{
+  background-color: #aaa;
 }
 
 .connectMetaMask,.connectTorus,.connectWalletConnect,.connectPortis,.connectBitski,.connectFortmatic,.connectVenly,.connectCoinbase,.requestWallet{

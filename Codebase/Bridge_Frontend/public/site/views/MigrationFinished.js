@@ -46,7 +46,7 @@ export default class extends AbstractView {
       model.migrationHash = "";
       model.escrowHash = "";
 
-      //model.destinationTokenTransfertTxHash = "";
+      model.destinationTokenTransfertTxHash = "";
 
       model.disconnectWallet = false;
       model.isRedeem = false;
