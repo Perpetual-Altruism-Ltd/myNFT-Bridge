@@ -646,9 +646,26 @@ export default class extends AbstractView {
       input.style.fontStyle = 'italic';
       input.style.color = '#aaa';
       input.value = txt;
+      input.classList.add("ShowHint");
     }
     let hideInputHint = function(id){
-
+      let input = document.getElementById(id);
+      input.style.fontStyle = 'normal';
+      input.style.color = 'inherit';
+      input.value = '';
+      input.classList.remove("ShowHint");
+    }
+    let isInputHintDisplayed = function(id){
+      return document.getElementById(id).classList.contains("ShowHint");
+    }
+    let displayOgWorldInputHint = function(){
+      displayInputHint("inputOGContractAddress", "Enter the contract address of the ERC721 smart contract.");
+    }
+    let displayOgTokenIdInputHint = function(){
+      displayInputHint("inputOGTokenID", "Enter the token id of the NFT you want to migrate.");
+    }
+    let displayDestOwnerInputHint = function(){
+      displayInputHint("inputDestOwner", "Enter the address who will receive the migrated token.");
     }
 
     //Prefill functions
@@ -908,11 +925,22 @@ export default class extends AbstractView {
     });
 
     //Display input hint
-    //displayInputHint("inputOGContractAddress", "Enter the contract address of the ERC721 smart contract.");
+    displayOgWorldInputHint();
+    displayOgTokenIdInputHint();
 
     //===Origin world input===
     //When return/enter key pressed in input: Display ogTokenID input
+    //Focus in & out, hint management
+    document.getElementById("inputOGContractAddress").addEventListener('focusin', async(e) =>{
+      if(isInputHintDisplayed("inputOGContractAddress"))
+        hideInputHint("inputOGContractAddress");
+    });
+    document.getElementById("inputOGContractAddress").addEventListener('focusout', async(e) =>{
+      if(document.getElementById("inputOGContractAddress").value == "")
+        displayOgWorldInputHint();
+    });
     document.getElementById("inputOGContractAddress").addEventListener('keyup', async(e) =>{
+      //Show next form field
       showCardLine("OriginTokenIDCardLine", true);
       migData.originWorld = document.getElementById("inputOGContractAddress").value;
       //Refresh complete button at every character change in the input
@@ -934,6 +962,14 @@ export default class extends AbstractView {
 
     //===Origin tokenID input===
     //When return/enter key pressed in input: Display dest owner input
+    document.getElementById("inputOGTokenID").addEventListener('focusin', async(e) =>{
+      if(isInputHintDisplayed("inputOGTokenID"))
+        hideInputHint("inputOGTokenID");
+    });
+    document.getElementById("inputOGTokenID").addEventListener('focusout', async(e) =>{
+      if(document.getElementById("inputOGTokenID").value == "")
+        displayOgTokenIdInputHint();
+    });
     /*document.getElementById("inputOGTokenID").addEventListener('keyup', async(e) =>{
       //Unfocus input when enter key is pressed
       if (e.key === 'Enter' || e.keyCode === 13) {
@@ -960,6 +996,14 @@ export default class extends AbstractView {
 
     //===Destination owner input===
     //When input is unfocused, display originTokenID input
+    document.getElementById("inputDestOwner").addEventListener('focusin', async(e) =>{
+      if(isInputHintDisplayed("inputDestOwner"))
+        hideInputHint("inputDestOwner");
+    });
+    document.getElementById("inputDestOwner").addEventListener('focusout', async(e) =>{
+      if(document.getElementById("inputDestOwner").value == "")
+        displayDestOwnerInputHint();
+    });
     document.getElementById("inputDestOwner").addEventListener('keyup', async() =>{
       document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
     });
