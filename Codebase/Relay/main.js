@@ -254,8 +254,14 @@ const main = async () => {
 
         Logger.info(`Client id ${client.id} inited migration from universe ${migrationData.originUniverse}, world ${migrationData.originWorld}, tokenId ${migrationData.originTokenId} to ${migrationData.destinationUniverse}, world ${migrationData.destinationWorld}, tokenId ${migrationData.destinationTokenId}.`)
 
-        // Calling departure bridge
-        await client.annonceToBridge(originUniverse)
+        try{
+            // Calling departure bridge
+            await client.annonceToBridge(originUniverse)
+
+            Logger.info(`Announced migration to bridge`)
+        }catch(err){
+            Logger.error(err)
+        }
     })
 
     // TODO : add this function/endpoint to the documentation (step n°18)
@@ -301,11 +307,16 @@ const main = async () => {
 
             Logger.info(`Client id ${client.id} signed migration hash.`)
 
-            // Transferring token to departure bridge
-            await client.transferToBridge(req.body.migrationHashSignature)
-
-            // Update escrow hash
-            await client.updateEscrowHash()
+            try{
+                // Transferring token to departure bridge
+                await client.transferToBridge(req.body.migrationHashSignature)
+                Logger.info(`Transfered token to bridge`)
+                // Update escrow hash
+                await client.updateEscrowHash()
+                Logger.info(`Updated escrow hash`)
+            }catch(err){
+                Logger.error(err)
+            }
         }catch(err){
             if(!res.headersSent)
                 res.status(500).send({
@@ -357,18 +368,25 @@ const main = async () => {
 
             Logger.info(`Client id ${client.id} signed escrow hash for minting an IOU.`)
 
-            // Check if escrow hash is valid before doing anything
-            await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
+            try{
+                // Check if escrow hash is valid before doing anything
+                await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
+                Logger.info(`Escrow hash verified`)
 
-            //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
-            await client.closeMigration()
+                //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
+                await client.closeMigration()
+                Logger.info(`Migration closed`)
 
-            const premintedToken = db.collections.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
-            premintedToken.minted = true
-            db.collections.premintedTokens.update(premintedToken)
+                const premintedToken = db.collections.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
+                premintedToken.minted = true
+                db.collections.premintedTokens.update(premintedToken)
 
-            // Call origin bridge migrateFromIOUERC721ToERC721
-            await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+                // Call origin bridge migrateFromIOUERC721ToERC721
+                await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+                Logger.info(`Transfer registered on origin bridge`)
+            }catch(err){
+                Logger.error(err)
+            }
         }catch(err){
             if(!res.headersSent)
                 res.status(500).send({
@@ -398,14 +416,21 @@ const main = async () => {
 
             Logger.info(`Client id ${client.id} signed escrow hash for redeeming an IOU.`)
 
-            // Check if escrow hash is valid before doing anything
-            await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
+            try{
+                // Check if escrow hash is valid before doing anything
+                await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
+                Logger.info(`Escrow hash verified`)
 
-            //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
-            await client.closeRedeemMigration()
+                //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
+                await client.closeRedeemMigration()
+                Logger.info(`Redeeming closed`)
 
-            // Call origin bridge migrateFromIOUERC721ToERC721
-            await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+                // Call origin bridge migrateFromIOUERC721ToERC721
+                await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
+                Logger.info(`Registered transfer on origin bridge`)
+            }catch(err){
+                Logger.error(err)
+            }
         }catch(err){
             if(!res.headersSent)
                 res.status(500).send({
