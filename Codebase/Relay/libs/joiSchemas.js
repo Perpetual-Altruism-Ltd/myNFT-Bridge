@@ -17,12 +17,12 @@ const schemas = {
         migrationData: Joi.object({
             originUniverse: Joi.string().required(),
             originWorld: Joi.string().required(),
-            originTokenId: Joi.string().required(),
+            originTokenId: Joi.number().required(),
             originOwner: Joi.string().required(),
             destinationUniverse: Joi.string().required(),
             destinationBridge: Joi.string().required(),
             destinationWorld: Joi.string().required(),
-            destinationTokenId: Joi.string().required(),
+            destinationTokenId: Joi.number().required(),
             destinationOwner: Joi.string().required()
         }).required(),
         redeem: Joi.bool().required(),

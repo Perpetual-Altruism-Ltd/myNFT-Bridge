@@ -25,14 +25,15 @@ const main = async () => {
         })
     }
 
-    function premintStock(){
-        const deliveredNotMintedTokens = db.collections.premintedTokens.find({
+    async function premintStock(){
+        const deliveredNotMintedTokens = await db.models.premintedTokens.find({
             delivered: true
             , minted: false
         })
+
         deliveredNotMintedTokens.forEach(token => {
             token.delivered = false
-            db.collections.premintedTokens.update(token)
+            token.save()
         })
 
         Conf.universes.forEach(universe => {
@@ -40,7 +41,7 @@ const main = async () => {
             universe.worlds.forEach(async world => {
                 while(true){
                     await sleep(1000)
-                    const premintedTokens = db.collections.premintedTokens.find({
+                    const premintedTokens = await db.models.premintedTokens.find({
                         universe: universe.uniqueId
                         , world: world.address
                         , delivered: false
@@ -49,13 +50,13 @@ const main = async () => {
                     if(premintedTokens.length < 2){
                         try{
                             const tokenId = await ethereum.premintToken(world.address, universe.bridgeAdress)
-                            db.collections.premintedTokens.insert({
+                            await (new db.models.premintedTokens({
                                 tokenId
                                 , universe: universe.uniqueId
                                 , world: world.address
                                 , delivered: false
                                 , minted: false
-                            })
+                            })).save()
                         }catch(err){
                             Logger.error(`Can't premint a token on ${ethereum.rpc}.`)
                         }
@@ -65,8 +66,8 @@ const main = async () => {
         })
     }
 
-    function populateClientList(){
-        const clients = db.collections.clients.find()
+    async function populateClientList(){
+        const clients = await db.models.clients.find()
         clients.forEach(client => {
             clientList[client.id] = new Client(
                 client.migrationData
@@ -77,14 +78,15 @@ const main = async () => {
                 , db
                 , client.id
                 , client.step)
+            clientList[client.id].init()
         })
     }
 
     connectRpc()
 
-    premintStock()
+    await premintStock()
 
-    populateClientList()
+    await populateClientList()
 
     const app = Express()
 
@@ -132,7 +134,7 @@ const main = async () => {
             return
         }
 
-        const premintedToken = db.collections.premintedTokens.findOne({
+        const premintedToken = await db.models.premintedTokens.findOne({
             universe: universe.uniqueId
             , world: req.body.world
             , delivered: false
@@ -145,17 +147,17 @@ const main = async () => {
 
         if(!premintedToken){
             tokenId = await ethereum.premintToken(req.body.world, universe.bridgeAdress)
-            db.collections.premintedTokens.insert({
+            await (new db.models.premintedTokens({
                 tokenId
                 , universe: universe.uniqueId
                 , world: req.body.world
                 , delivered: true
                 , minted: false
-            })
+            })).save()
         }else{
             tokenId = premintedToken.tokenId
             premintedToken.delivered = true
-            db.collections.premintedTokens.update(premintedToken)
+            premintedToken.save()
         }
 
         Logger.info(`Preminted token id ${tokenId} delivered to client.`)
@@ -248,6 +250,9 @@ const main = async () => {
             universesRpc[destinationUniverse.uniqueId],
             db
         )
+
+        await client.init()
+
         clientList[client.id] = client
         
         res.json({ migrationId: client.id })
@@ -377,9 +382,9 @@ const main = async () => {
                 await client.closeMigration()
                 Logger.info(`Migration closed`)
 
-                const premintedToken = db.collections.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
+                const premintedToken = await db.models.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
                 premintedToken.minted = true
-                db.collections.premintedTokens.update(premintedToken)
+                await premintedToken.save()
 
                 // Call origin bridge migrateFromIOUERC721ToERC721
                 await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
