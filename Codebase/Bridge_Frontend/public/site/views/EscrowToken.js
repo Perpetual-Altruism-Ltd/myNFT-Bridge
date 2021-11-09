@@ -39,7 +39,10 @@ export default class extends AbstractView {
 
     //Loading circle style
     let stopCircleSpinning = function(){
-      
+      document.getElementById("LoadingCircle").style.animationPlayState = 'paused';
+    }
+    let startCircleSpinning = function(){
+      document.getElementById("LoadingCircle").style.animationPlayState = 'running';
     }
     let setCircleColorGreen = function(){
 
@@ -69,6 +72,9 @@ export default class extends AbstractView {
           if(res.migrationHash != undefined){
             model.migrationHash = res.migrationHash;
             console.log("Migration hash received: " + model.migrationHash);
+
+            //Pause de loading circle spin
+            stopCircleSpinning();
 
             loadingText.textContent = "Please sign the migration hash to continue the migration.";
 
@@ -120,6 +126,9 @@ export default class extends AbstractView {
         console.log("Migration hash signed: " + res);
         loadingText.textContent = "Sending signature to relay.";
         migrationHashSigned = res;
+
+        //Resume loading circle spin
+        startCircleSpinning();
 
         continueMigration();
       }).catch((res) => {

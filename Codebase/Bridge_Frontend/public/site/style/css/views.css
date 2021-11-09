@@ -138,6 +138,7 @@
 .CompactCard{
   display: flex;
   flex-flow: column nowrap;
+  line-height: 1.56rem;
 }
 
 /*Represent one line contained in a Card */
