@@ -2,9 +2,15 @@ import AbstractView from './AbstractView.js';
 
 
 /*******************************Read before modifying code
-Inputs elements are read only.
+Inputs elements should be read only.
 Therefore to modify the content of inputOGContractAddress, inputOGTokenID, inputDestOwner: call the functions set*InputValue("...")
 Call the same function to modify the content of model.migrationData.[originWorld | originTokenId | destinationOwner]
+
+These functions are used to modify the text displayed on the form AND migData object.
+You must not modify migData.originOwner | destinationTokenId directly, you should use these functions:
+SetOriginOwner()
+SetDestinationTokenId() + SetDestinationTokenIdFetchingMsg()
+
 
 ****************************************************************************************/
 
@@ -144,10 +150,11 @@ export default class extends AbstractView {
         };
     };
 
-    //Update global var (i.e. model) and display avilable dest net once new network is selected
-    let onChainSwitchedSuccess = function(){
+    //Update global var (i.e. model) and display available dest net once new network is selected
+    let onChainSwitchedSuccessDataToFetch = function(){
       //Display next form field: ogWorld input
       showCardLine("OriginWorldCardLine", true);
+      showCardLine("OriginTokenIDCardLine", migData.originTokenId != "");
 
       //Save origin network in the object migData to access it later during the migration process
       migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
@@ -157,6 +164,9 @@ export default class extends AbstractView {
 
       //Clear Destination networks before fill it again
       clearDropDownOptions("DestinationNetworkSelector");
+      //Clear previously retrieved destWorld
+      clearDropDownOptions("DestinationWorldSelector");
+
       //Show the available destination networks for the ogNet selected
       for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
         let destNetId = target.networkId
@@ -173,20 +183,87 @@ export default class extends AbstractView {
       //we can prefill all form data if user come from register_mig & clicked edit btn
       if(isMigDataFilled()){prefillFormWithMigData();}
     }
+    //Change the originNet dropDown selected item + Fetch new token data if possible
+    let changeOriginNetworkAndFetchTokenData = async function(ethNetId){
+      console.log("changeOriginNetworkAndFetchTokenData(" + ethNetId + ')');
+      //Retrieve the network index associated with ethNetId
+      let netIndex = "";
+      bridgeApp.networks.forEach((univ, i) => {
+        if(univ.networkID == ethNetId){netIndex = i;}
+      });
+
+      //Save origin network in the object migData to access it later during the migration process
+      migData.originUniverseIndex = netIndex;
+      migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
+      migData.originUniverseUniqueId = bridgeApp.networks[migData.originUniverseIndex].uniqueId;
+      migData.originNetworkId = bridgeApp.networks[migData.originUniverseIndex].networkID;
+
+      //Change dropdown selected item
+      if(getDropDownSelectedOptionIndex("OriginNetworkSelector") != netIndex)
+        selectDropDownOptionByIndex("OriginNetworkSelector", netIndex);
+
+      //Clear previous token data
+      clearTokenData();
+
+      //Show next form field
+      showCardLine("OriginWorldCardLine", true);
+      showCardLine("OriginTokenIDCardLine", migData.originWorld != "");
+
+      //Dest network
+      //Clear Destination networks before fill it again
+      clearDropDownOptions("DestinationNetworkSelector");
+      //Clear previously retrieved destWorld
+      clearDropDownOptions("DestinationWorldSelector");
+      //Show the available destination networks for the ogNet selected
+      for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
+        let destNetId = target.networkId
+        let targetNet = {};
+        for(const network of bridgeApp.networks){
+          if(network.networkID == destNetId)
+            targetNet = network;
+        }
+        addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
+      }
+
+      //If migData already filled, prefill migration form
+      //Once wallet loaded, chain is switched, and dest net loaded:
+      //we can prefill all form data if user come from register_mig & clicked edit btn
+      if(isMigDataFilled()){prefillFormWithMigData();}
+      else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
+        document.getElementById("FetchDataButton").click();
+      }
+    }
+
     //Define functions which interact with blockchains or wallet
-    let promptSwitchChain = async function (ID) {
+    //Prompt the user to change his wallet network.
+    //If success (accepted by user) -> fetch new token data if og world & tokenId filled
+    //If canceled -> change OgNetowrk dropdown to current wallet network
+    let promptSwitchChainDataToFetch = async function (ID) {
       window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
-        console.log("Network switch done.");
-        onChainSwitchedSuccess();
+        console.log("Network switched to " + ID + ". (DataToFetch)");
+        changeOriginNetworkAndFetchTokenData(ID);
       }).catch((res) => {
-        console.log("Network switch canceled or error");
-        prefillOriginNetwork();
-        alert("Please accept the metamask switch network prompt in order to change to your desired network");
+        console.log("Network switch canceled or error. (DataToFetch): " + res);
+        setOgNetDropDownToWalletNet();
       });
     }
+    //Prompt the user to change his wallet network.
+    //If success (accepted by user) -> ogNet dropdown & wallet net are now the same and correspond to the token data already fetched. Do nothing.
+    //If canceled -> change OgNetowrk dropdown to current wallet network + Fetch tokenData
+    let promptSwitchChainFetchedData = async function (ID) {
+      window.ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+      }).then((res) =>{
+        console.log("Network switch done. (FetchedData)");
+      }).catch((res) => {
+        console.log("Network switch canceled or error. (FetchedData)");
+      });
+    }
+
     //Load a token metadata from chain
     let loadOgTokenData = async function () {
 
@@ -200,15 +277,14 @@ export default class extends AbstractView {
             alert("Please connect to a Wallet first");
             return;
         }
-        let selectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-        //let ogEthNetwork = bridgeApp.net[getDropDownOptionUniqueID("OriginNetworkSelector", selectedIndex)];//TODELETE IF NO ISSUE WITH THE NEXT LINE
+        /*let selectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
         let ogEthNetworkId = migData.originNetworkId;
 
         if (parseInt(window.web3.currentProvider.chainId) != parseInt(ogEthNetworkId)) {
             alert("Please connect to the original token network in your web3 provider");
             promptSwitchChain('0x' + ogEthNetworkId.toString(16));
             return;
-        }
+        }*/
 
         //Instanciate an ERC721 contract at the address
         try{
@@ -278,20 +354,20 @@ export default class extends AbstractView {
 
           //Display or not the owner
           if(content != ""){
-            document.getElementById("OGTokenOwner").innerHTML = content;
+            //Add origin token owner to migData & display it
+            setOriginOwner(content.toLowerCase());
+            //Show og owner card line
             showCardLine("OriginTokenOwnerCardLine", true);
-            //Add origin token owner to migData
-            migData.originOwner = content.toLowerCase();
             //display not owner msg depending on the connected addr & tok owner
             checkAndDisplayNotOwnerMsg();
           } else {
             showCardLine("OriginTokenOwnerCardLine", false);
-            migData.originOwner = "";
+            //Reset og owner
+            setOriginOwner("");
             //Inform user that no owner was found on this NFT
             displayNoOwnerMsg();
             refreshCompleteBtnEnabled();
           }
-
         }
         getTokenOwner();
 
@@ -414,7 +490,7 @@ export default class extends AbstractView {
             }
           } catch (err) {
             console.log(err);
-            console.log("Could not get name() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+            console.log("Could not get name() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenId:" + document.getElementById("DestTokenId").textContent);
           }
       }
       getContractName();
@@ -430,7 +506,7 @@ export default class extends AbstractView {
            }
          } catch (err) {
            console.log(err);
-           console.log("Could not get symbol() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputDestTokenID").value);
+           console.log("Could not get symbol() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
          }
        }
        getContractSymbol();
@@ -500,11 +576,8 @@ export default class extends AbstractView {
         if(response.status != 200){console.log(response.status + response.statusText);}
         console.log("Available tokenId: " + response.data.tokenId);
 
-        //Save tokenID into migData
-        migData.destinationTokenId = response.data.tokenId;
-
-        //Display tokenID
-        document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
+        //Save & display tokenID into migData
+        setDestinationTokenId(response.data.tokenId);
 
         //Refresh complete btn
         refreshCompleteBtnEnabled();
@@ -512,11 +585,9 @@ export default class extends AbstractView {
         console.error(error);
         //If "Too many requests", wait one minute before resending request
         //Display loading text for tokenID
-        document.getElementById("DestTokenID").textContent = "Too many request to relay. Please wait 1 min before getting the token id...";
+        setDestinationTokenIdWaitMsg("Too many request to relay. Please wait 1 min before getting the token id...");
         setTimeout(getAvailableTokenId, 60000);
 
-        //Reset dest token id
-        migData.destinationTokenId = "";
         //Refresh complete button
         refreshCompleteBtnEnabled();
       });
@@ -532,7 +603,10 @@ export default class extends AbstractView {
       showCard("CompleteMigrationCard", true);
 
       //Timeout to wait for wallet to be connected
-      setTimeout(prefillOriginNetwork, 500);
+      setTimeout(function(){
+        let providerNetId = window.web3.currentProvider.chainId;
+        changeOriginNetworkAndFetchTokenData(providerNetId);
+      }, 500);
     }
     //autoconnect to metamask if injected
     var connectToMetamask = async function () {
@@ -574,7 +648,7 @@ export default class extends AbstractView {
 
       document.getElementById("OGContractName").innerHTML = "";
       document.getElementById("OGContractSymbol").innerHTML = "";
-      document.getElementById("OGTokenOwner").innerHTML = "";
+      setOriginOwner("");
       document.getElementById("OGTokenURI").innerHTML = "";
       document.getElementById("OGTokenMetaName").textContent = "";
       document.getElementById("OGTokenMetaDesc").textContent = "";
@@ -599,7 +673,7 @@ export default class extends AbstractView {
       });
 
       //Empty form fields
-      document.getElementById("DestTokenID").textContent = "";
+      setDestinationTokenId("");
       //Empty migdata destination var
       resetDestinationMigrationData();
     }
@@ -650,11 +724,9 @@ export default class extends AbstractView {
       if(userAccount != migData.originOwner){
         console.log("Connected addr: " + userAccount + ", token owner: " + migData.originOwner);
         let errorMsg = document.getElementById("TokenErrorMessage");
-        errorMsg.innerHTML = "You are not the owner of this NFT. You can't migrate it.";
+        errorMsg.textContent = "You are not the owner of this NFT. You can't migrate it.";
 
         showCardLine("TokenErrorMessage", true);
-      }else{//If user is the owner, show it next to owner address.
-        document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you !)</span>';
       }
       //Refresh complete btn
       refreshCompleteBtnEnabled();
@@ -678,6 +750,14 @@ export default class extends AbstractView {
     }
     let showCardLine = function(id, disp){
       showCard(id, disp);
+      //If hide an element, reset its migData associated & input value
+      if(id == "OriginWorldCardLine" && !disp){
+        setOgWorldInputValue("");
+      }else if(id == "OriginTokenIDCardLine" && !disp){
+        setOgTokenIdInputValue("");
+      }else if(id == "DestOwnerCardLine" && !disp){
+        setDestOwnerInputValue("");
+      }
     }
     let enableRedeemBtnIfNetworkMatch = function(){
       //If dest network is the one from metadata of IOU token, enable redeem button
@@ -691,7 +771,6 @@ export default class extends AbstractView {
       userAccount = window.web3.currentProvider.selectedAddress;
       document.getElementById("CompleteButton").disabled = !isMigDataFilled() || (migData.originOwner != userAccount);
     }
-
 
     //Input setters.
     //These functions make sure the input value displayed is always the same as the variable in migData
@@ -718,14 +797,36 @@ export default class extends AbstractView {
     }
 
     //Data display
-    //These functions make sure the input value displayed is always the same as the variable in migData
-    let setOriginOwner = function(){
-      //TODO
+    //These functions make sure the value displayed is always the same as the variable in migData
+    let setOriginOwner = function(owner){
+      //Display new og owner
+      document.getElementById("OGTokenOwner").textContent = owner.toLowerCase();
+      //Add origin token owner to migData
+      migData.originOwner = owner.toLowerCase();
+
+      //If user is the owner, show "It's you!" next to og owner address.
+      userAccount = window.web3.currentProvider.selectedAddress;
+      if(userAccount == migData.originOwner){
+        document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you!)</span>';
+      }
+    }
+    //Set the destTokenId to migData & display it in DestTokenIdCardLine
+    let setDestinationTokenId = function(tokId){
+      //Display new dest tok id
+      document.getElementById("DestTokenId").textContent = tokId;
+      //Add dest tok id to migData
+      migData.destinationTokenId = tokId;
+    }
+    let setDestinationTokenIdWaitMsg = function(msg){
+      //Display new dest tok id
+      document.getElementById("DestTokenId").textContent = msg;
+      //Add dest tok id to migData
+      migData.destinationTokenId = "";
     }
 
     //Prefill functions
-    //Prefill origin network with the one the user is connected to
-    let prefillOriginNetwork = function(){
+    //Prefill origin network with the one the user is connected to through his wallet
+    let setOgNetDropDownToWalletNet = function(){
       let connectedChainId = parseInt(window.web3.currentProvider.chainId);
       //If user connected to a chain trough his wallet: prefill and show next form field
       if(connectedChainId != undefined){
@@ -733,7 +834,6 @@ export default class extends AbstractView {
           if(net.chainID == connectedChainId){
             selectDropDownOptionByIndex("OriginNetworkSelector", i);
             //Show next form field
-            onChainSwitchedSuccess();
           }
         });
       }
@@ -788,7 +888,7 @@ export default class extends AbstractView {
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //Prefill destTokenId
-      document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
+      setDestinationTokenId(migData.destinationTokenId)
       //Prefill destTokenOwner
       setDestOwnerInputValue(migData.destinationOwner)
 
@@ -806,7 +906,7 @@ export default class extends AbstractView {
     }
     let resetDestWorldNTokenNOwnerMigData = function(){
       migData.destinationWorld = "";
-      migData.destinationTokenId = "";
+      setDestinationTokenId("");
       setDestOwnerInputValue("");
     }
     let resetTokenMetadata = function(){
@@ -848,29 +948,34 @@ export default class extends AbstractView {
     //When new origin network selected : Prompt user to connect to new chain selected
     addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
       let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
-      console.log("Switching to network id " + chainIDSelected);
+      //console.log("Switching to network id " + chainIDSelected);
 
       //CLEAR PREVIOUS DATA
-      clearTokenData();
+      //clearTokenData();
       //Clear drop downs
       //clearDropDownOptions("RelaySelector");
-      clearDropDownOptions("DestinationNetworkSelector");
-      clearDropDownOptions("DestinationWorldSelector");
+      /*clearDropDownOptions("DestinationNetworkSelector");
+      clearDropDownOptions("DestinationWorldSelector");*/
 
       //Clear ogWorld & token Id
-      setOgWorldInputValue("");
-      setOgTokenIdInputValue("");
+      /*setOgWorldInputValue("");
+      setOgTokenIdInputValue("");*/
 
       //Reset migration buttons. Unselect the previously selected button.
-      let migButtonsCard = document.getElementById("MigrationTypeCardLine");
+      /*let migButtonsCard = document.getElementById("MigrationTypeCardLine");
       let selected = migButtonsCard.querySelector(".Selected");
-      if(selected != undefined){selected.classList.remove('Selected');}
+      if(selected != undefined){selected.classList.remove('Selected');}*/
 
       //Hide all form fields after origin network dropdown.
-      showFormFieldsAfterOgNet(false);
+      //Display only form fields not empty.
+      // showCardLine("OriginWorldCardLine", migData.originWorld == "");
+      // showCardLine("OriginTokenIDCardLine", migData.originTokenId == "");
 
-      refreshCompleteBtnEnabled();
-      promptSwitchChain(chainIDSelected);
+      //showFormFieldsAfterOgNet(false);
+
+      //refreshCompleteBtnEnabled();
+      //promptSwitchChain(chainIDSelected);
+      promptSwitchChainDataToFetch(chainIDSelected);
     });
     addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
       //Add relay to migData
@@ -919,11 +1024,10 @@ export default class extends AbstractView {
       showFormFieldsAfterMigButtons(false);
 
       //Clear MigData from outdated data
-      migData.destinationTokenId = 0;
       migData.destinationWorld = "";
       migData.migrationRelayIndex = 0;
       migData.migrationRelay = "";
-      document.getElementById("DestTokenID").textContent = "";
+      setDestinationTokenId("");
 
       //SAVE data to migData object
       //This index is relative to the list of destination networks which is different from the list of all networks.
@@ -971,7 +1075,7 @@ export default class extends AbstractView {
         showCardLine("DestOwnerCardLine", true);//Owner is prefilled when relay is selected
 
         //Display loading text for tokenID
-        document.getElementById("DestTokenID").textContent = "Fetching...";
+        setDestinationTokenIdWaitMsg("Fetching...");
         //Load desination tokenId from relay
         getAvailableTokenId();
       }
@@ -1049,7 +1153,7 @@ export default class extends AbstractView {
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
-      migData.destinationTokenId = "";
+      setDestinationTokenId("");
 
       //Unselect the previously selected button.
       let selected = this.parentNode.querySelector(".Selected");
@@ -1072,7 +1176,7 @@ export default class extends AbstractView {
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
-      migData.destinationTokenId = "";
+      setDestinationTokenId("");
 
       //Add migration type to migData object
       migData.migrationType = model.RedeemIOUMigrationType;
@@ -1089,7 +1193,7 @@ export default class extends AbstractView {
       migData.destinationUniverseIndex = migData.metadataDestinationUniverseIndex;
       migData.destinationUniverse = migData.metadataDestinationUniverse;
       migData.destinationWorld = migData.metadataDestinationWorld;
-      migData.destinationTokenId = migData.metadataDestinationTokenId;
+      setDestinationTokenId(migData.metadataDestinationTokenId);//Set migData destTokenId & display it
       migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
 
       //PREFILL fields
@@ -1098,8 +1202,6 @@ export default class extends AbstractView {
       console.log("migData.destinationWorld: " + migData.destinationWorld);
       addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
       selectDropDownOptionByIndex("DestinationWorldSelector", 0);
-      //destTokenId
-      document.getElementById("DestTokenID").textContent = migData.destinationTokenId;
 
       //Show relay selector
       showCardLine("MigrationRelayCardLine", true);
@@ -1156,11 +1258,17 @@ export default class extends AbstractView {
       //If migration form displayed
       if(document.getElementById("OriginNetworkSelector")){
         //If tokens data are loaded, do not prompt switch network.
-        //Only prompt if ogNet is set
         let originChainSelectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-        if(!migData.originOwner && originChainSelectedIndex >= 0){
+        if(originChainSelectedIndex >= 0){
+          //Retrieve chain id selected in ogNet dropdown
           let chainIDSelected = '0x' + bridgeApp.networks[originChainSelectedIndex].chainID.toString(16);
-          promptSwitchChain(chainIDSelected);
+          //Retrieve provider network
+          let providerNetwork = window.web3.currentProvider.chainId;
+          //Only prompt if ogNet is set & origin owner is not set & ogNet different from wallet net
+          if(!migData.originOwner &&  chainIDSelected != providerNetwork){
+            //Change ogNetwork migData & fetch data if possible
+            //changeOriginNetworkAndFetchTokenData(chainIDSelected);
+          }
         }
       }
     }
