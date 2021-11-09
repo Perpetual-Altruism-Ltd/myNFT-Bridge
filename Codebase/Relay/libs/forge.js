@@ -68,7 +68,13 @@ class Forge {
         const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
         const ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
 
-        this.db.collections.mintedIOU.insert({ url: ipfsUrl, metadata: forgedMetadata })
+        await (new this.db.models.mintedIOUs({ 
+            uri: ipfsUrl
+            , world: migrationData.destinationWorld
+            , universe: migrationData.destinationUniverse
+            , tokenId: migrationData.destinationTokenId
+            , metadata: forgedMetadata 
+        })).save()
 
         return ipfsUrl
     }
