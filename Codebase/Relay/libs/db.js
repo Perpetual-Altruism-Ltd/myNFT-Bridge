@@ -1,26 +1,21 @@
 const Loki = require('lokijs')
+const Mongoose = require('mongoose')
+const PremintedTokensSchema = require('./schemas/premintedTokens')
+const MintedIOUsSchema = require('./schemas/mintedIOUs')
+const ClientsSchema = require('./schemas/clients')
+const Conf = require('../conf')
 
 class Db {
-    constructor(){}
+    constructor(){
+        this.models = {}
+    }
 
-    init(){
-        return new Promise((resolve, reject) => {
-            const autoloadCallback = () => {
-                this.collections = {
-                    premintedTokens: (this.instance.getCollection('premintedTokens') === null) ? this.instance.addCollection('premintedTokens') : this.instance.getCollection('premintedTokens'),
-                    mintedIOU: (this.instance.getCollection('mintedIOU') === null) ? this.instance.addCollection('mintedIOU') : this.instance.getCollection('mintedIOU'),
-                    clients: (this.instance.getCollection('clients') === null) ? this.instance.addCollection('clients') : this.instance.getCollection('clients')
-                }
-                resolve()
-            }
-
-            this.instance = new Loki('db/db.json', { 
-                autosave: true
-                , autosaveInterval: 100
-                , autoload: true
-                , autoloadCallback: autoloadCallback 
-            })
-        })
+    async init(){
+        await Mongoose.connect(Conf.mongoDbConnectionString)
+        
+        this.models.premintedTokens = Mongoose.model('premintedToken', PremintedTokensSchema)
+        this.models.mintedIOUs = Mongoose.model('mintedIOU', MintedIOUsSchema)
+        this.models.clients = Mongoose.model('client', ClientsSchema)
     }
 }
 
