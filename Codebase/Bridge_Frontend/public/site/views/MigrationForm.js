@@ -187,10 +187,14 @@ export default class extends AbstractView {
     let changeOriginNetworkAndFetchTokenData = async function(ethNetId){
       console.log("changeOriginNetworkAndFetchTokenData(" + ethNetId + ')');
       //Retrieve the network index associated with ethNetId
-      let netIndex = "";
+      let netIndex = -1;
       bridgeApp.networks.forEach((univ, i) => {
-        if(univ.networkID == ethNetId){netIndex = i;}
+        if(parseInt(univ.networkID) == parseInt(ethNetId)){netIndex = i;}
       });
+      if(netIndex < 0){
+        console.log("Change ogNet & fetch: " + ethNetId + " networkId not found.");
+        return;
+      }
 
       //Save origin network in the object migData to access it later during the migration process
       migData.originUniverseIndex = netIndex;
@@ -259,8 +263,15 @@ export default class extends AbstractView {
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
         console.log("Network switch done. (FetchedData)");
+        //Nothing to do as token data are already fetched.
+        //Just hide "Please change net" message
+        showCardLine("OgNetworkSwitchMessage", false);
       }).catch((res) => {
         console.log("Network switch canceled or error. (FetchedData)");
+        showCardLine("OgNetworkSwitchMessage", false);
+        //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
+        let currentProviderNetId = window.web3.currentProvider.chainId;
+        changeOriginNetworkAndFetchTokenData(currentProviderNetId);
       });
     }
 
@@ -606,6 +617,19 @@ export default class extends AbstractView {
       setTimeout(function(){
         let providerNetId = window.web3.currentProvider.chainId;
         changeOriginNetworkAndFetchTokenData(providerNetId);
+
+        //Setup onChainChanged event listener.
+        window.ethereum.on('chainChanged', (chainId) => {
+  				// The metamask provider emits this event when the currently connected chain changes.
+  				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
+  				// of the current chain ID by listening for this event.
+  				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
+  				console.log("*** Event chainChanged to " + chainId + " emmited ***");
+          //Automatically change the form ogNet & retrieve data if destNet is not already set.
+          //This is to block token data changed after the user is filling the destnations data
+          if(!migData.destinationUniverseIndex)
+            changeOriginNetworkAndFetchTokenData(chainId);
+  			});
       }, 500);
     }
     //autoconnect to metamask if injected
@@ -718,33 +742,36 @@ export default class extends AbstractView {
     }
 
     //Error & user messages
+    let displayOgNetworkSwitchMsg = function(txt){
+      let errorMsg = document.getElementById("OgNetworkSwitchMessage");
+      errorMsg.innerHTML = txt;
+      showCardLine("OgNetworkSwitchMessage", true);
+    }
+    let displayErrorMsg = function(txt){
+      let errorMsg = document.getElementById("TokenErrorMessage");
+      errorMsg.innerHTML = txt;
+      showCardLine("TokenErrorMessage", true);
+    }
     let checkAndDisplayNotOwnerMsg = function(){
 
       //Handle if user is not the owner
       if(userAccount != migData.originOwner){
-        console.log("Connected addr: " + userAccount + ", token owner: " + migData.originOwner);
-        let errorMsg = document.getElementById("TokenErrorMessage");
-        errorMsg.textContent = "You are not the owner of this NFT. You can't migrate it.";
-
-        showCardLine("TokenErrorMessage", true);
+        console.log("Connected addr: " + userAccount + " != token owner: " + migData.originOwner);
+        displayErrorMsg("You are not the owner of this NFT. You can't migrate it.");
       }
       //Refresh complete btn
       refreshCompleteBtnEnabled();
     }
     let displayNoOwnerMsg = function(){
-      let errorMsg = document.getElementById("TokenErrorMessage");
-      errorMsg.innerHTML = "No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.";
-
-      showCardLine("TokenErrorMessage", true);
+      displayErrorMsg("No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.");
     }
     let displayContractErrorMsg = function(){
-      let errorMsg = document.getElementById("TokenErrorMessage");
-      errorMsg.innerHTML = "This contract couldn't be found. Make sure you filled in a correct contract address.";
+      displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
 
-      showCard("TokenDataCard", true);
-      showCardLine("TokenErrorMessage", true);
+      showCard("TokenDataCard", false);
       hideFormFieldsFromMigrationCard();
     }
+
     let showCard = function(id, disp){
       document.getElementById(id).style = (disp ? "display:flex;" : "display:none;")
     }
@@ -1260,15 +1287,22 @@ export default class extends AbstractView {
         //If tokens data are loaded, do not prompt switch network.
         let originChainSelectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
         if(originChainSelectedIndex >= 0){
-          //Retrieve chain id selected in ogNet dropdown
-          let chainIDSelected = '0x' + bridgeApp.networks[originChainSelectedIndex].chainID.toString(16);
-          //Retrieve provider network
-          let providerNetwork = window.web3.currentProvider.chainId;
-          //Only prompt if ogNet is set & origin owner is not set & ogNet different from wallet net
-          if(!migData.originOwner &&  chainIDSelected != providerNetwork){
-            //Change ogNetwork migData & fetch data if possible
-            //changeOriginNetworkAndFetchTokenData(chainIDSelected);
-          }
+          //Timeout to let time to provider to switch network & refresh window.web3.currentProvider.chainId.
+          //If not, it will call promptSwitchChainFetchedData again once the user come back from provider prompt to the website (window onfocus triggered)
+          setTimeout(function(){
+            //Retrieve chain id selected in ogNet dropdown
+            let chainIDSelected = '0x' + bridgeApp.networks[originChainSelectedIndex].chainID.toString(16);
+            //Retrieve provider network
+            let providerNetwork = window.web3.currentProvider.chainId;
+            //Only prompt if ogNet is set & origin owner is not retrieved & ogNet different from wallet net
+            if(!migData.originOwner &&  chainIDSelected != providerNetwork){
+              //Display user message jutifying why to switch network
+              displayOgNetworkSwitchMsg("Please change your provider network to the one you selected above.");
+
+              //Change ogNetwork migData & fetch data if possible
+              promptSwitchChainFetchedData(chainIDSelected);
+            }
+          }, 500);
         }
       }
     }

@@ -1,6 +1,6 @@
 /*============Views===========*/
 /*Initial view */
-#DepartureCard,#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
+#DepartureCard,#OriginNetworkCardLine,#OgNetworkSwitchMessage,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
@@ -22,6 +22,7 @@
 
 .ErrorText{
   font-weight: bold;
+  line-height: 1.56rem;
   color: #ab0707;
   margin-top: 1em;
   margin-bottom: 2em;
