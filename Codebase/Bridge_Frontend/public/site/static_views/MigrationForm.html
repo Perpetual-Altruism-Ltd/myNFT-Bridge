@@ -88,7 +88,7 @@
       </div>
     </div>
 
-    <div class="Card NoMargin" id="MetadataCard">
+    <div class="CompactCard" id="MetadataCard">
       <div class="CardLine DataDisplay">
         <div class="LineElement TextElement">Metadata Name:</div>
         <div class="LineElement DataText" id="OGTokenMetaName"></div>
@@ -115,6 +115,7 @@
   <div class="Card" id="MigrationCard">
     <div class="CardLine" id="DestNetworkCardLine">
       <div class="LineElement TextElement">Destination network:</div>
+
       <div class="LineElement">
         <!-- Custom drop down selector -->
         <div class="select-wrapper InputElement" id="DestinationNetworkSelector">
@@ -132,7 +133,7 @@
 
     <div class="CardLine" id="MigrationTypeCardLine">
       <div class="LineElement TextElement">Migration type:</div>
-      <div class="MigrationButtonLine">
+      <div class="MigrationButtonLine" id="MigrationTypeButtonsContainer">
         <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
         <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
         <button class="ColoredButton" id="RedeemButton" disabled>Redeem IOU</button>
@@ -163,6 +164,7 @@
   <div class="Card" id="ArrivalCard">
     <div class="CardLine" id="DestWorldCardLine">
       <div class="LineElement TextElement">Destination contract:</div>
+
       <div class="LineElement">
         <!-- Custom drop down selector -->
         <div class="select-wrapper InputElement" id="DestinationWorldSelector">
@@ -176,6 +178,12 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="CardLine" id="DestWorldRedeemCardLine">
+      <div class="LineElement TextElement">Destination contract:</div>
+
+      <div class="LineElement DataText" id="DestWorldRedeem"></div>
     </div>
 
     <div class="CardLine" id="DestWorldNameCardLine">

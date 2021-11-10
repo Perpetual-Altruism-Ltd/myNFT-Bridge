@@ -8,10 +8,10 @@ Therefore to modify the content of inputOGContractAddress, inputOGTokenID, input
 Call the same function to modify the content of model.migrationData.[originWorld | originTokenId | destinationOwner]
 
 These functions are used to modify the text displayed on the form AND migData object.
-You must not modify migData.originOwner | destinationTokenId directly, you should use these functions:
+You must not modify migData.originOwner | destinationTokenId | migrationType directly, you should use these functions:
 SetOriginOwner()
 SetDestinationTokenId() + SetDestinationTokenIdFetchingMsg()
-
+SelectMigrationButton()
 
 ****************************************************************************************/
 
@@ -41,8 +41,11 @@ export default class extends AbstractView {
     //Account var represent the addr whith which the user is connected when clicking Fetch Data btn.
     //This var is not refreshed after this step on purpose.
     let userAccount = "";
+    //Var indicating weather to send or not the getAvailableTokenId request. Set to true if receive "Too many requests"
+    let holdOnTokenIdReq = false;
 
-    //Load data from server: static files like conf and ABIs
+    //=====Load data from server=====
+    //Load static files like conf and ABIs
     let loadNets = async function (_callback) {
         bridgeApp.networks = [];
         bridgeApp.net = {};
@@ -151,39 +154,7 @@ export default class extends AbstractView {
         };
     };
 
-    //Update global var (i.e. model) and display available dest net once new network is selected
-    let onChainSwitchedSuccessDataToFetch = function(){
-      //Display next form field: ogWorld input
-      showCardLine("OriginWorldCardLine", true);
-      showCardLine("OriginTokenIDCardLine", migData.originTokenId != "");
-
-      //Save origin network in the object migData to access it later during the migration process
-      migData.originUniverseIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-      migData.originUniverse = bridgeApp.networks[migData.originUniverseIndex].name;
-      migData.originUniverseUniqueId = bridgeApp.networks[migData.originUniverseIndex].uniqueId;
-      migData.originNetworkId = bridgeApp.networks[migData.originUniverseIndex].networkID;
-
-      //Clear Destination networks before fill it again
-      clearDropDownOptions("DestinationNetworkSelector");
-      //Clear previously retrieved destWorld
-      clearDropDownOptions("DestinationWorldSelector");
-
-      //Show the available destination networks for the ogNet selected
-      for(const target of bridgeApp.networks[migData.originUniverseIndex].targetList){
-        let destNetId = target.networkId
-        let targetNet = {};
-        for(const network of bridgeApp.networks){
-          if(network.networkID == destNetId)
-            targetNet = network;
-        }
-        addDropDownOption("DestinationNetworkSelector", targetNet.name, "", targetNet.uniqueId);
-      }
-
-      //If migData already filled, prefill migration form
-      //Once wallet loaded, chain is switched, and dest net loaded:
-      //we can prefill all form data if user come from register_mig & clicked edit btn
-      if(isMigDataFilled()){prefillFormWithMigData();}
-    }
+    //=====Provider management=====
     //Change the originNet dropDown selected item + Fetch new token data if possible
     let changeOriginNetworkAndFetchTokenData = async function(ethNetId){
       console.log("changeOriginNetworkAndFetchTokenData(" + ethNetId + ')');
@@ -238,7 +209,6 @@ export default class extends AbstractView {
         document.getElementById("FetchDataButton").click();
       }
     }
-
     //Define functions which interact with blockchains or wallet
     //Prompt the user to change his wallet network.
     //If success (accepted by user) -> fetch new token data if og world & tokenId filled
@@ -277,6 +247,7 @@ export default class extends AbstractView {
       });
     }
 
+    //=====Token Management=====
     //Load a token metadata from chain
     let loadOgTokenData = async function () {
 
@@ -290,14 +261,6 @@ export default class extends AbstractView {
             alert("Please connect to a Wallet first");
             return;
         }
-        /*let selectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-        let ogEthNetworkId = migData.originNetworkId;
-
-        if (parseInt(window.web3.currentProvider.chainId) != parseInt(ogEthNetworkId)) {
-            alert("Please connect to the original token network in your web3 provider");
-            promptSwitchChain('0x' + ogEthNetworkId.toString(16));
-            return;
-        }*/
 
         //Instanciate an ERC721 contract at the address
         try{
@@ -415,6 +378,8 @@ export default class extends AbstractView {
             showCardLine("OriginTokenURICardLine", false);
             //Hide all metadata fields display
             showCard("MetadataCard", false);
+            //Unselect redeem button if it was selected
+            unselectMigrationButtons();
           }
         }
         getTokenURI();
@@ -457,6 +422,10 @@ export default class extends AbstractView {
                         migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
                         migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAdress
                         console.log(migData);
+                      }
+                      else{
+                        //If token is not IOU, unselect Redeem if previously selected
+                        unselectMigrationButtons();
                       }
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
@@ -536,9 +505,10 @@ export default class extends AbstractView {
       }
     }
 
-    //---Functions which interact with relay's backend---
+    //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
-    //And display it into dropDown
+    //And display it into dropDown.
+    //Display Fetching... text or Too many request while waiting tokenId
     let getRelayAvailableWorlds = async function(){
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
@@ -556,14 +526,17 @@ export default class extends AbstractView {
         //Add dest world available to dropdown and model.bridgeApp
         console.log("Available worlds: " + response.data.worlds);
         if(response.status == 200 && response.data.worlds){
+          //Add all destWorlds to dropDown
           bridgeApp.destWorlds = [];
           response.data.worlds.forEach((worldAddr, i) => {
             bridgeApp.destWorlds.push(worldAddr);
+            //Add world to drop down
             addDropDownOption("DestinationWorldSelector", worldAddr, "", i);
           });
           //Prefill with the 1st world
           if(response.data.worlds.length > 0){
             selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+            //Display other form fields as if user clicked on the dropdoen option
             triggerDropDownOnChange("DestinationWorldSelector");
           }
         }
@@ -585,25 +558,44 @@ export default class extends AbstractView {
       options.data.universe = migData.destinationUniverseUniqueId;
       options.data.world = migData.destinationWorld;
 
-      axios.request(options).then(function (response) {
-        if(response.status != 200){console.log(response.status + response.statusText);}
-        console.log("Available tokenId: " + response.data.tokenId);
-
-        //Save & display tokenID into migData
-        setDestinationTokenId(response.data.tokenId);
-
-        //Refresh complete btn
-        refreshCompleteBtnEnabled();
-      }).catch(function (error) {
-        console.error(error);
-        //If "Too many requests", wait one minute before resending request
+      //Send request if "too many request" not received
+      if(!holdOnTokenIdReq){
         //Display loading text for tokenID
-        setDestinationTokenIdWaitMsg("Too many request to relay. Please wait 1 min before getting the token id...");
-        setTimeout(getAvailableTokenId, 60000);
+        setDestinationTokenIdWaitMsg("Fetching...");
 
-        //Refresh complete button
-        refreshCompleteBtnEnabled();
-      });
+        axios.request(options).then(function (response) {
+          if(response.status != 200){console.log(response.status + response.statusText);}
+          //If redeem button is selected when response is received, do not take it into account
+          if(migData.migrationType != model.RedeemIOUMigrationType){
+            console.log("Available tokenId: " + response.data.tokenId);
+
+            //Save & display tokenID into migData
+            setDestinationTokenId(response.data.tokenId);
+
+            //Refresh complete btn
+            refreshCompleteBtnEnabled();
+          }
+        }).catch(function (error) {
+          //Block any new request from being sent
+          console.log("Too many requests");
+          holdOnTokenIdReq = true;
+          console.error(error);
+          //If "Too many requests", wait one minute before resending request
+          //Display loading text for tokenID
+          setDestinationTokenIdWaitMsg("Too many request to relay. Please wait 1 min...");
+          setTimeout(function(){
+            //Timeout elapsed
+            holdOnTokenIdReq = false;
+            getAvailableTokenId();
+          }, 60000);
+
+          //Refresh complete button
+          refreshCompleteBtnEnabled();
+        });
+      }
+      else {
+        setDestinationTokenIdWaitMsg("Too many request to relay. Please wait 1 min.");
+      }
     }
 
     //Display connected addr + disco btn + ogNet + prefill ogNet
@@ -686,23 +678,6 @@ export default class extends AbstractView {
       //Clear token metadata. (if previous token was an IOU)
       resetTokenMetadata();
     }
-    //Show & Hide form fields
-    let hideFormFieldsFromMigrationCard = function(){
-      //Hide all elements following departure card
-      let cardsToHide = document.querySelectorAll("#MigrationCard,#ArrivalCard,#CompleteMigrationCard");
-      cardsToHide.forEach(function(elem) {
-        showCard(elem.id, false);
-      });
-      let cardLinesToHide = document.querySelectorAll("#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
-      cardLinesToHide.forEach(function(elem) {
-        showCardLine(elem.id, false);
-      });
-
-      //Empty form fields
-      setDestinationTokenId("");
-      //Empty migdata destination var
-      resetDestinationMigrationData();
-    }
     let showFormFieldsAfterOgNet = function(show){
       //Hide all following elements
       let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#BreakLineCardContainer,#TokenDataCard,#TokenErrorMessage,#ArrivalCard,#MigrationCard,#CompleteMigrationCard");
@@ -711,14 +686,17 @@ export default class extends AbstractView {
       });
     }
     //Show - Hide from dest network to dest owner
-    let showArrivalFormFields = function(show){
-      let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+    let showArrivalFormFieldsOnRedeem = function(show){
+      let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       elementsToShow.forEach(function(elem) {
         showCard(elem.id, show);
       });
+
+      //Only for DestinationWorldSelector, hide it if show == true | false. Cuz we're showing redeem form field
+      showCardLine("DestWorldCardLine", false);
     }
     let showFormFieldsAfterMigButtons = function(show){
-      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldRedeemCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, show);
       });
@@ -730,6 +708,7 @@ export default class extends AbstractView {
         showCard(elem.id, show);
       });
     }
+    //Show all form fields, and show the right destWorld element (selector + text) depending on migData.migrationType
     let showAllFormFields = function(){
       //Show all cards
       let cardsToShow = document.querySelectorAll("#DepartureCard,#TokenDataCard,#MigrationCard,#ArrivalCard,#DestTokenDataCard,#CompleteMigrationCard");
@@ -737,10 +716,18 @@ export default class extends AbstractView {
         showCard(elem.id, true);
       });
       //Show all cardLines
-      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
       cardLinesToShow.forEach(function(elem) {
         showCardLine(elem.id, true);
       });
+
+      //Display destWorld element depending on the mig type
+      if(migData.migrationType == model.RedeemIOUMigrationType){
+        showCardLine("DestWorldRedeemCardLine", true);
+      }
+      else {
+        showCardLine("DestWorldCardLine", true);
+      }
     }
 
     //Error & user messages
@@ -772,7 +759,6 @@ export default class extends AbstractView {
     }
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
-      //hideFormFieldsFromMigrationCard();
     }
 
     let showCard = function(id, disp){
@@ -824,6 +810,33 @@ export default class extends AbstractView {
       input.value = txt;
       //Save ogWorld into migaData object, only if
       migData.destinationOwner = txt;
+    }
+    let unselectMigrationButtons = function(){
+      let selected = document.getElementById("MigrationTypeButtonsContainer").querySelector(".Selected");
+      if(selected != undefined){selected.classList.remove('Selected');}
+      migData.migrationType = "";
+    }
+    //Select migBtn + associate the right value to migData.migrationType.
+    let selectMigrationButton = function(migType){
+      //First, unselect any previously selected btn
+      unselectMigrationButtons();
+      //Next find the correct button
+      let btnToSelect = "";
+      switch(migType){
+        case model.MintOUIMigrationType:
+          btnToSelect = document.getElementById("IOUMigrationButton");
+          migData.migrationType = model.MintOUIMigrationType;
+          model.isRedeem = false;
+        break;
+
+        case model.RedeemIOUMigrationType:
+          btnToSelect = document.getElementById("RedeemButton");
+          migData.migrationType = model.RedeemIOUMigrationType;
+          model.isRedeem = true;
+        break;
+      }
+      //Finally select it
+      if(btnToSelect){btnToSelect.classList.add('Selected');}
     }
 
     //Data display
@@ -902,21 +915,25 @@ export default class extends AbstractView {
       //Select migration button
       if(migData.migrationType == model.MintOUIMigrationType){
         //Select the Mint IOU button
-        document.getElementById("IOUMigrationButton").classList.add('Selected');
+        selectMigrationButton(model.MintOUIMigrationType);
+
+        //Prefill destWorld
+        addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
+        selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       }
       else if(migData.migrationType == model.RedeemIOUMigrationType){
         //Enable Redeem btn
         document.getElementById("RedeemButton").disabled = false;
         //Select Redeem btn
-        document.getElementById("RedeemButton").classList.add('Selected');
+        selectMigrationButton(model.RedeemIOUMigrationType);
+
+        //Prefill destWorld text element
+        document.getElementById("DestWorldRedeem").textContent = migData.destinationWorld;
       }
 
       //Select relay
       selectDropDownOptionByIndex("RelaySelector", migData.migrationRelayIndex);
 
-      //Prefill destWorld
-      addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
-      selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       //Prefill destTokenId
       setDestinationTokenId(migData.destinationTokenId)
       //Prefill destTokenOwner
@@ -924,20 +941,6 @@ export default class extends AbstractView {
 
       //Finally display all form fields
       showAllFormFields();
-    }
-    //Reset destination migrationData to empty
-    let resetDestinationMigrationData = function(){
-      migData.destinationUniverseIndex = 0;//Index in network_list "networks" array
-      migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
-      migData.destinationUniverseUniqueId = "";
-      migData.destinationUniverse = "";
-      migData.destinationBridgeAddr = "";
-      resetDestWorldNTokenNOwnerMigData();
-    }
-    let resetDestWorldNTokenNOwnerMigData = function(){
-      migData.destinationWorld = "";
-      setDestinationTokenId("");
-      setDestOwnerInputValue("");
     }
     let resetTokenMetadata = function(){
       migData.metadataDestinationUniverseUniqueId = "";
@@ -953,7 +956,7 @@ export default class extends AbstractView {
     setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");
     setupDropDown("DestinationNetworkSelector", "Select the network to which you want to migrate your token.");
     setupDropDown("DestinationWorldSelector", "Select the ERC721 smart contract to which the migrated token will be.");
-    
+
     //Call Load data functions one after the other to execute form prefill when the last is finished
     //Load networks
     loadNets(function () {
@@ -978,33 +981,7 @@ export default class extends AbstractView {
     //When new origin network selected : Prompt user to connect to new chain selected
     addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
       let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
-      //console.log("Switching to network id " + chainIDSelected);
-
-      //CLEAR PREVIOUS DATA
-      //clearTokenData();
-      //Clear drop downs
-      //clearDropDownOptions("RelaySelector");
-      /*clearDropDownOptions("DestinationNetworkSelector");
-      clearDropDownOptions("DestinationWorldSelector");*/
-
-      //Clear ogWorld & token Id
-      /*setOgWorldInputValue("");
-      setOgTokenIdInputValue("");*/
-
-      //Reset migration buttons. Unselect the previously selected button.
-      /*let migButtonsCard = document.getElementById("MigrationTypeCardLine");
-      let selected = migButtonsCard.querySelector(".Selected");
-      if(selected != undefined){selected.classList.remove('Selected');}*/
-
-      //Hide all form fields after origin network dropdown.
-      //Display only form fields not empty.
-      // showCardLine("OriginWorldCardLine", migData.originWorld == "");
-      // showCardLine("OriginTokenIDCardLine", migData.originTokenId == "");
-
-      //showFormFieldsAfterOgNet(false);
-
-      //refreshCompleteBtnEnabled();
-      //promptSwitchChain(chainIDSelected);
+      //Prompt user to change his provider network to the one he selected
       promptSwitchChainDataToFetch(chainIDSelected);
     });
     addDropDownOnChangeCallback("RelaySelector", function(chainIndexSelected){
@@ -1016,7 +993,8 @@ export default class extends AbstractView {
       if(migData.migrationType == model.MintOUIMigrationType){
         //Display next form field: arrival title + arrival dest network
         showCardLine("ArrivalCard", true);
-        showCardLine("DestWorldCardLine", true);
+        showCardLine("DestWorldRedeemCardLine", false);//Hide destWorld text
+        showCardLine("DestWorldCardLine", true);//Show destWorl selector
 
         //Clear previous worlds retrived from relay
         clearDropDownOptions("DestinationWorldSelector");
@@ -1026,7 +1004,7 @@ export default class extends AbstractView {
       //Else REDEEM: display all following form fields and prefill them with data from metadata
       else if(migData.migrationType == model.RedeemIOUMigrationType){
         //SHOW all next form field which are prefilled
-        showArrivalFormFields(true);
+        showArrivalFormFieldsOnRedeem(true);
       }
 
       //Prefill dest owner
@@ -1043,9 +1021,7 @@ export default class extends AbstractView {
       document.getElementById("DestContractSymbol").innerHTML = "";
 
       //Reset migration buttons. Unselect the previously selected button.
-      let migButtonsCard = document.getElementById("MigrationTypeCardLine");
-      let selected = migButtonsCard.querySelector(".Selected");
-      if(selected != undefined){selected.classList.remove('Selected');}
+      unselectMigrationButtons();
       //Clear drop downs
       //clearDropDownOptions("RelaySelector");
       //load available relay from network_list and relay_list
@@ -1104,9 +1080,7 @@ export default class extends AbstractView {
         //Display next form field: dest owner input
         showCardLine("DestOwnerCardLine", true);//Owner is prefilled when relay is selected
 
-        //Display loading text for tokenID
-        setDestinationTokenIdWaitMsg("Fetching...");
-        //Load desination tokenId from relay
+        //Load desination tokenId from relay & display fetching text
         getAvailableTokenId();
       }
     });
@@ -1180,22 +1154,21 @@ export default class extends AbstractView {
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
-      //Migration button management
-      //Unselect the previously selected button.
-      let selected = this.parentNode.querySelector(".Selected");
-      if(selected != undefined && selected.id == "IOUMigrationButton"){return;}//To prevent user from clicking again
-      if(selected != undefined){selected.classList.remove('Selected');}
-      this.classList.add('Selected');//Select the clicked button
+      //If button already selected, do nothing
+      if(migData.migrationType == model.MintOUIMigrationType){return;}
+
+      //Select the new btn
+      selectMigrationButton(model.MintOUIMigrationType);
 
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
       setDestinationTokenId("");
+      //Unselect relay dropdown
+      unselectDropDown("RelaySelector");
 
       //Display next form field: relay drop down
-      document.getElementById("MigrationRelayCardLine").style.display = 'flex';
-      migData.migrationType = model.MintOUIMigrationType;
-      model.isRedeem = false;
+      showCardLine("MigrationRelayCardLine", true);
 
       //Hide all fields after relay drop down
       showFormFieldsAfterRelay(false);
@@ -1203,21 +1176,16 @@ export default class extends AbstractView {
       refreshCompleteBtnEnabled();
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
-      //Migration buttons management
-      //Select button, & hold it pressed
-      let selected = this.parentNode.querySelector(".Selected");
-      if(selected != undefined && selected.id == "RedeemButton"){return;}//To prevent user from clicking again
-      if(selected != undefined){selected.classList.remove('Selected');}
-      this.classList.add('Selected');
+      //If button already selected, do nothing
+      if(migData.migrationType == model.RedeemIOUMigrationType){return;}
+
+      //Select the new btn
+      selectMigrationButton(model.RedeemIOUMigrationType);
 
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
       setDestinationTokenId("");
-
-      //Add migration type to migData object
-      migData.migrationType = model.RedeemIOUMigrationType;
-      model.isRedeem = true;//Same, to delete
 
       //Fill migData object with migration data from metadata: destNet, world, tokenId
       migData.destinationUniverseUniqueId = migData.metadataDestinationUniverseUniqueId;
@@ -1228,18 +1196,15 @@ export default class extends AbstractView {
       migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
 
       //PREFILL fields
-      //destworld
-      console.log("Prefill dest world");
-      console.log("migData.destinationWorld: " + migData.destinationWorld);
-      addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
-      selectDropDownOptionByIndex("DestinationWorldSelector", 0);
+      //Prefill destWorld text because redeem selected
+      document.getElementById("DestWorldRedeem").textContent = migData.destinationWorld;
 
       //Show relay selector
       showCardLine("MigrationRelayCardLine", true);
 
       //If relay already selected, display all form till the end !
       if(getDropDownSelectedOptionIndex("RelaySelector") >= 0){
-        showArrivalFormFields(true);
+        showArrivalFormFieldsOnRedeem(true);
       }
 
       refreshCompleteBtnEnabled();

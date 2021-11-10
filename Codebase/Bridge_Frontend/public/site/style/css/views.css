@@ -4,7 +4,7 @@
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
 #MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
-#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
+#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard
 {
   /*-webkit-transition: max-height .25s ease;
@@ -49,7 +49,8 @@
 }
 
 .InputElement{
-  width: 30vw;
+  min-width: 30vw;
+  display: inline-block;/*To allow to expand if the text inside input is greater than 30vw */
 }
 
 .LoadingContainer{
@@ -230,6 +231,13 @@
 :-moz-placeholder { /* Firefox 18- */
   font-style: italic;
   color: #aaa;
+}
+
+
+/* To give destTokenId & destWorld texts the same height than drop down*/
+#DestWorldRedeemCardLine, #DestTokenIdCardLine{
+  min-height: 2.5em;
+  align-items: center;
 }
 
 #ResignButtonContainer{
