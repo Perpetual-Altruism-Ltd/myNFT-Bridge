@@ -46,16 +46,22 @@ export default class extends AbstractView {
       model.migrationHash = "";
       model.escrowHash = "";
 
-      model.destinationTokenTransfertTxHash = "";
+      //model.destinationTokenTransfertTxHash = "";
 
       model.disconnectWallet = false;
       model.isRedeem = false;
     }
 
-    //Set link to chain explorer of the dest token tranfser transaction.
-    let tfTokChainExplo = document.getElementById("TransfertTokenChainExplo");
-    let destinationNetworkExplorer = bridgeApp.networks[migData.destinationUniverseIndex].explorer;
-    tfTokChainExplo.href = destinationNetworkExplorer + "tx/" + model.destinationTokenTransfertTxHash;
+    //If mig successful: set link to chain explorer of the dest token tranfser transaction.
+    let tfTokChainExplo = document.getElementById("TransferTokenChainExplo");
+    if(model.destinationTokenTransfertTxHash){
+      let destinationNetworkExplorer = bridgeApp.networks[migData.destinationUniverseIndex].explorer;
+      tfTokChainExplo.href = destinationNetworkExplorer + "tx/" + model.destinationTokenTransfertTxHash;
+    }
+    else {
+      let tfLinkContainer = document.getElementById("TransferLinkContainer");
+      tfLinkContainer.innerHTML = "No transaction available.";
+    }
 
     //Retrieve new token URI
     let getTokenURI = async function(){
@@ -89,7 +95,13 @@ export default class extends AbstractView {
         console.error(error);
       });
     }
-    getTokenURI();
+    //If migration successful, display link to tokenURI
+    if(model.destinationTokenTransfertTxHash){
+      getTokenURI();
+    }else {
+      let tokenURIContainer = document.getElementById("TokenURIContainer");
+      tokenURIContainer.innerHTML = "No token URI available.";
+    }
 
     document.getElementById("NewMigrationButton").addEventListener('click', async() =>{
       //clear MigrationData

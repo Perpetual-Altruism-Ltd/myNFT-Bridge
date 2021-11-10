@@ -38,14 +38,29 @@ export default class extends AbstractView {
     }
 
     //Loading circle style
-    let stopCircleSpinning = function(){
-      document.getElementById("LoadingCircle").style.animationPlayState = 'paused';
+    //Color green + plain line + stop spinning
+    let setCircleValidState = function(){
+      document.getElementById("EscrowLoadingCircle").style.animationPlayState = 'paused';
+      document.getElementById("SVGEscrowCircle").setAttribute('stroke-dasharray', 0);
+      document.getElementById("EscrowLoadingCircle").style.color = '#0c0';
     }
-    let startCircleSpinning = function(){
-      document.getElementById("LoadingCircle").style.animationPlayState = 'running';
+    //Color pink + plain line + stop spinning
+    let setCircleHoldOnState = function(){
+      document.getElementById("EscrowLoadingCircle").style.animationPlayState = 'paused';
+      document.getElementById("SVGEscrowCircle").setAttribute('stroke-dasharray', 0);
+      document.getElementById("EscrowLoadingCircle").style.color = '#af1540';
     }
-    let setCircleColorGreen = function(){
-
+    //Color red + plain line + stop spinning
+    let setCircleErrorState = function(){
+      document.getElementById("EscrowLoadingCircle").style.animationPlayState = 'paused';
+      document.getElementById("SVGEscrowCircle").setAttribute('stroke-dasharray', 0);
+      document.getElementById("EscrowLoadingCircle").style.color = '#c00';
+    }
+    //Color pink + dashed line + spin (default state)
+    let setCircleWaitingState = function(){
+      document.getElementById("EscrowLoadingCircle").style.animationPlayState = 'running';
+      document.getElementById("SVGEscrowCircle").setAttribute('stroke-dasharray', 51.1);
+      document.getElementById("EscrowLoadingCircle").style.color = '#af1540';
     }
 
     //Initially hide resign button
@@ -73,15 +88,18 @@ export default class extends AbstractView {
             model.migrationHash = res.migrationHash;
             console.log("Migration hash received: " + model.migrationHash);
 
-            //Pause de loading circle spin
-            stopCircleSpinning();
-
+            //display valid state (green plain line)
+            setCircleHoldOnState();
             loadingText.textContent = "Please sign the migration hash to continue the migration.";
 
             //Then sign migration hash
             signMigrationHash();
           }
-        }else{console.log(response.status + ' : ' + response.statusText);}
+        }else{
+          setCircleErrorState();
+          loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
+          console.log(response.status + ' : ' + response.statusText);
+        }
       }
 
       console.log("Start listening for migration hash");
@@ -97,6 +115,8 @@ export default class extends AbstractView {
           axios.request(options).then(function (response) {
             requestCallback(response);
           }).catch(function (error) {
+            setCircleErrorState();
+            loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
             console.error(error);
           });
         }
@@ -107,7 +127,8 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.migrationHash == ""){
-        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team.";
+        setCircleErrorState();
+        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team for support.";
       }
     }
     //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user
@@ -115,7 +136,9 @@ export default class extends AbstractView {
     if(isMigDataFilled()){
       migrationHashListener();
     }else {
-      //model.navigateTo('wallet_connection');
+      setCircleErrorState();
+      loadingText.textContent = "No form data found. Redirecting to wallet connection page.";
+      //setTimeout(function(){model.navigateTo('wallet_connection');}, 3000);
     }
 
 
@@ -128,11 +151,14 @@ export default class extends AbstractView {
         migrationHashSigned = res;
 
         //Resume loading circle spin
-        startCircleSpinning();
+        setCircleWaitingState();
 
         continueMigration();
       }).catch((res) => {
+        //If user canceled signature, display error msg + ask to sign again
+        setCircleErrorState();
         loadingText.textContent = "Retry to sign or contact our team if the issue persists.";
+        //Show re sign button
         document.getElementById("ResignButton").style.display = 'flex';
         console.log("Signature error: " + res);
       });
@@ -154,14 +180,18 @@ export default class extends AbstractView {
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
+          //SetCircleWaitingState is called in escrowHashListener and delayed by 3sec
           //start listening relay for escrow hash
           escrowHashListener();
         }else{
-          loadingText.textContent = "Relay not responding. Contact our team.";
+          setCircleErrorState();
+          loadingText.textContent = "Relay not responding. Please contact our team.";
           console.log(response.status + ' : ' + response.statusText);
         }
 
       }).catch(function (error) {
+        setCircleErrorState();
+        loadingText.textContent = "Relay not responding. Please contact our team.";
         console.error(error);
       });
     }
@@ -188,14 +218,30 @@ export default class extends AbstractView {
             model.escrowHash = res.escrowHash;
             console.log("Escrow hash received: " + model.escrowHash);
 
+            //set circle Valid state
+            setCircleValidState();
+            if(migData.migrationType == model.RedeemIOUMigrationType){
+              loadingText.textContent = "IOU Token successfully put in escrow.";
+            }
+            else {
+              loadingText.textContent = "Token successfully put in escrow.";
+            }
+
             //Then move to signEscrow page
-            model.navigateTo("/sign_escrow");
+            setTimeout(function(){model.navigateTo("/sign_escrow");}, 3000);
           }
-        }else{console.log(response.status + ' : ' + response.statusText);}
+        }else{
+          setCircleErrorState();
+          loadingText.textContent = "Couldn't retrieve escrow hash. Please contact our team.";
+          console.log(response.status + ' : ' + response.statusText);
+        }
       }
 
       console.log("Start listening for escrow hash");
-      setTimeout(() => { loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge..."; }, 3000);
+      setTimeout(() => {
+        setCircleWaitingState();
+        loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge...";
+      }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
@@ -204,6 +250,8 @@ export default class extends AbstractView {
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
+          setCircleErrorState();
+          loadingText.textContent = "Relay not responding. Please contact our team.";
           console.error(error);
         });
 
@@ -213,12 +261,14 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.escrowHash == ""){
-        loadingText.textContent = "Couldn't retrieve escrow hash from relay. Contact our team.";
+        setCircleErrorState();
+        loadingText.textContent = "Couldn't retrieve escrow hash from relay. Please contact our team.";
       }
     }
 
     document.getElementById("ResignButton").addEventListener('click', async() => {
       //Hide the button itself
+      setCircleHoldOnState();
       document.getElementById("ResignButton").style.display = 'none';
       signMigrationHash();
     })

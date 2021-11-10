@@ -68,7 +68,7 @@
   position: absolute;
   width: 15em;
   height: 15em;
-  color: #12132b;
+  color: #af1540;
   -webkit-animation:loading-circle_spin 15s linear infinite;
   -moz-animation:loading-circle_spin 15s linear infinite;
   animation:loading-circle_spin 15s linear infinite;

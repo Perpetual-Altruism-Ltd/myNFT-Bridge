@@ -14,6 +14,27 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let migData = model.migrationData;
     let loadingText = document.getElementById("MigrationLoadingText");
+
+    //Loading circle style
+    //Color green + plain line + stop spinning
+    let setCircleValidState = function(){
+      document.getElementById("MintLoadingCircle").style.animationPlayState = 'paused';
+      document.getElementById("SVGMintCircle").setAttribute('stroke-dasharray', 0);
+      document.getElementById("MintLoadingCircle").style.color = '#0c0';
+    }
+    //Color red + plain line + stop spinning
+    let setCircleErrorState = function(){
+      document.getElementById("MintLoadingCircle").style.animationPlayState = 'paused';
+      document.getElementById("SVGMintCircle").setAttribute('stroke-dasharray', 0);
+      document.getElementById("MintLoadingCircle").style.color = '#c00';
+    }
+    //Color pink + dashed line + spin (default state)
+    let setCircleWaitingState = function(){
+      document.getElementById("MintLoadingCircle").style.animationPlayState = 'running';
+      document.getElementById("SVGMintCircle").setAttribute('stroke-dasharray', 51.1);
+      document.getElementById("MintLoadingCircle").style.color = '#af1540';
+    }
+
     //If redeem, display specific message
     if(migData.migrationType == model.RedeemIOUMigrationType){
       loadingText.textContent = "Please wait for the relay to retrieve the destination token...";
@@ -43,13 +64,20 @@ export default class extends AbstractView {
           //If token transfered to destination owner
           if(res.migrationStatus == "Ok"){
             model.destinationTokenTransfertTxHash = res.transactionHash;
+
             console.log("Migration ended !");
+            //Display valid (green) circle
+            setCircleValidState();
             loadingText.textContent = "Migration ended ! The token has been transferred to the destination owner.";
 
             //Then move to migration_finished page to display link to chain explorer for the token transfert transaction
             setTimeout(function () {model.navigateTo("/migration_finished");}, 3000);
           }
-        }else{console.log(response.status + ' : ' + response.statusText);}
+        }else{
+          setCircleErrorState();
+          loadingText.textContent = "Couldn't retrieve the transaction hash. Please contact our team.";
+          console.log(response.status + ' : ' + response.statusText);
+        }
       }
 
       console.log("Start listening for destination token transfert to owner");
@@ -62,6 +90,8 @@ export default class extends AbstractView {
           console.log("requestCallback called");
           requestCallback(response);
         }).catch(function (error) {
+          setCircleErrorState();
+          loadingText.textContent = "Relay not responding. Please contact our team.";
           console.error(error);
         });
 
@@ -71,6 +101,7 @@ export default class extends AbstractView {
 
       //If timeout: error message
       if(model.destinationTokenTransfertTxHash == ""){
+        setCircleErrorState();
         loadingText.textContent = "Couldn't retrieve transaction hash of the destination token transfer to owner.";
       }
     }

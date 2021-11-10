@@ -3,7 +3,8 @@ import AbstractView from './AbstractView.js';
 
 /*******************************Read before modifying code
 Inputs elements should be read only.
-Therefore to modify the content of inputOGContractAddress, inputOGTokenID, inputDestOwner: call the functions set*InputValue("...")
+Therefore to modify the content of inputOGContractAddress, inputOGTokenID, inputDestOwner:
+  call the functions set*InputValue("...")
 Call the same function to modify the content of model.migrationData.[originWorld | originTokenId | destinationOwner]
 
 These functions are used to modify the text displayed on the form AND migData object.
@@ -250,12 +251,13 @@ export default class extends AbstractView {
         console.log("Network switched to " + ID + ". (DataToFetch)");
         changeOriginNetworkAndFetchTokenData(ID);
       }).catch((res) => {
-        console.log("Network switch canceled or error. (DataToFetch): " + res);
+        console.log("Network switch canceled or error. (DataToFetch): " + JSON.stringify(res));
         setOgNetDropDownToWalletNet();
       });
     }
     //Prompt the user to change his wallet network.
-    //If success (accepted by user) -> ogNet dropdown & wallet net are now the same and correspond to the token data already fetched. Do nothing.
+    //If success (accepted by user) -> ogNet dropdown & wallet net are now the same and
+    //correspond to the token data already fetched. Do nothing.
     //If canceled -> change OgNetowrk dropdown to current wallet network + Fetch tokenData
     let promptSwitchChainFetchedData = async function (ID) {
       window.ethereum.request({
@@ -267,7 +269,7 @@ export default class extends AbstractView {
         //Just hide "Please change net" message
         showCardLine("OgNetworkSwitchMessage", false);
       }).catch((res) => {
-        console.log("Network switch canceled or error. (FetchedData)");
+        console.log("Network switch canceled or error. (FetchedData): " + JSON.stringify(res));
         showCardLine("OgNetworkSwitchMessage", false);
         //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
         let currentProviderNetId = window.web3.currentProvider.chainId;
@@ -750,7 +752,10 @@ export default class extends AbstractView {
     let displayErrorMsg = function(txt){
       let errorMsg = document.getElementById("TokenErrorMessage");
       errorMsg.innerHTML = txt;
+      //Hide all token data & metadata
+      clearTokenData();
       showCardLine("TokenErrorMessage", true);
+      showCard("TokenDataCard", true);
     }
     let checkAndDisplayNotOwnerMsg = function(){
 
@@ -767,9 +772,7 @@ export default class extends AbstractView {
     }
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
-
-      showCard("TokenDataCard", false);
-      hideFormFieldsFromMigrationCard();
+      //hideFormFieldsFromMigrationCard();
     }
 
     let showCard = function(id, disp){
@@ -946,11 +949,11 @@ export default class extends AbstractView {
     }
 
     //Setup custom selector
-    setupDropDown("OriginNetworkSelector");
-    setupDropDown("RelaySelector");
-    setupDropDown("DestinationNetworkSelector");
-    setupDropDown("DestinationWorldSelector");
-
+    setupDropDown("OriginNetworkSelector", "Select the network where the token is currently.");
+    setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");
+    setupDropDown("DestinationNetworkSelector", "Select the network to which you want to migrate your token.");
+    setupDropDown("DestinationWorldSelector", "Select the ERC721 smart contract to which the migrated token will be.");
+    
     //Call Load data functions one after the other to execute form prefill when the last is finished
     //Load networks
     loadNets(function () {
@@ -1177,17 +1180,17 @@ export default class extends AbstractView {
     //Migration type buttons
     document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
+      //Migration button management
+      //Unselect the previously selected button.
+      let selected = this.parentNode.querySelector(".Selected");
+      if(selected != undefined && selected.id == "IOUMigrationButton"){return;}//To prevent user from clicking again
+      if(selected != undefined){selected.classList.remove('Selected');}
+      this.classList.add('Selected');//Select the clicked button
+
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
       setDestinationTokenId("");
-
-      //Unselect the previously selected button.
-      let selected = this.parentNode.querySelector(".Selected");
-      if(selected != undefined && selected.id == "IOUMigrationButton"){return;}
-      if(selected != undefined){selected.classList.remove('Selected');}
-      //Select the clicked button
-      this.classList.add('Selected');
 
       //Display next form field: relay drop down
       document.getElementById("MigrationRelayCardLine").style.display = 'flex';
@@ -1200,6 +1203,13 @@ export default class extends AbstractView {
       refreshCompleteBtnEnabled();
     });
     document.getElementById("RedeemButton").addEventListener('click', function() {
+      //Migration buttons management
+      //Select button, & hold it pressed
+      let selected = this.parentNode.querySelector(".Selected");
+      if(selected != undefined && selected.id == "RedeemButton"){return;}//To prevent user from clicking again
+      if(selected != undefined){selected.classList.remove('Selected');}
+      this.classList.add('Selected');
+
       //Clear destWorld previous data
       clearDropDownOptions("DestinationWorldSelector");
       //Reset previous migData destination var
@@ -1208,12 +1218,6 @@ export default class extends AbstractView {
       //Add migration type to migData object
       migData.migrationType = model.RedeemIOUMigrationType;
       model.isRedeem = true;//Same, to delete
-
-      //Select button, & hold it pressed
-      let selected = this.parentNode.querySelector(".Selected");
-      if(selected != undefined && selected.id == "RedeemButton"){return;}
-      if(selected != undefined){selected.classList.remove('Selected');}
-      this.classList.add('Selected');
 
       //Fill migData object with migration data from metadata: destNet, world, tokenId
       migData.destinationUniverseUniqueId = migData.metadataDestinationUniverseUniqueId;
@@ -1252,6 +1256,12 @@ export default class extends AbstractView {
     });
     //Setup rooting
     document.getElementById("CompleteButton").addEventListener('click', async() =>{
+      //Clear last data from previous migration if exists
+      //This data is still here to let user come back to migration_finished
+      //from migration_form and see his tokenURI & txHash
+      //But need to be deleted, because if not /pollingMigrationHash request will not be sent
+      model.destinationTokenTransfertTxHash = "";
+
       console.log('===Migration Data===');
       console.log(migData);
       model.navigateTo("/register_migration");

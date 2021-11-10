@@ -30,6 +30,7 @@ addDropDownOption("CustomDropDown", "Bosh washing machine", "bosh", "0x3")
 
 selectDropDownOptionByIndex("CustomDropDown", 0);
 selectDropDownOptionByUniqueID("CustomDropDown", "0x3fbf5c9a");
+unselectDropDown("CustomDropDown");
 clickDropDownOptionByIndex("CustomDropDown", 0);//Trigger the option click event, and thus onChangeCallback
 getDropDownSelectedOptionIndex("CustomDropDown");
 getDropDownOptionDataValue("CustomDropDown", 1);
@@ -43,7 +44,8 @@ clearDropDownOptions("CustomDropDown");
 
 
 //Drop down management
-let callbacks = {};
+let callbacks = {};//Store all onChange callbacks from the dropdowns setup in the js context
+let hintText = {};//Store all hint text of all dropdown setup in the js context
 
 /*
 Initialize the behaviour of all custom drop down in this javascript context
@@ -64,14 +66,49 @@ let initDropDownBehaviour = function(){
 Register the element 'wrapperId' as new dropDown menu.
 This dropdown will only contain options that are set statically in the HTML doc.
 */
-let setupDropDown = function(wrapperId){
+let setupDropDown = function(wrapperId, hint){
+  let dropdown = document.getElementById(wrapperId);
   //toggle 'open' class in select element
-  document.getElementById(wrapperId).addEventListener('click', function() {
+  dropdown.addEventListener('click', function() {
     //Add "open" class to the select if not already set, delete otherwise
     this.querySelector('.select').classList.toggle('open');
   });
+
   //Register an empty onChange callback for 'wrapperId'
   callbacks[wrapperId] = {'onChange': function(index){}};
+
+  //save hint
+  if(hint){hintText[wrapperId] = hint;}
+  else{hintText[wrapperId] = "";}
+
+  //setup hint
+  displayDropDownHint(wrapperId);
+}
+
+/*
+Private function. You should not use it outside of this module
+Displays hint inside the select-trigger
+*/
+let displayDropDownHint = function(wrapperId){
+  let dropdown = document.getElementById(wrapperId);
+  let hintSpan = dropdown.querySelector('.select-trigger span');
+  //set dropdown text to hint text
+  hintSpan.textContent = hintText[wrapperId];
+  //Add hint css class
+  hintSpan.classList.add("hint");
+}
+
+/*
+Private function. You should not use it outside of this module
+Removes hint and css style associated
+*/
+let removeDropDownHint = function(wrapperId){
+  let dropdown = document.getElementById(wrapperId);
+  let hintSpan = dropdown.querySelector('.select-trigger span');
+  //set dropdown text to hint text
+  hintSpan.textContent = "";
+  //Add hint css class
+  hintSpan.classList.remove("hint");
 }
 
 /*
@@ -90,6 +127,9 @@ let addDropDownOption = function(wrapperId, optionText, optionDataValue, optionU
   //Add clickListener
   newOption.addEventListener('click', function() {
       //if (!this.classList.contains('selected')) {
+        //Remove hint in case it was set
+        removeDropDownHint(wrapperId);
+
         //Remove the previously selected item, if exists
         let previouslySelectedOption = this.parentNode.querySelector('.select-option.selected');
         if(previouslySelectedOption != undefined){
@@ -131,6 +171,9 @@ let selectDropDownOptionByUniqueID = function(wrapperId, optionUniqueID){
   for(const option of options){
     //Once the option found, set it to selected
     if(option.getAttribute("value") == optionUniqueID){
+      //Remove hint in case it was set
+      removeDropDownHint(wrapperId);
+
       //Remove the previously selected item, if exists
       let previouslySelectedOption = option.parentNode.querySelector('.select-option.selected')
       if(previouslySelectedOption != undefined){
@@ -156,15 +199,36 @@ let selectDropDownOptionByIndex = function(wrapperId, optionIndex){
     console.error("Bad optionIndex given to selectDropDownOptionByIndex(wrapperId, optionIndex)");
     return;
   }
+
+  //Remove hint in case it was set
+  removeDropDownHint(wrapperId);
+
   //Remove the previously selected item
   let previouslySelectedOption = option.parentNode.querySelector('.select-option.selected');
   if(previouslySelectedOption != undefined){
     previouslySelectedOption.classList.remove('selected');
   }
+
   //Set option to selected
   option.classList.add('selected');
   //Set the title of the select as the text of the option newly selected
   option.closest('.select').querySelector('.select-trigger span').textContent = option.textContent;
+}
+
+/*
+Unselect any previous option & display hint
+*/
+let unselectDropDown = function(wrapperId){
+  let select = document.getElementById(wrapperId);
+
+  //Remove selected class to the previously selected option
+  let previouslySelectedOption = select.querySelector('.select-option.selected')
+  if(previouslySelectedOption != undefined){
+    previouslySelectedOption.classList.remove('selected');
+  }
+
+  //Set hint as the drop down text
+  displayDropDownHint(wrapperId);
 }
 
 /*
@@ -252,6 +316,7 @@ let clearDropDownOptions = function(wrapperId){
   let select = document.getElementById(wrapperId);
   let options = select.querySelectorAll(".select-option");
 
+  //remove each option of the dropdown
   options.forEach((opt, i) => {
     opt.remove();
   });
@@ -259,4 +324,6 @@ let clearDropDownOptions = function(wrapperId){
   //Remove select trigger title
   select.querySelector('.select-trigger span').textContent = "";
 
+  //Set hint as the drop down text
+  displayDropDownHint(wrapperId);
 }

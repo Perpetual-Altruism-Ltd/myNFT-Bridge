@@ -56,7 +56,8 @@ table {
   justify-content: space-between;
   /*Sizing*/
   padding: 0em 1em;
-  height: 2.5em;
+  gap: 0em 1em;
+  min-height: 2.5em;
   line-height: 2em;
   font-weight: 300;
   /*Color*/
@@ -113,6 +114,10 @@ table {
 .select-option.selected {
      color: #ffffff;
      background-color: #3e287a;
+}
+.hint{
+  font-style: italic;
+  color: #aaa;
 }
 /* Arrow */
 .arrow {

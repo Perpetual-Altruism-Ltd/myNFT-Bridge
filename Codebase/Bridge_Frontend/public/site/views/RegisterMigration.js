@@ -42,6 +42,41 @@ export default class extends AbstractView {
       });
     }
 
+    //Loading circle styling of escrow_token page
+    //Color pink + plain line + stop spinning
+    let setCircleHoldOnState = function(){
+      let circleContainer = document.getElementById("EscrowLoadingCircle");
+      let circleSVG = document.getElementById("SVGEscrowCircle");
+
+      if(circleSVG){circleSVG.setAttribute('stroke-dasharray', 0);}
+      if(circleContainer){
+        circleContainer.style.color = '#af1540';
+        circleContainer.style.animationPlayState = 'paused';
+      }
+    }
+    //Color red + plain line + stop spinning
+    let setCircleErrorState = function(){
+      let circleContainer = document.getElementById("EscrowLoadingCircle");
+      let circleSVG = document.getElementById("SVGEscrowCircle");
+
+      if(circleSVG){circleSVG.setAttribute('stroke-dasharray', 0);}
+      if(circleContainer){
+        circleContainer.style.color = '#c00';
+        circleContainer.style.animationPlayState = 'paused';
+      }
+    }
+    //Color pink + dashed line + spin (default state)
+    let setCircleWaitingState = function(){
+      let circleContainer = document.getElementById("EscrowLoadingCircle");
+      let circleSVG = document.getElementById("SVGEscrowCircle");
+
+      if(circleSVG){circleSVG.setAttribute('stroke-dasharray', 51.1);}
+      if(circleContainer){
+        circleContainer.style.color = '#af1540';
+        circleContainer.style.animationPlayState = 'running';
+      }
+    }
+
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
       try{
@@ -79,12 +114,17 @@ export default class extends AbstractView {
           console.log("Operator approval canceled or error");
           console.log(res);
 
+          //Display red circle
+          setCircleErrorState();
+
+          //Display error message inside circle on escrow_token page
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){loadingText.textContent = "Error during relay operator approval.";}
 
           alert("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
         });
       }catch(err){
+        setCircleErrorState();
         console.log("Error when setting relay as an operator: " + err);
       }
     }
@@ -124,6 +164,9 @@ export default class extends AbstractView {
         }else{console.log(response.status + ' : ' + response.statusText);}
 
       }).catch(function (error) {
+        //display redCircle
+        setCircleErrorState();
+        //Display error msg inside circle
         if(error.response.data){
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){
