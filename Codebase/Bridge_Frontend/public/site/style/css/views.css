@@ -20,13 +20,11 @@
   box-sizing: border-box;
 }
 
-.ErrorText{
+.ErrorTextStyle{
   font-weight: bold;
   line-height: 1.56rem;
   color: #ab0707;
-  margin-top: 1em;
-  margin-bottom: 2em;
-  text-align: center;
+  margin-left: 12vw;/* To align it with inputs */
 }
 
 .TextInput{
@@ -49,7 +47,7 @@
 }
 
 .InputElement{
-  min-width: 30vw;
+  min-width: 28vw;
   display: inline-block;/*To allow to expand if the text inside input is greater than 30vw */
 }
 
@@ -121,7 +119,7 @@
   display: flex;
   flex-flow: column nowrap;
   gap: 1em 0em;
-  margin: 0vw 1em;
+  /*margin: 0vw 1em;*/
 }
 
 .NoMargin{
@@ -148,13 +146,14 @@
   flex-flow: row wrap;
   gap: 2em 4em;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 .CardLine{
   display: flex;
   flex-flow: row nowrap;
-  gap: 0em 2em;
+  gap: 0em 0em;
   align-items: center;
+  justify-content: flex-start;
 }
 /* No wrap for text*/
 .CardLineNoWrap{
@@ -165,7 +164,7 @@
   white-space: nowrap;
 }
 
-.DataDisplay{
+.AlignItemsStart{
   align-items: flex-start;
 }
 
@@ -176,9 +175,9 @@
 }
 
 /*Containers for one element of a card line */
-.LineElement{
+/*.LineElement{
   width: 100%;
-}
+}*/
 .WrapContentLineElement{
   width: auto;
   white-space: nowrap;
@@ -204,12 +203,35 @@
   font-size: 2em;
   margin: 2vw 0vw 2vw 0vw;/*To override CardLine margin */
   text-align: center;
+  justify-content: center;
   color: #333;
 }
 
-.TextElement{
-  max-width: 10vw;
-  flex
+.DescriptionTextElementWidth{
+  width: 11vw;
+  margin-right: 1vw;
+  white-space: break-spaces;
+}
+
+.DescriptionRegisterTextElementWidth{
+  width: 12vw;
+  max-width: 15em;
+  margin-right: 2vw;
+  white-space: break-spaces;
+}
+
+/* FormElement can be an input or a data (e.g. token datas)*/
+.FormElementWidth{
+  width: 28vw;
+  margin-right: 2vw;
+}
+
+.TokenDataWidth{
+  width: 38vw;
+}
+
+.FormElementMargin{
+  margin-left: 12vw;
 }
 
 .DataText{
@@ -233,6 +255,10 @@
   color: #aaa;
 }
 
+
+#FetchDataButton{
+  min-width: 8vw;
+}
 
 /* To give destTokenId & destWorld texts the same height than drop down*/
 #DestWorldRedeemCardLine, #DestTokenIdCardLine{
@@ -263,7 +289,7 @@
 
 #BreakLine{
   position: absolute;
-  left: -21.5vw;
+  left: -23.5vw;
   height: 3px;
   background-color: #3e287a;
   width: 98vw;

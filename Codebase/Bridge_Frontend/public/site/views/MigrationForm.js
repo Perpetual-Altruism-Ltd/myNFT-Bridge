@@ -229,6 +229,12 @@ export default class extends AbstractView {
       else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
         document.getElementById("FetchDataButton").click();
       }
+
+      //Refresh isERC-721 message within the new network
+      isOgContractERC721().then(function(isERC721){
+        //Show ERC721 compliant MSG & adapt text
+        showIsERC721CompliantMsg(migData.originWorld != "", isERC721);
+      });
     }
     //Define functions which interact with blockchains or wallet
     //Prompt the user to change his wallet network.
@@ -298,9 +304,12 @@ export default class extends AbstractView {
         let isERC721 = await isOgContractERC721();
         if(!isERC721){
           console.log("This contract is NOT ERC721 compliant.");
+          showIsERC721CompliantMsg(true, false);
           return;
         }else {
           console.log("This contract is ERC721 compliant.");
+          //Hide the message (Useful if fetch data triggered by network change, and thus no onchange triggered for ogWorl input which would hide the msg)
+          showIsERC721CompliantMsg(true, true);
         }
 
         //Display token data card
@@ -745,7 +754,6 @@ export default class extends AbstractView {
       showCardLine("OriginWorldNameCardLine", show);
       showCardLine("OriginWorldSymbolCardLine", show);
       showCardLine("OriginTokenOwnerCardLine", show);
-      console.log("OriginTokenOwnerCardLine display set to false");
       showCardLine("OriginTokenURICardLine", show);
       showCardLine("MetadataCard", show);
     }
@@ -823,6 +831,7 @@ export default class extends AbstractView {
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
     }
+    //Show the text message element if show is true. And  adapt the message depending on isCompliant
     let showIsERC721CompliantMsg = function(show, isCompliant){
       //Show ERC721 compliant MSG
       showCardLine("OgContractERC721CompliantMsgCardLine", show);
@@ -832,14 +841,14 @@ export default class extends AbstractView {
       if(isCompliant){
         ERC721Msg.textContent = "This contract is ERC721 compliant. Perfect!";
         //Add standard styling
-        ERC721Msg.classList.remove('ErrorText');
+        ERC721Msg.classList.remove('ErrorTextStyle');
         ERC721Msg.classList.add('DataText');
       }
       else{
         ERC721Msg.textContent = "You can't migrate tokens from this contract, it must be ERC721 compliant.";
         //Add error styling
         ERC721Msg.classList.remove('DataText');
-        ERC721Msg.classList.add('ErrorText');
+        ERC721Msg.classList.add('ErrorTextStyle');
       }
     }
 
@@ -1310,11 +1319,17 @@ export default class extends AbstractView {
         //If og contract is ERC721, load token data
         isOgContractERC721().then(function(isERC721){
           if(isERC721){
+            //Show msg saying that this contract is ERC-721
+            showIsERC721CompliantMsg(true, true);
+
             //Clear previous tokens data
             clearTokenData();
 
             //Load metadata from chain: token URI, symbole, name
             loadOgTokenData();
+          }
+          else{
+            showIsERC721CompliantMsg(true,false);
           }
         });
       }
@@ -1377,7 +1392,7 @@ export default class extends AbstractView {
               //Change ogNetwork migData & fetch data if possible
               promptSwitchChainFetchedData(chainIDSelected);
             }
-          }, 500);
+          }, 700);
         }
       }
     }
