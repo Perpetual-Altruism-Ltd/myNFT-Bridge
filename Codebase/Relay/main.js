@@ -113,7 +113,7 @@ const main = async () => {
 
     const getAvailableTokenIdLimiter = RateLimit({
         windowMs: 60 * 1000, // 60 second window
-        max: 1, // start blocking after 1 requests
+        max: 2, // start blocking after 1 requests
         message: { error : "Too many preminted tokens requested. Try again after one minute." }
     });
 
