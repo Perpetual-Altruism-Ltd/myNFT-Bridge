@@ -149,7 +149,7 @@ class MetamaskConnector extends ConnectorManager {
 				}
 			});
 
-			ethereum.on('chainChanged', (chainId) => {
+			/*ethereum.on('chainChanged', (chainId) => {
 				// The metamask provider emits this event when the currently connected chain changes.
 				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
 				// of the current chain ID by listening for this event.
@@ -157,7 +157,7 @@ class MetamaskConnector extends ConnectorManager {
 				console.log("*** Event chainChanged emmited ***");
 				//MODIF BY NICO. Need to change chain during the migration process to retrieve data from origin and then from destination chain, so must not reload.
 				//window.location.reload();
-			});
+			});*/
 
 			ethereum.on('message', (providerMessage) => {
 				// The metamask provider emits this event when it receives some message that the consumer should be notified of.

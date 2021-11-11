@@ -42,18 +42,20 @@
     </div>
 
 
-    <div class="Card CenteredCardLine DataDisplay ErrorText NoMargin" id="OgNetworkSwitchMessage"></div>
+    <div class="CenteredCardLine DataDisplay NoMargin" id="OgNetworkSwitchMessage"></div>
 
 
     <div class="CardLine" id="OriginWorldCardLine">
       <div class="LineElement">Origin contract:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputOGContractAddress" placeholder="Fill in the contract address of the ERC721 smart contract."></div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputOGContractAddress" placeholder="Enter the ERC-721 smart contract address."></div>
       <div class="LineElement"></div><!-- Same as previous empty LineElement -->
     </div>
 
+    <div class="CenteredCardLine DataDisplay ErrorText NoMargin" id="OgContractERC721CompliantMsgCardLine"></div>
+
     <div class="CardLine" id="OriginTokenIDCardLine">
       <div class="LineElement">Origin token ID:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" placeholder="Fill in the token id of the NFT you want to migrate."></div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" placeholder="Enter the token id of the NFT you want to migrate."></div>
       <div class="LineElement ColoredButtonContainer">
         <button class="ColoredButton" id="FetchDataButton">Fetch Data</button>
       </div>
@@ -203,7 +205,7 @@
 
     <div class="CardLine" id="DestOwnerCardLine">
       <div class="LineElement TextElement">Destination owner:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputDestOwner" placeholder="Fill in the address who will receive the migrated token."></div>
+      <div class="LineElement"><input class="TextInput InputElement" id="inputDestOwner" placeholder="Enter the address who will receive the migrated token."></div>
     </div>
   </div><!-- end of arrival card -->
 

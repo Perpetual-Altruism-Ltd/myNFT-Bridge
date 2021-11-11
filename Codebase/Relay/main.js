@@ -208,7 +208,7 @@ const main = async () => {
             Logger.error(`This address is not from an ERC-721 smartcontract`)
             return
         }
-        
+
         const isOwner = await originUniverseRpc.isOwner(migrationData.originWorld,
             migrationData.originTokenId,
             migrationData.originOwner
@@ -228,10 +228,10 @@ const main = async () => {
                 Logger.error(`Can't find origin world ${migrationData.originWorld}`)
                 return
             }
-            
+
             const tokenUri = await originUniverseRpc.getTokenUri(migrationData.originWorld, migrationData.originTokenId)
             const tokenMetadata = (await Axios.get(tokenUri)).data
-            
+
             if(migrationData.destinationUniverse != tokenMetadata.migrationData.originUniverse
                 || migrationData.destinationWorld != tokenMetadata.migrationData.originWorld
                 || migrationData.destinationTokenId != tokenMetadata.migrationData.originTokenId){
@@ -255,7 +255,7 @@ const main = async () => {
         await client.init()
 
         clientList[client.id] = client
-        
+
         res.json({ migrationId: client.id })
 
         Logger.info(`Client id ${client.id} inited migration from universe ${migrationData.originUniverse}, world ${migrationData.originWorld}, tokenId ${migrationData.originTokenId} to ${migrationData.destinationUniverse}, world ${migrationData.destinationWorld}, tokenId ${migrationData.destinationTokenId}.`)
