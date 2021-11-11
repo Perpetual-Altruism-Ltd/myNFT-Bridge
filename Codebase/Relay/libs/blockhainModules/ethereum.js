@@ -6,19 +6,31 @@ const ERC165Abi = require('../../abis/erc165')
 const BridgeAbi = require('../../abis/bridge')
 const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
-const { sleep } = require('../utils')
+const TransactionBalancer = require('./balancer.ethereum')
 
 class Ethereum extends EventEmitter {
-    constructor(rpc) {
+    constructor(universe) {
         super()
         this.running = false
-        this.rpc = rpc
-        this.web3Provider = new Web3.providers.WebsocketProvider(this.rpc)
+        this.rpc = universe.rpc
+        this.web3Provider = new Web3.providers.WebsocketProvider(this.rpc, {
+            clientConfig: {
+                keepalive: true,
+                keepaliveInterval: 60000
+            },
+            reconnect: {
+                auto: true,
+                delay: 5000,
+                maxAttempts: 5,
+                onTimeout: false
+            }
+        })
         this.web3Instance = new Web3(this.web3Provider)
         this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
         this.web3Instance.eth.defaultAccount = this.web3Wallet.address
-        
-        Logger.info(`Web3 ethereum querier instanciated on rpc ${rpc}`)
+        this.balancer = new TransactionBalancer(universe, this.web3Instance);
+        this.balancer.worker();
+        Logger.info(`Web3 ethereum querier instanciated on rpc ${this.rpc}`)
     }
 
     /**
@@ -26,24 +38,23 @@ class Ethereum extends EventEmitter {
      * @param {string} contractAddress : Address of the contract to interact with
      */
     async premintToken(contractAddress, bridgeAddress) {
-        while(this.running) await sleep(100)
-        this.running = true
         try{
-            const networkId = await this.web3Instance.eth.net.getId();    
             const contract = new this.web3Instance.eth.Contract(
                 ERC721IOUAbi,
                 contractAddress, 
                 { from: this.web3Instance.eth.defaultAccount, gas: 8000000 }
             );
-    
-            const tx = await contract.methods.premintFor(bridgeAddress).send();
+            const calldata = await contract.methods.premintFor(bridgeAddress).encodeABI();
+            const txObject = {
+                to: contractAddress,
+                value: 0,
+                data: calldata
+            };
+            const tx = await this.balancer.send(txObject);
             const tokenId = await contract.methods.mintedTokens().call()
             Logger.info(`Preminted a token on ${this.rpc} ! Transaction hash : "${tx.transactionHash}". Token id "${tokenId}".`)
-    
-            this.running = false
             return tokenId
         }catch(err){
-            this.running = false
             throw err
         }
     }
@@ -53,7 +64,6 @@ class Ethereum extends EventEmitter {
     }
 
     async getProofOfEscrowHash(bridgeAddress, migrationHash) {
-        while(this.running) await sleep(100)
         this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
@@ -64,12 +74,10 @@ class Ethereum extends EventEmitter {
             }
         )
         const escrowHash = await web3Contract.methods.getProofOfEscrowHash(migrationHash).call();
-        this.running = false
         return escrowHash;
     }
 
     async safeTransferFrom(contract, from, to, tokenId) {
-        while(this.running) await sleep(100)
         this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             ERC721Abi,
@@ -79,17 +87,19 @@ class Ethereum extends EventEmitter {
                 gas: 8000000
             }
         )
-        const escrowHash = await web3Contract.methods.safeTransferFrom(from, to, tokenId).send()
-        this.running = false
+        const calldata = await web3Contract.methods.safeTransferFrom(from, to, tokenId).encodeABI();
+        const txObject = {
+            to: contract,
+            value: 0,
+            data: calldata
+        };
+        const escrowHash = await this.balancer.send(txObject);
         return escrowHash
     }
 
     /* ==== Departure Bridge Interractions  ==== */
     migrateToERC721IOU(originBridge, migrationData) {
         return new Promise(async (resolve, reject) => {
-            while(this.running) await sleep(100)
-            this.running = true
-
             const web3Contract = new this.web3Instance.eth.Contract(
                 BridgeAbi,
                 originBridge,
@@ -123,14 +133,18 @@ class Ethereum extends EventEmitter {
                             migrationHash,
                             blockTimestamp: block.timestamp
                         })
-                        this.running = false
                         return
                     }
-                    this.running = false
                     reject("Can't retrieve the migration hash")
                 })
                 try{
-                    await web3Contract.methods.migrateToERC721IOU(...data).send()
+                    const calldata = await web3Contract.methods.migrateToERC721IOU(...data).encodeABI();
+                    const txObject = {
+                        to: originBridge,
+                        value: 0,
+                        data: calldata
+                    };
+                    await this.balancer.send(txObject);
                 }catch(err){
                     console.log(err)
                 }
@@ -140,10 +154,7 @@ class Ethereum extends EventEmitter {
         })
     }
 
-    async registerEscrowHashSignature(originBridge, migrationData, migrationHash, escrowHashSigned) {
-        while(this.running) await sleep(100)
-        this.running = true
-
+    async registerEscrowHashSignature(originBridge, migrationHash, escrowHashSigned) {
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             originBridge,
@@ -152,20 +163,21 @@ class Ethereum extends EventEmitter {
                 gas: 8000000
             }
         )
-
         const data = [
             migrationHash,
             escrowHashSigned
         ]
-        await web3Contract.methods.registerEscrowHashSignature(...data).send()
-
-        this.running = false
+        const calldata = await web3Contract.methods.registerEscrowHashSignature(...data).encodeABI();
+        const txObject = {
+            to: originBridge,
+            value: 0,
+            data: calldata
+        };
+        await this.balancer.send(txObject);
     }
 
     /* ==== Arrival Bridge Interractions  ==== */
     async migrateFromIOUERC721ToERC721(originBridge, migrationData, migrationHashSignature, blockTimestamp) {
-        while(this.running) await sleep(100)
-        this.running = true
         const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             migrationData.destinationBridge,
@@ -188,10 +200,13 @@ class Ethereum extends EventEmitter {
             this.numberToBytes32(blockTimestamp),
             migrationHashSignature
         ]
-        const result = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).send()
-
-        this.running = false
-        
+        const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).encodeABI();
+        const txObject = {
+            to: migrationData.destinationBridge,
+            value: 0,
+            data: calldata
+        };
+        const result = await this.balancer.send(txObject);    
         return result
     }
 
@@ -218,7 +233,13 @@ class Ethereum extends EventEmitter {
             }
         )
 
-        return await web3Contract.methods.setTokenUri(tokenId, tokenUri).send()
+        const calldata = await web3Contract.methods.setTokenUri(tokenId, tokenUri).encodeABI();
+        const txObject = {
+            to: contract,
+            value: 0,
+            data: calldata
+        };
+        return await this.balancer.send(txObject);
     }
 
     /**
