@@ -172,8 +172,7 @@
 .MigrationButtonLine{
   display: flex;
   flex-flow: row nowrap;
-  gap: 0vw 5vw;
-  justify-content: center;
+  gap: 0em 2em;
 }
 
 /*Containers for one element of a card line */
@@ -210,6 +209,7 @@
 
 .TextElement{
   max-width: 10vw;
+  flex
 }
 
 .DataText{
