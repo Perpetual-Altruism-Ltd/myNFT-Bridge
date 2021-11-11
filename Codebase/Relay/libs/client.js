@@ -127,7 +127,6 @@ class Client {
 
         await this.originEthereumConnection.registerEscrowHashSignature(
             this.originUniverse.bridgeAdress,
-            this.migrationData,
             this.migrationHash,
             escrowHashSigned)
     }
@@ -135,8 +134,8 @@ class Client {
     async verifyEscrowHashSigned(escrowHashSigned){
         this.step = 'verifyEscrowHashSigned'
         this.dbObject.step = this.step
-        await this.dbObject.save()
-
+        this.db.collections.clients.update(this.dbObject)
+        // TODO : at server restard, this.escrowHash could be null /!\
         const owner = await this.originEthereumConnection.verifySignature(this.escrowHash, escrowHashSigned);
         return owner == this.migrationData.originOwner;
     }

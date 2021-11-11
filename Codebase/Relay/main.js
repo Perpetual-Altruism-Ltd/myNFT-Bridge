@@ -6,6 +6,7 @@ const Cors = require('cors')
 const Logger = require('./libs/winston')('Main')
 const Client = require('./libs/client')
 const Ethereum = require('./libs/blockhainModules/ethereum')
+const TransactionBalancer = require('./libs/blockhainModules/balancer.ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
 const Db = require('./libs/db')
 const { sleep } = require('./libs/utils')
@@ -21,7 +22,7 @@ const main = async () => {
 
     function connectRpc(){
         Conf.universes.forEach(universe => {
-            universesRpc[universe.uniqueId] = new Ethereum(universe.rpc)
+            universesRpc[universe.uniqueId] = new Ethereum(universe)
         })
     }
 
