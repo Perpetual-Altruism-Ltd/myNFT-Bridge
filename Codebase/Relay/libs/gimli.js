@@ -8,7 +8,7 @@ class Gimli {
 
     async uploadFile(fileBuffer, name){
         const formData = new FormData()
-        formData.append('file', fileBuffer, "image.png")
+        formData.append('file', fileBuffer, name)
     
         const result = await Axios.post(
             `${Conf.gimliUrl}/api/files/uploadFile`
