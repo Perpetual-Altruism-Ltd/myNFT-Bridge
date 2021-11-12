@@ -267,6 +267,10 @@
   width: 38vw;
 }
 
+.InsideWhiteSheetWidth{
+  width: 54vw;
+}
+
 .FormElementMargin{
   margin-left: 12vw;
 }
@@ -440,4 +444,9 @@
 /* Mig_Finished view*/
 #DestTokenIdMigFinished, #DestWorldMigFinished{
   margin-left: 2em;
+}
+
+#MigFinishedExplText{
+  line-height: 1.56rem;
+  display: inline-block;
 }
