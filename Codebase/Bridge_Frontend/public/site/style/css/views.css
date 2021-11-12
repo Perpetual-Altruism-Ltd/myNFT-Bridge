@@ -3,7 +3,7 @@
 #DepartureCard,#OriginNetworkCardLine,#OgNetworkSwitchMessage,#OgContractERC721CompliantMsgCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
-#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigrationRelayCardLine,
+#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigTypeDescriptionMessage,#MigrationRelayCardLine,
 #ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard
 {
@@ -114,6 +114,42 @@
   background-image: linear-gradient(to right, #bf1560 0%, #bf1560 100%);
 }
 
+/* Tool tip */
+/* Tooltip container */
+.ToolTip {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip text */
+.ToolTip .ToolTipText {
+  visibility: hidden;
+  width: 12vw;
+  background-color: #ccc;
+  color: #333;
+  text-align: center;
+  white-space: break-spaces;
+  padding: 0.5em 0.5em;
+  border-radius: 0.5em;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+  /* Position the tooltip text - see examples below! */
+  position: absolute;
+  z-index: 1;
+}
+.ToolTipLeftPosition{
+  right: 105%;
+}
+.ToolTipRightPosition{
+  left: 105%;
+}
+
+.ColoredButton:disabled:hover, .ColoredButton[disabled]:hover .ToolTipText {
+  visibility: visible;
+}
+
+/* End of tooltip */
+
 /*Container for several elements lines placed one under the other  */
 .Card{
   display: flex;
@@ -172,6 +208,7 @@
   display: flex;
   flex-flow: row nowrap;
   gap: 0em 2em;
+  justify-content: center;
 }
 
 /*Containers for one element of a card line */
@@ -397,4 +434,10 @@
 
 .ConnectBtnTextContainer{
   margin-left: 80px;
+}
+
+
+/* Mig_Finished view*/
+#DestTokenIdMigFinished, #DestWorldMigFinished{
+  margin-left: 2em;
 }

@@ -672,35 +672,43 @@ export default class extends AbstractView {
 
     //Display connected addr + disco btn + ogNet + prefill ogNet
     let displayConnectedWallet = function(){
+      //When this function is called, the wallet-provider is connected
+      //Display connected account addr
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+      //Display wallet name
+      let providerName = localStorage.getItem("provider");
+      //Set first char to upperCase
+      providerName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
+      //Display it on html element
+      if(providerName){document.getElementById("ConnectedWalletName").textContent = providerName;}
+      else{document.getElementById("ConnectedWalletName").textContent = "No wallet connected.";}
 
       //Show origin network drop down
       showCard("DepartureCard", true);
       showCardLine("OriginNetworkCardLine", true);
       showCard("CompleteMigrationCard", true);
 
-      //Timeout to wait for wallet to be connected
-      setTimeout(function(){
-        let providerNetId = window.web3.currentProvider.chainId;
-        changeOriginNetworkAndFetchTokenData(providerNetId);
 
-        //Setup onChainChanged event listener.
-        window.ethereum.on('chainChanged', (chainId) => {
-  				// The metamask provider emits this event when the currently connected chain changes.
-  				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
-  				// of the current chain ID by listening for this event.
-  				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
-  				console.log("*** Event chainChanged to " + chainId + " emmited ***");
+      let providerNetId = window.web3.currentProvider.chainId;
+      changeOriginNetworkAndFetchTokenData(providerNetId);
 
-          //Auto switch the ogNet to provider net if window is focused
-          if(!document.hidden){
-            //Automatically change the form ogNet & retrieve data if destNet is not already set.
-            //This prevent token data from changing after the user is filling the destnations data
-            if(!migData.destinationUniverseIndex)
-              changeOriginNetworkAndFetchTokenData(chainId);
-          }
-  			});
-      }, 500);
+      //Setup onChainChanged event listener.
+      window.ethereum.on('chainChanged', (chainId) => {
+				// The metamask provider emits this event when the currently connected chain changes.
+				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
+				// of the current chain ID by listening for this event.
+				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
+				console.log("*** Event chainChanged to " + chainId + " emmited ***");
+
+        //Auto switch the ogNet to provider net if window is focused
+        if(!document.hidden){
+          //Automatically change the form ogNet & retrieve data if destNet is not already set.
+          //This prevent token data from changing after the user is filling the destnations data
+          if(!migData.destinationUniverseIndex)
+            changeOriginNetworkAndFetchTokenData(chainId);
+        }
+			});
     }
     //autoconnect to metamask if injected
     var connectToMetamask = async function () {
@@ -851,7 +859,31 @@ export default class extends AbstractView {
         ERC721Msg.classList.add('ErrorTextStyle');
       }
     }
+    //Show a message describing the migration type selected if show is true.
+    //The message is different depending on the modelMigType
+    //which can be Model.MintOUIMigrationType or Model.RedeemIOUMigrationType
+    let showMigrationTypeDescription = function(show, modelMigType){
+      //Show the message element
+      showCardLine("MigTypeDescriptionMessage", show);
 
+      //Set the right text to the element depending on the migType
+      switch(modelMigType){
+        case model.MintOUIMigrationType:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU from your NFT will create a new token that you can trade within the destination network.";
+        break;
+
+        case model.RedeemIOUMigrationType:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU let you claim back the original NFT that it represents.";
+        break;
+
+        case "":
+          document.getElementById("MigTypeDescriptionMessage").textContent = "";
+        break;
+
+        default:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Migration type unknown.";
+      }
+    }
     let showCard = function(id, disp){
       document.getElementById(id).style = (disp ? "display:flex;" : "display:none;")
     }
@@ -903,9 +935,13 @@ export default class extends AbstractView {
       migData.destinationOwner = txt;
     }
     let unselectMigrationButtons = function(){
+      //Remove Selected class to buttons
       let selected = document.getElementById("MigrationTypeButtonsContainer").querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       migData.migrationType = "";
+
+      //Hide text describing migType
+      showMigrationTypeDescription(false, "");
     }
     //Select migBtn + associate the right value to migData.migrationType.
     let selectMigrationButton = function(migType){
@@ -926,8 +962,11 @@ export default class extends AbstractView {
           model.isRedeem = true;
         break;
       }
-      //Finally select it
+      //Then select it
       if(btnToSelect){btnToSelect.classList.add('Selected');}
+
+      //Finally show the text explaining the migration type
+      showMigrationTypeDescription(true, migType);
     }
 
     //Data display
@@ -1047,7 +1086,7 @@ export default class extends AbstractView {
     setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");
     setupDropDown("DestinationNetworkSelector", "Select the network to which you want to migrate your token.");
     setupDropDown("DestinationWorldSelector", "Select the ERC-721 smart contract the destination token will belong to.");
-
+    
     //Call Load data functions one after the other to execute form prefill when the last is finished
     //Load networks
     loadNets(function () {

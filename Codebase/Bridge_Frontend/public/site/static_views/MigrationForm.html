@@ -6,13 +6,18 @@
   <div class="Card" id="ConnectedWalletCard">
     <div class="SpaceBetweenCardLine">
       <div class=CardLine>
-        <div class="WrapContentLineElement">Connected address:</div>
-        <div class="DataText" id="ConnectedAccountAddr"></div>
+        <div class="DescriptionTextElementWidth">Connected address:</div>
+        <div class="FormElementWidth DataText" id="ConnectedAccountAddr"></div>
       </div>
 
       <div class="ColoredButtonContainer">
         <button class="ColoredButton" id="DisconnectWalletBtn">Disconnect wallet</button>
       </div>
+    </div>
+
+    <div class="CardLine">
+      <div class="DescriptionTextElementWidth">Connected wallet:</div>
+      <div class="FormElementWidth DataText" id="ConnectedWalletName"></div>
     </div>
 
   </div>
@@ -131,12 +136,24 @@
 
     <div class="CardLine" id="MigrationTypeCardLine">
       <div class="DescriptionTextElementWidth">Migration type:</div>
-      <div class="MigrationButtonLine" id="MigrationTypeButtonsContainer">
-        <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
+      <div class="FormElementWidth MigrationButtonLine" id="MigrationTypeButtonsContainer">
+
+        <button class="ColoredButton ToolTip" id="FullMigrationButton" disabled>
+          Full migration
+          <span class="ToolTipText ToolTipLeftPosition">The publisher of the origin contract has not registered full migrations for this network.</span>
+        </button>
+
         <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
-        <button class="ColoredButton" id="RedeemButton" disabled>Redeem IOU</button>
+
+        <button class="ColoredButton ToolTip" id="RedeemButton" disabled>
+          Redeem NFT
+          <span class="ToolTipText ToolTipRightPosition">The token you selected is not an IOU, so you can't redeem it.</span>
+        </button>
+
       </div>
     </div>
+
+    <div class="CardLine FormElementWidth FormElementMargin DataText" id="MigTypeDescriptionMessage"></div>
 
     <div class="CardLine" id=MigrationRelayCardLine>
       <div class="DescriptionTextElementWidth">Migration relay:</div>
