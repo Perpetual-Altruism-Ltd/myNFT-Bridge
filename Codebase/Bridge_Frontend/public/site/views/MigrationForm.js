@@ -153,6 +153,27 @@ export default class extends AbstractView {
             lert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
         };
     };
+    let loadERC165ABI = async function () {
+        let pathERC721Metadata = '/ABI/ERC165.json';
+        try {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', pathERC721Metadata);
+            xhr.onload = function () {
+                if (xhr.status != 200) { // analyze HTTP status of the response
+                    console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                    alert("Could not load ERC165 ABI at " + pathERC721Metadata);
+                } else { // show the result
+                    //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                    var resp = xhr.response;
+                    ABIS.ERC165 = JSON.parse(resp).abi;
+                }
+            };
+            xhr.send();
+        } catch (err) {
+            console.log(err);
+            lert("Could not load ERC165 ABI at " + pathERC721Metadata);
+        };
+    };
 
     //=====Provider management=====
     //Change the originNet dropDown selected item + Fetch new token data if possible
@@ -272,6 +293,16 @@ export default class extends AbstractView {
           displayContractErrorMsg();
           return;
         }
+
+        //Check if ERC721 contract
+        let isERC721 = await isOgContractERC721();
+        if(!isERC721){
+          console.log("This contract is NOT ERC721 compliant.");
+          return;
+        }else {
+          console.log("This contract is ERC721 compliant.");
+        }
+
         //Display token data card
         showCardLine("TokenDataCard", true);
         showCardLine("MigrationCard", true);
@@ -504,6 +535,38 @@ export default class extends AbstractView {
         return false;
       }
     }
+    //Return weather the og world is an ERC721 contract
+    let isOgContractERC721 = async function(){
+      //First we check that we have a connected wallet
+      if (window.ethereum == undefined) {
+          alert("Please connect to a Wallet first");
+          return false;
+      }
+
+      if (window.web3.currentProvider.selectedAddress == null) {
+          alert("Please connect to a Wallet first");
+          return false;
+      }
+
+      //Second, instanciate the contract through ERC165
+      try{
+        contracts.originalChainERC165Contract = new window.web3.eth.Contract(ABIS.ERC165, document.getElementById("inputOGContractAddress").value);
+      }
+      catch(err){
+        console.log("Contract ERC165 instanciation error: " + err);
+        return false;
+      }
+
+      //Then call supportsInterface()
+      let isERC721;
+      try{
+        isERC721 = await contracts.originalChainERC165Contract.methods.supportsInterface("0x80ac58cd").call();
+      }catch(err){
+        console.log("Call to supportsInterface() from contract ERC165 error: " + JSON.stringify(err));
+        return false;
+      }
+      return isERC721;
+    }
 
     //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
@@ -619,10 +682,14 @@ export default class extends AbstractView {
   				// of the current chain ID by listening for this event.
   				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
   				console.log("*** Event chainChanged to " + chainId + " emmited ***");
-          //Automatically change the form ogNet & retrieve data if destNet is not already set.
-          //This is to block token data changed after the user is filling the destnations data
-          if(!migData.destinationUniverseIndex)
-            changeOriginNetworkAndFetchTokenData(chainId);
+
+          //Auto switch the ogNet to provider net if window is focused
+          if(!document.hidden){
+            //Automatically change the form ogNet & retrieve data if destNet is not already set.
+            //This prevent token data from changing after the user is filling the destnations data
+            if(!migData.destinationUniverseIndex)
+              changeOriginNetworkAndFetchTokenData(chainId);
+          }
   			});
       }, 500);
     }
@@ -658,11 +725,7 @@ export default class extends AbstractView {
     //Display functions
     let clearTokenData = function(){
       showCardLine("TokenErrorMessage", false);
-      showCardLine("OriginWorldNameCardLine", false);
-      showCardLine("OriginWorldSymbolCardLine", false);
-      showCardLine("OriginTokenOwnerCardLine", false);
-      showCardLine("OriginTokenURICardLine", false);
-      showCardLine("MetadataCard", false);
+      showTokenData(false);
 
       document.getElementById("OGContractName").innerHTML = "";
       document.getElementById("OGContractSymbol").innerHTML = "";
@@ -678,12 +741,13 @@ export default class extends AbstractView {
       //Clear token metadata. (if previous token was an IOU)
       resetTokenMetadata();
     }
-    let showFormFieldsAfterOgNet = function(show){
-      //Hide all following elements
-      let elementsToHide = document.querySelectorAll("#OriginWorldCardLine,#OriginTokenIDCardLine,#BreakLineCardContainer,#TokenDataCard,#TokenErrorMessage,#ArrivalCard,#MigrationCard,#CompleteMigrationCard");
-      elementsToHide.forEach(function(elem) {
-        showCard(elem.id, show);
-      });
+    let showTokenData = function(show){
+      showCardLine("OriginWorldNameCardLine", show);
+      showCardLine("OriginWorldSymbolCardLine", show);
+      showCardLine("OriginTokenOwnerCardLine", show);
+      console.log("OriginTokenOwnerCardLine display set to false");
+      showCardLine("OriginTokenURICardLine", show);
+      showCardLine("MetadataCard", show);
     }
     //Show - Hide from dest network to dest owner
     let showArrivalFormFieldsOnRedeem = function(show){
@@ -736,13 +800,12 @@ export default class extends AbstractView {
       errorMsg.innerHTML = txt;
       showCardLine("OgNetworkSwitchMessage", true);
     }
+    //Token error msg, same as contract error. Display error msg below tokenID input.
     let displayErrorMsg = function(txt){
       let errorMsg = document.getElementById("TokenErrorMessage");
       errorMsg.innerHTML = txt;
-      //Hide all token data & metadata
-      clearTokenData();
+      //Show error msg
       showCardLine("TokenErrorMessage", true);
-      showCard("TokenDataCard", true);
     }
     let checkAndDisplayNotOwnerMsg = function(){
 
@@ -759,6 +822,25 @@ export default class extends AbstractView {
     }
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
+    }
+    let showIsERC721CompliantMsg = function(show, isCompliant){
+      //Show ERC721 compliant MSG
+      showCardLine("OgContractERC721CompliantMsgCardLine", show);
+
+      //Change MSG if ERC721 compliant or not
+      let ERC721Msg = document.getElementById("OgContractERC721CompliantMsgCardLine");
+      if(isCompliant){
+        ERC721Msg.textContent = "This contract is ERC721 compliant. Perfect!";
+        //Add standard styling
+        ERC721Msg.classList.remove('ErrorText');
+        ERC721Msg.classList.add('DataText');
+      }
+      else{
+        ERC721Msg.textContent = "You can't migrate tokens from this contract, it must be ERC721 compliant.";
+        //Add error styling
+        ERC721Msg.classList.remove('DataText');
+        ERC721Msg.classList.add('ErrorText');
+      }
     }
 
     let showCard = function(id, disp){
@@ -955,7 +1037,7 @@ export default class extends AbstractView {
     setupDropDown("OriginNetworkSelector", "Select the network where the token is currently.");
     setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");
     setupDropDown("DestinationNetworkSelector", "Select the network to which you want to migrate your token.");
-    setupDropDown("DestinationWorldSelector", "Select the ERC721 smart contract to which the migrated token will be.");
+    setupDropDown("DestinationWorldSelector", "Select the ERC-721 smart contract the destination token will belong to.");
 
     //Call Load data functions one after the other to execute form prefill when the last is finished
     //Load networks
@@ -976,6 +1058,8 @@ export default class extends AbstractView {
     loadERC721ABI();
     //Load ERC721 Metadata ABI
     loadERC721MetadataABI();
+    //Load ERC165 ABI
+    loadERC165ABI();
 
     //Listeners & Callback
     //When new origin network selected : Prompt user to connect to new chain selected
@@ -1103,10 +1187,16 @@ export default class extends AbstractView {
       }
     });
     document.getElementById("inputOGContractAddress").addEventListener('change', async(e) =>{
-      //Trigger Fetch data button
-      if(migData.originTokenId && document.getElementById("inputOGTokenID").value){
-        document.getElementById("FetchDataButton").click();
-      }
+      //If originWorld is filled: display ERC721 compliant msg depending on isOgContractERC721
+      isOgContractERC721().then(function(isERC721){
+        //Show ERC721 compliant MSG & adapt text
+        showIsERC721CompliantMsg(migData.originWorld != "", isERC721);
+
+        //Trigger Fetch data button, if tokenId is filled
+        if(migData.originTokenId && document.getElementById("inputOGTokenID").value){
+          document.getElementById("FetchDataButton").click();
+        }
+      });
     });
 
     //===Origin tokenID input===
@@ -1214,10 +1304,20 @@ export default class extends AbstractView {
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
       //Refresh connected addr for the rest of the migration form
       userAccount = window.web3.currentProvider.selectedAddress;
-      //Clear previous tokens data
-      clearTokenData();
-      //Load metadata from chain: token URI, symbole, name
-      loadOgTokenData();
+
+      //Fetch token data only if og world + token id filled
+      if(migData.originWorld && migData.originTokenId){
+        //If og contract is ERC721, load token data
+        isOgContractERC721().then(function(isERC721){
+          if(isERC721){
+            //Clear previous tokens data
+            clearTokenData();
+
+            //Load metadata from chain: token URI, symbole, name
+            loadOgTokenData();
+          }
+        });
+      }
     });
     //Setup rooting
     document.getElementById("CompleteButton").addEventListener('click', async() =>{

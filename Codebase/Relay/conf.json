@@ -7,13 +7,24 @@
         "projectId": "205glgJgV59a6lg5A3w9qCWCS8k",
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
+    "gimliUrl": "",
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
     "port": 5000,
+    "balancer" : {
+        "addresses": [
+            {"address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8"}
+        ],
+        "minimalWalletAmount": 0.0001
+    },
     "universes": [
         {
             "name":"Ethereum Testnet Rinkeby",
             "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 4,
+            "networkID": 4,
             "uniqueId": "0x07dac20e",
+            "chain": "rinkeby",
+            "hardfork": "london",
             "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
@@ -23,16 +34,18 @@
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
                 }
-            ]
+            ],
+            "handleRevert": true,
+            "eip1559": true
         },
         {
             "name":"Ethereum Testnet Kovan",
             "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "chainID": 42,
             "networkID": 42,
             "uniqueId": "0xee0bec75",
             "bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5",
             "explorer" : "https://kovan.etherscan.io/",
+            "eip1559": true,
             "worlds": [
                 {
                     "address": "0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd",
@@ -48,6 +61,8 @@
             "chainID": 5,
             "networkID":5,
             "uniqueId": "0x3fbf5c9a",
+            "chain": "goerli",
+            "hardfork": "london",
             "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
             "explorer" : "https://etherscan.io/",
             "worlds": []
@@ -58,9 +73,28 @@
             "chainID": 323232,
             "networkID": 323232,
             "uniqueId": "0xd1e94e57",
+            "chain": "mynft",
+            "hardfork": "istambul",
             "bridgeAdress": "0xFcc2C1A4C772caBe772B75498E1434252eF87Fc5",
             "explorer" : "https://etherscan.io/",
             "worlds": []
+        },
+        {
+            "name":"Polkadot Testnet Moonalpha",
+            "rpc": "wss://moonbeam-alpha.api.onfinality.io/public-ws",
+            "networkID": 1287,
+            "uniqueId": "0xe35d7d6b",
+            "bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
+            "explorer": "https://moonbase-blockscout.testnet.moonbeam.network/",
+            "eip1559": false,
+            "worlds": [
+                {
+                    "address": "0x486922C002792237BE64F5017739635F6c8c7e59",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
         }
     ]
 }

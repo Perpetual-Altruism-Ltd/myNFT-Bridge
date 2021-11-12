@@ -4,13 +4,15 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev:watch": "nodemon"
+    "dev:watch": "nodemon",
+    "start": "node main.js"
   },
   "dependencies": {
     "axios": "^0.24.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-rate-limit": "^5.5.0",
+    "form-data": "^4.0.0",
     "ipfs-http-client": "^53.0.1",
     "jimp": "^0.16.1",
     "joi": "^17.4.2",
