@@ -1,10 +1,13 @@
 const Jimp = require('jimp')
-const IPFS = require('./ipfs')
+const Gimli = require('./gimli')
 const Axios = require('axios')
+const IPFSClient = require('./ipfs')
+const Conf = require('../conf')
 
 class Forge {
     constructor(db){
-        this.ipfsClient = new IPFS()
+        this.gimliClient = new Gimli()
+        this.ipfsClient = new IPFSClient()
         this.db = db
     }
 
@@ -13,7 +16,12 @@ class Forge {
      * @param {Buffer} imageBuffer : The buffer of data containing the image
      */
     async _uploadImage(imageBuffer){
-        return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addFileObj(imageBuffer)).path}`
+        if(Conf.gimliUrl){
+            const urls = await this.gimliClient.uploadFile(imageBuffer, 'image.png')
+            return urls.ipfsUrl
+        }else{
+            return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addFileObj(imageBuffer)).path}`
+        }
     }
 
     /**
@@ -66,7 +74,12 @@ class Forge {
     async forgeIOUMetadata(originalTokenUri, migrationData){
         const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
         const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
-        const ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
+        let ipfsUrl
+        if(Conf.gimliUrl){
+            ipfsUrl = (await this.gimliClient.uploadFile(new Buffer.from(JSON.stringify(forgedMetadata)), 'metadata.json')).ipfsUrl
+        }else{
+            ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
+        }
 
         await (new this.db.models.mintedIOUs({ 
             uri: ipfsUrl

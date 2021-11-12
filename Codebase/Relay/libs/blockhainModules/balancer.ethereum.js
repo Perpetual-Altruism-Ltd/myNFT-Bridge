@@ -96,8 +96,9 @@ class TransactionBalancer {
     getAddressAndNonce() {
         return new Promise((resolve, reject) => {
             this.getAvailableAddress().then(async (account) => {
-                // const nonce = this.web3Instance.eth.getTransactionCount(account.address);
-                return resolve([account, this.TransactionBalancerTable[account.address].queue]);
+                const nonce = await this.web3Instance.eth.getTransactionCount(account.address);
+                // return resolve([account, this.TransactionBalancerTable[account.address].queue]);
+                return resolve([account, nonce]);
             }).catch((error) => {
                 reject(error);
                 return;
@@ -127,13 +128,13 @@ class TransactionBalancer {
         const runner = async () => {
             await sleep(1000)
             if(this.transactions.length) {
-                const _txObject = this.transactions[0];
+                const _txObject = this.transactions.shift();
                 const hash = crypto.createHash('md5').update(JSON.stringify(_txObject)).digest("hex");
-                this.web3Instance.eth.estimateGas(_txObject).then(() => {
+                this.web3Instance.eth.estimateGas(_txObject).then((gas) => {
                     let txObject = {
-                        gas: this.web3Instance.utils.numberToHex(8000000),
+                        gas: this.web3Instance.utils.numberToHex(gas * 2),
                         ...(this.eip1559 && {maxFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('15', 'gwei'))}),
-                        ...(this.eip1559 && {maxPriorityFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('.5', 'gwei'))}),
+                        ...(this.eip1559 && {maxPriorityFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('3.5', 'gwei'))}),
                         ...this.txConfig,
                         ..._txObject
                     }
@@ -144,7 +145,6 @@ class TransactionBalancer {
                         txObject.nonce = nonceobj
                         this.web3Instance.eth.accounts.signTransaction(txObject, privateKey).then(obj => {
                             this.web3Instance.eth.sendSignedTransaction(obj.rawTransaction).then(res => {
-                                this.transactions.shift();
                                 this.eventEmitter.emit(hash, {
                                     state: true,
                                     data : res
@@ -153,9 +153,9 @@ class TransactionBalancer {
                                 Logger.info(error.message);
                                 if(error.message == 'Returned error: nonce too low' || error.message == 'Returned error: replacement transaction underpriced') {
                                     Logger.info('Waiting to retry the transaction');
+                                    this.transactions.unshift(_txObject);
                                 } else {
                                     // Failed for an other reason (EVM revert ...) => we do not retry
-                                    this.transactions.shift();
                                     this.eventEmitter.emit(hash, {
                                         state: false,
                                         data : (false, error)
@@ -168,7 +168,6 @@ class TransactionBalancer {
                         }).catch(error => {
                             this.releaseAddress(account.address);
                             Logger.info(error.message);
-                            this.transactions.shift();
                             this.eventEmitter.emit(hash, {
                                 state: false,
                                 data : false
@@ -185,7 +184,6 @@ class TransactionBalancer {
                     });
                 }).catch(error => {
                     Logger.info(error);
-                    this.transactions.shift();
                     this.eventEmitter.emit(hash, {
                         state: false,
                         data : error

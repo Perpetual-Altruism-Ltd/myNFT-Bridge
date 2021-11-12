@@ -7,7 +7,7 @@
 			"uniqueId": "0xee0bec75",
 			"bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5",
 			"explorer" : "https://kovan.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}]
+			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}]
 		},
 		{
 			"name":"Ethereum Testnet Rinkeby",
@@ -16,7 +16,16 @@
 			"uniqueId": "0x07dac20e",
 			"bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
 			"explorer" : "https://rinkeby.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}]
+			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}]
+		},
+		{
+			"name":"Polkadot Testnet Moonalpha",
+			"chainID": 1287,
+			"networkID": 1287,
+			"uniqueId": "0xe35d7d6b",
+			"bridgeAdress": "0x39554a5a267B2f808EbED920811447bFB8368F77",
+			"explorer" : "https://moonbase-blockscout.testnet.moonbeam.network/",
+			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}]
 		}
 	]
 }
