@@ -96,8 +96,9 @@ class TransactionBalancer {
     getAddressAndNonce() {
         return new Promise((resolve, reject) => {
             this.getAvailableAddress().then(async (account) => {
-                // const nonce = this.web3Instance.eth.getTransactionCount(account.address);
-                return resolve([account, this.TransactionBalancerTable[account.address].queue]);
+                const nonce = await this.web3Instance.eth.getTransactionCount(account.address);
+                // return resolve([account, this.TransactionBalancerTable[account.address].queue]);
+                return resolve([account, nonce]);
             }).catch((error) => {
                 reject(error);
                 return;
