@@ -8,6 +8,7 @@
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
     "gimliUrl": "",
+    "bridgeAdress": "http://bridge.mynft.com/",
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
     "port": 5000,
     "balancer" : {
