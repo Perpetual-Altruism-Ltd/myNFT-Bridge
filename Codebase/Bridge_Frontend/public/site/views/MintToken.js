@@ -35,9 +35,11 @@ export default class extends AbstractView {
       document.getElementById("MintLoadingCircle").style.color = '#af1540';
     }
 
+    //Adapt message to mig type
     //If redeem, display specific message
     if(migData.migrationType == model.RedeemIOUMigrationType){
       loadingText.textContent = "Please wait for the relay to retrieve the destination token...";
+      document.getElementById("MintTokenPageTitle").textContent = "Retriving your NFT";
     }
 
     function sleep(ms) {

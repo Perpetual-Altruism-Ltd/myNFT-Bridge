@@ -54,13 +54,23 @@ const router = async () => {
       //Get and display the view's html
       let view = new match.route.view(getParams(match));
       view.getHtml(htmlContent => {
-        document.getElementById("WhiteSheet").innerHTML = htmlContent;
-        //Run the code associated to this view
-
-        view.initCode(Model);
+        //Before displaying the new page, check if migData is filled, and if not, redirect to wallet_connection
+        //Exceptions for pages wallet_connection and migration_form which load themselves the provider
+        if(!Model.isProviderLoaded() &&
+          match.route.path != "/wallet_connection" &&
+          match.route.path != "/migration_form"){
+          console.log("No provider loaded. Redirecting to wallet_connection.");
+          navigateTo('/wallet_connection');
+        }else{
+          //Display the HTML view inside WhiteSheet
+          document.getElementById("WhiteSheet").innerHTML = htmlContent;
+          //Run the code associated to this view
+          view.initCode(Model);
+        }
       });
 }
 
+/*=====Model functions=====*/
 const navigateTo = url => {
     history.pushState(null, null, url);
     router();
@@ -92,6 +102,29 @@ Model.readCookie = function(name) {
 }
 Model.eraseCookie = function(name) {
     Model.createCookie(name, "", -1);
+}
+//Tell weather user come with migData object already filled up or not.
+Model.isMigDataFilled = function(){
+  let migData = Model.migrationData;
+
+  if(migData.originUniverseUniqueId &&
+    migData.originWorld &&
+    migData.originTokenId &&
+    migData.destinationUniverseUniqueId &&
+    migData.migrationType &&
+    migData.destinationWorld &&
+    parseInt(migData.destinationTokenId) &&
+    migData.destinationOwner){
+    return true;
+  }else{
+    return false;
+  }
+}
+//Return true if a provider is loaded.
+Model.isProviderLoaded = function(){
+  let userAccount = window.web3.currentProvider.selectedAddress;
+  //If web3 already injected
+  return userAccount != "" && window.web3.eth != undefined;
 }
 
 //Initialize javascript context for all views

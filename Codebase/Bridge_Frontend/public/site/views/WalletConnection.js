@@ -48,8 +48,24 @@ export default class extends AbstractView {
       loadWestron();
     }
 
-    //Auto connect to metamask if wallet exists
-    setTimeout(endLoadMetamaskConnection, 1000);
+    //Once loadWestron started, wait for it to finish by polling.
+    //Then auto connect to metamask if wallet exists
+    let cmptr = 0;
+    let pollWestronLoaded = async function(){
+      try{
+        await endLoadMetamaskConnection();
+        console.log("Westron lib loaded after " + cmptr + " attempts.");
+      }catch(err){
+        cmptr++;
+        if(cmptr > 100){
+          console.log("Westron loading timed out.");
+        }else {
+          setTimeout(pollWestronLoaded, 50);
+        }
+      }
+    }
+    //Start polling for westron to be loaded
+    pollWestronLoaded();
   }
 
   async getHtml(callback){

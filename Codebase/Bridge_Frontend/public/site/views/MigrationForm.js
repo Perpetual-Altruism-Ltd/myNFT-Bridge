@@ -181,8 +181,8 @@ export default class extends AbstractView {
         };
     };
     //Return true if all above data from server are loaded
-    let areNetworksLoadedFromServer = function(){
-      return bridgeApp.networks.length  > 0;
+    let areDataLoadedFromServer = function(){
+      return bridgeApp.networks.length  > 0 && bridgeApp.relays.length  > 0;
     }
 
     //=====Provider management=====
@@ -237,7 +237,8 @@ export default class extends AbstractView {
       //If migData already filled, prefill migration form
       //Once wallet loaded, chain is switched, and dest net loaded:
       //we can prefill all form data if user come from register_mig & clicked edit btn
-      if(isMigDataFilled()){prefillFormWithMigData();}
+      console.log("isMigDataFilled(): " + model.isMigDataFilled());
+      if(model.isMigDataFilled()){prefillFormWithMigData();}
       else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
         document.getElementById("FetchDataButton").click();
       }
@@ -691,6 +692,7 @@ export default class extends AbstractView {
     //This function requires the provider to be loaded (wallet connected)
     //This function requires the network data (network_list.json) to be loaded from server
     let displayConnectedWallet = function(){
+      console.log("displayConnectedWallet()");
       //When this function is called, the wallet-provider is connected
       //Display connected account addr
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
@@ -708,8 +710,10 @@ export default class extends AbstractView {
       showCardLine("OriginNetworkCardLine", true);
       showCard("CompleteMigrationCard", true);
 
-      //If Networks loaded from frontend web server, prefill origin network (If not already prefilled)
-      if(areNetworksLoadedFromServer() && migData.originUniverse == ""){
+      //If Network list loaded from web server: prefill origin network (If not already prefilled)
+      console.log(areDataLoadedFromServer() + ', ' + migData.originUniverse);
+      //migData.originUniverse != "" : is the case when user comde back from register & edit btn
+      if(areDataLoadedFromServer() || migData.originUniverse != ""){
         let providerNetId = window.web3.currentProvider.chainId;
         changeOriginNetworkAndFetchTokenData(providerNetId);
       }
@@ -936,7 +940,7 @@ export default class extends AbstractView {
     }
     let refreshCompleteBtnEnabled = function(){
       userAccount = window.web3.currentProvider.selectedAddress;
-      document.getElementById("CompleteButton").disabled = !isMigDataFilled() || (migData.originOwner != userAccount);
+      document.getElementById("CompleteButton").disabled = !(model.isMigDataFilled()) || (migData.originOwner != userAccount);
     }
 
     //Input setters.
@@ -1048,21 +1052,6 @@ export default class extends AbstractView {
         });
       }
     }
-    //Tell weather user come with migData object already filled up or not.
-    let isMigDataFilled = function(){
-      if(migData.originUniverseUniqueId &&
-        migData.originWorld &&
-        migData.originTokenId &&
-        migData.destinationUniverseUniqueId &&
-        migData.migrationType &&
-        migData.destinationWorld &&
-        parseInt(migData.destinationTokenId) &&
-        migData.destinationOwner){
-        return true;
-      }else{
-        return false;
-      }
-    }
     //Prefill all form fields. This function is called inside onChainSwitchedSuccess()
     let prefillFormWithMigData = function(){
       //OgNet is already prefilled because register_migration prompt user to switch to correct net for edit mig btn
@@ -1129,11 +1118,12 @@ export default class extends AbstractView {
     loadNets(function () {
         //Add select options
         for (var i = 0; i < bridgeApp.networks.length; i++) {
-            addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
+          addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
         }
 
         //If provider is loaded, and networks from server, disp connected wallet
-        if(isProviderLoaded() && areNetworksLoadedFromServer() && migData.originUniverse == ""){
+        if(isProviderLoaded() && areDataLoadedFromServer()){
+          console.log("Networks loaded, dispWallet.");
           displayConnectedWallet();
         }
     });
@@ -1142,6 +1132,12 @@ export default class extends AbstractView {
       //Add select options
       for (var i = 0; i < bridgeApp.relays.length; i++) {
           addDropDownOption("RelaySelector", bridgeApp.relays[i].name, "", bridgeApp.relays[i].uniqueId);
+      }
+
+      //If provider is loaded, and networks from server, disp connected wallet
+      if(isProviderLoaded() && areDataLoadedFromServer()){
+        console.log("Relays loaded, dispWallet.");
+        displayConnectedWallet();
       }
     });
     //Load ERC721 ABI
@@ -1449,7 +1445,7 @@ export default class extends AbstractView {
       let pollWestronLoaded = async function(){
         try{
           await connectToMetamask();
-          console.log("Westron lib loaded after " + cmptr + " attemps.");
+          console.log("Westron lib loaded after " + cmptr + " attempts.");
         }catch(err){
           cmptr++;
           if(cmptr > 100){
