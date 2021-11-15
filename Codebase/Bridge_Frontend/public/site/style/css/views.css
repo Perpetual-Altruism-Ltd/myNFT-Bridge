@@ -277,6 +277,7 @@
 
 .DataText{
   font-weight: bold;
+  line-height: 1.56rem;
 }
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */

@@ -181,17 +181,8 @@ export default class extends AbstractView {
         };
     };
     //Return true if all above data from server are loaded
-    let areDataLoadedFromServer = function(){
-      if(bridgeApp.networks != {} &&
-        bridgeApp.relays != [] &&
-        ABIS.ERC721 &&
-        ABIS.ERC721Metadata &&
-        ABIS.ERC165){
-          return true;
-        }
-        else{
-          return false;
-        }
+    let areNetworksLoadedFromServer = function(){
+      return bridgeApp.networks.length  > 0;
     }
 
     //=====Provider management=====
@@ -206,7 +197,7 @@ export default class extends AbstractView {
       if(netIndex < 0){
         console.log("Change ogNet & fetch: " + ethNetId + " networkId not found.");
         console.log("bridgeApp:");
-        console.log(bridgeApp);
+        console.log(bridgeApp.networks);
         return;
       }
 
@@ -718,7 +709,7 @@ export default class extends AbstractView {
       showCard("CompleteMigrationCard", true);
 
       //If Networks loaded from frontend web server, prefill origin network (If not already prefilled)
-      if(areDataLoadedFromServer() && migData.originUniverse == ""){
+      if(areNetworksLoadedFromServer() && migData.originUniverse == ""){
         let providerNetId = window.web3.currentProvider.chainId;
         changeOriginNetworkAndFetchTokenData(providerNetId);
       }
@@ -950,6 +941,15 @@ export default class extends AbstractView {
 
     //Input setters.
     //These functions make sure the input value displayed is always the same as the variable in migData
+    let unselectOriginUniv = function(){
+      //Unselect drop down
+      unselectDropDown("OriginNetworkSelector");
+      //Reset migData associated data
+      migData.originUniverseIndex = 0;
+      migData.originUniverseUniqueId = "";
+      migData.originNetworkId = "";//Blochain ID
+      migData.originUniverse = "";
+    }
     let setOgWorldInputValue = function(txt){
       let input = document.getElementById("inputOGContractAddress");
       //Set new text
@@ -1132,8 +1132,8 @@ export default class extends AbstractView {
             addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
         }
 
-        //If provider is loaded, and all data from server, disp connected wallet
-        if(isProviderLoaded() && areDataLoadedFromServer() && migData.originUniverse == ""){
+        //If provider is loaded, and networks from server, disp connected wallet
+        if(isProviderLoaded() && areNetworksLoadedFromServer() && migData.originUniverse == ""){
           displayConnectedWallet();
         }
     });
@@ -1143,33 +1143,13 @@ export default class extends AbstractView {
       for (var i = 0; i < bridgeApp.relays.length; i++) {
           addDropDownOption("RelaySelector", bridgeApp.relays[i].name, "", bridgeApp.relays[i].uniqueId);
       }
-
-      //If provider is loaded, and all data from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer() && migData.originUniverse == ""){
-        displayConnectedWallet();
-      }
     });
     //Load ERC721 ABI
-    loadERC721ABI(function (){
-      //If provider is loaded, and all data from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer() && migData.originUniverse == ""){
-        displayConnectedWallet();
-      }
-    });
+    loadERC721ABI(function (){});
     //Load ERC721 Metadata ABI
-    loadERC721MetadataABI(function (){
-      //If provider is loaded, and all data from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer() && migData.originUniverse == ""){
-        displayConnectedWallet();
-      }
-    });
+    loadERC721MetadataABI(function (){});
     //Load ERC165 ABI
-    loadERC165ABI(function (){
-      //If provider is loaded, and all data from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer() && migData.originUniverse == ""){
-        displayConnectedWallet();
-      }
-    });
+    loadERC165ABI(function (){});
 
     //Listeners & Callback
     //When new origin network selected : Prompt user to connect to new chain selected
@@ -1347,6 +1327,10 @@ export default class extends AbstractView {
 
     //Disconnect wallet button
     document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
+      //Clear originUniv.
+      unselectOriginUniv();
+      //Clear tokens data
+      clearTokenData();
       model.disconnectWallet = true;
       model.navigateTo('wallet_connection');
     });
@@ -1460,11 +1444,12 @@ export default class extends AbstractView {
       console.log("Metamask detected. Auto connect.");
       loadWestron();
 
+      //Once loadWestron started, wait for it to finish by polling.
       let cmptr = 0;
       let pollWestronLoaded = async function(){
         try{
           await connectToMetamask();
-          console.log("Westron lib finally loaded after " + cmptr + " pollings.");
+          console.log("Westron lib loaded after " + cmptr + " attemps.");
         }catch(err){
           cmptr++;
           if(cmptr > 100){
