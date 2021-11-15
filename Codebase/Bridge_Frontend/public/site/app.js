@@ -106,6 +106,7 @@ Model.eraseCookie = function(name) {
 //Tell weather user come with migData object already filled up or not.
 Model.isMigDataFilled = function(){
   let migData = Model.migrationData;
+  console.log(migData);
 
   if(migData.originUniverseUniqueId &&
     migData.originWorld &&

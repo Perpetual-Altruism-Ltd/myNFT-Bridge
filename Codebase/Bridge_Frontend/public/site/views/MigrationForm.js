@@ -482,7 +482,7 @@ export default class extends AbstractView {
                       }
                       else{
                         //If token is not IOU, unselect Redeem if previously selected
-                        unselectMigrationButtons();
+                        //unselectMigrationButtons();
                       }
 
                       document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
@@ -986,15 +986,18 @@ export default class extends AbstractView {
     }
     //Select migBtn + associate the right value to migData.migrationType.
     let selectMigrationButton = function(migType){
+      console.log("Select " + migType);
       //First, unselect any previously selected btn
       unselectMigrationButtons();
       //Next find the correct button
       let btnToSelect = "";
       switch(migType){
         case model.MintOUIMigrationType:
+          console.log(migData.migrationType);
           btnToSelect = document.getElementById("IOUMigrationButton");
           migData.migrationType = model.MintOUIMigrationType;
           model.isRedeem = false;
+          console.log(migData.migrationType);
         break;
 
         case model.RedeemIOUMigrationType:
@@ -1069,6 +1072,7 @@ export default class extends AbstractView {
       enableRedeemBtnIfNetworkMatch();
 
       //Select migration button
+      console.log("type: " + migData.migrationType);
       if(migData.migrationType == model.MintOUIMigrationType){
         //Select the Mint IOU button
         selectMigrationButton(model.MintOUIMigrationType);

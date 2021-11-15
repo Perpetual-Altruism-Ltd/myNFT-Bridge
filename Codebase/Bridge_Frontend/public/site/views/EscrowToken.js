@@ -122,7 +122,7 @@ export default class extends AbstractView {
     }else {
       setCircleErrorState();
       loadingText.textContent = "No migration data found. Redirecting to wallet connection page.";
-      //setTimeout(function(){model.navigateTo('wallet_connection');}, 3000);
+      setTimeout(function(){model.navigateTo('wallet_connection');}, 3000);
     }
 
 
