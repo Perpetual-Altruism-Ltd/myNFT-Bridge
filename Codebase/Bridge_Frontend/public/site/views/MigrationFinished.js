@@ -52,6 +52,25 @@ export default class extends AbstractView {
       model.isRedeem = false;
     }
 
+    //display destination token data
+    let showDestTokenData = function(){
+      if(migData.migrationType == model.MintOUIMigrationType){document.getElementById("TokenType").textContent = "IOU";}
+      else{document.getElementById("TokenType").textContent = "NFT";}
+
+      document.getElementById("OwnerAddr").textContent = migData.destinationOwner;
+      document.getElementById("DestNetworkName").textContent = migData.destinationUniverse;
+      document.getElementById("DestTokenIdMigFinished").textContent = migData.destinationTokenId;
+      document.getElementById("DestWorldMigFinished").textContent = migData.destinationWorld;
+
+    }
+    if(migData.destinationTokenId &&
+      migData.destinationWorld &&
+      migData.destinationUniverse &&
+      migData.destinationOwner &&
+      migData.migrationType){
+      showDestTokenData();
+    }
+
     //If mig successful: set link to chain explorer of the dest token tranfser transaction.
     let tfTokChainExplo = document.getElementById("TransferTokenChainExplo");
     if(model.destinationTokenTransfertTxHash){

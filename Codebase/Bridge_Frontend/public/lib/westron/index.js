@@ -170,7 +170,7 @@ function initConnector() {
 }
 
 /** Local function called when a connection/disconnection is engaged to update the frontend */
-async function connection() {
+async function connection(callback) {
 	initConnector();
 	setDisabledConnectButtons(true);
 
@@ -179,6 +179,7 @@ async function connection() {
 		web3 = connector.web3;
 
 		//Call the callback function once connected
+		//Need to be a function stored in this context as connection can be called by wallet conn buttons after
     if(connectionCallback){connectionCallback();}
 	} else {
 		setDisabledConnectButtons(false);

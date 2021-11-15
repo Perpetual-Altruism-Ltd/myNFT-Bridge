@@ -6,13 +6,18 @@
   <div class="Card" id="ConnectedWalletCard">
     <div class="SpaceBetweenCardLine">
       <div class=CardLine>
-        <div class="WrapContentLineElement TextElement">Connected address:</div>
-        <div class="DataText" id="ConnectedAccountAddr"></div>
+        <div class="DescriptionTextElementWidth">Connected address:</div>
+        <div class="FormElementWidth DataText" id="ConnectedAccountAddr"></div>
       </div>
 
       <div class="ColoredButtonContainer">
         <button class="ColoredButton" id="DisconnectWalletBtn">Disconnect wallet</button>
       </div>
+    </div>
+
+    <div class="CardLine">
+      <div class="DescriptionTextElementWidth">Connected wallet:</div>
+      <div class="FormElementWidth DataText" id="ConnectedWalletName"></div>
     </div>
 
   </div>
@@ -22,9 +27,9 @@
     <div class="CardLine CardTitle"><div class="LineElement">Migrate NFT</div></div>
 
     <div class="CardLine" id="OriginNetworkCardLine">
-      <div class="LineElement">Origin network:</div>
+      <div class="DescriptionTextElementWidth">Origin network:</div>
       <!-- Custom drop down selector -->
-      <div class="LineElement">
+      <div class="FormElementWidth">
         <div class="select-wrapper InputElement" id="OriginNetworkSelector">
           <div class="select">
             <div class="select-trigger">
@@ -37,26 +42,23 @@
           </div>
         </div>
       </div>
-      <!-- For column alignment purpose. Each line must have same number of elements (3 here) so that they are one on top of the other -->
-      <div class="LineElement"></div>
     </div>
 
 
-    <div class="CenteredCardLine DataDisplay NoMargin" id="OgNetworkSwitchMessage"></div>
+    <div class="CardLine FormElementWidth FormElementMargin AlignItemsStart NoMargin DataText" id="OgNetworkSwitchMessage"></div>
 
 
     <div class="CardLine" id="OriginWorldCardLine">
-      <div class="LineElement">Origin contract:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputOGContractAddress" placeholder="Enter the ERC-721 smart contract address."></div>
-      <div class="LineElement"></div><!-- Same as previous empty LineElement -->
+      <div class="DescriptionTextElementWidth">Origin contract:</div>
+      <div class="FormElementWidth"><input class="TextInput InputElement" id="inputOGContractAddress" placeholder="Enter the ERC-721 smart contract address."></div>
     </div>
 
-    <div class="CenteredCardLine DataDisplay ErrorText NoMargin" id="OgContractERC721CompliantMsgCardLine"></div>
+    <div class="CardLine FormElementWidth FormElementMargin ErrorTextStyle" id="OgContractERC721CompliantMsgCardLine"></div>
 
     <div class="CardLine" id="OriginTokenIDCardLine">
-      <div class="LineElement">Origin token ID:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputOGTokenID" placeholder="Enter the token id of the NFT you want to migrate."></div>
-      <div class="LineElement ColoredButtonContainer">
+      <div class="DescriptionTextElementWidth">Origin token ID:</div>
+      <div class="FormElementWidth"><input class="TextInput InputElement" id="inputOGTokenID" placeholder="Enter the token id of the NFT you want to migrate."></div>
+      <div class="ColoredButtonContainer">
         <button class="ColoredButton" id="FetchDataButton">Fetch Data</button>
       </div>
     </div>
@@ -64,46 +66,45 @@
 
   <!-- Token data card -->
   <div class="Card" id="TokenDataCard">
-    <div class="Card">
-      <div class="CenteredCardLine DataDisplay ErrorText" id="TokenErrorMessage"></div>
-    </div>
+
+    <div class="CardLine FormElementWidth FormElementMargin ErrorTextStyle" id="TokenErrorMessage"></div>
 
     <div class="CompactCard">
-      <div class="CardLine DataDisplay" id="OriginWorldNameCardLine">
-        <div class="LineElement TextElement">Token Contract Name:</div>
-        <div class="LineElement DataText" id="OGContractName"></div>
+      <div class="CardLine AlignItemsStart" id="OriginWorldNameCardLine">
+        <div class="DescriptionTextElementWidth">Token Contract Name:</div>
+        <div class="TokenDataWidth DataText" id="OGContractName"></div>
       </div>
 
-      <div class="CardLine DataDisplay" id="OriginWorldSymbolCardLine">
-        <div class="LineElement TextElement">Token Contract Symbol:</div>
-        <div class="LineElement DataText" id="OGContractSymbol"></div>
+      <div class="CardLine AlignItemsStart" id="OriginWorldSymbolCardLine">
+        <div class="DescriptionTextElementWidth">Token Contract Symbol:</div>
+        <div class="TokenDataWidth DataText" id="OGContractSymbol"></div>
       </div>
 
-      <div class="CardLine DataDisplay" id="OriginTokenOwnerCardLine">
-        <div class="LineElement TextElement">Token Owner:</div>
-        <div class="LineElement DataText" id="OGTokenOwner"></div>
+      <div class="CardLine AlignItemsStart" id="OriginTokenOwnerCardLine">
+        <div class="DescriptionTextElementWidth">Token Owner:</div>
+        <div class="TokenDataWidth DataText" id="OGTokenOwner"></div>
       </div>
 
-      <div class="CardLine DataDisplay" id="OriginTokenURICardLine">
-        <div class="LineElement TextElement">Token URI:</div>
-        <div class="LineElement DataText"><a href="" target="_blank" id="OGTokenURI"></a></div>
+      <div class="CardLine AlignItemsStart" id="OriginTokenURICardLine">
+        <div class="DescriptionTextElementWidth">Token URI:</div>
+        <div class="TokenDataWidth DataText"><a href="" target="_blank" id="OGTokenURI"></a></div>
       </div>
     </div>
 
     <div class="CompactCard" id="MetadataCard">
-      <div class="CardLine DataDisplay">
-        <div class="LineElement TextElement">Metadata Name:</div>
-        <div class="LineElement DataText" id="OGTokenMetaName"></div>
+      <div class="CardLine AlignItemsStart">
+        <div class="DescriptionTextElementWidth">Metadata Name:</div>
+        <div class="TokenDataWidth DataText" id="OGTokenMetaName"></div>
       </div>
 
-      <div class="CardLine DataDisplay">
-        <div class="LineElement TextElement">Metadata Description:</div>
-        <div class="LineElement DataText" id="OGTokenMetaDesc"></div>
+      <div class="CardLine AlignItemsStart">
+        <div class="DescriptionTextElementWidth">Metadata Description:</div>
+        <div class="TokenDataWidth DataText" id="OGTokenMetaDesc"></div>
       </div>
 
-      <div class="CardLine DataDisplay">
-        <div class="LineElement TextElement">Metadata Image:</div>
-        <div class="LineElement DataText" id="OGTokenMetaImagePath"></div>
+      <div class="CardLine AlignItemsStart">
+        <div class="DescriptionTextElementWidth">Metadata Image:</div>
+        <div class="TokenDataWidth DataText" id="OGTokenMetaImagePath"></div>
       </div>
     </div>
   </div> <!-- end of token card -->
@@ -116,9 +117,9 @@
   <!-- Migration card -->
   <div class="Card" id="MigrationCard">
     <div class="CardLine" id="DestNetworkCardLine">
-      <div class="LineElement TextElement">Destination network:</div>
+      <div class="DescriptionTextElementWidth">Destination network:</div>
 
-      <div class="LineElement">
+      <div class="FormElementWidth">
         <!-- Custom drop down selector -->
         <div class="select-wrapper InputElement" id="DestinationNetworkSelector">
           <div class="select">
@@ -134,18 +135,30 @@
     </div>
 
     <div class="CardLine" id="MigrationTypeCardLine">
-      <div class="LineElement TextElement">Migration type:</div>
-      <div class="MigrationButtonLine" id="MigrationTypeButtonsContainer">
-        <button class="ColoredButton" id="FullMigrationButton" disabled>Full migration</button>
+      <div class="DescriptionTextElementWidth">Migration type:</div>
+      <div class="FormElementWidth MigrationButtonLine" id="MigrationTypeButtonsContainer">
+
+        <button class="ColoredButton ToolTip" id="FullMigrationButton" disabled>
+          Full migration
+          <span class="ToolTipText ToolTipLeftPosition">The publisher of the origin contract has not registered full migrations for this network.</span>
+        </button>
+
         <button class="ColoredButton" id="IOUMigrationButton">Mint IOU</button>
-        <button class="ColoredButton" id="RedeemButton" disabled>Redeem IOU</button>
+
+        <button class="ColoredButton ToolTip" id="RedeemButton" disabled>
+          Redeem NFT
+          <span class="ToolTipText ToolTipRightPosition">The token you selected is not an IOU, so you can't redeem it.</span>
+        </button>
+
       </div>
     </div>
 
+    <div class="CardLine FormElementWidth FormElementMargin DataText" id="MigTypeDescriptionMessage"></div>
+
     <div class="CardLine" id=MigrationRelayCardLine>
-      <div class="LineElement TextElement">Migration relay:</div>
+      <div class="DescriptionTextElementWidth">Migration relay:</div>
       <!-- Custom drop down selector -->
-      <div class="LineElement">
+      <div class="FormElementWidth">
         <div class="select-wrapper InputElement" id="RelaySelector">
           <div class="select">
             <div class="select-trigger">
@@ -165,9 +178,9 @@
   <!-- Arrival card -->
   <div class="Card" id="ArrivalCard">
     <div class="CardLine" id="DestWorldCardLine">
-      <div class="LineElement TextElement">Destination contract:</div>
+      <div class="DescriptionTextElementWidth">Destination contract:</div>
 
-      <div class="LineElement">
+      <div class="FormElementWidth">
         <!-- Custom drop down selector -->
         <div class="select-wrapper InputElement" id="DestinationWorldSelector">
           <div class="select">
@@ -183,29 +196,29 @@
     </div>
 
     <div class="CardLine" id="DestWorldRedeemCardLine">
-      <div class="LineElement TextElement">Destination contract:</div>
+      <div class="DescriptionTextElementWidth">Destination contract:</div>
 
-      <div class="LineElement DataText" id="DestWorldRedeem"></div>
+      <div class="FormElementWidth DataText" id="DestWorldRedeem"></div>
     </div>
 
     <div class="CardLine" id="DestWorldNameCardLine">
-      <div class="LineElement TextElement">Token contract name:</div>
-      <div class="LineElement DataText" id="DestContractName"></div>
+      <div class="DescriptionTextElementWidth">Token contract name:</div>
+      <div class="FormElementWidth DataText" id="DestContractName"></div>
     </div>
 
     <div class="CardLine" id="DestWorldSymbolCardLine">
-      <div class="LineElement TextElement">Token contract symbol:</div>
-      <div class="LineElement DataText" id="DestContractSymbol"></div>
+      <div class="DescriptionTextElementWidth">Token contract symbol:</div>
+      <div class="FormElementWidth DataText" id="DestContractSymbol"></div>
     </div>
 
     <div class="CardLine" id="DestTokenIdCardLine">
-      <div class="LineElement TextElement">Destination token ID:</div>
-      <div class="LineElement DataText" id="DestTokenId"></div>
+      <div class="DescriptionTextElementWidth">Destination token ID:</div>
+      <div class="FormElementWidth DataText" id="DestTokenId"></div>
     </div>
 
     <div class="CardLine" id="DestOwnerCardLine">
-      <div class="LineElement TextElement">Destination owner:</div>
-      <div class="LineElement"><input class="TextInput InputElement" id="inputDestOwner" placeholder="Enter the address who will receive the migrated token."></div>
+      <div class="DescriptionTextElementWidth">Destination owner:</div>
+      <div class="FormElementWidth"><input class="TextInput InputElement" id="inputDestOwner" placeholder="Enter the address who will receive the migrated token."></div>
     </div>
   </div><!-- end of arrival card -->
 
