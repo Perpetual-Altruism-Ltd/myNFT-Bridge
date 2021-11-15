@@ -77,7 +77,7 @@
             "eip1559": false,
             "worlds": [
                 {
-                    "address": "0xaB5bCEc94282AD1Ea06D6b258bf84937d3A29d8e",
+                    "address": "0xC49b2F99051ac6dB0df65Cf5AE5c3DA6F017e8fd",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
