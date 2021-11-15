@@ -21,22 +21,6 @@ export default class extends AbstractView {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    //Tell if model.migrationData is filled, i.e. if user come from migration_form
-    let isMigDataFilled = function(){
-      if(migData.originUniverseUniqueId &&
-        migData.originWorld &&
-        migData.originTokenId &&
-        migData.destinationUniverseUniqueId &&
-        migData.migrationType &&
-        migData.destinationWorld &&
-        parseInt(migData.destinationTokenId) &&
-        migData.destinationOwner){
-        return true;
-      }else{
-        return false;
-      }
-    }
-
     //Loading circle style
     //Color green + plain line + stop spinning
     let setCircleValidState = function(){
@@ -133,11 +117,11 @@ export default class extends AbstractView {
     }
     //Will call signMigrationHash once migration hash is received, which will call continueMigration once signed by user
     //signMigrationHash() -> continueMigration() -> escrowHashListener() -> /sign_escrow
-    if(isMigDataFilled()){
+    if(model.isMigDataFilled()){
       migrationHashListener();
     }else {
       setCircleErrorState();
-      loadingText.textContent = "No form data found. Redirecting to wallet connection page.";
+      loadingText.textContent = "No migration data found. Redirecting to wallet connection page.";
       //setTimeout(function(){model.navigateTo('wallet_connection');}, 3000);
     }
 

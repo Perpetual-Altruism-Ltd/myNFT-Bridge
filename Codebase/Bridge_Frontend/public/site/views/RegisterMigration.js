@@ -196,7 +196,15 @@ export default class extends AbstractView {
     document.getElementById("EditMigrationButton").addEventListener('click', async() =>{
       promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
     });
-    document.getElementById("RegisterButton").addEventListener('click', async() =>{
+    document.getElementById("RegisterButton").addEventListener('click', async function(e){
+      //Prevent double clicks
+      //Check if button not already selected
+      if(this.classList.contains("Selected")){console.log("Button already clicked.");return;}
+
+      //Select button
+      //We can use 'this' inside the event listener, AND IF NON ARROW function (=>)
+      this.classList.add('Selected');
+
       //refresh user wallet account
       userAccount = window.web3.currentProvider.selectedAddress;
 
