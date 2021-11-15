@@ -37,12 +37,12 @@ module.exports = async(deployer, network, accounts) => {
     console.log("Deploying, linking and calling the init of the bridge...");
     await deployer.deploy(ImplMyNFTBridgeFunInit);
     await instancedProxy.updateContract(
-        ImplMyNFTBridgeFunInit.address, 
+        ImplMyNFTBridgeFunInit.address,
         "init(uint256)", 
         "ImplMyNFTBridgeFunInit"
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
-    await instancedInit.init("0xee0bec75"); //Replace localhost with whatever you are deploying on
+    await instancedInit.init("0xd1e94e57"); //Replace localhost with whatever you are deploying on
 
     //Adding ImplERC721TokenReceiver features
     console.log("Adding ERC721TokenReceiver features...");

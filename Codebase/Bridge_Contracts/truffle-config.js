@@ -61,17 +61,33 @@ module.exports = {
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     rinkeby: {
-      provider: () => new HDWalletProvider('1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8', `https://rinkeby.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://rinkeby.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
       network_id: 4,       // Rinkeby's id
-      gas: 5500000,        // Rinkeby has a lower block limit than mainnet
+      gas: 9999999,        // Rinkeby has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     kovan: {
-      provider: () => new HDWalletProvider('1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8', `https://kovan.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://kovan.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
       network_id: 42,       // Kovan's id
-      gas: 5500000,        // Kovan has a lower block limit than mainnet
+      gas: 9999999,        // Kovan has a lower block limit than mainnet
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+    moonbase: {
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://moonbeam-alpha.api.onfinality.io/public`),
+      network_id: 1287,       // Moonbase's id
+      gas: 9999999,        // Moonbase has a lower block limit than mainnet
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+    mynft: {
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `http://3.8.146.66:3232`),
+      network_id: 323232,       // Moonbase's id
+      gas: 8000000,        // Moonbase has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
