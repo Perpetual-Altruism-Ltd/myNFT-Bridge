@@ -95,6 +95,15 @@ Here a description of the configuration options :
         "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
         "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
     },
+    "balancer" : { // The part that is sending out transactions to the blockchain
+        "addresses": [
+            {
+                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", // Public key
+                "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8" // Associated private key
+            }
+        ],
+        "minimalWalletAmount": 0.0001 // Minimal wallet amount before warning about refiling
+    },    
     "port": 5000, // The port on which the http server of the relay will listen on
     "universes": [ // A list of universes and worlds on which your relay will be operating
         {
