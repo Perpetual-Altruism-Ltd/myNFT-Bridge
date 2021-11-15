@@ -82,6 +82,7 @@ You will need :
    - An infura account with IPFS enabled (projectId and projectSecret)
    - A bridge deployed on each universes you want to support with the wallet given before
    - A IOU enabled ERC721 contract on each of the IOU destination universes, deployed with the wallet given before
+   - A MongoDb server running to hold the data of the relay
 
 Here a description of the configuration options :
 
@@ -103,7 +104,8 @@ Here a description of the configuration options :
             }
         ],
         "minimalWalletAmount": 0.0001 // Minimal wallet amount before warning about refiling
-    },    
+    },
+    "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1", // Your mongodb server connection string
     "port": 5000, // The port on which the http server of the relay will listen on
     "universes": [ // A list of universes and worlds on which your relay will be operating
         {
