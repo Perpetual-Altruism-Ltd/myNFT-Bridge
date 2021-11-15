@@ -31,7 +31,7 @@ export default class extends AbstractView {
   }
 
   /*This function contain all the javascript code which will be executed when this view if selected */
-  initCode(model){
+  async initCode(model){
     //Define global functions. Only for code reuse purpose.
     let bridgeApp = model.bridgeApp;
     let ABIS = model.ABIS;
@@ -111,7 +111,7 @@ export default class extends AbstractView {
 
       };
     };
-    let loadERC721ABI = async function () {
+    let loadERC721ABI = async function (callback) {
         let pathERC721ABI = '/ABI/ERC721.json';
         try {
             let xhr = new XMLHttpRequest();
@@ -124,6 +124,8 @@ export default class extends AbstractView {
                     //console.log(`Done, got ${xhr.response}`); // responseText is the server
                     var resp = xhr.response;
                     ABIS.ERC721 = JSON.parse(resp).abi;
+
+                    callback();
                 }
             };
             xhr.send();
@@ -132,7 +134,7 @@ export default class extends AbstractView {
             alert("Could not load ERC721 ABI at " + pathERC721ABI);
         };
     };
-    let loadERC721MetadataABI = async function () {
+    let loadERC721MetadataABI = async function (callback) {
         let pathERC721Metadata = '/ABI/ERC721Metadata.json';
         try {
             let xhr = new XMLHttpRequest();
@@ -145,6 +147,8 @@ export default class extends AbstractView {
                     //console.log(`Done, got ${xhr.response}`); // responseText is the server
                     var resp = xhr.response;
                     ABIS.ERC721Metadata = JSON.parse(resp).abi;
+
+                    callback();
                 }
             };
             xhr.send();
@@ -153,7 +157,7 @@ export default class extends AbstractView {
             lert("Could not load ERC721Metadata ABI at " + pathERC721Metadata);
         };
     };
-    let loadERC165ABI = async function () {
+    let loadERC165ABI = async function (callback) {
         let pathERC721Metadata = '/ABI/ERC165.json';
         try {
             let xhr = new XMLHttpRequest();
@@ -166,6 +170,8 @@ export default class extends AbstractView {
                     //console.log(`Done, got ${xhr.response}`); // responseText is the server
                     var resp = xhr.response;
                     ABIS.ERC165 = JSON.parse(resp).abi;
+
+                    callback();
                 }
             };
             xhr.send();
@@ -174,6 +180,10 @@ export default class extends AbstractView {
             lert("Could not load ERC165 ABI at " + pathERC721Metadata);
         };
     };
+    //Return true if all above data from server are loaded
+    let areNetworksLoadedFromServer = function(){
+      return bridgeApp.networks.length  > 0;
+    }
 
     //=====Provider management=====
     //Change the originNet dropDown selected item + Fetch new token data if possible
@@ -186,6 +196,8 @@ export default class extends AbstractView {
       });
       if(netIndex < 0){
         console.log("Change ogNet & fetch: " + ethNetId + " networkId not found.");
+        console.log("bridgeApp:");
+        console.log(bridgeApp.networks);
         return;
       }
 
@@ -229,6 +241,16 @@ export default class extends AbstractView {
       else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
         document.getElementById("FetchDataButton").click();
       }
+
+      //If world is filled, refresh is ERC-721 msg
+      if(migData.originWorld){
+        //Refresh isERC-721 message within the new network
+        isOgContractERC721().then(function(isERC721){
+          //Show ERC721 compliant MSG & adapt text
+          showIsERC721CompliantMsg(migData.originWorld != "", isERC721);
+        });
+      }
+
     }
     //Define functions which interact with blockchains or wallet
     //Prompt the user to change his wallet network.
@@ -298,9 +320,12 @@ export default class extends AbstractView {
         let isERC721 = await isOgContractERC721();
         if(!isERC721){
           console.log("This contract is NOT ERC721 compliant.");
+          showIsERC721CompliantMsg(true, false);
           return;
         }else {
           console.log("This contract is ERC721 compliant.");
+          //Hide the message (Useful if fetch data triggered by network change, and thus no onchange triggered for ogWorl input which would hide the msg)
+          showIsERC721CompliantMsg(true, true);
         }
 
         //Display token data card
@@ -661,41 +686,55 @@ export default class extends AbstractView {
       }
     }
 
+    //=====Provider management=====
     //Display connected addr + disco btn + ogNet + prefill ogNet
+    //This function requires the provider to be loaded (wallet connected)
+    //This function requires the network data (network_list.json) to be loaded from server
     let displayConnectedWallet = function(){
+      //When this function is called, the wallet-provider is connected
+      //Display connected account addr
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+      //Display wallet name
+      let providerName = localStorage.getItem("provider");
+      //Set first char to upperCase
+      providerName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
+      //Display it on html element
+      if(providerName){document.getElementById("ConnectedWalletName").textContent = providerName;}
+      else{document.getElementById("ConnectedWalletName").textContent = "No wallet connected.";}
 
       //Show origin network drop down
       showCard("DepartureCard", true);
       showCardLine("OriginNetworkCardLine", true);
       showCard("CompleteMigrationCard", true);
 
-      //Timeout to wait for wallet to be connected
-      setTimeout(function(){
+      //If Networks loaded from frontend web server, prefill origin network (If not already prefilled)
+      if(areNetworksLoadedFromServer() && migData.originUniverse == ""){
         let providerNetId = window.web3.currentProvider.chainId;
         changeOriginNetworkAndFetchTokenData(providerNetId);
+      }
 
-        //Setup onChainChanged event listener.
-        window.ethereum.on('chainChanged', (chainId) => {
-  				// The metamask provider emits this event when the currently connected chain changes.
-  				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
-  				// of the current chain ID by listening for this event.
-  				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
-  				console.log("*** Event chainChanged to " + chainId + " emmited ***");
+      //Setup onChainChanged event listener.
+      window.ethereum.on('chainChanged', (chainId) => {
+				// The metamask provider emits this event when the currently connected chain changes.
+				// All RPC requests are submitted to the currently connected chain. Therefore, it's critical to keep track
+				// of the current chain ID by listening for this event.
+				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
+				console.log("*** Event chainChanged to " + chainId + " emmited ***");
 
-          //Auto switch the ogNet to provider net if window is focused
-          if(!document.hidden){
-            //Automatically change the form ogNet & retrieve data if destNet is not already set.
-            //This prevent token data from changing after the user is filling the destnations data
-            if(!migData.destinationUniverseIndex)
-              changeOriginNetworkAndFetchTokenData(chainId);
-          }
-  			});
-      }, 500);
+        //Auto switch the ogNet to provider net if window is focused
+        if(!document.hidden){
+          //Automatically change the form ogNet & retrieve data if destNet is not already set.
+          //This prevent token data from changing after the user is filling the destnations data
+          if(!migData.destinationUniverseIndex)
+            changeOriginNetworkAndFetchTokenData(chainId);
+        }
+			});
     }
     //autoconnect to metamask if injected
-    var connectToMetamask = async function () {
+    let connectToMetamask = async function () {
       //set callback function called when a wallet is connected
+      //HERE connectionCallback undefined because provider not loaded yet
       connectionCallback = function(){
         console.log("Wallet connected");
         //Refresh connected addr
@@ -721,6 +760,12 @@ export default class extends AbstractView {
         return;//To stop javascript execution in initCode() function
       }
     }
+    //Return true if a provider is loaded.
+    let isProviderLoaded = function(){
+      userAccount = window.web3.currentProvider.selectedAddress;
+      //If web3 already injected
+      return userAccount != "" && window.web3.eth != undefined;
+    }
 
     //Display functions
     let clearTokenData = function(){
@@ -745,7 +790,6 @@ export default class extends AbstractView {
       showCardLine("OriginWorldNameCardLine", show);
       showCardLine("OriginWorldSymbolCardLine", show);
       showCardLine("OriginTokenOwnerCardLine", show);
-      console.log("OriginTokenOwnerCardLine display set to false");
       showCardLine("OriginTokenURICardLine", show);
       showCardLine("MetadataCard", show);
     }
@@ -823,6 +867,7 @@ export default class extends AbstractView {
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
     }
+    //Show the text message element if show is true. And  adapt the message depending on isCompliant
     let showIsERC721CompliantMsg = function(show, isCompliant){
       //Show ERC721 compliant MSG
       showCardLine("OgContractERC721CompliantMsgCardLine", show);
@@ -832,17 +877,41 @@ export default class extends AbstractView {
       if(isCompliant){
         ERC721Msg.textContent = "This contract is ERC721 compliant. Perfect!";
         //Add standard styling
-        ERC721Msg.classList.remove('ErrorText');
+        ERC721Msg.classList.remove('ErrorTextStyle');
         ERC721Msg.classList.add('DataText');
       }
       else{
         ERC721Msg.textContent = "You can't migrate tokens from this contract, it must be ERC721 compliant.";
         //Add error styling
         ERC721Msg.classList.remove('DataText');
-        ERC721Msg.classList.add('ErrorText');
+        ERC721Msg.classList.add('ErrorTextStyle');
       }
     }
+    //Show a message describing the migration type selected if show is true.
+    //The message is different depending on the modelMigType
+    //which can be Model.MintOUIMigrationType or Model.RedeemIOUMigrationType
+    let showMigrationTypeDescription = function(show, modelMigType){
+      //Show the message element
+      showCardLine("MigTypeDescriptionMessage", show);
 
+      //Set the right text to the element depending on the migType
+      switch(modelMigType){
+        case model.MintOUIMigrationType:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU from your NFT will create a new token that you can trade within the destination network.";
+        break;
+
+        case model.RedeemIOUMigrationType:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU let you claim back the original NFT that it represents.";
+        break;
+
+        case "":
+          document.getElementById("MigTypeDescriptionMessage").textContent = "";
+        break;
+
+        default:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Migration type unknown.";
+      }
+    }
     let showCard = function(id, disp){
       document.getElementById(id).style = (disp ? "display:flex;" : "display:none;")
     }
@@ -872,6 +941,15 @@ export default class extends AbstractView {
 
     //Input setters.
     //These functions make sure the input value displayed is always the same as the variable in migData
+    let unselectOriginUniv = function(){
+      //Unselect drop down
+      unselectDropDown("OriginNetworkSelector");
+      //Reset migData associated data
+      migData.originUniverseIndex = 0;
+      migData.originUniverseUniqueId = "";
+      migData.originNetworkId = "";//Blochain ID
+      migData.originUniverse = "";
+    }
     let setOgWorldInputValue = function(txt){
       let input = document.getElementById("inputOGContractAddress");
       //Set new text
@@ -894,9 +972,13 @@ export default class extends AbstractView {
       migData.destinationOwner = txt;
     }
     let unselectMigrationButtons = function(){
+      //Remove Selected class to buttons
       let selected = document.getElementById("MigrationTypeButtonsContainer").querySelector(".Selected");
       if(selected != undefined){selected.classList.remove('Selected');}
       migData.migrationType = "";
+
+      //Hide text describing migType
+      showMigrationTypeDescription(false, "");
     }
     //Select migBtn + associate the right value to migData.migrationType.
     let selectMigrationButton = function(migType){
@@ -917,8 +999,11 @@ export default class extends AbstractView {
           model.isRedeem = true;
         break;
       }
-      //Finally select it
+      //Then select it
       if(btnToSelect){btnToSelect.classList.add('Selected');}
+
+      //Finally show the text explaining the migration type
+      showMigrationTypeDescription(true, migType);
     }
 
     //Data display
@@ -1046,6 +1131,11 @@ export default class extends AbstractView {
         for (var i = 0; i < bridgeApp.networks.length; i++) {
             addDropDownOption("OriginNetworkSelector", bridgeApp.networks[i].name, "", bridgeApp.networks[i].uniqueId);
         }
+
+        //If provider is loaded, and networks from server, disp connected wallet
+        if(isProviderLoaded() && areNetworksLoadedFromServer() && migData.originUniverse == ""){
+          displayConnectedWallet();
+        }
     });
     //Load relays
     loadRelays(function (){
@@ -1055,11 +1145,11 @@ export default class extends AbstractView {
       }
     });
     //Load ERC721 ABI
-    loadERC721ABI();
+    loadERC721ABI(function (){});
     //Load ERC721 Metadata ABI
-    loadERC721MetadataABI();
+    loadERC721MetadataABI(function (){});
     //Load ERC165 ABI
-    loadERC165ABI();
+    loadERC165ABI(function (){});
 
     //Listeners & Callback
     //When new origin network selected : Prompt user to connect to new chain selected
@@ -1237,6 +1327,10 @@ export default class extends AbstractView {
 
     //Disconnect wallet button
     document.getElementById("DisconnectWalletBtn").addEventListener('click', async() =>{
+      //Clear originUniv.
+      unselectOriginUniv();
+      //Clear tokens data
+      clearTokenData();
       model.disconnectWallet = true;
       model.navigateTo('wallet_connection');
     });
@@ -1310,11 +1404,17 @@ export default class extends AbstractView {
         //If og contract is ERC721, load token data
         isOgContractERC721().then(function(isERC721){
           if(isERC721){
+            //Show msg saying that this contract is ERC-721
+            showIsERC721CompliantMsg(true, true);
+
             //Clear previous tokens data
             clearTokenData();
 
             //Load metadata from chain: token URI, symbole, name
             loadOgTokenData();
+          }
+          else{
+            showIsERC721CompliantMsg(true,false);
           }
         });
       }
@@ -1333,19 +1433,36 @@ export default class extends AbstractView {
     });
 
     //HANDLE WALLET CONNECTION
-    userAccount = window.web3.currentProvider.selectedAddress;
     //If web3 already injected
-    if(userAccount != "" && window.web3.eth != undefined){
+    if(isProviderLoaded()){
       console.log("Westron already loaded, perfect.");
       //Display connected addr + ogNet & prefill it
       displayConnectedWallet();
     }
     //If metamask available: autoconnect without redirecting to connection page.
     else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
-      console.log("Metamask auto connect.");
+      console.log("Metamask detected. Auto connect.");
       loadWestron();
-      console.log("Westron lib loaded.");
-      setTimeout(connectToMetamask, 500);
+
+      //Once loadWestron started, wait for it to finish by polling.
+      let cmptr = 0;
+      let pollWestronLoaded = async function(){
+        try{
+          await connectToMetamask();
+          console.log("Westron lib loaded after " + cmptr + " attemps.");
+        }catch(err){
+          cmptr++;
+          if(cmptr > 100){
+            console.log("Westron loading timed out.");
+          }else {
+            setTimeout(pollWestronLoaded, 50);
+          }
+        }
+      }
+      //Start polling for westron
+      pollWestronLoaded();
+
+
     }
     //Redirect to wallet_connection page
     else{
@@ -1377,7 +1494,7 @@ export default class extends AbstractView {
               //Change ogNetwork migData & fetch data if possible
               promptSwitchChainFetchedData(chainIDSelected);
             }
-          }, 500);
+          }, 700);
         }
       }
     }

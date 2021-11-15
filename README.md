@@ -1,11 +1,3 @@
-TODO : 
-Replacing signing scheme with metamask V4
-
-TODO:
-Put data automaticallyh in decentralized storage (IPFS ?)
-https://www.arweave.org/
-
-
 # MyNFT-Bridge
 The work in progress of an universal NFT bridge. 
 
@@ -201,6 +193,26 @@ The frontend hold three configuration files :
 		}
 	]
 }
+```
+
+#### relay_list.json
+
+```js
+{
+  "relays": [
+    {
+      "id": 1, // Relay id that will be used in `network_list.json`
+      "name":"Localhost Relay", // Name of your relay
+      "url": "http://127.0.0.1:5000", // Base url of your relay
+      "operator": "Perpetual altruism", // Operator of your relay
+      "trustMecanism": "Centralised relay", // Trust mecanism of your relay
+      "description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs", // Description of your relay
+      "publicKey": "0xbf21e21414554dB734C9f86835D51B57136BC35b", // Public key of your relay
+      "contact": "abc@abc.fr" // Contact address of your relay
+    }
+  ]
+}
+
 ```
 
 

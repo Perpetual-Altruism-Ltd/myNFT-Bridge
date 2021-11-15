@@ -18,3 +18,8 @@ This frontend is totally static. You can launch the http server like this:
 sudo http-server ./public/ -p 85 -c-1
 ```
 For a single page app, we need all routes to redirect to index.html. NPM http-server package redirects all unknown routes to 404.html, so as weird as is can be, the entry page of the frontend is 404.html, but this file contains the app itself, and not a 404 error page.
+
+# Deploy Bridge
+On myNFT-Bridge repo: merge modif on master.
+On Gloin repo, MyNFTBridge branch: version++ & commit.
+  Look at git Action triggered

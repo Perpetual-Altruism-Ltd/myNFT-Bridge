@@ -87,7 +87,6 @@ export default class extends AbstractView {
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
-          console.log("requestCallback called");
           requestCallback(response);
         }).catch(function (error) {
           setCircleErrorState();

@@ -49,9 +49,10 @@ TOP LEFT COLOR: #12132b*/
     width: 400px;
 }
 
+/* 70% of viewport width*/
 .content-pillar{
-    width: 70%;
-    margin-left: 15%;
+    width: 70vw;
+    margin-left: 15vw;
     font-family: 'Sequel Sans',sans-serif;
 }
 
@@ -72,8 +73,7 @@ TOP LEFT COLOR: #12132b*/
 .whitesheet{
     background-color: #fff;
     border-radius: 20px;
-    padding:2em 5em 2em 5em;
-    margin: 1em;
+    padding:2em 8vw;
     display: flex;
     flex-flow: column wrap;
     justify-content: space-between;
@@ -150,4 +150,8 @@ button {
     align-content: center;
     justify-content: center;
     gap: 0.5em 2em;
+}
+
+#ReportBugBtn{
+  margin-left: 1em;
 }
