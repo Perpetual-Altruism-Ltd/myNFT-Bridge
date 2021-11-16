@@ -32,7 +32,7 @@ TOP LEFT COLOR: #12132b*/
 .big-circle{
     position: absolute;
     left: 30vw;
-    top: -350px;
+    top: -23em;
     width: 40vw;
     height: 40vw;
     color: #96134e;
@@ -122,6 +122,38 @@ button {
     font-size: .88rem;
     line-height: 1.5rem;
     text-decoration: none;
+}
+
+/* Grey btn */
+.ClassicButtonStyle{
+  padding: 0.5em 1em;
+  border-radius: 30px;
+  align-items: center;
+  justify-content: center;
+  /* background-color: #ccc; */
+  background-image: linear-gradient(to right, #eee 0%, #aaa 100%);
+  background-size: 200% auto;
+  border: none;
+  transition: 0.5s;
+  /* Text */
+  color: #333;
+  font: inherit;
+  line-height: 1.5rem;
+  text-decoration: none;
+}
+.ClassicButtonStyle:hover{
+  /* background-color: #bbb; */
+  /* background-image: linear-gradient(to right, #999 0%, #ccc 100%); */
+  background-position: right center;
+}
+.ClassicButtonStyle:active{
+  /* background-color: #999; */
+  background-image: linear-gradient(to right, #999 0%, #999 100%);
+}
+.ClassicButtonStyle:disabled, .ClassicButtonStyle[disabled]{
+ background-color: #ddd;
+ color: #888;
+ cursor: default;
 }
 
 .formfield{
