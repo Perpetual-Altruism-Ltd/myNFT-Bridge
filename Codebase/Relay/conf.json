@@ -13,7 +13,10 @@
     "port": 5000,
     "balancer" : {
         "addresses": [
-            {"address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8"}
+            {
+                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", 
+                "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8"
+            }
         ],
         "minimalWalletAmount": 0.0001
     },
