@@ -123,6 +123,9 @@ button {
     line-height: 1.5rem;
     text-decoration: none;
 }
+.clickableRoundButton:hover{
+  /* TODO */
+}
 
 /* Grey btn */
 .ClassicButtonStyle{

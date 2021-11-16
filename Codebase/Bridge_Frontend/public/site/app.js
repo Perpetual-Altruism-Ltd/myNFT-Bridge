@@ -134,13 +134,17 @@ initDropDownBehaviour();
 router();
 
 /* call the router when the user goes a page backward*/
-window.addEventListener("popstate", router);
+window.addEventListener("popstate", function(event){
+  let userInsists = confirm('Do you really want to move from the page you are on?\nIf you have already registered the migration, you cannot modify it.');
+  if(userInsists){router();}
+});
+
 
 //Add bug report button function
 document.getElementById("ReportBugBtn").addEventListener('click', async function(){
   let mailBody = "^^^^^^^^^^^Enter the description of the bug above^^^^^^^^^^^ \n";
-  mailBody += JSON.stringify(Model.migrationData);
+  mailBody += encodeURI(JSON.stringify(Model.migrationData));
 
   //OPen new tab for mailto
-  window.open("mailto:bridge@mynft.com?subject=Bridge bug report&body=" + mailBody);
+  window.open("mailto:bridge@mynft.com?subject=Bridge%20bug%20report&body=" + mailBody);
 })

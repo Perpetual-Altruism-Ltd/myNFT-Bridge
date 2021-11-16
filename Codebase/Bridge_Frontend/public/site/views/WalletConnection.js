@@ -66,6 +66,10 @@ export default class extends AbstractView {
     }
     //Start polling for westron to be loaded
     pollWestronLoaded();
+
+    document.getElementById("RequestWalletBtn").addEventListener('click', function(){
+      window.open("mailto:bridge@mynft.com?subject=Network%20request");
+    });
   }
 
   async getHtml(callback){

@@ -4,7 +4,7 @@
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
 #MigrationCard,#MigrationTypeCardLine,#MigTypeDescriptionMessage,#MigrationRelayCardLine,
-#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
+#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard
 {
   /*-webkit-transition: max-height .25s ease;
@@ -338,6 +338,7 @@
   width: 98vw;
 }
 
+/* Separation breakline arrow*/
 #DownArrow{
   background: url("../../medias/DownArrow.svg");
   background-size: 3em;
@@ -383,41 +384,41 @@
 
 /*use of absolute metrics (px) for width and height so that the icons do not adjust to screen size */
 .connectMetaMask{
-  background: url("../../medias/MetaMask_Icon.svg");
+  background-image: url("../../medias/MetaMask_Icon.svg");
   background-size: 55px;
   background-position-x: 0vw;
 }
 .connectTorus{
-  background: url("../../medias/Torus_Icon.svg");
+  background-image: url("../../medias/Torus_Icon.svg");
   background-size: 55px;
   background-position-x: 0.5vw;
 }
 .connectWalletConnect{
-  background: url("../../medias/WalletConnect_Icon.svg");
+  background-image: url("../../medias/WalletConnect_Icon.svg");
   background-size: 55px;
 }
 .connectPortis{
-  background: url("../../medias/Portis_Icon.png");
+  background-image: url("../../medias/Portis_Icon.png");
   background-size: 45px 55px;
 }
 .connectBitski{
-  background: url("../../medias/Bitski_Icon.svg");
+  background-image: url("../../medias/Bitski_Icon.svg");
   background-size: 55px;
 }
 .connectFortmatic{
-  background: url("../../medias/Fortmatic_Icon.jpg");
+  background-image: url("../../medias/Fortmatic_Icon.jpg");
   background-size: 50px 55px;
 }
 .connectVenly{
-  background: url("../../medias/Venly_Icon.png");
+  background-image: url("../../medias/Venly_Icon.png");
   background-size: 50px 55px;
 }
 .connectCoinbase{
-  background: url("../../medias/Coinbase_Icon.png");
+  background-image: url("../../medias/Coinbase_Icon.png");
   background-size: 55px;
 }
 .requestWallet{
-  background: url("../../medias/RequestWallet_Icon.svg");
+  background-image: url("../../medias/RequestWallet_Icon.svg");
   background-size: 40px;
   background-color: #ccc;
   border-width: 0;
