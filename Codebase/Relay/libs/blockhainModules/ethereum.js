@@ -7,6 +7,7 @@ const BridgeAbi = require('../../abis/bridge')
 const ERC721IOUAbi = require('../../abis/erc721IOU.json')
 const EventEmitter = require('events')
 const TransactionBalancer = require('./balancer.ethereum')
+const TransactionBalancerNewGen = require('./balancerNewGen.ethereum')
 
 class Ethereum extends EventEmitter {
     constructor(universe) {
@@ -28,8 +29,8 @@ class Ethereum extends EventEmitter {
         this.web3Instance = new Web3(this.web3Provider)
         this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
         this.web3Instance.eth.defaultAccount = this.web3Wallet.address
-        this.balancer = new TransactionBalancer(universe, this.web3Instance);
-        this.balancer.worker();
+        this.balancer = new TransactionBalancerNewGen(universe, this.web3Instance);
+
         Logger.info(`Web3 ethereum querier instanciated on rpc ${this.rpc}`)
     }
 
