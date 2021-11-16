@@ -67,12 +67,20 @@ class TransactionBalancerNewGen {
             const accountBalance = await this.web3Instance.eth.getBalance(account.address.toLowerCase())
 
             if((accountBalance / 1000000000000000000) < this.minimalWalletAmount){
-                Logger.error(`/!\ Account ${account.address} have very low balance ! Can't use to send transaction. Will stay locked until next relaunch.`)
+                Logger.error(`/!\\ Account ${account.address} have very low balance ! Can't use to send transaction. Will stay locked until next relaunch.`)
                 continue
             }
 
             const transactionHash = Crypto.createHash('md5').update(JSON.stringify(transaction)).digest("hex")
-            const gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
+
+            let gasEstimate
+            try{
+                gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
+            }catch(err){
+                this.eventEmitter.emit(transactionHash, { state: false, transactionResult: err })
+                account.locked = false
+                continue
+            }
             
             const fullTransaction = {
                 gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
