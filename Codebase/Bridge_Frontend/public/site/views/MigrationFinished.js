@@ -54,10 +54,10 @@ export default class extends AbstractView {
 
     //display destination token data
     let showDestTokenData = function(){
-      if(migData.migrationType == model.MintOUIMigrationType){document.getElementById("TokenType").textContent = "IOU";}
-      else{document.getElementById("TokenType").textContent = "NFT";}
+      if(migData.migrationType == model.MintOUIMigrationType){document.getElementById("MigrationTypeTextMigFinished").textContent = "created";}
+      else{document.getElementById("MigrationTypeTextMigFinished").textContent = "retrieved";}
 
-      document.getElementById("OwnerAddr").textContent = migData.destinationOwner;
+      document.getElementById("OwnerAddrMigFinished").textContent = migData.destinationOwner;
       document.getElementById("DestNetworkName").textContent = migData.destinationUniverse;
       document.getElementById("DestTokenIdMigFinished").textContent = migData.destinationTokenId;
       document.getElementById("DestWorldMigFinished").textContent = migData.destinationWorld;

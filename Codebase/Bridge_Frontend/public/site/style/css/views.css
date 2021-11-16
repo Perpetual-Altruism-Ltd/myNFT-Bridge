@@ -3,8 +3,8 @@
 #DepartureCard,#OriginNetworkCardLine,#OgNetworkSwitchMessage,#OgContractERC721CompliantMsgCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
-#MigrationCard,#MigrationCardLineTitle,#MigrationTypeCardLine,#MigTypeDescriptionMessage,#MigrationRelayCardLine,
-#ArrivalCard,#ArrivalCardLineTitle,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestTokenDataCard,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
+#MigrationCard,#MigrationTypeCardLine,#MigTypeDescriptionMessage,#MigrationRelayCardLine,
+#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine,
 #CompleteMigrationCard
 {
   /*-webkit-transition: max-height .25s ease;
@@ -62,6 +62,7 @@
   width: 12em;
   text-align: center;
   line-height: 1.56rem;
+  word-break: break-all;
 }
 .LoadingCircle{
   position: absolute;

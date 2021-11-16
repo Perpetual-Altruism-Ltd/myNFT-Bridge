@@ -35,6 +35,7 @@ export default class extends AbstractView {
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
         console.log("Network switch done.");
+        model.editMigrationForm = true;
         model.navigateTo("/migration_form");
       }).catch((res) => {
         console.log("Network switch canceled or error");
@@ -121,7 +122,7 @@ export default class extends AbstractView {
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){loadingText.textContent = "Error during relay operator approval.";}
 
-          alert("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
+          console.log("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
         });
       }catch(err){
         setCircleErrorState();

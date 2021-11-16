@@ -19,7 +19,7 @@
 			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}]
 		},
 		{
-			"name":"Polkadot Testnet Moonalpha",
+			"name":"Polkadot Testnet Moonbase Alpha",
 			"chainID": 1287,
 			"networkID": 1287,
 			"uniqueId": "0xe35d7d6b",

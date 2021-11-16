@@ -52,6 +52,7 @@ model.escrowHash = "";
 model.destinationTokenTransfertTxHash = "";
 
 model.disconnectWallet = false;
+model.editMigrationForm = false;
 model.isRedeem = false;
 
 export default model;
