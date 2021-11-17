@@ -441,7 +441,7 @@ export default class extends AbstractView {
             //Show token metadata attributes
             showCard("MetadataCard", true);
             //Display "Fetching..." message
-            document.getElementById("OGTokenMetaName").textContent = "Fetching...";
+            setOriginTokenName("", true);
             document.getElementById("OGTokenMetaDesc").textContent = "Fetching...";
             document.getElementById("OGTokenMetaImagePath").innerHTML = "Fetching...";
             //Load metadata from tokenURI
@@ -466,6 +466,7 @@ export default class extends AbstractView {
       } else {
           try {
               let xhr = new XMLHttpRequest();
+              console.log("XHR on " + OGTokenMetadataPath);
               xhr.open('GET', OGTokenMetadataPath);
               xhr.onload = function () {
                   if (xhr.status != 200) { // analyze HTTP status of the response
@@ -509,10 +510,15 @@ export default class extends AbstractView {
                         }
                       }
 
-                      document.getElementById("OGTokenMetaName").textContent = ogTokenMetaData.name;
                       document.getElementById("OGTokenMetaDesc").textContent = ogTokenMetaData.description;
-                      //Add token name to migData to display it later in registerMig page
-                      migData.originTokenName = ogTokenMetaData.name;
+                      //Display & save ogTokenName to migData
+                      setOriginTokenName(ogTokenMetaData.name, false);
+
+                      //Set destination token name if Mint IOU is selected
+                      if(migData.migrationType == model.MintOUIMigrationType){
+                        setDestTokenName(true, 'IOU of ' + migData.originTokenName);
+                      }
+
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
@@ -598,26 +604,51 @@ export default class extends AbstractView {
           content = await contracts.destChainERC721MetadataContract.methods.tokenURI(document.getElementById("DestTokenId").textContent).call();
         } catch (err) {
           //console.log(err);
+          displayDestTokenNameError("Could not retrieve the token's URI. Please contact our team to report the bug.");
           console.log("Could not get tokenURI() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
         }
-
-        //HERE instead of displaying content, retrieve content of URI, and display name + store it in model to display in register_mig page
-
         console.log("Dest token URI: " + content);
-        /*//Display or not the html element
-        if(content != ""){
-          document.getElementById("DestTokenName").innerHTML = content;
-          showCardLine("DestTokenNameCardLine", true);
-        } else {
-          showCardLine("DestTokenNameCardLine", false);
-        }
 
-        loadDestTokenMetadata();*/
+        //Load token metadata from URI
+        loadDestTokenMetadata(content);
        }
        getTokenURI();
     }
     //Load destination token metadata
-    let loadDestTokenMetadata = function(){
+    let loadDestTokenMetadata = function(URI){
+      //create get request
+      var options = {
+        method: 'GET',
+        url: URI,
+        headers: {'Content-Type': 'text/json'}
+      };
+
+      let requestCallback = function(response){
+        if(response.status == 200){
+          let metadata = response.data;
+
+          //Display token Name & save it to migData
+          if(metadata.name){
+            //Save token name in migData
+            migData.destinationTokenName = metadata.name;
+
+            setDestTokenName(true, metadata.name);
+          } else {
+            displayDestTokenNameError("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
+          }
+        }else{
+          displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
+          console.log(response.status + ' : ' + response.statusText);
+        }
+      }
+
+      //Execute request
+      axios.get(URI, options).then(function (response) {
+        requestCallback(response);
+      }).catch(function (error) {
+        displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
+        console.error(error);
+      });
 
     }
     //Check if the metadata json file represent an IOU
@@ -854,6 +885,7 @@ export default class extends AbstractView {
       showCardLine("DestWorldSymbolCardLine", false);
       showCardLine("DestTokenIdCardLine", false);
       showCardLine("DestOwnerCardLine", false);
+      setDestTokenName(false, "");
     }
     let clearDestDataOnOgNetChanged = function(){
       //Hide form fields after destNetwork.
@@ -880,7 +912,11 @@ export default class extends AbstractView {
 
       //Reset dest token ID
       setDestinationTokenId("");
+
+      //Reset token name
+      setDestTokenName(false, "");
     }
+    //Clear origin token display & migData
     let clearTokenData = function(){
       showCardLine("TokenErrorMessage", false);
       showTokenData(false);
@@ -888,8 +924,8 @@ export default class extends AbstractView {
       document.getElementById("OGContractName").innerHTML = "";
       document.getElementById("OGContractSymbol").innerHTML = "";
       setOriginOwner("");
+      setOriginTokenName("", false);
       document.getElementById("OGTokenURI").innerHTML = "";
-      document.getElementById("OGTokenMetaName").textContent = "";
       document.getElementById("OGTokenMetaDesc").textContent = "";
       document.getElementById("OGTokenMetaImagePath").innerHTML = "";
 
@@ -908,7 +944,7 @@ export default class extends AbstractView {
     }
     //Show - Hide from dest network to dest owner
     let showArrivalFormFieldsOnRedeem = function(show){
-      let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToShow = document.querySelectorAll("#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine");
       elementsToShow.forEach(function(elem) {
         showCard(elem.id, show);
       });
@@ -917,14 +953,14 @@ export default class extends AbstractView {
       showCardLine("DestWorldCardLine", false);
     }
     let showFormFieldsAfterMigButtons = function(show){
-      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldRedeemCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToHide = document.querySelectorAll("#MigrationRelayCardLine,#ArrivalCard,#DestWorldCardLine,#DestWorldRedeemCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, show);
       });
     }
     let showFormFieldsAfterRelay = function(show){
       //Hide further form field if ever displayed
-      let elementsToHide = document.querySelectorAll("#ArrivalCard,#DestWorldCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let elementsToHide = document.querySelectorAll("#ArrivalCard,#DestWorldCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine");
       elementsToHide.forEach(function(elem) {
         showCard(elem.id, show);
       });
@@ -937,7 +973,7 @@ export default class extends AbstractView {
         showCard(elem.id, true);
       });
       //Show all cardLines
-      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestTokenIdCardLine,#DestOwnerCardLine");
+      let cardLinesToShow = document.querySelectorAll("#OriginNetworkCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,#MigrationTypeCardLine,#MigrationRelayCardLine,#DestNetworkCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine");
       cardLinesToShow.forEach(function(elem) {
         showCardLine(elem.id, true);
       });
@@ -952,6 +988,11 @@ export default class extends AbstractView {
     }
 
     //=====Error & user messages=====
+    let displayDestTokenNameError = function(txt){
+      showCardLine("DestTokenNameCardLine", true);
+      document.getElementById("DestTokenName").innerHTML = txt;
+      migData.destinationTokenName = "";
+    }
     let displayRedeemNetworkHintMsg = function(show){
       let elem = document.getElementById("RedeemOUINetworkMsg");
       //show elem
@@ -1159,6 +1200,16 @@ export default class extends AbstractView {
         document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you!)</span>';
       }
     }
+    let setOriginTokenName = function(name, dispFetchingMsg){
+      if(dispFetchingMsg){
+        document.getElementById("OGTokenMetaName").textContent = "Fetching...";
+        migData.originTokenName = "";
+      }
+      else{
+        document.getElementById("OGTokenMetaName").textContent = name;
+        migData.originTokenName = name;
+      }
+    }
     //Set the destTokenId to migData & display it in DestTokenIdCardLine
     let setDestinationTokenId = function(tokId){
       //Display new dest tok id
@@ -1171,6 +1222,11 @@ export default class extends AbstractView {
       document.getElementById("DestTokenId").textContent = msg;
       //Add dest tok id to migData
       migData.destinationTokenId = "";
+    }
+    let setDestTokenName = function(show, txt){
+      showCardLine("DestTokenNameCardLine", show);
+      document.getElementById("DestTokenName").innerHTML = txt;
+      migData.destinationTokenName = txt;
     }
 
     //=====Prefill functions=====
@@ -1224,9 +1280,13 @@ export default class extends AbstractView {
       selectDropDownOptionByIndex("RelaySelector", migData.migrationRelayIndex);
 
       //Prefill destTokenId
-      setDestinationTokenId(migData.destinationTokenId)
+      setDestinationTokenId(migData.destinationTokenId);
+
+      //Prefill dest token name
+      setDestTokenName(true, migData.destinationTokenName);
+
       //Prefill destTokenOwner
-      setDestOwnerInputValue(migData.destinationOwner)
+      setDestOwnerInputValue(migData.destinationOwner);
 
       //Finally display all form fields
       showAllFormFields();
@@ -1285,9 +1345,6 @@ export default class extends AbstractView {
     addDropDownOnChangeCallback("OriginNetworkSelector", function(chainIndexSelected){
       let chainIDSelected = '0x' + bridgeApp.networks[chainIndexSelected].chainID.toString(16);
 
-      //Clear destination data.TODELETE
-      //clearDestDataOnOgNetChanged();
-
       //Prompt user to change his provider network to the one he selected
       promptSwitchChainDataToFetch(chainIDSelected);
     });
@@ -1303,8 +1360,14 @@ export default class extends AbstractView {
         showCardLine("DestWorldRedeemCardLine", false);//Hide destWorld text
         showCardLine("DestWorldCardLine", true);//Show destWorl selector
 
-        //Clear previous worlds retrived from relay
+        //Show DestTokenName if original token name retrieved
+        if(migData.originTokenName){
+          setDestTokenName(true, 'IOU of ' + migData.originTokenName);
+        }
+
+        //Clear previous worlds retrieved from relay
         clearDropDownOptions("DestinationWorldSelector");
+
         //Load available destination world from relay
         getRelayAvailableWorlds();
       }
@@ -1519,7 +1582,8 @@ export default class extends AbstractView {
 
       //If relay already selected, display all form till the end !
       if(getDropDownSelectedOptionIndex("RelaySelector") >= 0){
-        showArrivalFormFieldsOnRedeem(true);
+        //Call relaydropdown callback, as if user selected the relay in drop down
+        triggerDropDownOnChange("RelaySelector");
       }
 
       refreshCompleteBtnEnabled();
@@ -1613,7 +1677,7 @@ export default class extends AbstractView {
     //When user come back on tab: verify ogNet & wallet net
     window.onfocus = function(){
       //If migration form displayed
-      if(document.getElementById("OriginNetworkSelector")){
+      if(document.getElementById("MigrationFormDisplay")){
         //If tokens data are loaded, do not prompt switch network.
         let originChainSelectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
         if(originChainSelectedIndex >= 0 && migData.originWorld){

@@ -31,7 +31,7 @@ addDropDownOption("CustomDropDown", "Bosh washing machine", "bosh", "0x3")
 selectDropDownOptionByIndex("CustomDropDown", 0);
 selectDropDownOptionByUniqueID("CustomDropDown", "0x3fbf5c9a");
 unselectDropDown("CustomDropDown");
-clickDropDownOptionByIndex("CustomDropDown", 0);//Trigger the option click event, and thus onChangeCallback
+triggerDropDownOnChange("CustomDropDown");//Trigger the onChangeCallback
 getDropDownSelectedOptionIndex("CustomDropDown");
 getDropDownOptionDataValue("CustomDropDown", 1);
 getDropDownOptionText("CustomDropDown", 1);

@@ -62,7 +62,7 @@
   width: 12em;
   text-align: center;
   line-height: 1.56rem;
-  word-break: break-all;
+  word-break: break-word;
 }
 .LoadingCircle{
   position: absolute;
@@ -158,6 +158,12 @@
   gap: 1em 0em;
   /*margin: 0vw 1em;*/
 }
+.CenteredCard{
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1em 0em;
+  align-items: center;
+}
 
 .NoMargin{
   margin: 0vw 0vw;
@@ -226,6 +232,7 @@
   gap: 0vw 2vw;
   align-items: center;
   justify-content: center;
+  line-height: 1.56rem;
   /*margin-top: 5vh;
   margin-bottom: 5vh;*/
 }
@@ -445,7 +452,7 @@
 
 
 /* Mig_Finished view*/
-#DestTokenIdMigFinished, #DestWorldMigFinished{
+#DestTokenIdMigFinished, #DestWorldMigFinished, #OwnerAddrMigFinished{
   margin-left: 2em;
 }
 

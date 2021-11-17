@@ -26,6 +26,8 @@ export default class extends AbstractView {
       }).catch((res) => {
         console.log("Network switch canceled or error");
         alert("Please accept the metamask switch network prompt in order to continue your NFT migration.");
+        //Unselect btn to allow user to re click
+        document.getElementById("RegisterButton").classList.remove('Selected');
       });
     }
     //Once user accept to switch, it will be redirected to migration_form
@@ -92,6 +94,8 @@ export default class extends AbstractView {
           if(error){
             console.log('Approval rejected by user');
             alert("Please approve the relay as an operator for this NFT.");
+            //Unselect btn to allow user to re click
+            document.getElementById("RegisterButton").classList.remove('Selected');
           }
           else{
             console.log('Approval accepted by user');
@@ -117,6 +121,9 @@ export default class extends AbstractView {
 
           //Display red circle
           setCircleErrorState();
+
+          //Unselect btn to allow user to re click
+          document.getElementById("RegisterButton").classList.remove('Selected');
 
           //Display error message inside circle on escrow_token page
           let loadingText = document.getElementById("RegistrationLoadingText");
@@ -191,6 +198,7 @@ export default class extends AbstractView {
     document.getElementById("DestNetworkRegistrationDisp").textContent = migData.destinationUniverse;
     document.getElementById("DestContractAddressRegistrationDisp").textContent = migData.destinationWorld;
     document.getElementById("DestTokenIDRegistrationDisp").textContent = migData.destinationTokenId;
+    document.getElementById("DestTokenNameRegistrationDisp").textContent = migData.destinationTokenName;
     document.getElementById("DestTokenOwnerRegistrationDisp").textContent = migData.destinationOwner;
 
     //Interface Buttons
