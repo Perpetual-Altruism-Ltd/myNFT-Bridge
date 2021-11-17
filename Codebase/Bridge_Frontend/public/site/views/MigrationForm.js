@@ -198,7 +198,15 @@ export default class extends AbstractView {
         console.log("Change ogNet & fetch: " + ethNetId + " networkId not found.");
         console.log("bridgeApp:");
         console.log(bridgeApp.networks);
+
+        //Unselect ogNet
+        unselectDropDown("OriginNetworkSelector");
+        //Display unsupported net msg
+        displayOgNetworkSwitchMsg("Your provider's network is not yet supported. Drop us a message to request it.");
         return;
+      }
+      else {
+        showCardLine("OgNetworkSwitchMessage", false);
       }
 
       //Save origin network in the object migData to access it later during the migration process
@@ -287,11 +295,15 @@ export default class extends AbstractView {
         //Just hide "Please change net" message
         showCardLine("OgNetworkSwitchMessage", false);
       }).catch((res) => {
-        console.log("Network switch canceled or error. (FetchedData): " + JSON.stringify(res));
-        showCardLine("OgNetworkSwitchMessage", false);
-        //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
-        let currentProviderNetId = window.web3.currentProvider.chainId;
-        changeOriginNetworkAndFetchTokenData(currentProviderNetId);
+        console.log("Network switch canceled or error. (FetchedData)");
+
+        //If request is not pending
+        if(res.code != -32002){
+          showCardLine("OgNetworkSwitchMessage", false);
+          //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
+          let currentProviderNetId = window.web3.currentProvider.chainId;
+          changeOriginNetworkAndFetchTokenData(currentProviderNetId);
+        }
       });
     }
 
@@ -347,7 +359,7 @@ export default class extends AbstractView {
       			content = await contracts.originalChainERC721MetadataContract.methods.name().call();
           } catch (err) {
       			//console.log(err);
-      			console.log("Could not get name() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
+      			console.log("Could not get name() for: contractAddress " + contracts.originalChainERC721MetadataContract._address + "   tokenID: " + document.getElementById("inputOGTokenID").value);
       		}
 
           //Display or not the html element
@@ -367,7 +379,7 @@ export default class extends AbstractView {
       			content = await contracts.originalChainERC721MetadataContract.methods.symbol().call();
           } catch (err) {
       			//console.log(err);
-      			console.log("Could not get symbol() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      			console.log("Could not get symbol() for: contractAddress " + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
           //Display or not the ctrc symbol
           if(content != ""){
@@ -386,7 +398,7 @@ export default class extends AbstractView {
       			content = await contracts.originalChainERC721Contract.methods.ownerOf(document.getElementById("inputOGTokenID").value).call();
           } catch (err) {
       			//console.log(err);
-      			console.log("Could not get ownerOf() for: contractAddress" + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      			console.log("Could not get ownerOf() for: contractAddress " + contracts.originalChainERC721Contract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
 
           //Display or not the owner
@@ -415,7 +427,7 @@ export default class extends AbstractView {
       			content = await contracts.originalChainERC721MetadataContract.methods.tokenURI(document.getElementById("inputOGTokenID").value).call();
           } catch (err) {
       			//console.log(err);
-      			console.log("Could not get tokenURI() for: contractAddress" + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
+      			console.log("Could not get tokenURI() for: contractAddress " + contracts.originalChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("inputOGTokenID").value);
       		}
 
           if(content != ""){
@@ -482,9 +494,14 @@ export default class extends AbstractView {
                         migData.metadataDestinationWorld  = ogTokenMetaData.migrationData.originWorld;
                         migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
                         migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAdress
-                        console.log(migData);
+
+                        //Show network hint to redeem IOU
+                        displayRedeemNetworkHintMsg(true);
                       }
                       else{
+                        //Hide redeem network hint as token is not an IOU
+                        displayRedeemNetworkHintMsg(false);
+
                         //If token is not IOU, unselect Redeem if previously selected
                         //Do not modify migrationType if user just come from edit migration form.
                         if(!model.editMigrationForm && migData.migrationType == model.RedeemIOUMigrationType){
@@ -519,43 +536,89 @@ export default class extends AbstractView {
     let loadDestTokenData = async function(){
 
       try{
-        destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, document.getElementById("inputDestContractAddress").value);
-        destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, document.getElementById("inputDestContractAddress").value);
+        let destWorld;
+        if(migData.migrationType == model.RedeemIOUMigrationType){
+          destWorld = document.getElementById("DestWorldRedeem").textContent;
+        }
+        else if(migData.migrationType == model.MintOUIMigrationType){
+          destWorld = bridgeApp.destWorlds[getDropDownSelectedOptionIndex("DestinationWorldSelector")];
+        }
+        console.log("destWorld: " + destWorld);
+
+        contracts.destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, destWorld);
+        contracts.destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, destWorld);
       }catch(err){
         document.getElementById("DestContractName").innerHTML = "Unable to connect to contract.";
         document.getElementById("DestContractSymbol").innerHTML = "Unable to connect to contract.";
       }
 
       let getContractName = async function () {
-          try {
-            let content = await destChainERC721MetadataContract.methods.name().call();
-            if(content != null){
-              document.getElementById("DestContractName").innerHTML = content;
-            } else {
-              document.getElementById("DestContractName").innerHTML = "Not Specified";
-            }
-          } catch (err) {
-            console.log(err);
-            console.log("Could not get name() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenId:" + document.getElementById("DestTokenId").textContent);
-          }
+        let content = "";
+        try {
+          content = await contracts.destChainERC721MetadataContract.methods.name().call();
+        } catch (err) {
+          //console.log(err);
+          console.log("Could not get name() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenId:" + document.getElementById("DestTokenId").textContent);
+        }
+
+        //Display or not the html element
+        if(content != ""){
+          document.getElementById("DestContractName").innerHTML = content;
+          showCardLine("DestWorldNameCardLine", true);
+        } else {
+          showCardLine("DestWorldNameCardLine", false);
+        }
       }
       getContractName();
 
       //Get the Contract Symbol
       let getContractSymbol = async function () {
-         try {
-           let content = await destChainERC721MetadataContract.methods.symbol().call();
-           if(content != null){
-             document.getElementById("DestContractSymbol").innerHTML = content;
-           } else {
-             document.getElementById("DestContractSymbol").innerHTML = "Not Specified";
-           }
-         } catch (err) {
-           console.log(err);
-           console.log("Could not get symbol() for: contractAddress" + destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
-         }
+        let content = "";
+        try {
+          content = await contracts.destChainERC721MetadataContract.methods.symbol().call();
+        } catch (err) {
+          //console.log(err);
+          console.log("Could not get symbol() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
+        }
+
+        //Display or not the html element
+        if(content != ""){
+          document.getElementById("DestContractSymbol").innerHTML = content;
+          showCardLine("DestWorldSymbolCardLine", true);
+        } else {
+          showCardLine("DestWorldSymbolCardLine", false);
+        }
        }
        getContractSymbol();
+
+      //Get the token URI
+      let getTokenURI = async function () {
+        let content = "";
+        try {
+          content = await contracts.destChainERC721MetadataContract.methods.tokenURI(document.getElementById("DestTokenId").textContent).call();
+        } catch (err) {
+          //console.log(err);
+          console.log("Could not get tokenURI() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
+        }
+
+        //HERE instead of displaying content, retrieve content of URI, and display name + store it in model to display in register_mig page
+
+        console.log("Dest token URI: " + content);
+        /*//Display or not the html element
+        if(content != ""){
+          document.getElementById("DestTokenName").innerHTML = content;
+          showCardLine("DestTokenNameCardLine", true);
+        } else {
+          showCardLine("DestTokenNameCardLine", false);
+        }
+
+        loadDestTokenMetadata();*/
+       }
+       getTokenURI();
+    }
+    //Load destination token metadata
+    let loadDestTokenMetadata = function(){
+
     }
     //Check if the metadata json file represent an IOU
     let isIOUToken = function(metadata){
@@ -629,6 +692,7 @@ export default class extends AbstractView {
             //Add world to drop down
             addDropDownOption("DestinationWorldSelector", worldAddr, "", i);
           });
+
           //Prefill with the 1st world
           if(response.data.worlds.length > 0){
             selectDropDownOptionByIndex("DestinationWorldSelector", 0);
@@ -706,6 +770,7 @@ export default class extends AbstractView {
 
       //Display wallet name
       let providerName = localStorage.getItem("provider");
+      if(!providerName){return;}
       //Set first char to upperCase
       providerName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
       //Display it on html element
@@ -886,7 +951,15 @@ export default class extends AbstractView {
       }
     }
 
-    //Error & user messages
+    //=====Error & user messages=====
+    let displayRedeemNetworkHintMsg = function(show){
+      let elem = document.getElementById("RedeemOUINetworkMsg");
+      //show elem
+      showCardLine(elem.id, show);
+
+      //Set the text
+      elem.textContent = "The original token of this IOU is in the network " + migData.metadataDestinationUniverse + ". You need to select this network to redeem the IOU.";
+    }
     let displayOgNetworkSwitchMsg = function(txt){
       let errorMsg = document.getElementById("OgNetworkSwitchMessage");
       errorMsg.innerHTML = txt;
@@ -1239,6 +1312,9 @@ export default class extends AbstractView {
       else if(migData.migrationType == model.RedeemIOUMigrationType){
         //SHOW all next form field which are prefilled
         showArrivalFormFieldsOnRedeem(true);
+
+        //Retrieve dest token data
+        loadDestTokenData();
       }
 
       //Prefill dest owner
@@ -1299,12 +1375,7 @@ export default class extends AbstractView {
     addDropDownOnChangeCallback("DestinationWorldSelector", function(chainIndexSelected){
       //If not redeem: display next form field and load data from relay
       if(migData.migrationType != model.RedeemIOUMigrationType){
-        //Load dest world info
-        //loadDestTokenData():
-
-        //Show dest world infos
-        /*showCardLine("DestWorldNameCardLine", true);
-        showCardLine("DestWorldSymbolCardLine", true);*/
+        //Show next form field
         showCardLine("DestTokenIdCardLine", true);
 
         //Save destWorld addr into migData object
@@ -1545,7 +1616,7 @@ export default class extends AbstractView {
       if(document.getElementById("OriginNetworkSelector")){
         //If tokens data are loaded, do not prompt switch network.
         let originChainSelectedIndex = getDropDownSelectedOptionIndex("OriginNetworkSelector");
-        if(originChainSelectedIndex >= 0){
+        if(originChainSelectedIndex >= 0 && migData.originWorld){
           //Timeout to let time to provider to switch network & refresh window.web3.currentProvider.chainId.
           //If not, it will call promptSwitchChainFetchedData again once the user come back from provider prompt to the website (window onfocus triggered)
           setTimeout(function(){
@@ -1562,6 +1633,11 @@ export default class extends AbstractView {
               promptSwitchChainFetchedData(chainIDSelected);
             }
           }, 700);
+        }
+        //If user hasn't filled any fields, just change ogNet dropdown to the provider net
+        else if(originChainSelectedIndex >= 0 && !migData.originWorld && !migData.originTokenId){
+          let currentProviderNetId = window.web3.currentProvider.chainId;
+          changeOriginNetworkAndFetchTokenData(currentProviderNetId);
         }
       }
     }
