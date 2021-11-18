@@ -338,6 +338,9 @@ export default class extends AbstractView {
         if(!isERC721){
           console.log("This contract is NOT ERC721 compliant.");
           showIsERC721CompliantMsg(true, false);
+          //Hide redeem network hint as token is not an IOU
+          displayRedeemNetworkHintMsg(false);
+
           return;
         }else {
           console.log("This contract is ERC721 compliant.");
@@ -453,6 +456,8 @@ export default class extends AbstractView {
             showCard("MetadataCard", false);
             //Unselect redeem button if it was selected
             unselectMigrationButtons();
+            //Hide redeem network hint as token is not an IOU
+            displayRedeemNetworkHintMsg(false);
           }
         }
         getTokenURI();
@@ -538,83 +543,40 @@ export default class extends AbstractView {
           };
       }
     };
-    //Load destination contract name and symbol
-    let loadDestTokenData = async function(){
+    //Load destination token URI + display token name
+    let getDestTokenURIAndDisplayTokenName = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
 
-      try{
-        let destWorld;
-        if(migData.migrationType == model.RedeemIOUMigrationType){
-          destWorld = document.getElementById("DestWorldRedeem").textContent;
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/getTokenUri';
+      options.data.universe = migData.destinationUniverseUniqueId;
+      options.data.world = migData.destinationWorld;
+      options.data.tokenId = migData.destinationTokenId;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
+          let tokenURI = response.data.tokenUri;
+          console.log("Destination token URI: " + tokenURI);
+
+          //Load token metadata + display name
+          loadDestTokenMetadata(tokenURI);
+        }else{
+          displayDestTokenNameMsg("Could not retrieve the token's URI. Please contact our team to report the bug.");
+          console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
+          console.log(response.status + ' : ' + response.statusText);
         }
-        else if(migData.migrationType == model.MintOUIMigrationType){
-          destWorld = bridgeApp.destWorlds[getDropDownSelectedOptionIndex("DestinationWorldSelector")];
-        }
-        console.log("destWorld: " + destWorld);
-
-        contracts.destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, destWorld);
-        contracts.destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, destWorld);
-      }catch(err){
-        document.getElementById("DestContractName").innerHTML = "Unable to connect to contract.";
-        document.getElementById("DestContractSymbol").innerHTML = "Unable to connect to contract.";
-      }
-
-      let getContractName = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.name().call();
-        } catch (err) {
-          //console.log(err);
-          console.log("Could not get name() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenId:" + document.getElementById("DestTokenId").textContent);
-        }
-
-        //Display or not the html element
-        if(content != ""){
-          document.getElementById("DestContractName").innerHTML = content;
-          showCardLine("DestWorldNameCardLine", true);
-        } else {
-          showCardLine("DestWorldNameCardLine", false);
-        }
-      }
-      getContractName();
-
-      //Get the Contract Symbol
-      let getContractSymbol = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.symbol().call();
-        } catch (err) {
-          //console.log(err);
-          console.log("Could not get symbol() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
-        }
-
-        //Display or not the html element
-        if(content != ""){
-          document.getElementById("DestContractSymbol").innerHTML = content;
-          showCardLine("DestWorldSymbolCardLine", true);
-        } else {
-          showCardLine("DestWorldSymbolCardLine", false);
-        }
-       }
-       getContractSymbol();
-
-      //Get the token URI
-      let getTokenURI = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.tokenURI(document.getElementById("DestTokenId").textContent).call();
-        } catch (err) {
-          //console.log(err);
-          displayDestTokenNameError("Could not retrieve the token's URI. Please contact our team to report the bug.");
-          console.log("Could not get tokenURI() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
-        }
-        console.log("Dest token URI: " + content);
-
-        //Load token metadata from URI
-        loadDestTokenMetadata(content);
-       }
-       getTokenURI();
+      }).catch(function (error) {
+        displayDestTokenNameMsg("Relay is not responding. Please contact our team to report the bug.");
+        console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
+      });
     }
-    //Load destination token metadata
+    //Load destination token metadata + display dest token name
     let loadDestTokenMetadata = function(URI){
       //create get request
       var options = {
@@ -626,7 +588,6 @@ export default class extends AbstractView {
       let requestCallback = function(response){
         if(response.status == 200){
           let metadata = response.data;
-
           //Display token Name & save it to migData
           if(metadata.name){
             //Save token name in migData
@@ -634,10 +595,10 @@ export default class extends AbstractView {
 
             setDestTokenName(true, metadata.name);
           } else {
-            displayDestTokenNameError("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
+            displayDestTokenNameMsg("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
           }
         }else{
-          displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
+          displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
           console.log(response.status + ' : ' + response.statusText);
         }
       }
@@ -646,7 +607,7 @@ export default class extends AbstractView {
       axios.get(URI, options).then(function (response) {
         requestCallback(response);
       }).catch(function (error) {
-        displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
+        displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
         console.error(error);
       });
 
@@ -988,7 +949,7 @@ export default class extends AbstractView {
     }
 
     //=====Error & user messages=====
-    let displayDestTokenNameError = function(txt){
+    let displayDestTokenNameMsg = function(txt){
       showCardLine("DestTokenNameCardLine", true);
       document.getElementById("DestTokenName").innerHTML = txt;
       migData.destinationTokenName = "";
@@ -1025,9 +986,13 @@ export default class extends AbstractView {
     }
     let displayNoOwnerMsg = function(){
       displayErrorMsg("No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.");
+      //Hide destination token name
+      setDestTokenName(false,"");
     }
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
+      //Hide destination token name
+      setDestTokenName(false,"");
     }
     //Show the text message element if show is true. And  adapt the message depending on isCompliant
     let showIsERC721CompliantMsg = function(show, isCompliant){
@@ -1047,6 +1012,8 @@ export default class extends AbstractView {
         //Add error styling
         ERC721Msg.classList.remove('DataText');
         ERC721Msg.classList.add('ErrorTextStyle');
+        //Hide destination token name
+        setDestTokenName(false,"");
       }
     }
     //Show a message describing the migration type selected if show is true.
@@ -1059,7 +1026,7 @@ export default class extends AbstractView {
       //Set the right text to the element depending on the migType
       switch(modelMigType){
         case model.MintOUIMigrationType:
-          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU from your NFT will create a new token that you can trade within the destination network.";
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU of your NFT will create a new token that you can trade within the destination network.";
         break;
 
         case model.RedeemIOUMigrationType:
@@ -1376,8 +1343,12 @@ export default class extends AbstractView {
         //SHOW all next form field which are prefilled
         showArrivalFormFieldsOnRedeem(true);
 
-        //Retrieve dest token data
-        loadDestTokenData();
+        //Show fetching dest token name
+        displayDestTokenNameMsg("Fetching...");
+
+        //Retrieve dest token uri
+        //Load dest token metadata + display token name
+        getDestTokenURIAndDisplayTokenName();
       }
 
       //Prefill dest owner
