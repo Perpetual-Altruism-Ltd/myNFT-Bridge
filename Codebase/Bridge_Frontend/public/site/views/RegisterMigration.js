@@ -93,7 +93,7 @@ export default class extends AbstractView {
           //Function called when user accept or reject relay's operator approval
           if(error){
             console.log('Approval rejected by user');
-            alert("Please approve the relay as an operator for this NFT.");
+            alert("The relay need to be an operator for this NFT to be able to operate the migration.\nPlease approve the relay as an operator.");
             //Unselect btn to allow user to re click
             document.getElementById("RegisterButton").classList.remove('Selected');
           }

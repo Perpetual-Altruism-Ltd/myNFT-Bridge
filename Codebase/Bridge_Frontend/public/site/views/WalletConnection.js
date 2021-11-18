@@ -48,7 +48,7 @@ export default class extends AbstractView {
       loadWestron();
     }
 
-    //Once loadWestron started, wait for it to finish by polling.
+    //Once loadWestron started, wait for it to finish by polling. Timeout after 50ms*100 = 5sec
     //Then auto connect to metamask if wallet exists
     let cmptr = 0;
     let pollWestronLoaded = async function(){
@@ -59,6 +59,7 @@ export default class extends AbstractView {
         cmptr++;
         if(cmptr > 100){
           console.log("Westron loading timed out.");
+          alert('It seems that you have no wallet provider installed. You can install metamask in few minutes by visiting https://metamask.io/')
         }else {
           setTimeout(pollWestronLoaded, 50);
         }

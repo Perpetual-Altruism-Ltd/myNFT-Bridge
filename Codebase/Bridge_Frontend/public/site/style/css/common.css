@@ -126,6 +126,9 @@ button {
 .clickableRoundButton:hover{
   /* TODO */
 }
+.clickableRoundButton:disabled, .clickableRoundButton[disabled]{
+  cursor: default;
+}
 
 /* Grey btn */
 .ClassicButtonStyle{

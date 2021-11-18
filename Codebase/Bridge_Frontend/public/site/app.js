@@ -122,9 +122,11 @@ Model.isMigDataFilled = function(){
 }
 //Return true if a provider is loaded.
 Model.isProviderLoaded = function(){
-  let userAccount = window.web3.currentProvider.selectedAddress;
-  //If web3 already injected
-  return userAccount != "" && window.web3.eth != undefined;
+  if(window.web3){
+    let userAccount = window.web3.currentProvider.selectedAddress;
+    //If web3 already injected
+    return userAccount != "" && window.web3.eth != undefined;
+  }else{return false;}
 }
 
 //Initialize javascript context for all views
