@@ -828,12 +828,6 @@ export default class extends AbstractView {
         return;//To stop javascript execution in initCode() function
       }
     }
-    //Return true if a provider is loaded.
-    let isProviderLoaded = function(){
-      userAccount = window.web3.currentProvider.selectedAddress;
-      //If web3 already injected
-      return userAccount != "" && window.web3.eth != undefined;
-    }
 
     //=====Display functions=====
     let hideFieldAfterDestNetwork = function(){
@@ -1282,7 +1276,7 @@ export default class extends AbstractView {
         }
 
         //If provider is loaded, and networks from server, disp connected wallet
-        if(isProviderLoaded() && areDataLoadedFromServer()){
+        if(model.isProviderLoaded() && areDataLoadedFromServer()){
           console.log("Networks loaded, dispWallet.");
           displayConnectedWallet();
         }
@@ -1295,7 +1289,7 @@ export default class extends AbstractView {
       }
 
       //If provider is loaded, and networks from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer()){
+      if(model.isProviderLoaded() && areDataLoadedFromServer()){
         console.log("Relays loaded, dispWallet.");
         displayConnectedWallet();
       }
@@ -1607,7 +1601,10 @@ export default class extends AbstractView {
 
     //HANDLE WALLET CONNECTION
     //If web3 already injected
-    if(isProviderLoaded()){
+    if(!window.web3){
+        model.navigateTo("/migration_finished");
+    }
+    else if(model.isProviderLoaded()){
       console.log("Westron already loaded, perfect.");
       //Display connected addr + ogNet & prefill it
       displayConnectedWallet();
