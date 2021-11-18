@@ -510,8 +510,6 @@ const main = async () => {
             //Check if input contract is ERC721
             if(await ethereum.isErc721(req.body.world)){
               let uri = await ethereum.getTokenUri(req.body.world, req.body.tokenId);
-              console.log("URI");
-              console.log(uri);
               return res.json({ "tokenUri" : uri });
             }else{
               res.status(400)
