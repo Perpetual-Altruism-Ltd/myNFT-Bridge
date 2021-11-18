@@ -29,11 +29,11 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
+            "bridgeAdress": "0x0D8051b11F7531b44BC55CD26d1308a7308EeE50",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6",
+                    "address": "0x0D8051b11F7531b44BC55CD26d1308a7308EeE50",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
