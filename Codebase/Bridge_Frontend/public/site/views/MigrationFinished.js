@@ -93,8 +93,10 @@ export default class extends AbstractView {
         headers: {'Content-Type': 'application/json'},
         data: {}
       };
-      options.url = relayURL + '/getDestinationTokenUri';
-      options.data.migrationId = model.readCookie("migrationId");
+      options.url = relayURL + '/getTokenUri';
+      options.data.universe = migData.destinationUniverseUniqueId;
+      options.data.world = migData.destinationWorld;
+      options.data.tokenId = migData.destinationTokenId;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
@@ -102,8 +104,7 @@ export default class extends AbstractView {
           console.log("New token URI: " + tokenURI);
 
           //Set link to DOM element
-          let tokenURIElement = document.getElementById("TokenURI");
-          tokenURIElement.href = tokenURI;
+          document.getElementById("TokenURI").href = tokenURI;
         }else{console.log(response.status + ' : ' + response.statusText);}
       }).catch(function (error) {
         if(error.response.data){

@@ -279,6 +279,12 @@
   width: 54vw;
 }
 
+.MigFinishedDescTextWidth{
+  width: 6vw;
+  white-space: break-spaces;
+  margin-right: 1em;
+}
+
 .FormElementMargin{
   margin-left: 12vw;
 }
