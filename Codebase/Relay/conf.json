@@ -1,5 +1,5 @@
 {
-    "relayPrivateKey": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8",
+    "relayPrivateKey": "d4727bbc1d06be9363d5caf0bae5dad26dabe55d3ad1a6c368d3794d36920f09",
     "infuraIpfs": {
         "host": "ipfs.infura.io",
         "port": 5001,
@@ -14,8 +14,8 @@
     "balancer" : {
         "addresses": [
             {
-                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b",
-                "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8"
+                "address": "0x343da20c010148b4E4D4D3203e7c445E0a7468A4",
+                "key": "d4727bbc1d06be9363d5caf0bae5dad26dabe55d3ad1a6c368d3794d36920f09"
             }
         ],
         "minimalWalletAmount": 0.0001
@@ -29,11 +29,11 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "bridgeAdress": "0x0D8051b11F7531b44BC55CD26d1308a7308EeE50",
+            "bridgeAdress": "0x7b8f7b466E1645d2456C2bF05A68bBeB39496b9f",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x0D8051b11F7531b44BC55CD26d1308a7308EeE50",
+                    "address": "0x54938238682d260FF09759944510F6c0139452b6",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
