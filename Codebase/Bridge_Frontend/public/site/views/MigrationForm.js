@@ -526,21 +526,16 @@ export default class extends AbstractView {
 
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
-                      /*console.log("ext4:");
-                      console.log(ext4);
-                      console.log("isIOU: " + isIOUToken(ogTokenMetaData));
-                      console.log("xhr: ");
-                      console.log(xhr);*/
 
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
-                      }/*else if(ext4 == ".mp4"){
+                      }else if(ext4 == ".mp4"){
                         document.getElementById("OGTokenMetaImagePath").innerHTML =
                         `<video class="videoPlayer" controls autoplay muted loop>
                           <source src="` + encodeURI(ogTokenMetaData.image) + `" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>`
-                      }*/
+                      }
                       else if(ogTokenMetaData.image != null) {
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '</a>';
                       }
