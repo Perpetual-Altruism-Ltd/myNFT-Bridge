@@ -758,6 +758,7 @@ export default class extends AbstractView {
     }
 
     //=====Provider management=====
+    let refresh
     //Display connected addr + disco btn + ogNet + prefill ogNet
     //This function requires the provider to be loaded (wallet connected)
     //This function requires the network data (network_list.json) to be loaded from server
@@ -782,7 +783,6 @@ export default class extends AbstractView {
       showCard("CompleteMigrationCard", true);
 
       //If Network list loaded from web server: prefill origin network (If not already prefilled)
-      console.log(areDataLoadedFromServer() + ', ' + migData.originUniverse);
       //migData.originUniverse != "" : is the case when user comde back from register & edit btn
       if(areDataLoadedFromServer() || migData.originUniverse != ""){
         let providerNetId = window.web3.currentProvider.chainId;
@@ -807,7 +807,8 @@ export default class extends AbstractView {
 			});
       //Setup onAccountChanged event listener.
       connector.onAccountChanged = function(newAcc){
-        displayConnectedWallet();
+        refreshConnectedAccount();
+        document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
         //Reload og token data
         if(migData.originUniverse && migData.originWorld && migData.originTokenId){
