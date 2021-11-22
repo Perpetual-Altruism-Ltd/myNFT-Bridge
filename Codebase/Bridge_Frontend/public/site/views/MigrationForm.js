@@ -270,41 +270,51 @@ export default class extends AbstractView {
     //If success (accepted by user) -> fetch new token data if og world & tokenId filled
     //If canceled -> change OgNetowrk dropdown to current wallet network
     let promptSwitchChainDataToFetch = async function (ID) {
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
-      }).then((res) =>{
-        console.log("Network switched to " + ID + ". (DataToFetch)");
-        changeOriginNetworkAndFetchTokenData(ID);
-      }).catch((res) => {
-        console.log("Network switch canceled or error. (DataToFetch): " + JSON.stringify(res));
-        setOgNetDropDownToWalletNet();
-      });
+      try{
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+        }).then((res) =>{
+          console.log("Network switched to " + ID + ". (DataToFetch)");
+          changeOriginNetworkAndFetchTokenData(ID);
+        }).catch((res) => {
+          console.log("Network switch canceled or error. (DataToFetch): " + JSON.stringify(res));
+          setOgNetDropDownToWalletNet();
+        });
+      }catch(err){
+        console.error("promptSwitchChainFetchedData failed when sending wallet_switchEthereumChain request.");
+        console.error(err);
+      }
     }
     //Prompt the user to change his wallet network.
     //If success (accepted by user) -> ogNet dropdown & wallet net are now the same and
     //correspond to the token data already fetched. Do nothing.
     //If canceled -> change OgNetowrk dropdown to current wallet network + Fetch tokenData
     let promptSwitchChainFetchedData = async function (ID) {
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
-      }).then((res) =>{
-        console.log("Network switch done. (FetchedData)");
-        //Nothing to do as token data are already fetched.
-        //Just hide "Please change net" message
-        showCardLine("OgNetworkSwitchMessage", false);
-      }).catch((res) => {
-        console.log("Network switch canceled or error. (FetchedData)");
-
-        //If request is not pending
-        if(res.code != -32002){
+      try{
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+        }).then((res) =>{
+          console.log("Network switch done. (FetchedData)");
+          //Nothing to do as token data are already fetched.
+          //Just hide "Please change net" message
           showCardLine("OgNetworkSwitchMessage", false);
-          //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
-          let currentProviderNetId = window.web3.currentProvider.chainId;
-          changeOriginNetworkAndFetchTokenData(currentProviderNetId);
-        }
-      });
+        }).catch((res) => {
+          console.log("Network switch canceled or error. (FetchedData)");
+
+          //If request is not pending
+          if(res.code != -32002){
+            showCardLine("OgNetworkSwitchMessage", false);
+            //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
+            let currentProviderNetId = window.web3.currentProvider.chainId;
+            changeOriginNetworkAndFetchTokenData(currentProviderNetId);
+          }
+        });
+      }catch(err){
+        console.error("promptSwitchChainFetchedData failed when sending wallet_switchEthereumChain request.");
+        console.error(err);
+      }
     }
 
     //=====Token Management=====
@@ -758,7 +768,6 @@ export default class extends AbstractView {
     }
 
     //=====Provider management=====
-    let refresh
     //Display connected addr + disco btn + ogNet + prefill ogNet
     //This function requires the provider to be loaded (wallet connected)
     //This function requires the network data (network_list.json) to be loaded from server
@@ -797,8 +806,8 @@ export default class extends AbstractView {
 				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
 				console.log("*** Event chainChanged to " + chainId + " emmited ***");
 
-        //Auto switch the ogNet to provider net if window is focused
-        if(!document.hidden){
+        //Auto switch the ogNet to provider net if window is focused && migration form displayed
+        if(!document.hidden && document.getElementById("MigrationFormDisplay")) {
           //Automatically change the form ogNet & retrieve data if destNet is not already set.
           //This prevent token data from changing after the user is filling the destnations data
           if(!migData.destinationUniverseIndex)
@@ -807,12 +816,15 @@ export default class extends AbstractView {
 			});
       //Setup onAccountChanged event listener.
       connector.onAccountChanged = function(newAcc){
-        refreshConnectedAccount();
-        document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+        //Change displayed connected wallet acc only on mig_form view
+        if(document.getElementById("MigrationFormDisplay")){
+          refreshConnectedAccount();
+          document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
-        //Reload og token data
-        if(migData.originUniverse && migData.originWorld && migData.originTokenId){
-          document.getElementById("FetchDataButton").click();
+          //Reload og token data
+          if(migData.originUniverse && migData.originWorld && migData.originTokenId){
+            document.getElementById("FetchDataButton").click();
+          }
         }
       }
     }
@@ -873,6 +885,7 @@ export default class extends AbstractView {
       migData.destinationUniverseIndex = 0;//Index in network_list "networks" array
       migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = "";
+      migData.destinationNetworkId = "";
       migData.destinationUniverse = "";
       migData.destinationBridgeAddr = "";
       migData.destinationWorld = "";
@@ -1401,15 +1414,18 @@ export default class extends AbstractView {
       //This index is the one relative to the full list of all networks. i.e. network_list.json
       let destUnivAbsoluteIndex = 0;
       let destUnivUniqueId = "";
+      let destNetworkId = "";
       bridgeApp.networks.forEach((network, i) => {
         if(network.networkID == destUnivId){
           destUnivAbsoluteIndex = i;
           destUnivUniqueId = network.uniqueId;
+          destNetworkId = '0x' + network.networkID.toString(16);
         }
       });
       migData.destinationUniverseIndex = destUnivAbsoluteIndex;//Index in network_list "networks" array
       migData.destinationUniverseTargerListIndex = destUnivDropDownIndex;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = destUnivUniqueId;
+      migData.destinationNetworkId = destNetworkId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
       migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
@@ -1553,6 +1569,7 @@ export default class extends AbstractView {
       //Fill migData object with migration data from metadata: destNet, world, tokenId
       migData.destinationUniverseUniqueId = migData.metadataDestinationUniverseUniqueId;
       migData.destinationUniverseIndex = migData.metadataDestinationUniverseIndex;
+      migData.destinationNetworkId = '0x' + bridgeApp.networks[migData.destinationUniverseIndex].networkID;
       migData.destinationUniverse = migData.metadataDestinationUniverse;
       migData.destinationWorld = migData.metadataDestinationWorld;
       setDestinationTokenId(migData.metadataDestinationTokenId);//Set migData destTokenId & display it

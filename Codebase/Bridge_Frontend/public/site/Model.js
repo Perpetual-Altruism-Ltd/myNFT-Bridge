@@ -27,6 +27,7 @@ model.migrationData.migrationType = "";
 model.migrationData.destinationUniverseIndex = 0;//Index in network_list "networks" array
 model.migrationData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
 model.migrationData.destinationUniverseUniqueId = "";
+model.migrationData.destinationNetworkId = "";//Blochain ID
 model.migrationData.destinationUniverse = "";
 model.migrationData.destinationBridgeAddr = "";
 model.migrationData.destinationWorld = "";
