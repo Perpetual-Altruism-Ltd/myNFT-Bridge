@@ -437,7 +437,7 @@ export default class extends AbstractView {
             //Display tokenURI
             document.getElementById("OGTokenURI").innerHTML = content;
             document.getElementById("OGTokenURI").href = content;
-            console.log("TokenURI: " + content);
+            console.log("Origin Token URI: " + content);
             showCardLine("OriginTokenURICardLine", true);
 
             //Load and display metadata from JSON file
@@ -471,7 +471,6 @@ export default class extends AbstractView {
       } else {
           try {
               let xhr = new XMLHttpRequest();
-              console.log("XHR on " + OGTokenMetadataPath);
               xhr.open('GET', OGTokenMetadataPath);
               xhr.onload = function () {
                   if (xhr.status != 200) { // analyze HTTP status of the response
@@ -763,9 +762,9 @@ export default class extends AbstractView {
     //This function requires the provider to be loaded (wallet connected)
     //This function requires the network data (network_list.json) to be loaded from server
     let displayConnectedWallet = function(){
-      console.log("displayConnectedWallet()");
       //When this function is called, the wallet-provider is connected
       //Display connected account addr
+      refreshConnectedAccount();
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
       //Display wallet name
@@ -806,6 +805,15 @@ export default class extends AbstractView {
             changeOriginNetworkAndFetchTokenData(chainId);
         }
 			});
+      //Setup onAccountChanged event listener.
+      connector.onAccountChanged = function(newAcc){
+        displayConnectedWallet();
+
+        //Reload og token data
+        if(migData.originUniverse && migData.originWorld && migData.originTokenId){
+          document.getElementById("FetchDataButton").click();
+        }
+      }
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {
@@ -813,8 +821,6 @@ export default class extends AbstractView {
       //HERE connectionCallback undefined because provider not loaded yet
       connectionCallback = function(){
         console.log("Wallet connected");
-        //Refresh connected addr
-        userAccount = window.web3.currentProvider.selectedAddress;
         //Display connected addr + ogNet & prefill it
         displayConnectedWallet();
       };
@@ -835,6 +841,10 @@ export default class extends AbstractView {
         model.navigateTo('wallet_connection');
         return;//To stop javascript execution in initCode() function
       }
+    }
+    //Refresh userAccount global var from provider
+    let refreshConnectedAccount = function(){
+      userAccount = window.web3.currentProvider.selectedAddress;
     }
 
     //=====Display functions=====
@@ -1067,7 +1077,8 @@ export default class extends AbstractView {
       }
     }
     let refreshCompleteBtnEnabled = function(){
-      userAccount = window.web3.currentProvider.selectedAddress;
+      //Refresh userAccount global var
+      refreshConnectedAccount();
       document.getElementById("CompleteButton").disabled = !(model.isMigDataFilled()) || (migData.originOwner != userAccount);
     }
 
@@ -1164,7 +1175,7 @@ export default class extends AbstractView {
       migData.originOwner = owner.toLowerCase();
 
       //If user is the owner, show "It's you!" next to og owner address.
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
       if(userAccount == migData.originOwner){
         document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you!)</span>';
       }
@@ -1354,7 +1365,7 @@ export default class extends AbstractView {
       }
 
       //Prefill dest owner
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
       //Prefill destTokenOwner with the current connected address
       setDestOwnerInputValue(userAccount);
 
@@ -1565,7 +1576,7 @@ export default class extends AbstractView {
     //Setting token data retrieval
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
       //Refresh connected addr for the rest of the migration form
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
 
       //Fetch token data only if og world + token id filled
       if(migData.originWorld && migData.originTokenId){
@@ -1580,7 +1591,7 @@ export default class extends AbstractView {
               //Clear previous tokens data
               clearTokenData();
             }else{
-              //Do not clear TokData only once. Next time, clear them
+              //Do not clear TokData (only once). Next time, clear them
               model.editMigrationForm = false;
             }
 
