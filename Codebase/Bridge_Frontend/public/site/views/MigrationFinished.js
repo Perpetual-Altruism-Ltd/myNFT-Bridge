@@ -95,7 +95,8 @@ export default class extends AbstractView {
           params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
         }).then((res) =>{
           console.log("Network switch done to " + ID);
-          promptAddNFTToWallet();
+          //Timeout to let provider time to switch network (previous prompt)
+          setTimeout(promptAddNFTToWallet, 2000);
         }).catch((res) => {
           console.log("Network switch canceled or error.");
         });
