@@ -84,7 +84,7 @@ class TransactionBalancerNewGen {
             
             const fullTransaction = {
                 gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
-                ...(this.universe.eip1559 && { maxFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('15', 'gwei')) }),
+                ...(this.universe.eip1559 && { maxFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('30', 'gwei')) }),
                 ...(this.universe.eip1559 && { maxPriorityFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('3.5', 'gwei')) }),
                 ...this.transactionConfig,
                 ...transaction
@@ -93,12 +93,14 @@ class TransactionBalancerNewGen {
             fullTransaction.from = account.address
             fullTransaction.nonce = await this.web3Instance.eth.getTransactionCount(account.address)
 
-            Logger.info(`Executing transaction on account ${account.address} with nonce ${fullTransaction.nonce}.`)
+            Logger.info(`Executing transaction on account ${account.address} with nonce ${fullTransaction.nonce} on universe ${this.universe.name}.`)
 
             const signedTransaction = await this.web3Instance.eth.accounts.signTransaction(fullTransaction, account.key)
 
             try{
+                Logger.info(`Sending signed transaction.`)
                 const transactionResult = await this.web3Instance.eth.sendSignedTransaction(signedTransaction.rawTransaction)
+                Logger.info(`Signed transaction sent !`)
                 this.eventEmitter.emit(transactionHash, { state: true, transactionResult })
             }catch(err){
                 Logger.error(err.message)
@@ -106,6 +108,7 @@ class TransactionBalancerNewGen {
                     Logger.info('Transaction failed. Waiting to retry the transaction.');
                     this.transactionQueue.unshift(transaction);
                 }else{
+                    Logger.info('Transaction failed. Fatal, will not retry.');
                     this.eventEmitter.emit(transactionHash, { state: false, transactionResult: err })
                 }
             }finally{

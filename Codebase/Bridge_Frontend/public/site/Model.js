@@ -45,7 +45,7 @@ model.migrationData.metadataDestinationBridgeAddr = "";
 model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
 
-model.listeningTimeOut = 180; //seconds
+model.listeningTimeOut = 1800; //seconds
 model.listeningRefreshFrequency = 5;//seconds
 
 model.migrationHash = "";
