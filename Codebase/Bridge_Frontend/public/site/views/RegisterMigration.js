@@ -203,7 +203,8 @@ export default class extends AbstractView {
 
     //Interface Buttons
     document.getElementById("EditMigrationButton").addEventListener('click', async() =>{
-      promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
+      model.bcTrail.setCompletedStep(1);
+      //promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
     });
     document.getElementById("RegisterButton").addEventListener('click', async function(e){
       //Prevent double clicks

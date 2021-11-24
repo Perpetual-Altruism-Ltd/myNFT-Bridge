@@ -73,6 +73,9 @@ const router = async () => {
       });
 }
 
+//init breadcrumb trail behaviour
+window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
+
 /*=====Model functions=====*/
 const navigateTo = url => {
     history.pushState(null, null, url);
@@ -131,11 +134,7 @@ Model.isProviderLoaded = function(){
     return userAccount != "" && window.web3.eth != undefined;
   }else{return false;}
 }
-
-
-//init breadcrumb trail behaviour
-window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
-
+Model.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();
 

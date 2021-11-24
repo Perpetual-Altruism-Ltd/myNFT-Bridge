@@ -2,35 +2,20 @@
 =====HTML ELEMENT=====
 To pu inside the page where you want to display the breadcrumb trail
 
-<div class="BreadcrumbContainer">
-  <div class="BreadcrumbStepContainer StepCompleted">
-    <div class="BreadcrumbStepText">Approve relay as operator</div>
-    <div class="BreadcrumbStepArrow"></div>
-  </div>
-  <div class="BreadcrumbStepLink"></div>
+To use it: 2 steps
+1 - Add <breadcrumb-trail></breadcrumb-trail> inside HTML doc at desired position.
+2 - Add
+import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
+window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
 
-  <div class="BreadcrumbStepContainer StepCompleted">
-    <div class="BreadcrumbStepText">Sign migration hash</div>
-    <div class="BreadcrumbStepArrow"></div>
-  </div>
-  <div class="BreadcrumbStepLink"></div>
-
-  <div class="BreadcrumbStepContainer">
-    <div class="BreadcrumbStepText">Sign escrow hash</div>
-    <div class="BreadcrumbStepArrow"></div>
-  </div>
-  <div class="BreadcrumbStepLink"></div>
-
-  <div class="BreadcrumbStepContainer">
-    <div class="BreadcrumbStepText">Finished</div>
-  </div>
-</div>
+in the app module of the website
 
 */
 /* Autonomous custom element */
 const breadcrumbStruct = () => {
   let htmlContent = {};
-  htmlContent.innerHTML = `<div class="BreadcrumbContainer">
+  htmlContent.innerHTML = `
+  <div class="BreadcrumbContainer">
     <div class="BreadcrumbStepContainer StepCompleted">
       <div class="BreadcrumbStepText">Approve relay as operator</div>
       <div class="BreadcrumbStepArrow"></div>
@@ -58,7 +43,7 @@ const breadcrumbStruct = () => {
 
 const breadcrumbStyle = () => {
   let cssStyle = document.createElement('style');
-  cssStyle.textContent = '.BreadcrumbContainer{
+  cssStyle.textContent = `.BreadcrumbContainer{
     font-size: 0.75em;
     justify-content: center;/* Center horizontally */
 
@@ -150,23 +135,53 @@ const breadcrumbStyle = () => {
   .StepCompleted > .BreadcrumbStepArrow::after{
     width: 2px;
   }
-';
-  return cssStyle.innerHTML;/* Using htmlContent variable is to have the synthax coloration for HTML*/
+`;
+  return cssStyle;/* Using htmlContent variable is to have the synthax coloration for HTML*/
 }
 
-export default class BreadcrumbTrail extends HTMLElement {
+class BreadcrumbTrail extends HTMLElement {
   constructor() {
     super();
 
     // Create a shadow root
     this.attachShadow({mode: 'open'}); // sets and returns 'this.shadowRoot'
 
+    //Add style
+    const linkElem = document.createElement('link');
+    linkElem.setAttribute('rel', 'stylesheet');
+    linkElem.setAttribute('href', '/site/style/css/breadcrumbTrail.css');
+    this.shadowRoot.appendChild(linkElem);
+
+    //Add HTML elements making the breadcrumb trail
     const container = document.createElement('breadcrumbTrailContainer');
     container.innerHTML = breadcrumbStruct();
     this.shadowRoot.appendChild(container);
+  }
 
+  /*
+  Set appearance completed until step stepNum.
+  If stepNum = 0 : no step completed.
+  If stepNum = 1 : first step completed.
+  */
+  setCompletedStep(stepNum) {
+    let bcContainer = this.shadowRoot.querySelector(".BreadcrumbContainer");
+    if(!bcContainer){console.log("No element with class BreadcrumbContainer found");return;}
+    let steps = bcContainer.querySelectorAll(".BreadcrumbStepContainer");
+    //Add StepCompleted class to the firsts steps
+    steps.forEach((step, i) => {
+      console.log(step);
+      if(i < stepNum){
+        console.log("add StepCompleted for " + i);
+        step.classList.add("StepCompleted");
+      }else{
+        console.log("remove StepCompleted for " + i);
+        step.classList.remove("StepCompleted");
+      }
+    });
   }
 }
+
+export default BreadcrumbTrail;
 
 /* Display the validated steps.
 stepId = 0 means no step validated.
