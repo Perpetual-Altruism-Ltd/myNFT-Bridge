@@ -14,7 +14,7 @@
     "balancer" : {
         "addresses": [
             {
-                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", 
+                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b",
                 "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8"
             }
         ],
@@ -84,7 +84,7 @@
             "worlds": []
         },
         {
-            "name":"Polkadot Testnet Moonalpha",
+            "name":"Polkadot Testnet Moonbase Alpha",
             "rpc": "wss://moonbeam-alpha.api.onfinality.io/public-ws",
             "networkID": 1287,
             "uniqueId": "0xe35d7d6b",

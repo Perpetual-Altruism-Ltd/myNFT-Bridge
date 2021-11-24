@@ -58,6 +58,7 @@ const router = async () => {
         //Exceptions for pages wallet_connection and migration_form which load themselves the provider
         if(!Model.isProviderLoaded() &&
           match.route.path != "/wallet_connection" &&
+          //match.route.path != "/register_migration" &&
           match.route.path != "/migration_form"){
           console.log("No provider loaded. Redirecting to wallet_connection.");
           navigateTo('/wallet_connection');

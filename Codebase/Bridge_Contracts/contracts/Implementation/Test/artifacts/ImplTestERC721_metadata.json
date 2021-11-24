@@ -524,7 +524,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"Test/ImplTestERC721.sol": "ImplTestERC721"
+			"contracts/Implementation/Test/ImplTestERC721.sol": "ImplTestERC721"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -538,7 +538,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"ERC721.sol": {
+		"contracts/Implementation/ERC721.sol": {
 			"keccak256": "0x65dd41da5d50472d6ef2a8c76d102396a351f3813b2a1afadd736937e9f8ee98",
 			"license": "CC0-1.0",
 			"urls": [
@@ -546,7 +546,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"Test/ImplTestERC721.sol": {
+		"contracts/Implementation/Test/ImplTestERC721.sol": {
 			"keccak256": "0x711e51bd4d11b32893051dd995d1595442199c86c033843efd31e70947d90a2a",
 			"license": "Unlicense",
 			"urls": [

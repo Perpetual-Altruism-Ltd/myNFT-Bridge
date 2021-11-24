@@ -1376,11 +1376,11 @@
 			]
 		},
 		"contracts/MyNFTBridge.sol": {
-			"keccak256": "0xd24b9f9c053f4a48c6ebb93242fe8116ad8d87f886f593e5b278c8fd7bc4c87e",
+			"keccak256": "0x0bac3290a98c0dcf383b7ab9b92d0239fc0181137659824ef91449d189812fb5",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://848c7207ad8c7a4213f05fdb2332e757d776c1bfd0353da9212ddcebc4e5bb45",
-				"dweb:/ipfs/QmQVN6mSRL7eMZN7tMjeNAKc6eguba12xH1oRLDqa9hFvj"
+				"bzz-raw://cced83e527d2004e2bc9d8f7fb1e155138c278269acea6cab2fe0771d528f21b",
+				"dweb:/ipfs/Qmen7k2Ed4rcEURFGa3pDBzQYcfhUUpcDdYFSoStmw4v7K"
 			]
 		}
 	},
