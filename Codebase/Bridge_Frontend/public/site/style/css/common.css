@@ -48,6 +48,11 @@ TOP LEFT COLOR: #12132b*/
 .imgassetpreview{
     width: 400px;
 }
+.videoPlayer{
+  width: 38vw;
+  /* 4:3 format*/
+  height: 28vw;
+}
 
 /* 70% of viewport width*/
 .content-pillar{
@@ -125,6 +130,9 @@ button {
 }
 .clickableRoundButton:hover{
   /* TODO */
+}
+.clickableRoundButton:disabled, .clickableRoundButton[disabled]{
+  cursor: default;
 }
 
 /* Grey btn */

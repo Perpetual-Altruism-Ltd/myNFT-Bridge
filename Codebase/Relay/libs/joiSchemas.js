@@ -52,8 +52,10 @@ const schemas = {
     cancelMigration: Joi.object({
         migrationId: Joi.string().required(),
     }),
-    getDestinationTokenUri: Joi.object({
-        migrationId: Joi.string().required(),
+    getTokenUri: Joi.object({
+        universe: Joi.string().required(),
+        world: Joi.string().required(),
+        tokenId: Joi.number().required(),
     })
 }
 

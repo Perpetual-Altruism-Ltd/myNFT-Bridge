@@ -14,6 +14,7 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let migData = model.migrationData;
 
+    //=====Function definition=====
     //Clear all data in model.migrationData related to previous migration
     let clearMigData = function(){
       migData.originUniverseIndex = 0;
@@ -52,7 +53,7 @@ export default class extends AbstractView {
       model.isRedeem = false;
     }
 
-    //display destination token data
+    //display destination token data: dest univ + world + tokId + owner
     let showDestTokenData = function(){
       if(migData.migrationType == model.MintOUIMigrationType){document.getElementById("MigrationTypeTextMigFinished").textContent = "created";}
       else{document.getElementById("MigrationTypeTextMigFinished").textContent = "retrieved";}
@@ -63,11 +64,98 @@ export default class extends AbstractView {
       document.getElementById("DestWorldMigFinished").textContent = migData.destinationWorld;
 
     }
-    if(migData.destinationTokenId &&
-      migData.destinationWorld &&
-      migData.destinationUniverse &&
-      migData.destinationOwner &&
-      migData.migrationType){
+
+    //Ask provider to prompt user to add the destination token to wallet
+    let promptAddNFTToWallet = async function () {
+      let tokenSymbol = migData.migrationType == model.MintOUIMigrationType ? 'IOU' : 'TKN';
+      console.log('tokenSymbol ' + tokenSymbol);
+
+      window.ethereum.request({
+        method: 'wallet_watchAsset',
+        params: { type: 'ERC20',
+          options: {
+            address: migData.destinationWorld,
+            symbol: tokenSymbol,
+            decimals: 0,
+          }},
+      }).then((res) =>{
+        console.log("Token added to wallet.");
+        console.log(res);
+      }).catch((res) => {
+        console.log("Token NOT added: canceld | error: ");
+        console.log(res);
+      });
+    }
+
+    //Prompt user to switch to destNetwork in order to add dest token
+    let promptSwitchDestChainAndAddToken = async function (ID) {
+      try{
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+        }).then((res) =>{
+          console.log("Network switch done to " + ID);
+          //Timeout to let provider time to switch network (previous prompt)
+          setTimeout(promptAddNFTToWallet, 2000);
+        }).catch((res) => {
+          console.log("Network switch canceled or error.");
+        });
+      }catch(err){
+        console.error("promptSwitchChainFetchedData failed when sending wallet_switchEthereumChain request.");
+        console.error(err);
+      }
+    }
+
+    //Retrieve new token URI
+    let getTokenURI = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
+
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/getTokenUri';
+      options.data.universe = migData.destinationUniverseUniqueId;
+      options.data.world = migData.destinationWorld;
+      options.data.tokenId = migData.destinationTokenId;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
+          let tokenURI = response.data.tokenUri;
+          console.log("New token URI: " + tokenURI);
+
+          //Set link to DOM element
+          document.getElementById("TokenURI").href = tokenURI;
+        }else{console.log(response.status + ' : ' + response.statusText);}
+      }).catch(function (error) {
+        if(error.response.data){
+          //Display error message
+          let tokenURIContainer = document.getElementById("TokenURIContainer");
+          tokenURIContainer.innerHTML = "Could not load new tokenURI. Please contact our team.";
+        }
+        console.error(error);
+      });
+    }
+
+    //Tell weather destination token data are fill in
+    let areDestTokenDataFilled = function(){
+      if(migData.destinationTokenId &&
+        migData.destinationWorld &&
+        migData.destinationUniverse &&
+        migData.destinationNetworkId &&
+        migData.destinationOwner &&
+        migData.migrationType){
+        return true;
+      }else{return false;}
+    }
+
+    //=====View setup=====
+    //If migData object filled up, display destination token info: univ+world+tokId
+    if(areDestTokenDataFilled()){
+      //Show dest univ, world, tokId, owner
       showDestTokenData();
     }
 
@@ -82,38 +170,6 @@ export default class extends AbstractView {
       tfLinkContainer.innerHTML = "No transaction available.";
     }
 
-    //Retrieve new token URI
-    let getTokenURI = async function(){
-      let selectedRelayIndex = migData.migrationRelayIndex;
-      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
-
-      var options = {
-        method: 'POST',
-        url: '',
-        headers: {'Content-Type': 'application/json'},
-        data: {}
-      };
-      options.url = relayURL + '/getDestinationTokenUri';
-      options.data.migrationId = model.readCookie("migrationId");
-
-      axios.request(options).then(function (response) {
-        if(response.status == 200){
-          let tokenURI = response.data.tokenUri;
-          console.log("New token URI: " + tokenURI);
-
-          //Set link to DOM element
-          let tokenURIElement = document.getElementById("TokenURI");
-          tokenURIElement.href = tokenURI;
-        }else{console.log(response.status + ' : ' + response.statusText);}
-      }).catch(function (error) {
-        if(error.response.data){
-          //Display error message
-          let tokenURIContainer = document.getElementById("TokenURIContainer");
-          tokenURIContainer.innerHTML = "Could not load new tokenURI. Please contact our team.";
-        }
-        console.error(error);
-      });
-    }
     //If migration successful, display link to tokenURI
     if(model.destinationTokenTransfertTxHash){
       getTokenURI();
@@ -126,6 +182,12 @@ export default class extends AbstractView {
       //clear MigrationData
       clearMigData();
       model.navigateTo("/migration_form");
+    });
+    document.getElementById("AddTokenWalletButton").addEventListener('click', async() =>{
+      //Prompt user to add the dest token to his wallet
+      if(areDestTokenDataFilled()){
+        promptSwitchDestChainAndAddToken(migData.destinationNetworkId);
+      }
     });
   }
 

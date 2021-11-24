@@ -532,26 +532,26 @@
 			"bytecodeHash": "ipfs"
 		},
 		"optimizer": {
-			"enabled": true,
+			"enabled": false,
 			"runs": 200
 		},
 		"remappings": []
 	},
 	"sources": {
 		"contracts/Implementation/ERC721.sol": {
-			"keccak256": "0xa6297f1856dad920fce8fd672cdc844ea5a8ab0ed28046ccdc717500ea75de23",
+			"keccak256": "0x65dd41da5d50472d6ef2a8c76d102396a351f3813b2a1afadd736937e9f8ee98",
 			"license": "CC0-1.0",
 			"urls": [
-				"bzz-raw://38b70fd581a954de06eb47d6b0a92fdf32618a0787dbf7c6ac3a8f0efe238b44",
-				"dweb:/ipfs/QmTs8qdLPSYK3kGPb9Rt2eSJVczKBuYcZXeRZXdFPj2Kbp"
+				"bzz-raw://863d2d6f435040b6ea5148f81d13ae96afb415461e9adc27b20c798a82b4557a",
+				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
 		"contracts/Implementation/Test/ImplTestERC721.sol": {
-			"keccak256": "0x3971a09ba69f1c1c3addafe8bd210bcdef0f9a9cbca35fd086fe01094716ff9f",
+			"keccak256": "0x711e51bd4d11b32893051dd995d1595442199c86c033843efd31e70947d90a2a",
 			"license": "Unlicense",
 			"urls": [
-				"bzz-raw://fe4f3b31419d4c052292ea4be1a61aa1d49575bff43e80366428bf0207d565aa",
-				"dweb:/ipfs/QmQyvp7gEQP8UagdrXY2Gps1VaquKhkfxzp4H8YvqmBUMk"
+				"bzz-raw://3304f22437f2fb69da29d3532f6a44eaa9bb4d45487b8a4b3b8ed8708ee6e960",
+				"dweb:/ipfs/QmYLMFV5sWRBRLMQYfFagtCh1UKLSvKj5Xtn4caNLA4tWK"
 			]
 		}
 	},

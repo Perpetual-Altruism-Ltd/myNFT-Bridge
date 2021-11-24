@@ -270,41 +270,51 @@ export default class extends AbstractView {
     //If success (accepted by user) -> fetch new token data if og world & tokenId filled
     //If canceled -> change OgNetowrk dropdown to current wallet network
     let promptSwitchChainDataToFetch = async function (ID) {
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
-      }).then((res) =>{
-        console.log("Network switched to " + ID + ". (DataToFetch)");
-        changeOriginNetworkAndFetchTokenData(ID);
-      }).catch((res) => {
-        console.log("Network switch canceled or error. (DataToFetch): " + JSON.stringify(res));
-        setOgNetDropDownToWalletNet();
-      });
+      try{
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+        }).then((res) =>{
+          console.log("Network switched to " + ID + ". (DataToFetch)");
+          changeOriginNetworkAndFetchTokenData(ID);
+        }).catch((res) => {
+          console.log("Network switch canceled or error. (DataToFetch): " + JSON.stringify(res));
+          setOgNetDropDownToWalletNet();
+        });
+      }catch(err){
+        console.error("promptSwitchChainFetchedData failed when sending wallet_switchEthereumChain request.");
+        console.error(err);
+      }
     }
     //Prompt the user to change his wallet network.
     //If success (accepted by user) -> ogNet dropdown & wallet net are now the same and
     //correspond to the token data already fetched. Do nothing.
     //If canceled -> change OgNetowrk dropdown to current wallet network + Fetch tokenData
     let promptSwitchChainFetchedData = async function (ID) {
-      window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
-      }).then((res) =>{
-        console.log("Network switch done. (FetchedData)");
-        //Nothing to do as token data are already fetched.
-        //Just hide "Please change net" message
-        showCardLine("OgNetworkSwitchMessage", false);
-      }).catch((res) => {
-        console.log("Network switch canceled or error. (FetchedData)");
-
-        //If request is not pending
-        if(res.code != -32002){
+      try{
+        window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
+        }).then((res) =>{
+          console.log("Network switch done. (FetchedData)");
+          //Nothing to do as token data are already fetched.
+          //Just hide "Please change net" message
           showCardLine("OgNetworkSwitchMessage", false);
-          //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
-          let currentProviderNetId = window.web3.currentProvider.chainId;
-          changeOriginNetworkAndFetchTokenData(currentProviderNetId);
-        }
-      });
+        }).catch((res) => {
+          console.log("Network switch canceled or error. (FetchedData)");
+
+          //If request is not pending
+          if(res.code != -32002){
+            showCardLine("OgNetworkSwitchMessage", false);
+            //retrive the netId of the network before prompt switch (which is the same as after as the user canceled the prompt)
+            let currentProviderNetId = window.web3.currentProvider.chainId;
+            changeOriginNetworkAndFetchTokenData(currentProviderNetId);
+          }
+        });
+      }catch(err){
+        console.error("promptSwitchChainFetchedData failed when sending wallet_switchEthereumChain request.");
+        console.error(err);
+      }
     }
 
     //=====Token Management=====
@@ -338,6 +348,9 @@ export default class extends AbstractView {
         if(!isERC721){
           console.log("This contract is NOT ERC721 compliant.");
           showIsERC721CompliantMsg(true, false);
+          //Hide redeem network hint as token is not an IOU
+          displayRedeemNetworkHintMsg(false);
+
           return;
         }else {
           console.log("This contract is ERC721 compliant.");
@@ -434,7 +447,7 @@ export default class extends AbstractView {
             //Display tokenURI
             document.getElementById("OGTokenURI").innerHTML = content;
             document.getElementById("OGTokenURI").href = content;
-            console.log("TokenURI: " + content);
+            console.log("Origin Token URI: " + content);
             showCardLine("OriginTokenURICardLine", true);
 
             //Load and display metadata from JSON file
@@ -453,6 +466,8 @@ export default class extends AbstractView {
             showCard("MetadataCard", false);
             //Unselect redeem button if it was selected
             unselectMigrationButtons();
+            //Hide redeem network hint as token is not an IOU
+            displayRedeemNetworkHintMsg(false);
           }
         }
         getTokenURI();
@@ -466,7 +481,6 @@ export default class extends AbstractView {
       } else {
           try {
               let xhr = new XMLHttpRequest();
-              console.log("XHR on " + OGTokenMetadataPath);
               xhr.open('GET', OGTokenMetadataPath);
               xhr.onload = function () {
                   if (xhr.status != 200) { // analyze HTTP status of the response
@@ -521,9 +535,17 @@ export default class extends AbstractView {
 
                       //Img loading
                       let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
+
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
-                      } else if(ogTokenMetaData.image != null) {
+                      }else if(ext4 == ".mp4"){
+                        document.getElementById("OGTokenMetaImagePath").innerHTML =
+                        `<video class="videoPlayer" controls autoplay muted loop>
+                          <source src="` + encodeURI(ogTokenMetaData.image) + `" type="video/mp4">
+                          Your browser does not support the video tag.
+                        </video>`
+                      }
+                      else if(ogTokenMetaData.image != null) {
                           document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '</a>';
                       }
 
@@ -538,83 +560,40 @@ export default class extends AbstractView {
           };
       }
     };
-    //Load destination contract name and symbol
-    let loadDestTokenData = async function(){
+    //Load destination token URI + display token name
+    let getDestTokenURIAndDisplayTokenName = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
 
-      try{
-        let destWorld;
-        if(migData.migrationType == model.RedeemIOUMigrationType){
-          destWorld = document.getElementById("DestWorldRedeem").textContent;
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/getTokenUri';
+      options.data.universe = migData.destinationUniverseUniqueId;
+      options.data.world = migData.destinationWorld;
+      options.data.tokenId = migData.destinationTokenId;
+
+      axios.request(options).then(function (response) {
+        if(response.status == 200){
+          let tokenURI = response.data.tokenUri;
+          console.log("Destination token URI: " + tokenURI);
+
+          //Load token metadata + display name
+          loadDestTokenMetadata(tokenURI);
+        }else{
+          displayDestTokenNameMsg("Could not retrieve the token's URI. Please contact our team to report the bug.");
+          console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
+          console.log(response.status + ' : ' + response.statusText);
         }
-        else if(migData.migrationType == model.MintOUIMigrationType){
-          destWorld = bridgeApp.destWorlds[getDropDownSelectedOptionIndex("DestinationWorldSelector")];
-        }
-        console.log("destWorld: " + destWorld);
-
-        contracts.destChainERC721Contract = new web3.eth.Contract(ABIS.ERC721, destWorld);
-        contracts.destChainERC721MetadataContract = new web3.eth.Contract(ABIS.ERC721Metadata, destWorld);
-      }catch(err){
-        document.getElementById("DestContractName").innerHTML = "Unable to connect to contract.";
-        document.getElementById("DestContractSymbol").innerHTML = "Unable to connect to contract.";
-      }
-
-      let getContractName = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.name().call();
-        } catch (err) {
-          //console.log(err);
-          console.log("Could not get name() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenId:" + document.getElementById("DestTokenId").textContent);
-        }
-
-        //Display or not the html element
-        if(content != ""){
-          document.getElementById("DestContractName").innerHTML = content;
-          showCardLine("DestWorldNameCardLine", true);
-        } else {
-          showCardLine("DestWorldNameCardLine", false);
-        }
-      }
-      getContractName();
-
-      //Get the Contract Symbol
-      let getContractSymbol = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.symbol().call();
-        } catch (err) {
-          //console.log(err);
-          console.log("Could not get symbol() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
-        }
-
-        //Display or not the html element
-        if(content != ""){
-          document.getElementById("DestContractSymbol").innerHTML = content;
-          showCardLine("DestWorldSymbolCardLine", true);
-        } else {
-          showCardLine("DestWorldSymbolCardLine", false);
-        }
-       }
-       getContractSymbol();
-
-      //Get the token URI
-      let getTokenURI = async function () {
-        let content = "";
-        try {
-          content = await contracts.destChainERC721MetadataContract.methods.tokenURI(document.getElementById("DestTokenId").textContent).call();
-        } catch (err) {
-          //console.log(err);
-          displayDestTokenNameError("Could not retrieve the token's URI. Please contact our team to report the bug.");
-          console.log("Could not get tokenURI() for: contractAddress " + contracts.destChainERC721MetadataContract._address + "   tokenID:" + document.getElementById("DestTokenId").textContent);
-        }
-        console.log("Dest token URI: " + content);
-
-        //Load token metadata from URI
-        loadDestTokenMetadata(content);
-       }
-       getTokenURI();
+      }).catch(function (error) {
+        displayDestTokenNameMsg("Relay is not responding. Please contact our team to report the bug.");
+        console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
+      });
     }
-    //Load destination token metadata
+    //Load destination token metadata + display dest token name
     let loadDestTokenMetadata = function(URI){
       //create get request
       var options = {
@@ -626,7 +605,6 @@ export default class extends AbstractView {
       let requestCallback = function(response){
         if(response.status == 200){
           let metadata = response.data;
-
           //Display token Name & save it to migData
           if(metadata.name){
             //Save token name in migData
@@ -634,10 +612,10 @@ export default class extends AbstractView {
 
             setDestTokenName(true, metadata.name);
           } else {
-            displayDestTokenNameError("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
+            displayDestTokenNameMsg("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
           }
         }else{
-          displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
+          displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
           console.log(response.status + ' : ' + response.statusText);
         }
       }
@@ -646,7 +624,7 @@ export default class extends AbstractView {
       axios.get(URI, options).then(function (response) {
         requestCallback(response);
       }).catch(function (error) {
-        displayDestTokenNameError("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
+        displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
         console.error(error);
       });
 
@@ -794,9 +772,9 @@ export default class extends AbstractView {
     //This function requires the provider to be loaded (wallet connected)
     //This function requires the network data (network_list.json) to be loaded from server
     let displayConnectedWallet = function(){
-      console.log("displayConnectedWallet()");
       //When this function is called, the wallet-provider is connected
       //Display connected account addr
+      refreshConnectedAccount();
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
       //Display wallet name
@@ -814,7 +792,6 @@ export default class extends AbstractView {
       showCard("CompleteMigrationCard", true);
 
       //If Network list loaded from web server: prefill origin network (If not already prefilled)
-      console.log(areDataLoadedFromServer() + ', ' + migData.originUniverse);
       //migData.originUniverse != "" : is the case when user comde back from register & edit btn
       if(areDataLoadedFromServer() || migData.originUniverse != ""){
         let providerNetId = window.web3.currentProvider.chainId;
@@ -829,14 +806,27 @@ export default class extends AbstractView {
 				// We strongly recommend reloading the page on chain changed, unless you have good reason not to.
 				console.log("*** Event chainChanged to " + chainId + " emmited ***");
 
-        //Auto switch the ogNet to provider net if window is focused
-        if(!document.hidden){
+        //Auto switch the ogNet to provider net if window is focused && migration form displayed
+        if(!document.hidden && document.getElementById("MigrationFormDisplay")) {
           //Automatically change the form ogNet & retrieve data if destNet is not already set.
           //This prevent token data from changing after the user is filling the destnations data
           if(!migData.destinationUniverseIndex)
             changeOriginNetworkAndFetchTokenData(chainId);
         }
 			});
+      //Setup onAccountChanged event listener.
+      connector.onAccountChanged = function(newAcc){
+        //Change displayed connected wallet acc only on mig_form view
+        if(document.getElementById("MigrationFormDisplay")){
+          refreshConnectedAccount();
+          document.getElementById("ConnectedAccountAddr").textContent = userAccount;
+
+          //Reload og token data
+          if(migData.originUniverse && migData.originWorld && migData.originTokenId){
+            document.getElementById("FetchDataButton").click();
+          }
+        }
+      }
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {
@@ -844,8 +834,6 @@ export default class extends AbstractView {
       //HERE connectionCallback undefined because provider not loaded yet
       connectionCallback = function(){
         console.log("Wallet connected");
-        //Refresh connected addr
-        userAccount = window.web3.currentProvider.selectedAddress;
         //Display connected addr + ogNet & prefill it
         displayConnectedWallet();
       };
@@ -867,11 +855,9 @@ export default class extends AbstractView {
         return;//To stop javascript execution in initCode() function
       }
     }
-    //Return true if a provider is loaded.
-    let isProviderLoaded = function(){
+    //Refresh userAccount global var from provider
+    let refreshConnectedAccount = function(){
       userAccount = window.web3.currentProvider.selectedAddress;
-      //If web3 already injected
-      return userAccount != "" && window.web3.eth != undefined;
     }
 
     //=====Display functions=====
@@ -899,6 +885,7 @@ export default class extends AbstractView {
       migData.destinationUniverseIndex = 0;//Index in network_list "networks" array
       migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = "";
+      migData.destinationNetworkId = "";
       migData.destinationUniverse = "";
       migData.destinationBridgeAddr = "";
       migData.destinationWorld = "";
@@ -988,7 +975,7 @@ export default class extends AbstractView {
     }
 
     //=====Error & user messages=====
-    let displayDestTokenNameError = function(txt){
+    let displayDestTokenNameMsg = function(txt){
       showCardLine("DestTokenNameCardLine", true);
       document.getElementById("DestTokenName").innerHTML = txt;
       migData.destinationTokenName = "";
@@ -1025,9 +1012,13 @@ export default class extends AbstractView {
     }
     let displayNoOwnerMsg = function(){
       displayErrorMsg("No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.");
+      //Hide destination token name
+      setDestTokenName(false,"");
     }
     let displayContractErrorMsg = function(){
       displayErrorMsg("This contract couldn't be found. Make sure you filled in a correct contract address.");
+      //Hide destination token name
+      setDestTokenName(false,"");
     }
     //Show the text message element if show is true. And  adapt the message depending on isCompliant
     let showIsERC721CompliantMsg = function(show, isCompliant){
@@ -1047,6 +1038,8 @@ export default class extends AbstractView {
         //Add error styling
         ERC721Msg.classList.remove('DataText');
         ERC721Msg.classList.add('ErrorTextStyle');
+        //Hide destination token name
+        setDestTokenName(false,"");
       }
     }
     //Show a message describing the migration type selected if show is true.
@@ -1059,7 +1052,7 @@ export default class extends AbstractView {
       //Set the right text to the element depending on the migType
       switch(modelMigType){
         case model.MintOUIMigrationType:
-          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU from your NFT will create a new token that you can trade within the destination network.";
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting an IOU of your NFT will create a new token that you can trade within the destination network.";
         break;
 
         case model.RedeemIOUMigrationType:
@@ -1098,7 +1091,8 @@ export default class extends AbstractView {
       }
     }
     let refreshCompleteBtnEnabled = function(){
-      userAccount = window.web3.currentProvider.selectedAddress;
+      //Refresh userAccount global var
+      refreshConnectedAccount();
       document.getElementById("CompleteButton").disabled = !(model.isMigDataFilled()) || (migData.originOwner != userAccount);
     }
 
@@ -1195,7 +1189,7 @@ export default class extends AbstractView {
       migData.originOwner = owner.toLowerCase();
 
       //If user is the owner, show "It's you!" next to og owner address.
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
       if(userAccount == migData.originOwner){
         document.getElementById("OGTokenOwner").innerHTML = document.getElementById("OGTokenOwner").innerHTML + '&emsp;<span style="font-weight: normal;font-style: italic;">(It\'s you!)</span>';
       }
@@ -1315,7 +1309,7 @@ export default class extends AbstractView {
         }
 
         //If provider is loaded, and networks from server, disp connected wallet
-        if(isProviderLoaded() && areDataLoadedFromServer()){
+        if(model.isProviderLoaded() && areDataLoadedFromServer()){
           console.log("Networks loaded, dispWallet.");
           displayConnectedWallet();
         }
@@ -1328,7 +1322,7 @@ export default class extends AbstractView {
       }
 
       //If provider is loaded, and networks from server, disp connected wallet
-      if(isProviderLoaded() && areDataLoadedFromServer()){
+      if(model.isProviderLoaded() && areDataLoadedFromServer()){
         console.log("Relays loaded, dispWallet.");
         displayConnectedWallet();
       }
@@ -1376,12 +1370,16 @@ export default class extends AbstractView {
         //SHOW all next form field which are prefilled
         showArrivalFormFieldsOnRedeem(true);
 
-        //Retrieve dest token data
-        loadDestTokenData();
+        //Show fetching dest token name
+        displayDestTokenNameMsg("Fetching...");
+
+        //Retrieve dest token uri
+        //Load dest token metadata + display token name
+        getDestTokenURIAndDisplayTokenName();
       }
 
       //Prefill dest owner
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
       //Prefill destTokenOwner with the current connected address
       setDestOwnerInputValue(userAccount);
 
@@ -1416,15 +1414,18 @@ export default class extends AbstractView {
       //This index is the one relative to the full list of all networks. i.e. network_list.json
       let destUnivAbsoluteIndex = 0;
       let destUnivUniqueId = "";
+      let destNetworkId = "";
       bridgeApp.networks.forEach((network, i) => {
         if(network.networkID == destUnivId){
           destUnivAbsoluteIndex = i;
           destUnivUniqueId = network.uniqueId;
+          destNetworkId = '0x' + network.networkID.toString(16);
         }
       });
       migData.destinationUniverseIndex = destUnivAbsoluteIndex;//Index in network_list "networks" array
       migData.destinationUniverseTargerListIndex = destUnivDropDownIndex;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = destUnivUniqueId;
+      migData.destinationNetworkId = destNetworkId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
       migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
 
@@ -1568,6 +1569,7 @@ export default class extends AbstractView {
       //Fill migData object with migration data from metadata: destNet, world, tokenId
       migData.destinationUniverseUniqueId = migData.metadataDestinationUniverseUniqueId;
       migData.destinationUniverseIndex = migData.metadataDestinationUniverseIndex;
+      migData.destinationNetworkId = '0x' + bridgeApp.networks[migData.destinationUniverseIndex].networkID;
       migData.destinationUniverse = migData.metadataDestinationUniverse;
       migData.destinationWorld = migData.metadataDestinationWorld;
       setDestinationTokenId(migData.metadataDestinationTokenId);//Set migData destTokenId & display it
@@ -1592,7 +1594,7 @@ export default class extends AbstractView {
     //Setting token data retrieval
     document.getElementById("FetchDataButton").addEventListener('click', async() =>{
       //Refresh connected addr for the rest of the migration form
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
 
       //Fetch token data only if og world + token id filled
       if(migData.originWorld && migData.originTokenId){
@@ -1607,7 +1609,7 @@ export default class extends AbstractView {
               //Clear previous tokens data
               clearTokenData();
             }else{
-              //Do not clear TokData only once. Next time, clear them
+              //Do not clear TokData (only once). Next time, clear them
               model.editMigrationForm = false;
             }
 
@@ -1636,7 +1638,10 @@ export default class extends AbstractView {
 
     //HANDLE WALLET CONNECTION
     //If web3 already injected
-    if(isProviderLoaded()){
+    if(!window.web3){
+        model.navigateTo("/migration_finished");
+    }
+    else if(model.isProviderLoaded()){
       console.log("Westron already loaded, perfect.");
       //Display connected addr + ogNet & prefill it
       displayConnectedWallet();

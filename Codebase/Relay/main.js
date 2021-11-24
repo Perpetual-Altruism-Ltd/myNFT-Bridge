@@ -495,28 +495,30 @@ const main = async () => {
         })
     })
 
-    app.post('/getDestinationTokenUri', async (req, res) => {
-        const { error } = JoiSchemas.getDestinationTokenUri.validate(req.body)
+    app.post('/getTokenUri', async (req, res) => {
+        const { error } = JoiSchemas.getTokenUri.validate(req.body)
         if(error){
             res.status(400)
-            res.send({ status: "Bad parameters given to /getDestinationTokenUri" })
-            Logger.error("Bad parameters given to /getDestinationTokenUri")
+            res.send({ status: "Bad parameters given to /getTokenUri" })
+            Logger.error("Bad parameters given to /getTokenUri")
             return
         }
-        const client = clientList[req.body.migrationId]
-        if(!client) {
-            return res.status(400).json({ error : 'Unknown migrationId' })
+
+        const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+        if(universe) {
+            const ethereum = universesRpc[universe.uniqueId];
+            //Check if input contract is ERC721
+            if(await ethereum.isErc721(req.body.world)){
+              let uri = await ethereum.getTokenUri(req.body.world, req.body.tokenId);
+              return res.json({ "tokenUri" : uri });
+            }else{
+              res.status(400)
+              res.send({ status: `This address is not from an ERC-721 smartcontract` })
+              Logger.error(`This address is not from an ERC-721 smartcontract`)
+              return
+            }
         }
-
-        if(!client.creationTransferHash){
-            return res.status(400).send({
-                status: "Migration isn't finished ! Can't call this route."
-            })
-        }
-
-        const tokenUri = await client.getDestinationTokenUri()
-
-        res.send({ tokenUri })
+        return res.status(400).json({ error : 'Universe Not Found' });
     })
 
     app.listen(Conf.port, () => {

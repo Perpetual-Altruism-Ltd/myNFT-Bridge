@@ -58,7 +58,7 @@ const router = async () => {
         //Exceptions for pages wallet_connection and migration_form which load themselves the provider
         if(!Model.isProviderLoaded() &&
           match.route.path != "/wallet_connection" &&
-          match.route.path != "/migration_finished" &&
+          //match.route.path != "/register_migration" &&
           match.route.path != "/migration_form"){
           console.log("No provider loaded. Redirecting to wallet_connection.");
           navigateTo('/wallet_connection');
@@ -123,9 +123,11 @@ Model.isMigDataFilled = function(){
 }
 //Return true if a provider is loaded.
 Model.isProviderLoaded = function(){
-  let userAccount = window.web3.currentProvider.selectedAddress;
-  //If web3 already injected
-  return userAccount != "" && window.web3.eth != undefined;
+  if(window.web3){
+    let userAccount = window.web3.currentProvider.selectedAddress;
+    //If web3 already injected
+    return userAccount != "" && window.web3.eth != undefined;
+  }else{return false;}
 }
 
 //Initialize javascript context for all views

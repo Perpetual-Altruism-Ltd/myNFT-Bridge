@@ -93,7 +93,7 @@ export default class extends AbstractView {
           //Function called when user accept or reject relay's operator approval
           if(error){
             console.log('Approval rejected by user');
-            alert("Please approve the relay as an operator for this NFT.");
+            alert("The relay need to be an operator for this NFT to be able to operate the migration.\nPlease approve the relay as an operator.");
             //Unselect btn to allow user to re click
             document.getElementById("RegisterButton").classList.remove('Selected');
           }
@@ -129,7 +129,7 @@ export default class extends AbstractView {
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){loadingText.textContent = "Error during relay operator approval.";}
 
-          console.log("An error occured when approving the relay as an operator for your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
+          console.log("An error occured when approving the relay as an operator of your NFT. Make sure you are the owner of that token and to accept the approval operation. Current owner is " + migData.originOwner);
         });
       }catch(err){
         setCircleErrorState();

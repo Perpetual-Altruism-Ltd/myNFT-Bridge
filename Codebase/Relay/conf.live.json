@@ -69,7 +69,7 @@
             "worlds": []
         },
         {
-            "name":"Polkadot Testnet Moonalpha",
+            "name":"Polkadot Testnet Moonbase Alpha",
             "rpc": "wss://moonbeam-alpha.api.onfinality.io/public-ws",
             "networkID": 1287,
             "uniqueId": "0xe810b6b7",
