@@ -7,6 +7,8 @@ import SignEscrow from './views/SignEscrow.js';
 import MintToken from './views/MintToken.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
+import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
+
 import Model from './Model.js';
 
 //Launch the static server: sudo http-server ./public/ -p 85 -c-1
@@ -129,6 +131,10 @@ Model.isProviderLoaded = function(){
     return userAccount != "" && window.web3.eth != undefined;
   }else{return false;}
 }
+
+
+//init breadcrumb trail behaviour
+window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
 
 //Initialize javascript context for all views
 initDropDownBehaviour();
