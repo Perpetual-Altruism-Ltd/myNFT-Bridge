@@ -158,6 +158,11 @@ class BreadcrumbTrail extends HTMLElement {
     this.shadowRoot.appendChild(container);
   }
 
+  /* Register which attributes to watch for changes */
+  static get observedAttributes() {
+    return ['step-num'];
+  }
+
   /*
   Set appearance completed until step stepNum.
   If stepNum = 0 : no step completed.
@@ -171,22 +176,19 @@ class BreadcrumbTrail extends HTMLElement {
     steps.forEach((step, i) => {
       console.log(step);
       if(i < stepNum){
-        console.log("add StepCompleted for " + i);
         step.classList.add("StepCompleted");
       }else{
-        console.log("remove StepCompleted for " + i);
         step.classList.remove("StepCompleted");
       }
     });
   }
+
+  attributeChangedCallback(attrName, oldVal, newVal) {
+    console.log("attributeChangedCallback " + attrName + ', ' + oldVal + ', ' + newVal);
+    if(attrName == "step-num") {
+      this.setCompletedStep(newVal);
+    }
+  }
 }
 
 export default BreadcrumbTrail;
-
-/* Display the validated steps.
-stepId = 0 means no step validated.
-stepId = 1 means the first step validated.
-
-let setBreadcrumbStep = function(stepId){
-
-}*/

@@ -28,6 +28,9 @@ export default class extends AbstractView {
       window.ethereum.request({ method: 'personal_sign', params: [ model.escrowHash, account ] })
       .then((res) =>{
         console.log("Escrow hash signed: " + res);
+        //Advance one step further in breadcrumb trail
+        document.getElementById("BCT").setAttribute('step-num', 2);
+
         escrowHashSigned = res;
         //Send escrowHashSigned to relay
         closeMigration();

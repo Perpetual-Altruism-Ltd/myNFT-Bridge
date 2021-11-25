@@ -99,6 +99,9 @@ export default class extends AbstractView {
           }
           else{
             console.log('Approval accepted by user');
+            //Avdance 1 step in breadcrumb trail
+            document.getElementById("BCT").setAttribute('step-num', 1);
+
             //Delete cookies from previous migration, to let place to the new one which will me
             model.eraseCookie("migrationId");
 
@@ -203,8 +206,7 @@ export default class extends AbstractView {
 
     //Interface Buttons
     document.getElementById("EditMigrationButton").addEventListener('click', async() =>{
-      model.bcTrail.setCompletedStep(1);
-      //promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
+      promptSwitchChainThenEditForm('0x' + migData.originNetworkId.toString(16));
     });
     document.getElementById("RegisterButton").addEventListener('click', async function(e){
       //Prevent double clicks

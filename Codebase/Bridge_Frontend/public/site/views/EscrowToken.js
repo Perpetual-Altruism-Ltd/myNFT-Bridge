@@ -134,6 +134,9 @@ export default class extends AbstractView {
         loadingText.textContent = "Sending signature to relay.";
         migrationHashSigned = res;
 
+        //Advance one step further in breadcrumb
+        document.getElementById("BCT").setAttribute('step-num', 2);
+
         //Resume loading circle spin
         setCircleWaitingState();
 
