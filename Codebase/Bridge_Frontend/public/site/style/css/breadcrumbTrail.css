@@ -79,7 +79,7 @@
 }
 .BreadcrumbStepArrow::after{
   left: 0px;
-  top: calc(0.5em+1px);/* 1px = offset due to displaying only top-border in BreadcrumbStepLink*/
+  top: 0.5em;
   transform: rotate(45deg);
   background-color: #af1540;
 }
