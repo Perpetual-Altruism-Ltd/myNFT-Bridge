@@ -1322,6 +1322,10 @@ export default class extends AbstractView {
       migData.metadataDestinationBridgeAddr = "";
     }
 
+    let mintPrefillTest = function(){
+      console.log("YEY, Nailed it!");
+    }
+
     //Setup custom selector
     setupDropDown("OriginNetworkSelector", "Select the network where the token is currently.");
     setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");

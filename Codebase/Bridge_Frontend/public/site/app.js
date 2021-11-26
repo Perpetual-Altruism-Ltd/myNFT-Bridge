@@ -7,7 +7,10 @@ import SignEscrow from './views/SignEscrow.js';
 import MintToken from './views/MintToken.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
+//Components
 import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
+import NFTCollection from './components/nftCollection.js';
+import NFTCard from './components/nftCard.js';
 
 import Model from './Model.js';
 
@@ -71,8 +74,10 @@ const router = async () => {
       });
 }
 
-//init breadcrumb trail behaviour
+//init all components behaviour
 window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
+window.customElements.define('nft-collection', NFTCollection);
+window.customElements.define('nft-card', NFTCard);
 
 /*=====Model functions=====*/
 const navigateTo = url => {

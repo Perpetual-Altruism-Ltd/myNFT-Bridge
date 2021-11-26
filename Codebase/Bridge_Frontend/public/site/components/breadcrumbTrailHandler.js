@@ -94,7 +94,6 @@ const breadcrumbStyle = () => {
 
   /*=====Strait line=====*/
   .BreadcrumbStepLink{
-    /* position: absolute; */
     width: 5vw;
     height: 2px;
     border-top: 1px dashed #af1540;
@@ -134,8 +133,7 @@ const breadcrumbStyle = () => {
   }
   .StepCompleted > .BreadcrumbStepArrow::after{
     width: 2px;
-  }
-`;
+  }`;
   return cssStyle;/* Using htmlContent variable is to have the synthax coloration for HTML*/
 }
 
@@ -147,15 +145,16 @@ class BreadcrumbTrail extends HTMLElement {
     this.attachShadow({mode: 'open'}); // sets and returns 'this.shadowRoot'
 
     //Add style
-    const linkElem = document.createElement('link');
+    /*const linkElem = document.createElement('link');
     linkElem.setAttribute('rel', 'stylesheet');
     linkElem.setAttribute('href', '/site/style/css/breadcrumbTrail.css');
-    this.shadowRoot.appendChild(linkElem);
+    this.shadowRoot.appendChild(linkElem);*/
 
     //Add HTML elements making the breadcrumb trail
     const container = document.createElement('breadcrumbTrailContainer');
     container.innerHTML = breadcrumbStruct();
-    this.shadowRoot.appendChild(container);
+    // this.shadowRoot.appendChild(style, container);
+    this.shadowRoot.append(breadcrumbStyle(), container);
   }
 
   /* Register which attributes to watch for changes */
