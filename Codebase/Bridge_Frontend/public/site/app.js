@@ -11,8 +11,6 @@ import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
 
 import Model from './Model.js';
 
-//Launch the static server: sudo http-server ./public/ -p 85 -c-1
-
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
 const router = async () => {
@@ -115,12 +113,15 @@ Model.isMigDataFilled = function(){
 
   if(migData.originUniverseUniqueId &&
     migData.originWorld &&
+    !(migData.originWorld.includes(' ')) &&
     migData.originTokenId &&
+    !(migData.originTokenId.includes(' ')) &&
     migData.destinationUniverseUniqueId &&
     migData.migrationType &&
     migData.destinationWorld &&
     parseInt(migData.destinationTokenId) &&
-    migData.destinationOwner){
+    migData.destinationOwner &&
+    !(migData.destinationOwner.includes(' '))){
     return true;
   }else{
     return false;
