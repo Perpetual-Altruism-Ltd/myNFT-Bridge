@@ -1,0 +1,46 @@
+/* WHENEVER YOU MODIFY THIS FILE, ALWAYS REFRESH THE breadcrumbStyle() FUNCTION IN nftCollection.js FILE.
+THIS CSS IS NOT USED ANYWHERE ELSE THAN IN THE FILE nftCollection.js;
+THIS FILE'S ONLY PURPOSE IS TO HAVE A SYNTAX COLORATION FOR CSS.
+Loading the CSS directly in the .js file resolve the issue of Flash Of Unstyled Content (FOUC) at the loading stage of the page
+
+*/
+.NFTCollectionContainer{
+  width: 100%;
+  height: 20em;
+  overflow: hidden;
+  /* Border */
+  border-color: #333;
+  border-style: solid;
+  border-width: 2px;
+  border-radius: 1em;
+
+  /* background */
+  background-color: #ddd;
+}
+.SlideButtonsContainer{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  height: 100%;
+}
+.SlideButton{
+
+  height: 100%;
+  width: 0.5em;
+  opacity: 0.5;
+
+  font-size: 3em;
+  font-weight: bold;
+
+  /* Flex */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.LeftButton{
+}
+.RightButton{
+}
