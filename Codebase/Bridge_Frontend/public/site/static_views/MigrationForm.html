@@ -25,12 +25,19 @@
   <!-- NFT Collection card -->
   <div class="Card" id="NFTCollectionCard">
     <nft-collection id="NFTCollectionComponent">
-      <h3 slot="NFTElement">SALUUTE</h3>
-      <h3 slot="NFTElement">OH Really?</h3>
     </nft-collection>
   </div>
 
-  <nft-card on-mintiou-click='mintPrefillTest()' name="Cool stuff" is-iou="true" imgsrc="https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png"></nft-card>
+  <div id="NFTCardContainer">
+    <nft-card universe="0x07dac20e"
+        world="0xf2E02E4ee09428755C78658a636B31a289d772B6"
+        tokenid="308"
+        name="Cool stuff"
+        is-iou="true"
+        original-token-universe="0xee0bec75"
+        imgsrc="https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png">
+    </nft-card>
+  </div>
 
   <!-- Departure card -->
   <div class="Card" id="DepartureCard">

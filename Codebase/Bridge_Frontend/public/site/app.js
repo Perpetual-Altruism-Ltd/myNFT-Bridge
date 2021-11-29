@@ -121,6 +121,7 @@ Model.isMigDataFilled = function(){
     !(migData.originWorld.includes(' ')) &&
     migData.originTokenId &&
     !(migData.originTokenId.includes(' ')) &&
+    migData.migrationRelay &&
     migData.destinationUniverseUniqueId &&
     migData.migrationType &&
     migData.destinationWorld &&

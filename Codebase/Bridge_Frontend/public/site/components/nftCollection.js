@@ -13,15 +13,17 @@ To use it: 2 steps
 const nftCollectionStruct = () => {
   let htmlContent = {};
   htmlContent.innerHTML = `
-  <div class="NFTCollectionContainer">
+  <div class="NFTCollectionComponent">
+  <!--Navigation buttons -->
     <div class="SlideButtonsContainer">
-      <!--Navigation buttons -->
       <div class="SlideButton LeftButton">&#8249;</div>
       <div class="SlideButton RightButton">&#8250;</div>
     </div>
 
     <!--Tokens cards -->
-    <slot name="NFTElement">No NFT found</slot>
+    <div class="CollectionContainer">
+      <slot name="NFTElement">No NFT found</slot>
+    </div>
 
   </div>`;
   return htmlContent.innerHTML;/* Using htmlContent variable is to have the synthax coloration for HTML*/
@@ -29,7 +31,7 @@ const nftCollectionStruct = () => {
 
 const nftCollectionStyle = () => {
   let cssStyle = document.createElement('style');
-  cssStyle.textContent = `.NFTCollectionContainer{
+  cssStyle.textContent = `.NFTCollectionComponent{
     width: 100%;
     height: 20em;
     overflow: hidden;
@@ -44,8 +46,15 @@ const nftCollectionStyle = () => {
     /* background */
     background-color: #fff;
   }
+  .CollectionContainer{
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    z-index: 0;
+  }
   .SlideButtonsContainer{
     position: absolute;
+    z-index: 1;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

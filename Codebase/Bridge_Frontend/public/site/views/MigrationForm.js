@@ -512,6 +512,19 @@ export default class extends AbstractView {
 
                         //Show network hint to redeem IOU
                         displayRedeemNetworkHintMsg(true);
+
+                        //If user clicked redeem from nft card, prefill dest form fields
+                        if(window.prefillRedeemForm){
+                          //select dest network
+                          selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.metadataDestinationUniverseUniqueId);
+                          triggerDropDownOnChange("DestinationNetworkSelector");
+
+                          //Click redeem btn
+                          document.getElementById("RedeemButton").click();
+
+                          //Unset prefillRedeemForm for next time
+                          window.prefillRedeemForm = false;
+                        }
                       }
                       else{
                         //Hide redeem network hint as token is not an IOU
@@ -676,6 +689,21 @@ export default class extends AbstractView {
       return isERC721;
     }
 
+    //=====NFT Collection=====
+    let addNFTToCollection = function(){
+      let cont = document.getElementById("NFTCollectionComponent");
+      let newNftCard = document.createElement("nft-card");
+      newNftCard.setAttribute('slot', "NFTElement");
+      newNftCard.setAttribute('origin-universe', "0x07dac20e");
+      newNftCard.setAttribute('origin-world', "0xCDD05c5881D2E234D651472a95c86691F4f25dE9");
+      newNftCard.setAttribute('origin-tokenid', "3");
+      newNftCard.setAttribute('name', "Yeyy, add from js");
+      newNftCard.setAttribute('is-iou', "false");
+      newNftCard.setAttribute('imgsrc', "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png");
+
+      cont.appendChild(newNftCard);
+    }
+
     //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
     //And display it into dropDown.
@@ -830,6 +858,17 @@ export default class extends AbstractView {
           }
         }
       }
+
+      //Retrieve NFT collection of user
+      //TODO
+      console.log("----TODO---ADDING NFT");
+      addNFTToCollection();
+      addNFTToCollection();
+      addNFTToCollection();
+      addNFTToCollection();
+      addNFTToCollection();
+      addNFTToCollection();
+      addNFTToCollection();
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {
@@ -898,7 +937,7 @@ export default class extends AbstractView {
       disableRedeemBtn(true);
 
       //Unselect relay
-      unselectDropDown("RelaySelector");
+      unselectRelaySelector();
 
       //Reset dest token ID
       setDestinationTokenId("");
@@ -1207,6 +1246,11 @@ export default class extends AbstractView {
       //Finally show the text explaining the migration type
       showMigrationTypeDescription(true, migType);
     }
+    let unselectRelaySelector = function(){
+      migData.migrationRelayIndex = 0;
+      migData.migrationRelay = ""
+      unselectDropDown("RelaySelector");
+    }
 
     //=====Data display=====
     //These functions make sure the value displayed is always the same as the variable in migData
@@ -1425,9 +1469,6 @@ export default class extends AbstractView {
 
       //Reset migration buttons. Unselect the previously selected button.
       unselectMigrationButtons();
-      //Clear drop downs
-      //clearDropDownOptions("RelaySelector");
-      //load available relay from network_list and relay_list
 
       //HIDE form fields further than one step from dest network drop down
       showFormFieldsAfterMigButtons(false);
@@ -1582,7 +1623,7 @@ export default class extends AbstractView {
       //Reset previous migData destination var
       setDestinationTokenId("");
       //Unselect relay dropdown
-      unselectDropDown("RelaySelector");
+      unselectRelaySelector();
 
       //Display next form field: relay drop down
       showCardLine("MigrationRelayCardLine", true);
