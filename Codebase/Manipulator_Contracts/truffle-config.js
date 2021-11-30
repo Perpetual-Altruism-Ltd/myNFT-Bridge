@@ -61,7 +61,7 @@ module.exports = {
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
     ganache: {
-      provider: () => new HDWalletProvider('63709557aadad9f519387e3c9d216797e032ca2b396f596841db10216ad701ae', `HTTP://127.0.0.1:7545`),
+      provider: () => new HDWalletProvider('0x371818f8c050486e61cea174551308f731019811382e6c6a9e625be739ef0694', `http://127.0.0.1:8545`),
       network_id: 5777,       // Rinkeby's id
       gas: 6721975,        // Rinkeby has a lower block limit than mainnet
       confirmations: 0,    // # of confs to wait between deployments. (default: 0)
