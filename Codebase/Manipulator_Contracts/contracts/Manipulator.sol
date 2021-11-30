@@ -143,7 +143,7 @@ contract Manipulator is MemoryStructure {
 
     */
 
-    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _delegate) external onlyOwnerOrOperator {
+    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _contractAddress) external onlyOwnerOrOperator {
         bytes4 signature = bytes4(keccak256("migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)"));
 
         assembly{
@@ -154,7 +154,7 @@ contract Manipulator is MemoryStructure {
             mstore(add(ptr, 0x164), sub(_data.length, 0x140)) // State size of byte variable
             calldatacopy(add(ptr, 0x184), add(_data.offset, 0x140), sub(_data.length, 0x140)) // Add byte variable to ptr
             
-            let result := call(gas(), _delegate, 0, ptr, add(0x184, sub(_data.length, 0x140)), ptr, 0x20) // Call child function
+            let result := call(gas(), _contractAddress, 0, ptr, add(0x184, sub(_data.length, 0x140)), ptr, 0x20) // Call child function
             
             if iszero(result) { revert(ptr, add(0x184, sub(_data.length, 0x140))) } // If result is zero, revert
         }
