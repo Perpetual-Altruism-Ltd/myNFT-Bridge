@@ -3,13 +3,15 @@ Just launch this server with an appropriate conf to allow users to migrate their
 # World address
 Sidechain test (ERC2665): 0xD277FCd0e8199b61eE9Edb87e876dA2D8B6252aF
 Mainnet (ERC2665): 0x60e31A1a38213Ec3Ba1C7345EA49C8b57f7bA4D7
-Rinkeby: 0x34797AaF0848b0f495cE413e551335362bc793eD (ImplTestERC721)
+Rinkeby: 0xCDD05c5881D2E234D651472a95c86691F4f25dE9 (ImplTestERC721 cryptograph.com)
+  0x34797AaF0848b0f495cE413e551335362bc793eD (ImplTestERC721 cryptograph.co)
   0xf2E02E4ee09428755C78658a636B31a289d772B6 (IOUExemple)
 
 
-Kovan: 0x3551bc5fA3333937A8c555c66640141b432d63B0 (ImplTestERC721)
+Kovan: 0x27C9c55b44656c13A4F5224F55cB22050F9c1712 (ImplTestERC721 cry.com)
+      0x3551bc5fA3333937A8c555c66640141b432d63B0 (ImplTestERC721)
       0x237546f0f89f7ebb72283a42b125608d67fbae03 (ImplTestERC721)
-  0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd (IOUExemple)
+  0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd (IOUExemple) 0x3c1f63bdb0ea3fb6d5cf06195bfd7c48a29eddbd
   0x78b1297c4ce735f26b5727a3e8786a206b057b54 (IOUExmpl)
 
 Contract addresses updated the 4/11/2021
@@ -46,7 +48,8 @@ IOUExample: 0x54938238682d260FF09759944510F6c0139452b6
 
 # Some tokenURI
 ### Video, mp4
-https://www.cryptograph.co/tokenuri/0xD0d0649aFd4B5459f966bb28083A66DE3C5B1AD3
+https://www.cryptograph.com/tokenuri/0xD0d0649aFd4B5459f966bb28083A66DE3C5B1AD3
   tok 291 on 0xf2E02E4ee09428755C78658a636B31a289d772B6
-https://cryptograph.co/tokenuri/0xa0ecc4a6d30efe90f151f30cba3010148019cb0e
+https://cryptograph.com/tokenuri/0xa0ecc4a6d30efe90f151f30cba3010148019cb0e
   292 om 0xf2E0
+https://cryptograph.com/tokenuri/0xbC8105823BF52DD8a11E4e94D62b8883BFbec985 (Rabbit)

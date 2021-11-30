@@ -252,7 +252,7 @@ contract ImplTestERC721 is ERC721 {
     ///  Metadata JSON Schema".
     function tokenURI(uint256 _tokenId) external view returns(string memory){
         require(tokenOwners[_tokenId] != address(0), "This token is not minted");
-        return string(abi.encodePacked("https://cryptograph.co/tokenuri/0x2449835e86a539ab33f5773729c0db42e89016ff"));
+        return string(abi.encodePacked("https://cryptograph.com/tokenuri/0xbC8105823BF52DD8a11E4e94D62b8883BFbec985"));
     }
     
     /// @notice Query if a contract implements an interface

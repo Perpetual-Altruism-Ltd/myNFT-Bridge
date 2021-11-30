@@ -68,6 +68,7 @@ module.exports = {
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },    
+    //Julio pvKey: d4727bbc1d06be9363d5caf0bae5dad26dabe55d3ad1a6c368d3794d36920f09
     rinkeby: {
       provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://rinkeby.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
       network_id: 4,       // Rinkeby's id
