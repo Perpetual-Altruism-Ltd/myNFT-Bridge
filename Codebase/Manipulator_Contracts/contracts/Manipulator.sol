@@ -143,7 +143,7 @@ contract Manipulator is MemoryStructure {
 
     */
 
-    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _delegate) external {
+    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _delegate) external onlyOwnerOrOperator {
         bytes4 signature = bytes4(keccak256("migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)"));
 
         assembly{
