@@ -65,7 +65,7 @@ class Client {
                 throw 'Undefined migrationHash'
             this.migrationHash = migrationHash
             this.blockTimestamp = blockTimestamp
-            
+
             this.dbObject.migrationHash = this.migrationHash
             this.dbObject.blockTimestamp = this.blockTimestamp
             await this.dbObject.save()
@@ -96,7 +96,7 @@ class Client {
 
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
         const IOUMetadataUrl = await (new Forge(this.db)).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
-        
+
         await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
 
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
@@ -145,7 +145,7 @@ class Client {
         this.step = 'updateEscrowHash'
         this.dbObject.step = this.step
         await this.dbObject.save()
-        
+
         if(this.migrationHash) {
             this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.originUniverse.bridgeAdress, this.migrationHash);
             this.dbObject.escrowHash = this.escrowHash

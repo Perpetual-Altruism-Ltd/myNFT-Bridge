@@ -171,7 +171,7 @@ export default class extends AbstractView {
     }
 
     //If migration successful, display link to tokenURI
-    if(model.destinationTokenTransfertTxHash){
+    if(model.destinationTokenTransfertTxHash && areDestTokenDataFilled()){
       getTokenURI();
     }else {
       let tokenURIContainer = document.getElementById("TokenURIContainer");
