@@ -690,16 +690,17 @@ export default class extends AbstractView {
     }
 
     //=====NFT Collection=====
-    let addNFTToCollection = function(){
-      let cont = document.getElementById("NFTCollectionComponent");
+    //Universe is the uniqueId
+    let addNFTToCollection = function(name, universe, world, tokenId, isIOU, imgSrc){
+      let cont = document.getElementById("NFTCollectionCustomComponent");
       let newNftCard = document.createElement("nft-card");
       newNftCard.setAttribute('slot', "NFTElement");
-      newNftCard.setAttribute('origin-universe', "0x07dac20e");
-      newNftCard.setAttribute('origin-world', "0xCDD05c5881D2E234D651472a95c86691F4f25dE9");
-      newNftCard.setAttribute('origin-tokenid', "3");
-      newNftCard.setAttribute('name', "Yeyy, add from js");
-      newNftCard.setAttribute('is-iou', "false");
-      newNftCard.setAttribute('imgsrc', "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png");
+      newNftCard.setAttribute('name', name);
+      newNftCard.setAttribute('universe', universe);
+      newNftCard.setAttribute('world', world);
+      newNftCard.setAttribute('tokenid', tokenId);
+      newNftCard.setAttribute('is-iou', isIOU);
+      newNftCard.setAttribute('imgsrc', imgSrc);
 
       cont.appendChild(newNftCard);
     }
@@ -862,13 +863,26 @@ export default class extends AbstractView {
       //Retrieve NFT collection of user
       //TODO
       console.log("----TODO---ADDING NFT");
-      addNFTToCollection();
-      addNFTToCollection();
-      addNFTToCollection();
-      addNFTToCollection();
-      addNFTToCollection();
-      addNFTToCollection();
-      addNFTToCollection();
+      addNFTToCollection("Yeyy",
+        "0x07dac20e",
+        "0xCDD05c5881D2E234D651472a95c86691F4f25dE9",
+        "1",
+        false,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png");
+      addNFTToCollection("Rabbbit in a rabbit hole",
+        "0xee0bec75",
+        "0x27C9c55b44656c13A4F5224F55cB22050F9c1712",
+        "1",
+        false,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Erika-Christensen-Rabbit/Cryptograph.png");
+      addNFTToCollection("Mat",
+        "0x07dac20e",
+        "0xf2E02E4ee09428755C78658a636B31a289d772B6",
+        "300",
+        true,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");
+
+
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {

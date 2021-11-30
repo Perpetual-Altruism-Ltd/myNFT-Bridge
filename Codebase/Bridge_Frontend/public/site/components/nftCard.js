@@ -15,9 +15,12 @@ const nftCardStruct = () => {
   let htmlContent = {};
   htmlContent.innerHTML = `
   <div class="NFTCardContainer">
-    <img class="NFTImage"></img>
-    <div class="ControlContainer">
+    <div>
+      <img class="NFTImage">
       <div class="NFTNameText"></div>
+    </div>
+
+    <div class="ControlContainer">
       <button class="Button ColoredButton MintIOUButton">Mint IOU (Prefill)</button>
       <button class="Button ColoredButton RedeemIOUButton">Redeem IOU (Prefill)</button>
     </div>
@@ -28,10 +31,20 @@ const nftCardStruct = () => {
 const nftCardStyle = () => {
   let cssStyle = document.createElement('style');
   cssStyle.textContent = `
+  *{
+    box-sizing: border-box;
+  }
   .NFTCardContainer{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
     width: 10vw;
-    height: 100%;
-    overflow: hidden;
+    height: calc(100% - 1em);
+    overflow-y: auto;
+    overflow-x: hidden;
     margin: 0.5em;
 
     /* Border */
@@ -48,15 +61,16 @@ const nftCardStyle = () => {
     flex-direction: column;
     justify-content: center;
     gap: 0.5em; 0em;
-    margin-bottom: 0.5em;
+    margin-bottom: 1em;
   }
   .NFTImage{
-    width: 10vw;
-    height: 10vw;
+    width: 100%;
+    height: auto;
   }
   .NFTNameText{
     text-align: center;
     word-break: break-word;
+    margin-top: 1em;
     margin-bottom: 1em;
   }
   .Button{
@@ -172,7 +186,7 @@ class NFTCard extends HTMLElement {
 
   /* Register which attributes to watch for changes */
   static get observedAttributes() {
-    return ['name', 'imgsrc', 'is-iou', 'universe', 'world', 'tokenid', 'original-token-universe'];
+    return ['name', 'imgsrc', 'is-iou', 'universe', 'world', 'tokenid'];
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
@@ -203,10 +217,6 @@ class NFTCard extends HTMLElement {
     }
     else if(attrName == 'tokenid'){
       this.tokenId = newVal;
-    }
-    //This attribute is relevent only if the token is an IOU
-    else if(attrName == 'original-token-universe'){
-      this.originalTokenUniv = newVal;
     }
   }
 }

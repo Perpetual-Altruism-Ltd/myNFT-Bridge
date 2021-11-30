@@ -16,12 +16,12 @@ const nftCollectionStruct = () => {
   <div class="NFTCollectionComponent">
   <!--Navigation buttons -->
     <div class="SlideButtonsContainer">
-      <div class="SlideButton LeftButton">&#8249;</div>
-      <div class="SlideButton RightButton">&#8250;</div>
+      <button class="SlideButton LeftButton">&#8249;</button>
+      <button class="SlideButton RightButton">&#8250;</button>
     </div>
 
     <!--Tokens cards -->
-    <div class="CollectionContainer">
+    <div class="CollectionContainer" style="left:0em;">
       <slot name="NFTElement">No NFT found</slot>
     </div>
 
@@ -51,10 +51,14 @@ const nftCollectionStyle = () => {
     display: flex;
     flex-direction: row;
     z-index: 0;
+    height: 100%;
+
+    -webkit-transition: left .25s ease;
+    -moz-transition: left .25s ease;
+    transition: left .25s ease;
   }
   .SlideButtonsContainer{
     position: absolute;
-    z-index: 1;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -67,23 +71,32 @@ const nftCollectionStyle = () => {
     height: 100%;
     width: 0.5em;
     opacity: 0.5;
+    color: #12132b;
 
     font-size: 3em;
     font-weight: bold;
     cursor: pointer;
+    border: none;
 
     /* Flex, center arrow vertic */
     display: flex;
+    z-index: 1;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
+  .SlideButton:hover{
+    opacity: 0.6;
+  }
+  .SlideButton:active{
+    opacity: 0.7;
+  }
   .LeftButton{
-    background-image: linear-gradient(to right, #aaa 0%, #fff 100%);
+    background-image: linear-gradient(to right, #000 0%, #fff 100%);
     left: 0;
   }
   .RightButton{
-    background-image: linear-gradient(to right, #fff 0%, #aaa 100%);
+    background-image: linear-gradient(to right, #fff 0%, #000 100%);
     right: 0;
   }
 `;
@@ -103,11 +116,49 @@ class NFTCollection extends HTMLElement {
     linkElem.setAttribute('href', '/site/style/css/breadcrumbTrail.css');
     this.shadowRoot.appendChild(linkElem);*/
 
-    //Add HTML elements making the breadcrumb trail
     const container = document.createElement('nftCollectionContainer');
     container.innerHTML = nftCollectionStruct();
     // this.shadowRoot.appendChild(style, container);
     this.shadowRoot.append(nftCollectionStyle(), container);
+
+    //Handle click events for sliders
+    let shRoot = this.shadowRoot;
+    //init style for offset of CollectionContainer
+    this.shadowRoot.querySelector(".LeftButton").addEventListener('click', function(){
+      //Get & increment left offset
+      let collecContainer = shRoot.querySelector(".CollectionContainer");
+      let currentOffset = getComputedStyle(collecContainer).left;
+      currentOffset = (currentOffset == "" ? '0' : parseInt(currentOffset));//Initialisation
+
+      //Calc of new offset (+20vw = 2 cards)
+      let maxLeftOffset = 0;
+      let offsetInPx = document.documentElement.clientWidth * 20 / 100;
+      let newLeftOffset = currentOffset + offsetInPx;
+      newLeftOffset = newLeftOffset > maxLeftOffset ? 0 : newLeftOffset;
+
+      //Apply new offset, corrected if go beyond border
+      collecContainer.style.left = newLeftOffset + 'px';
+    })
+    this.shadowRoot.querySelector(".RightButton").addEventListener('click', function(){
+      //Get & increment left offset
+      let collecContainer = shRoot.querySelector(".CollectionContainer");
+      let currentOffset = getComputedStyle(collecContainer).left;
+      currentOffset = (currentOffset == "" ? '0' : parseInt(currentOffset));//Initialisation
+
+      //Calcul of min offset
+      let collectionViewCompo = shRoot.querySelector(".NFTCollectionComponent");
+      let collecViewWidth = parseInt(getComputedStyle(collectionViewCompo).width);
+      let fullCollecWidth = parseInt(getComputedStyle(collecContainer).width);
+      let minLeftOffset = -(fullCollecWidth - collecViewWidth);
+
+      //Calc of new offset (+20vw = 2 cards)
+      let offsetInPx = document.documentElement.clientWidth * 20 / 100;
+      let newLeftOffset = currentOffset - offsetInPx;
+      newLeftOffset = newLeftOffset < minLeftOffset ? minLeftOffset : newLeftOffset;
+
+      //Apply new offset, corrected if go beyond border
+      collecContainer.style.left = newLeftOffset + 'px';
+    })
   }
 
   /* Register which attributes to watch for changes */
