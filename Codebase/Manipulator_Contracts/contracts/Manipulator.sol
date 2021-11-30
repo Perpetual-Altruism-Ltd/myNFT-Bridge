@@ -77,11 +77,11 @@ contract Manipulator is MemoryStructure {
     *   Manipulate a bridge
     */
 
-    function getProofOfEscrowHash(bytes32 _migrationHash, address _contractAddress) external onlyOwnerOrOperator returns (string memory){
+    function getProofOfEscrowHash(bytes32 _migrationHash, address _contractAddress) external onlyOwnerOrOperator returns (bytes32){
         bytes memory payload = abi.encodeWithSignature("getProofOfEscrowHash(bytes32)", _migrationHash);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
-        return abi.decode(result, (string));
+        return abi.decode(result, (bytes32));
     }
 
     function migrateToERC721IOU(
@@ -95,20 +95,24 @@ contract Manipulator is MemoryStructure {
         , bytes32 _signee
         , address _contractAddress
         ) external onlyOwnerOrOperator returns (string memory){
-        bytes memory payload = abi.encodeWithSignature(
-            "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)"
-            , _originWorld
-            , _originTokenId
-            , _destinationUniverse
-            , _destinationBridge
-            , _destinationWorld
-            , _destinationTokenId
-            , _destinationOwner
-            , _signee
-        );
-        (bool success, bytes memory result) = _contractAddress.call(payload);
-        if(!success) revert("Call of child contract failed");
-        return abi.decode(result, (string));
+        bytes4 signature = bytes4(keccak256("migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)"));
+
+        assembly{
+            let ptr := mload(0x40) // Loading a free memory pointer
+            mstore(ptr, signature) // Adding signature hash to ptr
+            mstore(add(ptr, 0x04), _originWorld)
+            mstore(add(ptr, 0x24), _originTokenId)
+            mstore(add(ptr, 0x44), _destinationUniverse)
+            mstore(add(ptr, 0x64), _destinationBridge)
+            mstore(add(ptr, 0x84), _destinationWorld)
+            mstore(add(ptr, 0xa4), _destinationTokenId)
+            mstore(add(ptr, 0xc4), _destinationOwner)
+            mstore(add(ptr, 0xe4), _signee)
+            
+            let result := call(gas(), _contractAddress, 0, ptr, 0x104, 0, 0) // Call child function
+            
+            if iszero(result) { revert(ptr, 0x104) } // If result is zero, revert
+        }
     }
 
     function registerEscrowHashSignature(

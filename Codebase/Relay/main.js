@@ -50,7 +50,7 @@ const main = async () => {
                     })
                     if(premintedTokens.length < 2){
                         try{
-                            const tokenId = await ethereum.premintToken(world.address, universe.bridgeAdress)
+                            const tokenId = await ethereum.premintToken(universe.manipulatorAddress, world.address, universe.bridgeAdress)
                             await (new db.models.premintedTokens({
                                 tokenId
                                 , universe: universe.uniqueId
@@ -509,7 +509,7 @@ const main = async () => {
             const ethereum = universesRpc[universe.uniqueId];
             //Check if input contract is ERC721
             if(await ethereum.isErc721(req.body.world)){
-              let uri = await ethereum.getTokenUri(req.body.world, req.body.tokenId);
+              let uri = await ethereum.getTokenUri(universe.manipulatorAddress, req.body.world, req.body.tokenId);
               return res.json({ "tokenUri" : uri });
             }else{
               res.status(400)

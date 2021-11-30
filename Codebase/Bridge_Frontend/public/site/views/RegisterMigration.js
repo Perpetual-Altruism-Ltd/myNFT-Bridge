@@ -84,7 +84,7 @@ export default class extends AbstractView {
     let grantRelayOperatorPrivilege = async function(){
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
-        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
+        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].manipulatorAddress;
         let originTokenId = parseInt(migData.originTokenId);
         console.log("Ask user " + userAccount + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 

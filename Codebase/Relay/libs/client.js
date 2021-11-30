@@ -58,6 +58,7 @@ class Client {
         try {
             Logger.info(`Announcing to bridge the intent to migrate a token`)
             const { migrationHash, blockTimestamp } = await this.originEthereumConnection.migrateToERC721IOU(
+                this.originUniverse.manipulatorAddress,
                 this.originUniverse.bridgeAdress,
                 this.migrationData
             )
@@ -82,6 +83,7 @@ class Client {
         this.migrationHashSignature = migrationHashSignature
         const owner = await this.originEthereumConnection.verifySignature(this.migrationHash, migrationHashSignature)
         await this.originEthereumConnection.safeTransferFrom(
+            this.originUniverse.manipulatorAddress,
             this.migrationData.originWorld,
             owner,
             this.originUniverse.bridgeAdress,
@@ -94,12 +96,14 @@ class Client {
         this.dbObject.step = this.step
         await this.dbObject.save()
 
-        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.migrationData.originWorld, this.migrationData.originTokenId)
+        this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.originUniverse.manipulatorAddress, this.migrationData.originWorld, this.migrationData.originTokenId)
+        console.log("this.originalTokenUri", this.originalTokenUri)
         const IOUMetadataUrl = await (new Forge(this.db)).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
 
-        await this.destinationEthereumConnection.setTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
+        await this.destinationEthereumConnection.setTokenUri(this.destinationUniverse.manipulatorAddress, this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
 
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
+            this.originUniverse.manipulatorAddress,
             this.originUniverse.bridgeAdress,
             this.migrationData,
             this.migrationHashSignature,
@@ -126,6 +130,7 @@ class Client {
         await this.dbObject.save()
 
         await this.originEthereumConnection.registerEscrowHashSignature(
+            this.originUniverse.manipulatorAddress,
             this.originUniverse.bridgeAdress,
             this.migrationHash,
             escrowHashSigned)
@@ -147,7 +152,11 @@ class Client {
         await this.dbObject.save()
 
         if(this.migrationHash) {
-            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(this.originUniverse.bridgeAdress, this.migrationHash);
+            this.escrowHash = await this.originEthereumConnection.getProofOfEscrowHash(
+                this.originUniverse.manipulatorAddress
+                , this.originUniverse.bridgeAdress
+                , this.migrationHash
+            );
             this.dbObject.escrowHash = this.escrowHash
             await this.dbObject.save()
         } else {
@@ -170,7 +179,7 @@ class Client {
     }
 
     async getDestinationTokenUri(){
-        return await this.destinationEthereumConnection.getTokenUri(this.migrationData.destinationWorld, this.migrationData.destinationTokenId)
+        return await this.destinationEthereumConnection.getTokenUri(this.destinationUniverse.manipulatorAddress, this.migrationData.destinationWorld, this.migrationData.destinationTokenId)
     }
 
 }
