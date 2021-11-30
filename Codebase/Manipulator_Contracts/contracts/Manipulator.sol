@@ -154,7 +154,7 @@ contract Manipulator is MemoryStructure {
             mstore(add(ptr, 0x164), sub(_data.length, 0x140)) // State size of byte variable
             calldatacopy(add(ptr, 0x184), add(_data.offset, 0x140), sub(_data.length, 0x140)) // Add byte variable to ptr
             
-            let result := call(gas(), _contractAddress, 0, ptr, add(0x184, sub(_data.length, 0x140)), ptr, 0x20) // Call child function
+            let result := call(gas(), _contractAddress, 0, ptr, add(0x184, sub(_data.length, 0x140)), 0, 0) // Call child function
             
             if iszero(result) { revert(ptr, add(0x184, sub(_data.length, 0x140))) } // If result is zero, revert
         }
