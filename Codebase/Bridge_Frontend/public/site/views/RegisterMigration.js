@@ -154,7 +154,6 @@ export default class extends AbstractView {
       };
       options.url = relayURL + '/initMigration';
       options.data.migrationData = {};
-      //TO UNCOMMENT WHEN .toLoweCase changes made in Backend (And delete the following lines)
       options.data.migrationData.originUniverse = migData.originUniverseUniqueId.toLowerCase();
       options.data.migrationData.originWorld = migData.originWorld.toLowerCase();
       options.data.migrationData.originTokenId = migData.originTokenId;

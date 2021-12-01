@@ -149,12 +149,6 @@ class NFTCard extends HTMLElement {
     linkElem.setAttribute('href', '/site/style/css/nftCard.css');
     this.shadowRoot.appendChild(linkElem);*/
 
-    //Add custom dropdown handler
-    var cdd = document.createElement("script");
-  	cdd.setAttribute("type","text/javascript");
-  	cdd.setAttribute("src","./customDropDownHandler.js");
-  	document.body.appendChild(cdd);
-
     //Add HTML elements making the breadcrumb trail
     const container = document.createElement('nftCardContainer');
     container.innerHTML = nftCardStruct();

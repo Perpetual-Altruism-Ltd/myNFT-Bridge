@@ -184,6 +184,14 @@ export default class extends AbstractView {
       model.navigateTo("/migration_form");
     });
     document.getElementById("AddTokenWalletButton").addEventListener('click', async() =>{
+      //Prevent double clicks
+      //Check if button not already selected
+      if(this.classList.contains("Selected")){console.log("Button already clicked.");return;}
+
+      //Select button
+      //We can use 'this' inside the event listener, AND IF NON ARROW function (=>)
+      this.classList.add('Selected');
+
       //Prompt user to add the dest token to his wallet
       if(areDestTokenDataFilled()){
         promptSwitchDestChainAndAddToken(migData.destinationNetworkId);

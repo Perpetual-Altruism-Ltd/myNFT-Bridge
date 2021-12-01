@@ -704,6 +704,64 @@ export default class extends AbstractView {
 
       cont.appendChild(newNftCard);
     }
+    //Retrieve the Mathom API key from frontend's server
+    let getApiCredential = async function(){
+      let pathApiKeyJson = '/api_credential.json';
+      var options = {
+        method: 'GET',
+        url: pathApiKeyJson,
+        headers: {'Content-Type': 'application/json'}
+      };
+
+      try{
+        let response = await axios.request(options);
+        if(response.status == 200){
+          return response.data.mathom.key;
+        }else{
+          console.log(response.status + ' : ' + response.statusText);
+          return '';
+        }
+      }catch(error){
+        console.error(error);
+        return '';
+      }
+    }
+    let fetchUserNFTCollection = async function(){
+      //Refresh user account addr
+      refreshConnectedAccount();
+
+      //Retrieve api credential key from frontend's server
+      let apiKey = await getApiCredential();
+      console.log('Mathom API key: ' + apiKey);
+
+      let apiUrl = 'https://mathomhouse.mynft.com';
+      var options = {
+        method: 'GET',
+        url: apiUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
+        headers: {'Content-Type': 'application/json'}
+      };
+      console.log(options);
+
+      //Sent request to mathom, to get list of NFT of the user
+      try{
+        let response = await axios.request(options)
+        if(response.status == 200){
+          let nftList = response.data;
+          for(let nft of nftList){
+            let mdata = nft.metadata;
+            //Determine weather this nft is an IOU
+            let isIOU = isIOUToken(mdata);
+
+            //Add nft to nft collection
+            addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+          }
+        }else{
+          console.log(response.status + ' : ' + response.statusText);
+        }
+      }catch(err){
+        console.error(error);
+      }
+    }
 
     //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
@@ -881,7 +939,7 @@ export default class extends AbstractView {
         "300",
         true,
         "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");
-
+      fetchUserNFTCollection();
 
     }
     //autoconnect to metamask if injected
