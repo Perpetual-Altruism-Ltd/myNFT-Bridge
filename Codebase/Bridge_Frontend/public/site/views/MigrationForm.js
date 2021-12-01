@@ -1736,8 +1736,7 @@ export default class extends AbstractView {
     }
     else if(model.isProviderLoaded()){
       console.log("Westron already loaded, perfect.");
-      //Display connected addr + ogNet & prefill it
-      displayConnectedWallet();
+      //displayConnectedWallet will be called when relays & networks are loaded from networks_list.json
     }
     //If metamask available: autoconnect without redirecting to connection page.
     else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {

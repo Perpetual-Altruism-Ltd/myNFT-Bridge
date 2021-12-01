@@ -21,8 +21,8 @@ const nftCardStruct = () => {
     </div>
 
     <div class="ControlContainer">
-      <button class="Button ColoredButton MintIOUButton">Mint IOU (Prefill)</button>
-      <button class="Button ColoredButton RedeemIOUButton">Redeem IOU (Prefill)</button>
+      <button class="Button ColoredButton MintIOUButton">Mint IOU</button>
+      <button class="Button ColoredButton RedeemIOUButton">Redeem IOU</button>
     </div>
   </div>`;
   return htmlContent.innerHTML;/* Using htmlContent variable is to have the synthax coloration for HTML*/
@@ -190,7 +190,6 @@ class NFTCard extends HTMLElement {
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
-    console.log("attributeChangedCallback " + attrName + ', ' + oldVal + ', ' + newVal);
     //NFT NAME
     if(attrName == 'name'){
       let nameElem = this.shadowRoot.querySelector(".NFTNameText");

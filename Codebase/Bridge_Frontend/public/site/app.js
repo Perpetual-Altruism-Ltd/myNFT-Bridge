@@ -141,7 +141,10 @@ Model.isProviderLoaded = function(){
     return userAccount != "" && window.web3.eth != undefined;
   }else{return false;}
 }
-Model.bcTrail = new BreadcrumbTrail();
+Model.displayConnectedWallet = function(){
+  console.log("DISPLAY");
+}
+//TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();
 
