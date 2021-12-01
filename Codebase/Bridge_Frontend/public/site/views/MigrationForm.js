@@ -716,7 +716,7 @@ export default class extends AbstractView {
       try{
         let response = await axios.request(options);
         if(response.status == 200){
-          return response.data.mathom.key;
+          return response.data;
         }else{
           console.log(response.status + ' : ' + response.statusText);
           return '';
@@ -731,16 +731,17 @@ export default class extends AbstractView {
       refreshConnectedAccount();
 
       //Retrieve api credential key from frontend's server
-      let apiKey = await getApiCredential();
-      console.log('Mathom API key: ' + apiKey);
+      let apiData = await getApiCredential();
+      let mathomAPIKey = apiData.mathom.key;
+      let mathomAIPUrl = apiData.mathom.url;
+      console.log('Mathom API key: ' + mathomAPIKey);
 
       let apiUrl = 'https://mathomhouse.mynft.com';
       var options = {
         method: 'GET',
-        url: apiUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
+        url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
         headers: {'Content-Type': 'application/json'}
       };
-      console.log(options);
 
       //Sent request to mathom, to get list of NFT of the user
       try{
@@ -758,7 +759,7 @@ export default class extends AbstractView {
         }else{
           console.log(response.status + ' : ' + response.statusText);
         }
-      }catch(err){
+      }catch(error){
         console.error(error);
       }
     }
@@ -1187,7 +1188,7 @@ export default class extends AbstractView {
         break;
 
         case model.RedeemIOUMigrationType:
-          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU will give you back the NFT it represent on the destination chain.";
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU will give you back the token it represents on the destination chain.";
         break;
 
         case "":
