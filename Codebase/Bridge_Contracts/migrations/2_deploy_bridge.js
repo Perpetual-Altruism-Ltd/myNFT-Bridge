@@ -43,7 +43,9 @@ module.exports = async(deployer, network, accounts) => {
     );
     let instancedInit = await ImplMyNFTBridgeFunInit.at(ImplTransparentProxy.address);
     //await instancedInit.init("0x8b3528a8"); //  GANACHE Replace localhost with whatever you are deploying on
-    await instancedInit.init("0x07dac20e"); //  RINKEBY
+    //await instancedInit.init("0x07dac20e"); //  RINKEBY
+    //await instancedInit.init("0xee0bec75"); // KOVAN
+    await instancedInit.init("0xe35d7d6b"); // POLKADOT TESTNET MOONBASE ALPHA
 
     //Adding ImplERC721TokenReceiver features
     console.log("Adding ERC721TokenReceiver features...");

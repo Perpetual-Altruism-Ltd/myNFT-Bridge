@@ -53,7 +53,10 @@ module.exports = async (deployer, network, accounts) => {
     console.log("Setting owner as current account...")
     await instancedManipulator.init(accounts[0])
     //Approving accounts
-    await instancedManipulator.approve(accounts[0], true)
+    await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)
+    await instancedManipulator.approve("0x4795257d72F0055940842900fF11A956189eeba1", true)
+    await instancedManipulator.approve("0x402a85Ddd124cc397df8E8F1ca71AAfc24Fca545", true)
+    await instancedManipulator.approve("0xc61e49d72C0189fcA2DD2da2237D7bf2aa18C914", true)
 
     //Deploying IOU contract
     console.log("Deploying IOU contract...")

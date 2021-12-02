@@ -14,8 +14,8 @@
     "balancer" : {
         "addresses": [
             {
-                "address": "0xD169F5F66F286384110963F551094650F7CCE8ee",
-                "key": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371"
+                "address": "0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595",
+                "key": ""
             }
         ],
         "minimalWalletAmount": 0.0001
@@ -30,12 +30,12 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "manipulatorAddress": "0xd9DAEDdC85e053E570a3F9aCDA2B54a684E899Cf",
-            "bridgeAddress": "0x024B238aB1664aeC6A5a6be449780322196E4A94",
+            "manipulatorAddress": "0x04a5B52f420D81Eb1f1da094ee5D6af238E2eA4b",
+            "bridgeAddress": "0x1F9B0977fEEF580D7F22678e709423cE802D39b6",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x5AB87616691Cc1Bb3ec7805529A18258a5C87b2d",
+                    "address": "0x3b04aE18222D35475c607F4c0a9D3CF8782e4662",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
