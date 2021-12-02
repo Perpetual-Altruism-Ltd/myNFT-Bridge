@@ -7,9 +7,9 @@ import SignEscrow from './views/SignEscrow.js';
 import MintToken from './views/MintToken.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
-import Model from './Model.js';
+import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
 
-//Launch the static server: sudo http-server ./public/ -p 85 -c-1
+import Model from './Model.js';
 
 const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
 
@@ -58,7 +58,7 @@ const router = async () => {
         //Exceptions for pages wallet_connection and migration_form which load themselves the provider
         if(!Model.isProviderLoaded() &&
           match.route.path != "/wallet_connection" &&
-          //match.route.path != "/register_migration" &&
+          match.route.path != "/register_migration" &&
           match.route.path != "/migration_form"){
           console.log("No provider loaded. Redirecting to wallet_connection.");
           navigateTo('/wallet_connection');
@@ -70,6 +70,9 @@ const router = async () => {
         }
       });
 }
+
+//init breadcrumb trail behaviour
+window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
 
 /*=====Model functions=====*/
 const navigateTo = url => {
@@ -110,12 +113,15 @@ Model.isMigDataFilled = function(){
 
   if(migData.originUniverseUniqueId &&
     migData.originWorld &&
+    !(migData.originWorld.includes(' ')) &&
     migData.originTokenId &&
+    !(migData.originTokenId.includes(' ')) &&
     migData.destinationUniverseUniqueId &&
     migData.migrationType &&
     migData.destinationWorld &&
     parseInt(migData.destinationTokenId) &&
-    migData.destinationOwner){
+    migData.destinationOwner &&
+    !(migData.destinationOwner.includes(' '))){
     return true;
   }else{
     return false;
@@ -129,7 +135,7 @@ Model.isProviderLoaded = function(){
     return userAccount != "" && window.web3.eth != undefined;
   }else{return false;}
 }
-
+Model.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();
 

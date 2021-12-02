@@ -67,6 +67,9 @@ export default class extends AbstractView {
           if(res.migrationStatus == "Ok"){
             model.destinationTokenTransfertTxHash = res.transactionHash;
 
+            //Advance one step further in breadcrumb trail
+            document.getElementById("BCT").setAttribute('step-num', 4);
+
             console.log("Migration ended !");
             //Display valid (green) circle
             setCircleValidState();

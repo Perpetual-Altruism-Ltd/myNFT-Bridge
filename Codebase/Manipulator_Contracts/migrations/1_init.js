@@ -42,7 +42,7 @@ module.exports = async (deployer, network, accounts) => {
         "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
         "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
         "registerEscrowHashSignature(bytes32,bytes,address)"+
-        "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes,address)",
+        "migrateFromIOUERC721ToERC721(bytes,address)",
         "Manipulator"
     )
     
@@ -74,8 +74,35 @@ const Manipulator = artifacts.require("Manipulator")
 const IOU = artifacts.require("IOU")
 
 module.exports = async (deployer, network, accounts) => {
-    const IOUAddress = "0x7e70E4f0e7dC7a0B03d3AeFe99AF1B8674a8D841"
-    const TransparentProxyAddress = "0x41CD4484645039b43c37C1339897762889d128c9"
+
+
+    await deployer.deploy(Manipulator)
+
+    const instancedManipulator = await Manipulator.at(Manipulator.address)
+
+    await instancedManipulator.init(accounts[0])
+
+    console.log(await instancedManipulator.test.call(
+        Buffer.from("1111111111111111111111111111111122222222222222222222222222222222333333333333333333333333333333334444444444444444444444444444444455555555555555555555555555555555", "ascii")
+        , Manipulator.address
+        )
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+    return*/
+    /*
+    const IOUAddress = "0x7ACacA68e251BdB45F1E9c220953551457a88c7E"
+    const TransparentProxyAddress = "0x78c8583d59ec4202F5F6D7B45644c872e7a44a53"
 
 
     //await deployer.deploy(Manipulator)
@@ -90,9 +117,9 @@ module.exports = async (deployer, network, accounts) => {
 
     const instancedManipulator = await Manipulator.at(TransparentProxyAddress)
 
-    //console.log("1. Minted tokens : " + (await instancedManipulator.mintedTokens.call(IOUAddress)).toNumber())
+    console.log("1. Minted tokens : " + (await instancedManipulator.mintedTokens.call(IOUAddress)).toNumber())
 
-    //console.log("2. Mint : " + JSON.stringify((await instancedManipulator.mint(IOUAddress))))
+    console.log("2. Mint : " + JSON.stringify((await instancedManipulator.mint(IOUAddress))))
 
     console.log("3. Minted tokens : " + (await instancedManipulator.mintedTokens.call(IOUAddress)).toNumber())
 
@@ -101,11 +128,11 @@ module.exports = async (deployer, network, accounts) => {
     const tokenId = (await instancedManipulator.mintedTokens.call(IOUAddress)).toNumber()
     console.log("5. Minted tokens : " + tokenId)
     
-    console.log("6. SetTokenUri : " + JSON.stringify((await instancedManipulator.setTokenUri(tokenId, "http://perdu2.com", IOUAddress))))
+    console.log("6. SetTokenUri : " + JSON.stringify((await instancedManipulator.setTokenUri(tokenId, "http://perdu.com", IOUAddress))))
 
     console.log("7. SafeTransferFrom : " + JSON.stringify((await instancedManipulator.safeTransferFrom("0x0000000000000000000000000000000000000000", accounts[0], tokenId, IOUAddress))))
     
-    console.log("7. TokenUri : " + (await instancedManipulator.tokenURI.call(tokenId, IOUAddress)))
+    console.log("8. TokenUri : " + (await instancedManipulator.tokenURI.call(tokenId, IOUAddress)))
 
 
 
@@ -139,5 +166,5 @@ module.exports = async (deployer, network, accounts) => {
 
     //console.log("4. "+ (await instancedManipulator.mint("0xd21ce98550B5813DDA97C7fd10680357b4F42213")))
 
-    //console.log("5. " + (await instancedManipulator.mintedTokens.call("0xd21ce98550B5813DDA97C7fd10680357b4F42213")).toNumber())
-}*/
+    //console.log("5. " + (await instancedManipulator.mintedTokens.call("0xd21ce98550B5813DDA97C7fd10680357b4F42213")).toNumber())*/
+//}

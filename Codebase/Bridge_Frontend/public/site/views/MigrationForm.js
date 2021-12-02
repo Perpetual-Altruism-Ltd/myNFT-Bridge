@@ -508,7 +508,7 @@ export default class extends AbstractView {
 
                         migData.metadataDestinationWorld  = ogTokenMetaData.migrationData.originWorld;
                         migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
-                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAdress
+                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAddress
 
                         //Show network hint to redeem IOU
                         displayRedeemNetworkHintMsg(true);
@@ -653,9 +653,12 @@ export default class extends AbstractView {
           return false;
       }
 
+      //Check if there is no space slipped into the contract addr (bad copy paste)
+      let contractAddrInput = document.getElementById("inputOGContractAddress").value;
+
       //Second, instanciate the contract through ERC165
       try{
-        contracts.originalChainERC165Contract = new window.web3.eth.Contract(ABIS.ERC165, document.getElementById("inputOGContractAddress").value);
+        contracts.originalChainERC165Contract = new window.web3.eth.Contract(ABIS.ERC165, contractAddrInput);
       }
       catch(err){
         console.log("Contract ERC165 instanciation error: " + err);
@@ -887,7 +890,6 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = "";
       migData.destinationNetworkId = "";
       migData.destinationUniverse = "";
-      migData.destinationBridgeAddr = "";
       migData.destinationWorld = "";
 
       //Reset btn & disable redeem
@@ -1011,7 +1013,13 @@ export default class extends AbstractView {
       refreshCompleteBtnEnabled();
     }
     let displayNoOwnerMsg = function(){
-      displayErrorMsg("No owner could be found for this NFT.<br>Make sure you have selected to origin network that match where the contract is deployed.");
+      let tokenIdInput = document.getElementById("inputOGTokenID").value;
+      if(tokenIdInput.includes(' ')){
+        displayErrorMsg("A space has crept into your token ID. Make sure to double check the input you provided.");
+      }else{
+        displayErrorMsg("No owner could be found for this NFT.<br>Make sure you have provided an existing token ID.");
+      }
+
       //Hide destination token name
       setDestTokenName(false,"");
     }
@@ -1025,16 +1033,27 @@ export default class extends AbstractView {
       //Show ERC721 compliant MSG
       showCardLine("OgContractERC721CompliantMsgCardLine", show);
 
+      //retrieve the content of og contract addr
+      let contractAddrInput = document.getElementById("inputOGContractAddress").value;
+
       //Change MSG if ERC721 compliant or not
       let ERC721Msg = document.getElementById("OgContractERC721CompliantMsgCardLine");
-      if(isCompliant){
-        ERC721Msg.textContent = "This contract is ERC721 compliant. Perfect!";
+      if(contractAddrInput.includes(' ')) {
+        ERC721Msg.innerHTML = "A space has crept into your contract address. Make sure to double check the input you provided.";
+        //Add error styling
+        ERC721Msg.classList.remove('DataText');
+        ERC721Msg.classList.add('ErrorTextStyle');
+        //Hide destination token name
+        setDestTokenName(false,"");
+      }
+      else if(isCompliant){
+        ERC721Msg.innerHTML = "This contract is ERC721 compliant. Perfect!";
         //Add standard styling
         ERC721Msg.classList.remove('ErrorTextStyle');
         ERC721Msg.classList.add('DataText');
       }
       else{
-        ERC721Msg.textContent = "You can't migrate tokens from this contract, it must be ERC721 compliant.";
+        ERC721Msg.innerHTML = "You can't migrate tokens from this contract, it must be ERC721 compliant.<br>Make sure you have selected to origin network that match with where the contract is deployed.";
         //Add error styling
         ERC721Msg.classList.remove('DataText');
         ERC721Msg.classList.add('ErrorTextStyle');
@@ -1067,6 +1086,14 @@ export default class extends AbstractView {
           document.getElementById("MigTypeDescriptionMessage").textContent = "Migration type unknown.";
       }
     }
+    //Used amoung other to show a message warning user that dest owner addr contains a white space.
+    let showDestOwnerMessage = function(show, txt){
+      let msgElem = document.getElementById("DestOwnerMessage");
+      msgElem.innerHTML = txt;
+
+      showCardLine("DestOwnerMessage", show);
+    }
+
     let showCard = function(id, disp){
       document.getElementById(id).style = (disp ? "display:flex;" : "display:none;")
     }
@@ -1427,7 +1454,7 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = destUnivUniqueId;
       migData.destinationNetworkId = destNetworkId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
-      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
+      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAddress;
 
       //Enable redeem if network dest if same as IOU metadata origin
       enableRedeemBtnIfNetworkMatch();
@@ -1513,10 +1540,16 @@ export default class extends AbstractView {
     //===Destination owner input===
     //When input is unfocused, display originTokenID input
     document.getElementById("inputDestOwner").addEventListener('keyup', async() =>{
-      document.getElementById("inputDestOwner").dispatchEvent(new Event("change"));
+      migData.destinationOwner = document.getElementById("inputDestOwner").value;
     });
     document.getElementById("inputDestOwner").addEventListener('change', async() =>{
-      migData.destinationOwner = document.getElementById("inputDestOwner").value;
+      //Check if any white space crept into the input (bad copy paste)
+      if(document.getElementById("inputDestOwner").value.includes(' ')){
+        showDestOwnerMessage(true, "A space has crept into the destination owner address. Make sure to double check the input you provided.");
+      }else{
+        showDestOwnerMessage(false, "");
+      }
+
       refreshCompleteBtnEnabled();
     });
 
@@ -1573,7 +1606,6 @@ export default class extends AbstractView {
       migData.destinationUniverse = migData.metadataDestinationUniverse;
       migData.destinationWorld = migData.metadataDestinationWorld;
       setDestinationTokenId(migData.metadataDestinationTokenId);//Set migData destTokenId & display it
-      migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
 
       //PREFILL fields
       //Prefill destWorld text because redeem selected

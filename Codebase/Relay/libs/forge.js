@@ -56,7 +56,7 @@ class Forge {
     async _forgeMetadata(originalMetadata, migrationData){
         return {
             name: `IOU of ${originalMetadata.name}`,
-            description: `This token is an IOU of tokenId "${migrationData.originTokenId}" on universe "${Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse).name}" (${migrationData.originUniverse}) and world "${migrationData.originWorld}". It can be redeemed on ${Conf.bridgeAdress}. ${originalMetadata.description}`,
+            description: `This token is an IOU of tokenId "${migrationData.originTokenId}" on universe "${Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse).name}" (${migrationData.originUniverse}) and world "${migrationData.originWorld}". It can be redeemed on ${Conf.bridgeUrl}. ${originalMetadata.description}`,
             image: await this._uploadImage(await this._forgeImage(originalMetadata.image)),
             migrationData: {
                 originUniverse: migrationData.originUniverse,

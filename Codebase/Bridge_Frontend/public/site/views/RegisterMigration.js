@@ -84,7 +84,7 @@ export default class extends AbstractView {
     let grantRelayOperatorPrivilege = async function(){
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
-        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
+        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].manipulatorAddress;
         let originTokenId = parseInt(migData.originTokenId);
         console.log("Ask user " + userAccount + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 
@@ -99,6 +99,9 @@ export default class extends AbstractView {
           }
           else{
             console.log('Approval accepted by user');
+            //Avdance 1 step in breadcrumb trail
+            document.getElementById("BCT").setAttribute('step-num', 1);
+
             //Delete cookies from previous migration, to let place to the new one which will me
             model.eraseCookie("migrationId");
 
@@ -151,12 +154,21 @@ export default class extends AbstractView {
       };
       options.url = relayURL + '/initMigration';
       options.data.migrationData = {};
+      //TO UNCOMMENT WHEN .toLoweCase changes made in Backend (And delete the following lines)
+      /*options.data.migrationData.originUniverse = migData.originUniverseUniqueId.toLowerCase();
+      options.data.migrationData.originWorld = migData.originWorld.toLowerCase();
+      options.data.migrationData.originTokenId = migData.originTokenId;
+      options.data.migrationData.originOwner = migData.originOwner.toLowerCase();
+      options.data.migrationData.destinationUniverse = migData.destinationUniverseUniqueId.toLowerCase();
+      options.data.migrationData.destinationBridge = migData.destinationBridgeAddr.toLowerCase();
+      options.data.migrationData.destinationWorld = migData.destinationWorld.toLowerCase();
+      options.data.migrationData.destinationTokenId = migData.destinationTokenId;
+      options.data.migrationData.destinationOwner = migData.destinationOwner.toLowerCase();*/
       options.data.migrationData.originUniverse = migData.originUniverseUniqueId;
       options.data.migrationData.originWorld = migData.originWorld;
       options.data.migrationData.originTokenId = migData.originTokenId;
       options.data.migrationData.originOwner = migData.originOwner;
       options.data.migrationData.destinationUniverse = migData.destinationUniverseUniqueId;
-      options.data.migrationData.destinationBridge = migData.destinationBridgeAddr;
       options.data.migrationData.destinationWorld = migData.destinationWorld;
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;
       options.data.migrationData.destinationOwner = migData.destinationOwner;
