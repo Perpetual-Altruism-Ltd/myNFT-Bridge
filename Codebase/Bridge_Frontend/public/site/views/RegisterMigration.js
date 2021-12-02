@@ -83,8 +83,9 @@ export default class extends AbstractView {
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
       try{
-        let selectedOgNetworkIndex = migData.originUniverseIndex;
-        let relayOgNetworkAddr = bridgeApp.networks[selectedOgNetworkIndex].manipulatorAddress;
+        let selectedRelayIndex = migData.migrationRelayIndex;
+        let selectedOgNetworkUniqueId = migData.originUniverseUniqueId;
+        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].manipulatorAddresses[selectedOgNetworkUniqueId];
         let originTokenId = parseInt(migData.originTokenId);
         console.log("Ask user " + userAccount + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
 
