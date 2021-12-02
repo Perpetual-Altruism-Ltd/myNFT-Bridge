@@ -118,13 +118,15 @@ const breadcrumbStyle = () => {
   }
   .BreadcrumbStepArrow::before{
     left: 0px;
-    top: -0.5em;
+    /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+    top: calc(-0.5em - 1px);
     transform: rotate(-45deg);
     background-color: #af1540;
   }
   .BreadcrumbStepArrow::after{
     left: 0px;
-    top: 0.5em;
+    /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+    top: calc(0.5em - 1px);
     transform: rotate(45deg);
     background-color: #af1540;
   }
@@ -173,7 +175,6 @@ class BreadcrumbTrail extends HTMLElement {
     let steps = bcContainer.querySelectorAll(".BreadcrumbStepContainer");
     //Add StepCompleted class to the firsts steps
     steps.forEach((step, i) => {
-      console.log(step);
       if(i < stepNum){
         step.classList.add("StepCompleted");
       }else{
@@ -183,7 +184,6 @@ class BreadcrumbTrail extends HTMLElement {
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
-    console.log("attributeChangedCallback " + attrName + ', ' + oldVal + ', ' + newVal);
     if(attrName == "step-num") {
       this.setCompletedStep(newVal);
     }

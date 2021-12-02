@@ -80,13 +80,15 @@ Loading the CSS directly in the .js file resolve the issue of Flash Of Unstyled 
 }
 .BreadcrumbStepArrow::before{
   left: 0px;
-  top: -0.5em;
+  /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+  top: calc(-1px - 0.5em);
   transform: rotate(-45deg);
   background-color: #af1540;
 }
 .BreadcrumbStepArrow::after{
   left: 0px;
-  top: 0.5em;
+  /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+  top: calc(0.5em - 1px);
   transform: rotate(45deg);
   background-color: #af1540;
 }
