@@ -112,11 +112,28 @@ const main = async () => {
         return res.status(400).json({ error : 'Universe Not Found' });
     })
 
+    app.post('/getManipulatorAddress', (req, res) => {
+        const { error } = JoiSchemas.getManipulatorAddress.validate(req.body)
+        if(error){
+            res.status(400)
+            res.send({ status: "Bad parameters given to /getManipulatorAddress" })
+            Logger.error("Bad parameters given to /getManipulatorAddress")
+            return
+        }
+
+        const universe = Conf.universes.find(universe => universe.uniqueId == req.body.universe)
+        if(universe) {
+            const addresses = universe.worlds.map(elt => elt.address);
+            return res.json({ "manipulatorAddress" : universe.manipulatorAddress });
+        }
+        return res.status(400).json({ error : 'Universe Not Found' });
+    })    
+
     const getAvailableTokenIdLimiter = RateLimit({
         windowMs: 60 * 1000, // 60 second window
         max: 2, // start blocking after 1 requests
         message: { error : "Too many preminted tokens requested. Try again after one minute." }
-    });
+    })
 
     app.post('/getAvailableTokenId', getAvailableTokenIdLimiter, async (req, res) => {
         const { error } = JoiSchemas.getAvailableTokenId.validate(req.body)
