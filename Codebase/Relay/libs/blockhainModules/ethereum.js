@@ -73,7 +73,6 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
-        console.log(migrationHash, bridgeAddress)
         const escrowHash = await web3Contract.methods.getProofOfEscrowHash(migrationHash, bridgeAddress).call();
         return escrowHash;
     }
@@ -85,8 +84,6 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
-
-        console.log(from, to, tokenId, contract)
 
         const calldata = await web3Contract.methods.safeTransferFrom(from, to, tokenId, contract).encodeABI();
         const txObject = {
@@ -123,9 +120,6 @@ class Ethereum extends EventEmitter {
                 this.hexToBytes32(migrationData.destinationOwner),
                 this.hexToBytes32(migrationData.originOwner)
             ];
-            
-            console.log(migrationData)
-            console.log(data)
 
             try {
                 web3ContractBridge.once('MigrationDeparturePreRegisteredERC721IOU', { 
@@ -183,12 +177,12 @@ class Ethereum extends EventEmitter {
     /* ==== Arrival Bridge Interractions  ==== */
     async migrateFromIOUERC721ToERC721(manipulatorAddress, originBridge, migrationData, migrationHashSignature, blockTimestamp) {
         const web3Contract = new this.web3Instance.eth.Contract(
-            BridgeAbi,
-            migrationData.destinationBridge,
+            ManipulatorAbi,
+            manipulatorAddress,
             { gas: 8000000 }
         )
 
-        const data = [
+        /*const data = [
             this.hexToBytes32(migrationData.originUniverse),
             this.hexToBytes32(originBridge),
             this.hexToBytes32(migrationData.originWorld),
@@ -200,15 +194,27 @@ class Ethereum extends EventEmitter {
             migrationData.originOwner,
             this.numberToBytes32(blockTimestamp),
             migrationHashSignature
-        ]
-        const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).encodeABI();
+        ]*/
+
+        const data = "0x" + this.web3Instance.utils.padLeft(migrationData.originUniverse, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(originBridge, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(migrationData.originWorld, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(this.web3Instance.utils.numberToHex(this.web3Instance.utils.toBN(parseInt(migrationData.originTokenId))), 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(migrationData.originOwner, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(migrationData.destinationWorld, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(this.web3Instance.utils.numberToHex(this.web3Instance.utils.toBN(parseInt(migrationData.destinationTokenId))), 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(migrationData.destinationOwner, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(migrationData.originOwner, 64).replace("0x", "")
+        + this.web3Instance.utils.padLeft(this.web3Instance.utils.numberToHex(this.web3Instance.utils.toBN(parseInt(blockTimestamp))), 64).replace("0x", "")
+        + migrationHashSignature.replace("0x", "")
+        
+        const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(data, migrationData.destinationBridge).encodeABI();
         const txObject = {
-            to: migrationData.destinationBridge,
+            to: manipulatorAddress,
             value: 0,
             data: calldata
         };
-        const result = await this.balancer.send(txObject);    
-        return result
+        return await this.balancer.send(txObject);
     }
 
     async getTokenUri(manipulatorAddress, contract, tokenId){
@@ -217,7 +223,6 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
-        console.log("GET TOKEN URI", contract, tokenId)
         return await web3Contract.methods.tokenURI(tokenId, contract).call()
     }
 

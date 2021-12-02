@@ -32,7 +32,6 @@ export default class extends AbstractView {
       migData.destinationUniverseTargerListIndex = 0;//Index in network_list "neworks.targetList" array
       migData.destinationUniverseUniqueId = "";
       migData.destinationUniverse = "";
-      migData.destinationBridgeAddr = "";
       migData.destinationWorld = "";
       migData.destinationTokenId = "";
       migData.destinationOwner = "";

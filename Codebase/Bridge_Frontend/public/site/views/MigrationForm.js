@@ -508,7 +508,7 @@ export default class extends AbstractView {
 
                         migData.metadataDestinationWorld  = ogTokenMetaData.migrationData.originWorld;
                         migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
-                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAdress
+                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAddress
 
                         //Show network hint to redeem IOU
                         displayRedeemNetworkHintMsg(true);
@@ -890,7 +890,6 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = "";
       migData.destinationNetworkId = "";
       migData.destinationUniverse = "";
-      migData.destinationBridgeAddr = "";
       migData.destinationWorld = "";
 
       //Reset btn & disable redeem
@@ -1455,7 +1454,7 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = destUnivUniqueId;
       migData.destinationNetworkId = destNetworkId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
-      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAdress;
+      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAddress;
 
       //Enable redeem if network dest if same as IOU metadata origin
       enableRedeemBtnIfNetworkMatch();
@@ -1607,7 +1606,6 @@ export default class extends AbstractView {
       migData.destinationUniverse = migData.metadataDestinationUniverse;
       migData.destinationWorld = migData.metadataDestinationWorld;
       setDestinationTokenId(migData.metadataDestinationTokenId);//Set migData destTokenId & display it
-      migData.destinationBridgeAddr = migData.metadataDestinationBridgeAddr;
 
       //PREFILL fields
       //Prefill destWorld text because redeem selected

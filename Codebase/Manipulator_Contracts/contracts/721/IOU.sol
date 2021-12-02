@@ -186,6 +186,11 @@ contract IOU is ERC721 {
         return retour;
     }
 
+    function preminterOf(uint256 _tokenId) external view returns (address){
+        address retour = preminters[_tokenId];
+        return retour;
+    }
+
     /// @notice Get the approved address for a single NFT
     /// @dev Throws if `_tokenId` is not a valid NFT
     /// @param _tokenId The NFT to find the approved address for
@@ -234,7 +239,6 @@ contract IOU is ERC721 {
 
     }
 
-
     /// @notice Transfer ownership of an NFT
     /// @dev Throws unless `msg.sender` is the current owner, an authorized
     ///  operator, or the approved address for this NFT. Throws if `_from` is
@@ -262,9 +266,9 @@ contract IOU is ERC721 {
 
 
         } else { //If requiring minting
-            
             require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
             require(msg.sender == preminters[_tokenId], "_tokenId has not be approved for minting by msg.sender");
+            //require(msg.sender == preminters[_tokenId], string(abi.encodePacked("_____preminters[_tokenId]_", toAsciiString(preminters[_tokenId]), "_____msg.sender_", toAsciiString(msg.sender))));
             //require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
             //require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
             //require(msg.sender == owner, "only this smart contract owner can premint tokens");

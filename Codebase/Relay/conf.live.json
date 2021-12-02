@@ -8,7 +8,7 @@
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
     "gimliUrl": "",
-    "bridgeAdress": "http://bridge.mynft.com/",
+    "bridgeUrl": "http://bridge.mynft.com/",
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
     "port": 5000,
     "balancer" : {
@@ -26,7 +26,7 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "bridgeAdress": "0x2BEd5f01b9165d9E04Ec5319B4bB49621f6C5134",
+            "bridgeAddress": "0x2BEd5f01b9165d9E04Ec5319B4bB49621f6C5134",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
@@ -44,7 +44,7 @@
             "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
             "networkID": 42,
             "uniqueId": "0xee0bec75",
-            "bridgeAdress": "0x188b34fa257D9cca28115471ab76830394e31077",
+            "bridgeAddress": "0x188b34fa257D9cca28115471ab76830394e31077",
             "explorer" : "https://kovan.etherscan.io/",
             "eip1559": true,
             "worlds": [
@@ -64,7 +64,7 @@
             "uniqueId": "0xd1e94e57",
             "chain": "mynft",
             "hardfork": "istambul",
-            "bridgeAdress": "0x55a867eF72E5bf90a5cC599b98fbE2310AC2C823",
+            "bridgeAddress": "0x55a867eF72E5bf90a5cC599b98fbE2310AC2C823",
             "explorer" : "https://etherscan.io/",
             "worlds": []
         },
@@ -73,7 +73,7 @@
             "rpc": "wss://moonbeam-alpha.api.onfinality.io/public-ws",
             "networkID": 1287,
             "uniqueId": "0xe810b6b7",
-            "bridgeAdress": "0x3f869212D04E78c8a6661823E6Bc21b42A2e7B2c",
+            "bridgeAddress": "0x3f869212D04E78c8a6661823E6Bc21b42A2e7B2c",
             "explorer": "https://moonbase-blockscout.testnet.moonbeam.network/",
             "eip1559": false,
             "worlds": [

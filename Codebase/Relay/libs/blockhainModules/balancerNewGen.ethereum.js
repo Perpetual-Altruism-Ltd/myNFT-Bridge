@@ -25,6 +25,10 @@ class TransactionBalancerNewGen {
             }
         })
         
+        this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(this.addresses[0].key)
+
+        this.web3Instance.eth.defaultAccount = this.web3Wallet.address
+
         this.minimalWalletAmount = Conf.balancer.minimalWalletAmount
 
         this.transactionQueue = []
@@ -61,7 +65,6 @@ class TransactionBalancerNewGen {
                 continue
             }
             account.locked = true
-            
             const transaction = this.transactionQueue.shift()
 
             const accountBalance = await this.web3Instance.eth.getBalance(account.address.toLowerCase())
@@ -81,7 +84,7 @@ class TransactionBalancerNewGen {
                 account.locked = false
                 continue
             }
-            
+
             const fullTransaction = {
                 gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
                 ...(this.universe.eip1559 && { maxFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('30', 'gwei')) }),

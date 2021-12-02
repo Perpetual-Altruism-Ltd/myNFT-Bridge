@@ -119,11 +119,10 @@ contract Manipulator is MemoryStructure {
         bytes32 _migrationHash
         , bytes calldata _escrowHashSigned
         , address _contractAddress
-        ) external onlyOwnerOrOperator returns (string memory){
+        ) external onlyOwnerOrOperator {
         bytes memory payload = abi.encodeWithSignature("registerEscrowHashSignature(bytes32,bytes)", _migrationHash, _escrowHashSigned);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
-        return abi.decode(result, (string));
     }
 
     /*
@@ -135,7 +134,7 @@ contract Manipulator is MemoryStructure {
         3131313131313131313131313131313131313131313131313131313131313131 // _originUniverse (bytes32)
         3232323232323232323232323232323232323232323232323232323232323232 // _originBridge (bytes32)
         3333333333333333333333333333333333333333333333333333333333333333 // _originWorld (bytes32)
-        3434343434343434343434343434343434343434343434343434343434343434 // _originTokenId (bytes32)
+        0000000000000000000000000000000000000000000000000000000000000004 // _originTokenId (bytes32)
         3535353535353535353535353535353535353535353535353535353535353535 // _originOwner (bytes32)
         000000000000000000000000cafecafecafe9440008183EF92a3296C075A8c15 // _destinationWorld (address)
         0000000000000000000000000000000000000000000000000000000000000005 // _destinationTokenId (uint256)

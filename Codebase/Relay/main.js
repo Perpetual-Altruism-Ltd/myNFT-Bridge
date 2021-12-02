@@ -50,7 +50,7 @@ const main = async () => {
                     })
                     if(premintedTokens.length < 2){
                         try{
-                            const tokenId = await ethereum.premintToken(universe.manipulatorAddress, world.address, universe.bridgeAdress)
+                            const tokenId = await ethereum.premintToken(universe.manipulatorAddress, world.address, universe.bridgeAddress)
                             await (new db.models.premintedTokens({
                                 tokenId
                                 , universe: universe.uniqueId
@@ -147,7 +147,7 @@ const main = async () => {
         let tokenId
 
         if(!premintedToken){
-            tokenId = await ethereum.premintToken(req.body.world, universe.bridgeAdress)
+            tokenId = await ethereum.premintToken(universe.manipulatorAddress, req.body.world, universe.bridgeAddress)
             await (new db.models.premintedTokens({
                 tokenId
                 , universe: universe.uniqueId
@@ -190,6 +190,8 @@ const main = async () => {
             return
         }
 
+        migrationData.destinationBridge = destinationUniverse.bridgeAddress
+
         if(!req.body.redeem){
             const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
             if(!destinationWorld){
@@ -229,7 +231,7 @@ const main = async () => {
                 return
             }
 
-            const tokenUri = await originUniverseRpc.getTokenUri(migrationData.originWorld, migrationData.originTokenId)
+            const tokenUri = await originUniverseRpc.getTokenUri(originUniverse.manipulatorAddress, migrationData.originWorld, migrationData.originTokenId)
             const tokenMetadata = (await Axios.get(tokenUri)).data
 
             if(migrationData.destinationUniverse != tokenMetadata.migrationData.originUniverse

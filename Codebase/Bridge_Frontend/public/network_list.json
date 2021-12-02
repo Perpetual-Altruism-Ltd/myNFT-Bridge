@@ -5,9 +5,16 @@
 			"chainID": 5777,
 			"networkID": 5777,
 			"uniqueId": "0x8b3528a8",
-			"bridgeAdress": "0x9c21dc2E188e91c1A5baCCd7CD1ae8b6E937A63E",
 			"explorer" : "https://moonbase-blockscout.testnet.moonbeam.network/",
 			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}, {"relayIds": [1], "networkId": 5777}]
+		},
+		{
+			"name":"Ethereum Testnet Rinkeby",
+			"chainID": 4,
+			"networkID": 4,
+			"uniqueId": "0x07dac20e",
+			"explorer" : "https://rinkeby.etherscan.io/",
+			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}, {"relayIds": [1], "networkId": 1287}]
 		}
 	]
 }

@@ -24,7 +24,7 @@ const universeSchema = Mongoose.Schema({
     name: { type: String, required: [true, "name is required"] },
     rpc: { type: String, required: [true, "rpc is required"] },
     uniqueId: { type: String, required: [true, "uniqueId is required"] },
-    bridgeAdress: { type: String, required: [true, "bridgeAdress is required"] },
+    bridgeAddress: { type: String, required: [true, "bridgeAddress is required"] },
     explorer: { type: String, required: [true, "explorer is required"] },
     worlds: [ worldSchema ]
 })

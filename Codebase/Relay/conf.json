@@ -1,5 +1,5 @@
 {
-    "relayPrivateKey": "371818f8c050486e61cea174551308f731019811382e6c6a9e625be739ef0694",
+    "relayPrivateKey": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371",
     "infuraIpfs": {
         "host": "ipfs.infura.io",
         "port": 5001,
@@ -7,20 +7,43 @@
         "projectId": "205glgJgV59a6lg5A3w9qCWCS8k",
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
-    "bridgeAdress": "http://bridge.mynft.com/",
+    "bridgeUrl": "http://bridge.mynft.com/",
     "gimliUrl": "",
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
     "port": 5000,
     "balancer" : {
         "addresses": [
             {
-                "address": "0xcf62F54ba96235A4920e871595307Cd6F2098186",
-                "key": "2fbfa74facc03f13c53192c300a989811e0cd8abad9653f94d75354a9a81478c"
+                "address": "0xD169F5F66F286384110963F551094650F7CCE8ee",
+                "key": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371"
             }
         ],
         "minimalWalletAmount": 0.0001
     },
     "universes": [
+        
+        {
+            "name":"Ethereum Testnet Rinkeby",
+            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "chainID": 4,
+            "networkID": 4,
+            "uniqueId": "0x07dac20e",
+            "chain": "rinkeby",
+            "hardfork": "london",
+            "manipulatorAddress": "0xd9DAEDdC85e053E570a3F9aCDA2B54a684E899Cf",
+            "bridgeAddress": "0x024B238aB1664aeC6A5a6be449780322196E4A94",
+            "explorer" : "https://rinkeby.etherscan.io/",
+            "worlds": [
+                {
+                    "address": "0x5AB87616691Cc1Bb3ec7805529A18258a5C87b2d",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ],
+            "handleRevert": true,
+            "eip1559": true
+        },
         {
             "name":"Ganache testnet",
             "rpc": "ws://127.0.0.1:8545",
@@ -32,14 +55,7 @@
             "manipulatorAddress": "0x953096Ad9cD0451e2276dA12edb249fA48DDEFac",
             "bridgeAdress": "0x6b5490c794D3B5D3e77cAA4733aC7C5ef7EF5f7c",
             "explorer" : "https://rinkeby.etherscan.io/",
-            "worlds": [
-                {
-                    "address": "0xEc962f6bfF8Ce58fF2096a740f3A2BAa159b0a21",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                }
-            ],
+            "worlds": [],
             "handleRevert": true,
             "eip1559": false
         }
