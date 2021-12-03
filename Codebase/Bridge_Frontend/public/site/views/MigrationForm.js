@@ -716,6 +716,7 @@ export default class extends AbstractView {
       try{
         let response = await axios.request(options);
         if(response.status == 200){
+          console.log(response);
           return response.data;
         }else{
           console.log(response.status + ' : ' + response.statusText);
@@ -735,8 +736,8 @@ export default class extends AbstractView {
       let mathomAPIKey = apiData.mathom.key;
       let mathomAIPUrl = apiData.mathom.url;
       console.log('Mathom API key: ' + mathomAPIKey);
+      console.log("Mathom API url: " + mathomAIPUrl);
 
-      let apiUrl = 'https://mathomhouse.mynft.com';
       var options = {
         method: 'GET',
         url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
@@ -920,8 +921,6 @@ export default class extends AbstractView {
       }
 
       //Retrieve NFT collection of user
-      //TODO
-      console.log("----TODO---ADDING NFT");
       addNFTToCollection("Yeyy",
         "0x07dac20e",
         "0xCDD05c5881D2E234D651472a95c86691F4f25dE9",
