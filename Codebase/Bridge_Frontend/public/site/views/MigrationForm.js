@@ -716,7 +716,6 @@ export default class extends AbstractView {
       try{
         let response = await axios.request(options);
         if(response.status == 200){
-          console.log(response);
           return response.data;
         }else{
           console.log(response.status + ' : ' + response.statusText);
@@ -870,7 +869,8 @@ export default class extends AbstractView {
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
       //Display wallet name
-      let providerName = localStorage.getItem("provider");
+      let providerName =
+      torage.getItem("provider");
       if(!providerName){return;}
       //Set first char to upperCase
       providerName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
@@ -1086,6 +1086,12 @@ export default class extends AbstractView {
       else {
         showCardLine("DestWorldCardLine", true);
       }
+    }
+    //Show the pending migration data from localStorage
+    let showPendingMigData = function(){
+      let pendingMigrationData = localStorage.getItem("migrationData");
+      console.log("pendingMigrationData:");
+      console.log(pendingMigrationData);
     }
 
     //=====Error & user messages=====

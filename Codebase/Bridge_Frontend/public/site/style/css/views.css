@@ -1,5 +1,6 @@
 /*============Views===========*/
 /*Initial view */
+/*#PendingMigCard,*/
 #DepartureCard,#OriginNetworkCardLine,#OgNetworkSwitchMessage,#OgContractERC721CompliantMsgCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
@@ -312,6 +313,26 @@
   color: #aaa;
 }
 
+#PendingMigDataCardLine{
+  margin-top: 3em;
+}
+#PendingMigDataCardLine{
+  margin-bottom: 1em;
+}
+
+#PendingMigDataArrow{
+  background: url("../../medias/DownArrow.svg");
+  background-size: 3em;
+  background-position-x: 0vw;
+  background-position-y: center;
+  width: 3em;
+  height: 5em;
+  background-repeat: no-repeat;
+  transform: rotate(-90deg);
+
+  margin-left: 2em;
+  margin-right: 2em;
+}
 
 #FetchDataButton{
   min-width: 8vw;

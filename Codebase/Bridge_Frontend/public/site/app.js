@@ -146,7 +146,7 @@ Model.displayConnectedWallet = function(){
 
 //=====Persistent migration data handling
 Model.storeMigDataLocalStorage = function(){
-
+  localStorage.setItem('migrationData', Model.migrationData);
 }
 //Store the step that the user completed in the mig process to local storage to access it later.
 Model.storeMigStepLocalStorage = function(){
@@ -156,7 +156,12 @@ Model.storeMigStepLocalStorage = function(){
 Model.isMigrationPending = function(){
 
 }
-Model.
+Model.getPendingMigData = function(){
+  localStorage.getItem("migrationData");
+}
+Model.getPendingMigStep = function(){
+  localStorage.getItem("migrationData");
+}
 //TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();

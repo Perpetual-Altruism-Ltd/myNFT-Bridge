@@ -82,6 +82,9 @@ export default class extends AbstractView {
 
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
+      //Before engaging in the migration process, save mig data to localStorage
+      model.storeMigDataLocalStorage();
+
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
         let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].publicKey;
