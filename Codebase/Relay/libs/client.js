@@ -98,11 +98,11 @@ class Client {
 
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.originUniverse.manipulatorAddress, this.migrationData.originWorld, this.migrationData.originTokenId)
         const IOUMetadataUrl = await (new Forge(this.db)).forgeIOUMetadata(this.originalTokenUri, this.migrationData)
-
         await this.destinationEthereumConnection.setTokenUri(this.destinationUniverse.manipulatorAddress, this.migrationData.destinationWorld, this.migrationData.destinationTokenId, IOUMetadataUrl)
+        Logger.info(`Token uri (${IOUMetadataUrl}) set for token id ${this.migrationData.destinationTokenId}`)
 
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
-            this.originUniverse.manipulatorAddress,
+            this.destinationUniverse.manipulatorAddress,
             this.originUniverse.bridgeAddress,
             this.migrationData,
             this.migrationHashSignature,
@@ -116,7 +116,7 @@ class Client {
         await this.dbObject.save()
 
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
-            this.originUniverse.manipulatorAddress,
+            this.destinationUniverse.manipulatorAddress,
             this.originUniverse.bridgeAddress,
             this.migrationData,
             this.migrationHashSignature,

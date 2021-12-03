@@ -79,6 +79,7 @@ class TransactionBalancerNewGen {
             let gasEstimate
             try{
                 gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
+                Logger.info(`Gas needed estimed (${gasEstimate}).`)
             }catch(err){
                 this.eventEmitter.emit(transactionHash, { state: false, transactionResult: err })
                 account.locked = false

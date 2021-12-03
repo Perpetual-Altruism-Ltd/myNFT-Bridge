@@ -46,6 +46,7 @@ class Ethereum extends EventEmitter {
                 manipulatorAddress, 
                 { gas: 8000000 }
             );
+
             const calldata = await contract.methods.premintFor(bridgeAddress, contractAddress).encodeABI();
             const txObject = {
                 to: manipulatorAddress,
@@ -181,8 +182,12 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
-
-        /*const data = [
+        /*const web3Contract = new this.web3Instance.eth.Contract(
+            BridgeAbi,
+            migrationData.destinationBridge,
+            { gas: 8000000 }
+        )
+        const data = [
             this.hexToBytes32(migrationData.originUniverse),
             this.hexToBytes32(originBridge),
             this.hexToBytes32(migrationData.originWorld),
@@ -214,6 +219,12 @@ class Ethereum extends EventEmitter {
             value: 0,
             data: calldata
         };
+        /*const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).encodeABI();
+        const txObject = {
+            to: migrationData.destinationBridge,
+            value: 0,
+            data: calldata
+        };*/
         return await this.balancer.send(txObject);
     }
 

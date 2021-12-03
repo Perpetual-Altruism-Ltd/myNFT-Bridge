@@ -30,12 +30,12 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "manipulatorAddress": "0x04a5B52f420D81Eb1f1da094ee5D6af238E2eA4b",
-            "bridgeAddress": "0x1F9B0977fEEF580D7F22678e709423cE802D39b6",
+            "manipulatorAddress": "0xBA5Ad339c13446A9d00e380E9335BE61d1Ed4d4c",
+            "bridgeAddress": "0x9a8F28C8e21b2b1F7432e026Db55cB04C8Fd80C5",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x3b04aE18222D35475c607F4c0a9D3CF8782e4662",
+                    "address": "0x6dC58dDf7c24240eA0AD863d03D10e6C424736Da",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
@@ -45,19 +45,40 @@
             "eip1559": true
         },
         {
-            "name":"Ganache testnet",
-            "rpc": "ws://127.0.0.1:8545",
-            "chainID": 5777,
-            "networkID": 5777,
-            "uniqueId": "0x8b3528a8",
-            "chain": "ganache",
-            "hardfork": "muirglacier",
-            "manipulatorAddress": "0x953096Ad9cD0451e2276dA12edb249fA48DDEFac",
-            "bridgeAdress": "0x6b5490c794D3B5D3e77cAA4733aC7C5ef7EF5f7c",
-            "explorer" : "https://rinkeby.etherscan.io/",
-            "worlds": [],
-            "handleRevert": true,
-            "eip1559": false
+            "name":"Ethereum Testnet Kovan",
+            "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
+            "networkID": 42,
+            "uniqueId": "0xee0bec75",
+            "manipulatorAddress": "0x5deA2d834f283CaBd4A5327b75f2E5EF6bC0Db94",
+            "bridgeAddress": "0xcAc4B5AacB7d6973B7644F0cbecf1aeDff2628E1",
+            "explorer" : "https://kovan.etherscan.io/",
+            "eip1559": true,
+            "worlds": [
+                {
+                    "address": "0x6C6838Dd759189fd333780d8Dc84E7c93343Ea7B",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
+        },
+        {
+            "name":"Polkadot Testnet Moonbase Alpha",
+            "rpc": "ws://moonbeam-alphanet.mynft.com:9944",
+            "networkID": 1287,
+            "uniqueId": "0xe35d7d6b",
+            "manipulatorAddress": "0x59c1880cA700f48467f53ec63e97d2ff46752A03",
+            "bridgeAddress": "0xC11086AFF26Ad58CADe91A975fAA6084254996AA",
+            "explorer": "https://moonbase-blockscout.testnet.moonbeam.network/",
+            "eip1559": false,
+            "worlds": [
+                {
+                    "address": "0xac96cB971E723ABB06E7d2c6f05f6B21dEbB5F72",
+                    "name": "MyContract",
+                    "tokenName": "TOKENNAME",
+                    "owner": "0x00"
+                }
+            ]
         }
     ]
 }

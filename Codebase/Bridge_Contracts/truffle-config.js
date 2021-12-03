@@ -83,11 +83,12 @@ module.exports = {
       provider: () => new HDWalletProvider('', `https://kovan.infura.io/v3/93b9ab40c8a14d4aa00caaeb713fc5c0`),
       network_id: 42,       // Kovan's id
       gas: 9999999,        // Kovan has a lower block limit than mainnet
+      gasPrice: 6000000000,
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
-    moonbase: {
+    moonbasealphanet: {
       provider: () => new HDWalletProvider('', `http://moonbeam-alphanet.mynft.com:9933`),
       network_id: 1287,       // Moonbase's id
       gas: 9999999,        // Moonbase has a lower block limit than mainnet

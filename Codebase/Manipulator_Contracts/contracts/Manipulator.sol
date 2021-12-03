@@ -131,7 +131,7 @@ contract Manipulator is MemoryStructure {
         The bytes type _data variable is composed of every variable needed by the child function. Here's an example of its content :
 
         0x
-        3131313131313131313131313131313131313131313131313131313131313131 // _originUniverse (bytes32)
+        0000000000000000000000000000000000000000000000000000000007dac20e // _originUniverse (bytes32)
         3232323232323232323232323232323232323232323232323232323232323232 // _originBridge (bytes32)
         3333333333333333333333333333333333333333333333333333333333333333 // _originWorld (bytes32)
         0000000000000000000000000000000000000000000000000000000000000004 // _originTokenId (bytes32)
@@ -143,7 +143,7 @@ contract Manipulator is MemoryStructure {
         3636363636363636363636363636363636363636363636363636363636363636 // _height (bytes32)
         3737373737373737373737373737373737373737373737373737373737373737 // _migrationHashSigned part1 (bytes)
         3838383838383838383838383838383838383838383838383838383838383838 // _migrationHashSigned part2 (... and can continue as it is converted to a bytes)
-
+        
     */
 
     function migrateFromIOUERC721ToERC721(bytes calldata _data, address _contractAddress) external onlyOwnerOrOperator {
