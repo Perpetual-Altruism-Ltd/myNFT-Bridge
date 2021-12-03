@@ -79,7 +79,7 @@ yarn
 The backend hold a conf.json file here `Codebase/Relay/conf.json`. 
 You will need :
    - A wallet private key with fund on each of the universes you want to interact
-   - An infura account with IPFS enabled (projectId and projectSecret)
+   - An access to an IPFS node (infura credentials or your own node with API reachable)
    - A bridge deployed on each universes you want to support with the wallet given before
    - A IOU enabled ERC721 contract on each of the IOU destination universes, deployed with the wallet given before
    - A MongoDb server running to hold the data of the relay
@@ -89,12 +89,12 @@ Here a description of the configuration options :
 ```js
 {
     "relayPrivateKey": "xxxxx", // Your relay wallet private key (must have been used to deploy IOU and bridge contracts)
-    "infuraIpfs": { // Your infura informations
+    "ipfs": { // Your infura informations
         "host": "ipfs.infura.io", // Default value
         "port": 5001, // Default value
         "protocol": "https", // Default value
-        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
-        "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
+        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // OPTIONAL : Your infura project id
+        "projectSecret": "78db432020396e4d0bf8963731a6b17a" // OPTIONAL : Your infura project secret
     },
     "bridgeAdress": "http://bridge.mynft.com/", // Adress of the frontend that will be linked to this relay
     "balancer" : { // The part that is sending out transactions to the blockchain
