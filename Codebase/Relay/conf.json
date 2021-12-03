@@ -1,6 +1,6 @@
 {
     "relayPrivateKey": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8",
-    "infuraIpfs": {
+    "ipfs": {
         "host": "ipfs.infura.io",
         "port": 5001,
         "protocol": "https",
