@@ -1,43 +1,16 @@
 const Logger = require('./winston.js')('Saruman')
 const Conf = require('../conf')
 const Axios = require('axios')
-const FormData = require('form-data')
 
 class Saruman {
     constructor(){}
 
-    async uploadFile(fileBuffer, name){
-        const formData = new FormData()
-        formData.append('file', fileBuffer, name)
-    
+    async createScreenshot(videoUrl){
         const result = await Axios.post(
-            `${Conf.sarumanUrl}/api/files/uploadFile`
-            , formData
-            , { headers: formData.getHeaders() }
-        )
-
-        return result.data
-    }
-
-    async getFile(fileId){
-        const result = await Axios.get(`${Conf.sarumanUrl}/api/files/${fileId}`)
-
-        return result.data
-    }
-
-    async getS3Url(ipfsUrl){
-        const result = await Axios.post(
-            `${Conf.sarumanUrl}/api/files/getUrl`
-            , { ipfsUrl }
-        )
-
-        return result.data
-    }
-
-    async getIpfsUrl(s3Url){
-        const result = await Axios.post(
-            `${Conf.sarumanUrl}/api/files/getUrl`
-            , { s3Url }
+            `${Conf.sarumanUrl}/screenshots/createScreenshot`, 
+            {
+                videoUrl
+            }
         )
 
         return result.data

@@ -1,11 +1,13 @@
 const Jimp = require('jimp')
 const Gimli = require('./gimli')
+const Saruman = require('./saruman')
 const Axios = require('axios')
 const IPFSClient = require('./ipfs')
 const Conf = require('../conf')
 
 class Forge {
     constructor(db){
+        this.gimliClient = new Gimli()
         this.sarumanClient = new Saruman()
         this.ipfsClient = new IPFSClient()
         this.db = db
@@ -13,11 +15,11 @@ class Forge {
 
     /**
      * Upload an image to IPFS
-     * @param {Buffer} imageBuffer : The buffer of data containing the image
+     * @param {Buffer} imageBuffer : The buffer of data containing the image (IOU)
      */
-    async _uploadImage(imageBuffer){
+     async _uploadImage(imageBuffer){
         if(Conf.gimliUrl){
-            const urls = await this.sarumanClient.uploadFile(imageBuffer, 'image.png')
+            const urls = await this.gimliClient.uploadFile(imageBuffer, 'image.png')
             return urls.ipfsUrl
         }else{
             return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addFileObj(imageBuffer)).path}`
@@ -25,10 +27,32 @@ class Forge {
     }
 
     /**
+     * Submit a videoUrl to Saruman service and retrive S3/IPFS picture urls with watermaks
+     * @param {String} videoUrl : The URL of video
+     */
+    async _uploadVideo(videoUrl){
+        if(Conf.sarumanUrl){
+            const urls = await this.sarumanClient.createScreenshot(videoUrl)
+            return urls.ipfsUrl
+        }else{
+            throw "Missing SarumanUrl. Can't create an IOU from a token with a video link";
+        }
+    }
+
+    /**
+     * 2 OPTIONS :
+     *  IMAGE : We have the link, we apply _forgeImage and then upload to Gimli
+     *  VIDEO : We have the link, we upload it to saruman and retrieve the S3 url / IPFS url
+     * 
+     *  TODO : Upload pictures from SARUMAN 
+     * Useless to have 2 ENDPOINTS for the same functionality 
+     */
+
+    /**
      * Modify an image to add the mention 'I AM AN IOU'
      * @param {string} imageUri : The url of the image to modify
      */
-    async _forgeImage(imageUri){
+     async _forgeImage(imageUri){
         const image = await Jimp.read(imageUri)
         // Resize original image
         if(image.bitmap.height < image.bitmap.width) image.resize(512, Jimp.AUTO)
@@ -54,10 +78,18 @@ class Forge {
      * @param {JSON Object} originalMetadata 
      */
     async _forgeMetadata(originalMetadata, migrationData){
+        let image;
+        if (originalMetadata.image) {
+            image = await this._uploadImage(await this._forgeImage(originalMetadata.image));
+        } else if(originalMetadata.video) {
+            image = await this._uploadVideo(originalMetadata.video);
+        } else {
+            // TODO : set a default IMAGE (black background for eg)
+        }
         return {
             name: `IOU of ${originalMetadata.name}`,
             description: `This token is an IOU of tokenId "${migrationData.originTokenId}" on universe "${Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse).name}" (${migrationData.originUniverse}) and world "${migrationData.originWorld}". It can be redeemed on ${Conf.bridgeAdress}. ${originalMetadata.description}`,
-            image: await this._uploadImage(await this._forgeImage(originalMetadata.image)),
+            image: image,
             migrationData: {
                 originUniverse: migrationData.originUniverse,
                 originWorld: migrationData.originWorld,
@@ -76,7 +108,7 @@ class Forge {
         const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
         let ipfsUrl
         if(Conf.gimliUrl){
-            ipfsUrl = (await this.sarumanClient.uploadFile(new Buffer.from(JSON.stringify(forgedMetadata)), 'metadata.json')).ipfsUrl
+            ipfsUrl = (await this.gimliClient.uploadFile(new Buffer.from(JSON.stringify(forgedMetadata)), 'metadata.json')).ipfsUrl
         }else{
             ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
         }

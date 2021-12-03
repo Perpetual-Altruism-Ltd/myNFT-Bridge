@@ -9,7 +9,7 @@
     },
     "bridgeAdress": "http://bridge.mynft.com/",
     "gimliUrl": "",
-    "sarumanUrl": "",
+    "sarumanUrl": "https://saruman.mynft.com/api",
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
     "port": 5000,
     "balancer" : {
