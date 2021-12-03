@@ -6,7 +6,7 @@ const Conf = require('../conf')
 
 class Forge {
     constructor(db){
-        this.gimliClient = new Gimli()
+        this.sarumanClient = new Saruman()
         this.ipfsClient = new IPFSClient()
         this.db = db
     }
@@ -17,7 +17,7 @@ class Forge {
      */
     async _uploadImage(imageBuffer){
         if(Conf.gimliUrl){
-            const urls = await this.gimliClient.uploadFile(imageBuffer, 'image.png')
+            const urls = await this.sarumanClient.uploadFile(imageBuffer, 'image.png')
             return urls.ipfsUrl
         }else{
             return `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addFileObj(imageBuffer)).path}`
@@ -76,7 +76,7 @@ class Forge {
         const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
         let ipfsUrl
         if(Conf.gimliUrl){
-            ipfsUrl = (await this.gimliClient.uploadFile(new Buffer.from(JSON.stringify(forgedMetadata)), 'metadata.json')).ipfsUrl
+            ipfsUrl = (await this.sarumanClient.uploadFile(new Buffer.from(JSON.stringify(forgedMetadata)), 'metadata.json')).ipfsUrl
         }else{
             ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
         }

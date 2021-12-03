@@ -1,9 +1,9 @@
-const Logger = require('./winston.js')('Gimli')
+const Logger = require('./winston.js')('Saruman')
 const Conf = require('../conf')
 const Axios = require('axios')
 const FormData = require('form-data')
 
-class Gimli {
+class Saruman {
     constructor(){}
 
     async uploadFile(fileBuffer, name){
@@ -11,7 +11,7 @@ class Gimli {
         formData.append('file', fileBuffer, name)
     
         const result = await Axios.post(
-            `${Conf.gimliUrl}/api/files/uploadFile`
+            `${Conf.sarumanUrl}/api/files/uploadFile`
             , formData
             , { headers: formData.getHeaders() }
         )
@@ -20,14 +20,14 @@ class Gimli {
     }
 
     async getFile(fileId){
-        const result = await Axios.get(`${Conf.gimliUrl}/api/files/${fileId}`)
+        const result = await Axios.get(`${Conf.sarumanUrl}/api/files/${fileId}`)
 
         return result.data
     }
 
     async getS3Url(ipfsUrl){
         const result = await Axios.post(
-            `${Conf.gimliUrl}/api/files/getUrl`
+            `${Conf.sarumanUrl}/api/files/getUrl`
             , { ipfsUrl }
         )
 
@@ -36,7 +36,7 @@ class Gimli {
 
     async getIpfsUrl(s3Url){
         const result = await Axios.post(
-            `${Conf.gimliUrl}/api/files/getUrl`
+            `${Conf.sarumanUrl}/api/files/getUrl`
             , { s3Url }
         )
 
@@ -44,4 +44,4 @@ class Gimli {
     }
 }
 
-module.exports = Gimli
+module.exports = Saruman
