@@ -143,6 +143,20 @@ Model.isProviderLoaded = function(){
 Model.displayConnectedWallet = function(){
   console.log("DISPLAY");
 }
+
+//=====Persistent migration data handling
+Model.storeMigDataLocalStorage = function(){
+
+}
+//Store the step that the user completed in the mig process to local storage to access it later.
+Model.storeMigStepLocalStorage = function(){
+
+}
+//Tell weather there is an unfinished migration.
+Model.isMigrationPending = function(){
+
+}
+Model.
 //TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();
