@@ -735,8 +735,8 @@ export default class extends AbstractView {
       let mathomAPIKey = apiData.mathom.key;
       let mathomAIPUrl = apiData.mathom.url;
       console.log('Mathom API key: ' + mathomAPIKey);
-
-      let apiUrl = 'https://mathomhouse.mynft.com';
+      console.log("Mathom API url: " + mathomAIPUrl);
+      
       var options = {
         method: 'GET',
         url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
