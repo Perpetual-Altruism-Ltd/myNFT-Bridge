@@ -15,13 +15,13 @@
         "addresses": [
             {
                 "address": "0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595",
-                "key": ""
+                "key": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371"
             }
         ],
         "minimalWalletAmount": 0.0001
     },
     "universes": [
-        
+
         {
             "name":"Ethereum Testnet Rinkeby",
             "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",

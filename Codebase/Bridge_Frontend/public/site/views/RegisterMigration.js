@@ -79,17 +79,55 @@ export default class extends AbstractView {
         circleContainer.style.animationPlayState = 'running';
       }
     }
+    //Query the relay to get the manip addr from the og univ unique id from migData.
+    let getManipulatorAddrFromRelay = async function(){
+      let selectedRelayIndex = migData.migrationRelayIndex;
+      let relayURL = bridgeApp.relays[selectedRelayIndex].url;
+
+      var options = {
+        method: 'POST',
+        url: '',
+        headers: {'Content-Type': 'application/json'},
+        data: {}
+      };
+      options.url = relayURL + '/getManipulatorAddress';
+      options.data.universe = migData.originUniverseUniqueId;
+
+      try{
+        let response = await axios.request(options);
+        if(response.status == 200){
+          console.log("Response:");
+          console.log(response);
+          let manipAddr = response.data.manipulatorAddress;
+          console.log("Manipulator addr retrieved from relay: " + manipAddr);
+
+          return manipAddr;
+        }else{console.log(response.status + ' : ' + response.statusText);}
+      }catch(error){
+        //display redCircle
+        setCircleErrorState();
+        //Display error msg inside circle
+        if(error.response.data){
+          let loadingText = document.getElementById("RegistrationLoadingText");
+          if(loadingText != null && loadingText != undefined){
+            loadingText.textContent = error.response.data.status + ". Please contact our team.";
+          }
+        }
+        console.error(error);
+      }
+      //If nothing retrieved from server, return empty
+      return "";
+
+    }
 
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
       try{
-        let selectedRelayIndex = migData.migrationRelayIndex;
-        let selectedOgNetworkUniqueId = migData.originUniverseUniqueId;
-        let relayOgNetworkAddr = bridgeApp.relays[selectedRelayIndex].manipulatorAddresses[selectedOgNetworkUniqueId];
+        let manipulatorAddr = await getManipulatorAddrFromRelay();
         let originTokenId = parseInt(migData.originTokenId);
-        console.log("Ask user " + userAccount + " to grant relay " + relayOgNetworkAddr + " as an operator for the token " + originTokenId);
+        console.log("Ask user " + userAccount + " to grant relay " + manipulatorAddr + " as an operator for the token " + originTokenId);
 
-        contracts.originalChainERC721Contract.methods.approve(relayOgNetworkAddr, originTokenId)
+        contracts.originalChainERC721Contract.methods.approve(manipulatorAddr, originTokenId)
         .send({from: userAccount, gas:100000}, function(error, transactionHash){
           //Function called when user accept or reject relay's operator approval
           if(error){
