@@ -869,8 +869,7 @@ export default class extends AbstractView {
       document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
       //Display wallet name
-      let providerName =
-      torage.getItem("provider");
+      let providerName = localStorage.getItem("provider");
       if(!providerName){return;}
       //Set first char to upperCase
       providerName = providerName.charAt(0).toUpperCase() + providerName.slice(1);
@@ -1089,7 +1088,7 @@ export default class extends AbstractView {
     }
     //Show the pending migration data from localStorage
     let showPendingMigData = function(){
-      let pendingMigrationData = localStorage.getItem("migrationData");
+      let pendingMigrationData = //TODO
       console.log("pendingMigrationData:");
       console.log(pendingMigrationData);
     }

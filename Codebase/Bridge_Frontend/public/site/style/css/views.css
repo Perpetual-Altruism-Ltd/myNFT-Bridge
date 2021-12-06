@@ -193,6 +193,13 @@
   align-items: center;
   justify-content: flex-start;
 }
+.CenteredCardLineWrap{
+  display: flex;
+  flex-flow: row wrap;
+  gap: 2em 4em;
+  align-items: center;
+  justify-content: centered;
+}
 .CardLine{
   display: flex;
   flex-flow: row nowrap;
