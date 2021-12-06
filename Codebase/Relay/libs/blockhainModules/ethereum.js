@@ -125,7 +125,8 @@ class Ethereum extends EventEmitter {
             try {
                 web3ContractBridge.once('MigrationDeparturePreRegisteredERC721IOU', { 
                     filter: { 
-                        _signee: this.hexToBytes32(migrationData.originOwner) 
+                        _originWorld: migrationData.originWorld,
+                        _originTokenId: migrationData.originTokenId
                     } 
                 }, async (err, data) => {
                     const migrationHash = data?.returnValues?._migrationHash;
@@ -187,7 +188,7 @@ class Ethereum extends EventEmitter {
             migrationData.destinationBridge,
             { gas: 8000000 }
         )
-        const data = [
+        const dataArray = [
             this.hexToBytes32(migrationData.originUniverse),
             this.hexToBytes32(originBridge),
             this.hexToBytes32(migrationData.originWorld),
@@ -212,14 +213,14 @@ class Ethereum extends EventEmitter {
         + this.web3Instance.utils.padLeft(migrationData.originOwner, 64).replace("0x", "")
         + this.web3Instance.utils.padLeft(this.web3Instance.utils.numberToHex(this.web3Instance.utils.toBN(parseInt(blockTimestamp))), 64).replace("0x", "")
         + migrationHashSignature.replace("0x", "")
-        
+
         const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(data, migrationData.destinationBridge).encodeABI();
         const txObject = {
             to: manipulatorAddress,
             value: 0,
             data: calldata
         };
-        /*const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(...data).encodeABI();
+        /*const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(...dataArray).encodeABI();
         const txObject = {
             to: migrationData.destinationBridge,
             value: 0,

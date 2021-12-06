@@ -47,7 +47,7 @@ class TransactionBalancerNewGen {
                 } 
                 return reject(res.transactionResult);
             }
-            this.eventEmitter.addListener(transactionHash, handler)
+            this.eventEmitter.once(transactionHash, handler)
             Logger.info(`New transaction registered with transaction balancer.`)
             this.transactionQueue.push(transaction)
         }) 
@@ -76,6 +76,9 @@ class TransactionBalancerNewGen {
 
             const transactionHash = Crypto.createHash('md5').update(JSON.stringify(transaction)).digest("hex")
 
+            transaction.from = account.address
+            transaction.nonce = await this.web3Instance.eth.getTransactionCount(transaction.from)
+
             let gasEstimate
             try{
                 gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
@@ -94,9 +97,6 @@ class TransactionBalancerNewGen {
                 ...transaction
             }
 
-            fullTransaction.from = account.address
-            fullTransaction.nonce = await this.web3Instance.eth.getTransactionCount(account.address)
-
             Logger.info(`Executing transaction on account ${account.address} with nonce ${fullTransaction.nonce} on universe ${this.universe.name}.`)
 
             const signedTransaction = await this.web3Instance.eth.accounts.signTransaction(fullTransaction, account.key)
@@ -108,7 +108,8 @@ class TransactionBalancerNewGen {
                 this.eventEmitter.emit(transactionHash, { state: true, transactionResult })
             }catch(err){
                 Logger.error(err.message)
-                if(err.message == 'Returned error: nonce too low' || err.message == 'Returned error: replacement transaction underpriced') {
+                if(err.message == 'Returned error: nonce too low' 
+                    || err.message == 'Returned error: replacement transaction underpriced') {
                     Logger.info('Transaction failed. Waiting to retry the transaction.');
                     this.transactionQueue.unshift(transaction);
                 }else{

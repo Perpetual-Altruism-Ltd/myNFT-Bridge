@@ -48,7 +48,8 @@ const main = async () => {
                         , delivered: false
                         , minted: false
                     })
-                    if(premintedTokens.length < 2){
+                    
+                    if(premintedTokens.length < 10){
                         try{
                             const tokenId = await ethereum.premintToken(universe.manipulatorAddress, world.address, universe.bridgeAddress)
                             await (new db.models.premintedTokens({
@@ -152,35 +153,28 @@ const main = async () => {
             return
         }
 
-        const premintedToken = await db.models.premintedTokens.findOne({
+        let premintedToken = await db.models.premintedTokens.findOneAndUpdate({
             universe: universe.uniqueId
             , world: req.body.world
             , delivered: false
             , minted: false
-        })
+        }, { delivered: true })
+
+        while(!premintedToken){
+            await sleep(100)
+            premintedToken = await db.models.premintedTokens.findOneAndUpdate({
+                universe: universe.uniqueId
+                , world: req.body.world
+                , delivered: false
+                , minted: false
+            }, { delivered: true })
+        }
 
         const ethereum = universesRpc[universe.uniqueId]
 
-        let tokenId
+        Logger.info(`Preminted token id ${premintedToken.tokenId} delivered to client.`)
 
-        if(!premintedToken){
-            tokenId = await ethereum.premintToken(universe.manipulatorAddress, req.body.world, universe.bridgeAddress)
-            await (new db.models.premintedTokens({
-                tokenId
-                , universe: universe.uniqueId
-                , world: req.body.world
-                , delivered: true
-                , minted: false
-            })).save()
-        }else{
-            tokenId = premintedToken.tokenId
-            premintedToken.delivered = true
-            premintedToken.save()
-        }
-
-        Logger.info(`Preminted token id ${tokenId} delivered to client.`)
-
-        res.json({ "tokenId" : tokenId })
+        res.json({ "tokenId" : premintedToken.tokenId })
     })
 
     app.post('/initMigration', async (req, res) => {
@@ -208,6 +202,9 @@ const main = async () => {
         }
 
         migrationData.destinationBridge = destinationUniverse.bridgeAddress
+
+        console.log(migrationData)
+        
 
         if(!req.body.redeem){
             const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
@@ -398,13 +395,14 @@ const main = async () => {
                 await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
                 Logger.info(`Escrow hash verified`)
 
+                const premintedToken = await db.models.premintedTokens.findOneAndUpdate(
+                    { tokenId: client.migrationData.destinationTokenId }
+                    , { minted: true }
+                )
+
                 //call client which will call ethereum on destination which will call migrateFromIOUERC721ToERC721 on bridge
                 await client.closeMigration()
                 Logger.info(`Migration closed`)
-
-                const premintedToken = await db.models.premintedTokens.findOne({ tokenId: client.migrationData.destinationTokenId })
-                premintedToken.minted = true
-                await premintedToken.save()
 
                 // Call origin bridge migrateFromIOUERC721ToERC721
                 await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
