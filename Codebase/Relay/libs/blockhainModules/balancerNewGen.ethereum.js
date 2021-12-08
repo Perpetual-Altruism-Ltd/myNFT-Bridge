@@ -109,7 +109,8 @@ class TransactionBalancerNewGen {
             }catch(err){
                 Logger.error(err.message)
                 if(err.message == 'Returned error: nonce too low' 
-                    || err.message == 'Returned error: replacement transaction underpriced') {
+                    || err.message == 'Returned error: replacement transaction underpriced'
+                    || err.message == 'Returned error: Transaction nonce is too low. Try incrementing the nonce.') {
                     Logger.info('Transaction failed. Waiting to retry the transaction.');
                     await sleep(5000)
                     this.transactionQueue.unshift(transaction);

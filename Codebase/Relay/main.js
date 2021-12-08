@@ -203,9 +203,6 @@ const main = async () => {
 
         migrationData.destinationBridge = destinationUniverse.bridgeAddress
 
-        console.log(migrationData)
-        
-
         if(!req.body.redeem){
             const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
             if(!destinationWorld){

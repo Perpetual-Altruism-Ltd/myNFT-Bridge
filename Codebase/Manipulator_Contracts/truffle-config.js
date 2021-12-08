@@ -69,7 +69,7 @@ module.exports = {
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     rinkeby: {
-      provider: () => new HDWalletProvider('', `https://rinkeby.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://rinkeby.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
       network_id: 4,       // Rinkeby's id
       gas: 9999999,        // Rinkeby has a lower block limit than mainnet
       gasPrice: 6000000000,
@@ -78,7 +78,7 @@ module.exports = {
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     kovan: {
-      provider: () => new HDWalletProvider('', `https://kovan.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
+      provider: () => new HDWalletProvider('fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371', `https://kovan.infura.io/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
       network_id: 42,       // Kovan's id
       gas: 9999999,        // Kovan has a lower block limit than mainnet
       confirmations: 2,    // # of confs to wait between deployments. (default: 0)

@@ -1,5 +1,4 @@
 {
-    "relayPrivateKey": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371",
     "infuraIpfs": {
         "host": "ipfs.infura.io",
         "port": 5001,
@@ -14,20 +13,8 @@
     "balancer" : {
         "addresses": [
             {
-                "address": "0x4795257d72F0055940842900fF11A956189eeba1",
-                "key": ""
-            },
-            {
-                "address": "0x402a85Ddd124cc397df8E8F1ca71AAfc24Fca545",
-                "key": ""
-            },
-            {
-                "address": "0xc61e49d72C0189fcA2DD2da2237D7bf2aa18C914",
-                "key": ""
-            },
-            {
-                "address": "0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595",
-                "key": ""
+                "address": "0xD169F5F66F286384110963F551094650F7CCE8ee",
+                "key": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371"
             }
         ],
         "minimalWalletAmount": 0.0001
@@ -42,12 +29,12 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "manipulatorAddress": "0xBA5Ad339c13446A9d00e380E9335BE61d1Ed4d4c",
-            "bridgeAddress": "0x9a8F28C8e21b2b1F7432e026Db55cB04C8Fd80C5",
+            "manipulatorAddress": "0x79a186242868024ef1ee0C49298EdA617c5D9d80",
+            "bridgeAddress": "0xbd51e2fe518Ed45e3ecB01d89558eb58681C2976",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x6dC58dDf7c24240eA0AD863d03D10e6C424736Da",
+                    "address": "0x2f13399D9d49ed61D602CCb100E6d1be876B0e62",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"
@@ -61,31 +48,13 @@
             "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
             "networkID": 42,
             "uniqueId": "0xee0bec75",
-            "manipulatorAddress": "0x5deA2d834f283CaBd4A5327b75f2E5EF6bC0Db94",
-            "bridgeAddress": "0xcAc4B5AacB7d6973B7644F0cbecf1aeDff2628E1",
+            "manipulatorAddress": "0x8e0bbeaE7CDC5A44bE4C5dA6B2353636064F60Aa",
+            "bridgeAddress": "0x1B8D1d050522ed75533E444D46159EEF93A1c0bD",
             "explorer" : "https://kovan.etherscan.io/",
             "eip1559": true,
             "worlds": [
                 {
-                    "address": "0x6C6838Dd759189fd333780d8Dc84E7c93343Ea7B",
-                    "name": "MyContract",
-                    "tokenName": "TOKENNAME",
-                    "owner": "0x00"
-                }
-            ]
-        },
-        {
-            "name":"Polkadot Testnet Moonbase Alpha",
-            "rpc": "ws://moonbeam-alphanet.mynft.com:9944",
-            "networkID": 1287,
-            "uniqueId": "0xe35d7d6b",
-            "manipulatorAddress": "0x59c1880cA700f48467f53ec63e97d2ff46752A03",
-            "bridgeAddress": "0xC11086AFF26Ad58CADe91A975fAA6084254996AA",
-            "explorer": "https://moonbase-blockscout.testnet.moonbeam.network/",
-            "eip1559": false,
-            "worlds": [
-                {
-                    "address": "0xac96cB971E723ABB06E7d2c6f05f6B21dEbB5F72",
+                    "address": "0x7BaC8E53e779E5661Bb62cA3eA2f3FE87672b21a",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x00"

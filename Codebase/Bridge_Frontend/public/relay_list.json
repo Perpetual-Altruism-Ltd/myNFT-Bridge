@@ -7,12 +7,7 @@
       "operator": "Perpetual altruism",
       "trustMecanism": "Centralised relay",
       "description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs",
-      "contact": "abc@abc.fr",
-      "manipulatorAddresses": {
-        "0x07dac20e": "0xBA5Ad339c13446A9d00e380E9335BE61d1Ed4d4c",
-        "0xee0bec75": "0x5deA2d834f283CaBd4A5327b75f2E5EF6bC0Db94",
-        "0xe35d7d6b": "0x59c1880cA700f48467f53ec63e97d2ff46752A03"
-      }
+      "contact": "abc@abc.fr"
     }
   ]
 }
