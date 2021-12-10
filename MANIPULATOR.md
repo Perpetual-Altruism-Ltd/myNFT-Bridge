@@ -1,1 +1,33 @@
+# Manipulator
+
+The manipulator is the single entry point to the supported blockchains. This is the contract that will permit multiple transaction per block through using multiple wallet simultaneously on the relay side.
+
+## Configuration
+
+To deploy the manipulator you'll need to edit the [https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/migrations/1_init.js](1_init.js) file.
+
+There is, line 56 to 59 some approve (`await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)`) function calls. You need to replace that with your manipulating wallets addresses. These addresse will be used by the relay to talk to the manipulator, call the bridge, and mint the IOUs.
+
+Then update [https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/truffle-config.js](truffle-config.js) with your credentials and network data:
+```
+networks : {
+ rinkeby: {
+       provider: () => new HDWalletProvider('yourmasterprivatekey', `your_http_rpc_url`),
+       network_id: 4,       // (eg : 4 = Rinkeby)
+       gas: 5500000,        // Rinkeby has a lower block limit than mainnet
+       confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+     },
+}
+```
+
+## Deployment
+
+Then run :
+```bash
+truffle migrate --network rinkeby --reset
+```
+
+Save somewhere safe all the deployement data outputed by truffle to be able to interact with your contracts and notably approving new addresses to handle manipulator if needed. Note that your entry point is the Transparent proxy address and not the Manipulator address which is just an empty shell for delegate calls purposes.
 
