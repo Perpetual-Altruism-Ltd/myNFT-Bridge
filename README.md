@@ -33,6 +33,9 @@ This is an open ended question with no correct answers, only compromises. Many s
 - Allow users to chose a relay.
 - Allow NFT owners to migrate tokens in a single operation : allowing a relay as the token operator.
 
+## Using the myNFT bridge
+
+You can find an how to [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/USERHOWTO.md)
 
 ## More details 
 
