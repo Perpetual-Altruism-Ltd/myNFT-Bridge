@@ -88,7 +88,6 @@ Here a description of the configuration options :
 
 ```js
 {
-    "relayPrivateKey": "xxxxx", // Your relay wallet private key (must have been used to deploy IOU and bridge contracts)
     "infuraIpfs": { // Your infura informations
         "host": "ipfs.infura.io", // Default value
         "port": 5001, // Default value
@@ -171,7 +170,6 @@ The frontend hold three configuration files :
 			"chainID": 42, // Chain id
 			"networkID": 42, // Network id
 			"uniqueId": "0xee0bec75", // Universe unique id
-			"bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5", // Bridge address
 			"explorer" : "https://kovan.etherscan.io/", // Explorer address
 			"targetList": [
 				{
@@ -189,7 +187,6 @@ The frontend hold three configuration files :
 			"chainID": 4,
 			"networkID": 4,
 			"uniqueId": "0x07dac20e",
-			"bridgeAdress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242",
 			"explorer" : "https://rinkeby.etherscan.io/",
 			"targetList": [
 				{
@@ -219,7 +216,6 @@ The frontend hold three configuration files :
       "operator": "Perpetual altruism", // Operator of your relay
       "trustMecanism": "Centralised relay", // Trust mecanism of your relay
       "description": "The myNFT relay is the best relay in the world. You can trust us with your life and also some of your NFTs", // Description of your relay
-      "publicKey": "0xbf21e21414554dB734C9f86835D51B57136BC35b", // Public key of your relay
       "contact": "abc@abc.fr" // Contact address of your relay
     }
   ]
@@ -271,7 +267,7 @@ networks : {
 Deploy all contracts on this network (migration/bridge/erc721/iou):
 
 ```
-$ truffle migrate rinkeby
+$ truffle migrate --network rinkeby --reset
 ```
 If you only need to deploy a bridge, you can run: 
 ```
