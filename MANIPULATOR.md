@@ -34,5 +34,9 @@ Then run :
 truffle migrate --network rinkeby --reset
 ```
 
+## After deployment
+
 Save somewhere safe all the deployement data outputed by truffle to be able to interact with your contracts and notably approving new addresses to handle manipulator if needed. Note that your entry point is the Transparent proxy address and not the Manipulator address which is just an empty shell for delegate calls purposes.
+
+You can then use the TransparentProxy address as the manipulator address in the relay configuration.
 
