@@ -48,17 +48,12 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 * NodeJS 12+ is supported
 * Windows, Linux or macOS
 
-## Installation
+## Being a relay
 
-### Initialization
-
-*This is the recommended installation method if you want to improve the `Perpetual-Altruism-Ltd/myNFT-Bridge` project.*
-
-Clone this repository and install the required `npm` dependencies:
-
-```sh
-git clone git@github.com:Perpetual-Altruism-Ltd/myNFT-Bridge.git
-```
+- You first need to either find a bridge already deployed on your target blockchains, or deploy one yourself. You can find the informations about dpeloying a bridge [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/BRIDGE.md)
+- Then you need to depoy a Manipulator and a IOU (world) contract, you can find all the informations [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/MANIPULATOR.md)
+- Then you can configure and launch the relay. All the informations are [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/RELAY.md)
+- And lastly you must configure and launch a frontend server, [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/FRONTEND.md)
 
 ## Thanks to
 
