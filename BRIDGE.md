@@ -1,5 +1,5 @@
 
-## Bridge deployment
+# Bridge
 
 This project is a truffle project. There are multiple files in the contracts folder and you can select between:
 
@@ -41,10 +41,6 @@ networks : {
 ```
 Deploy all contracts on this network (migration/bridge/erc721/iou):
 
-```
+```bash
 $ truffle migrate --network rinkeby --reset
-```
-If you only need to deploy a bridge, you can run: 
-```
-$ truffle migrate --from 2 --to 2
 ```
