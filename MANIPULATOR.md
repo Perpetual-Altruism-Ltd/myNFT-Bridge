@@ -2,7 +2,10 @@
 
 The manipulator is the single entry point to the supported blockchains. This is the contract that will permit multiple transaction per block through using multiple wallet simultaneously on the relay side.
 
-- [
+- [`Codebase/Manipulator_Contracts/contracts/Manipulator.sol`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/contracts/Manipulator.sol) - Is the manipulator contract. Will check if the address calling it is approved and forward the call to the bridge or the IOU contract.
+- [`Codebase/Manipulator_Contracts/contracts/MemoryStructure.sol`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/contracts/MemoryStructure.sol) - Is the memory structure used by the Manipulator. Is useful for proxyfication purpose.
+- [`Codebase/Manipulator_Contracts/contracts/1538/`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/contracts/1538) - All the proxy contracts
+- [`Codebase/Manipulator_Contracts/contracts/721/IOU.sol`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/contracts/721/IOU.sol) - The IOU contract. Will be initialized with the owner address. Should be the manipulator contract address in this setup.
 
 ## Configuration
 
