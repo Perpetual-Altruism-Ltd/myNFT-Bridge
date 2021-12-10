@@ -2,13 +2,15 @@
 
 The manipulator is the single entry point to the supported blockchains. This is the contract that will permit multiple transaction per block through using multiple wallet simultaneously on the relay side.
 
+- [
+
 ## Configuration
 
-To deploy the manipulator you'll need to edit the [https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/migrations/1_init.js](1_init.js) file.
+To deploy the manipulator you'll need to edit the [`Codebase/Manipulator_Contracts/migrations/1_init.js`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/migrations/1_init.js) file.
 
 There is, line 56 to 59 some approve (`await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)`) function calls. You need to replace that with your manipulating wallets addresses. These addresse will be used by the relay to talk to the manipulator, call the bridge, and mint the IOUs.
 
-Then update [https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/truffle-config.js](truffle-config.js) with your credentials and network data:
+Then update [`Codebase/Manipulator_Contracts/truffle-config.js`](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Manipulator_Contracts/truffle-config.js) with your credentials and network data:
 ```
 networks : {
  rinkeby: {
