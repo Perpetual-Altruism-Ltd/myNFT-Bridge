@@ -69,7 +69,7 @@ const main = async () => {
     }
 
     async function populateClientList(){
-        const clients = await db.models.clients.find()
+        const clients = await db.models.clients.find({ step: { $ne: 'registerTransferOnOriginBridge' } })
         clients.forEach(client => {
             clientList[client.id] = new Client(
                 client.migrationData
@@ -404,6 +404,9 @@ const main = async () => {
                 // Call origin bridge migrateFromIOUERC721ToERC721
                 await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
                 Logger.info(`Transfer registered on origin bridge`)
+
+                clientList[req.body.migrationId]
+                Logger.info(`Client ${req.body.migrationId} has been deleted from client list`)
             }catch(err){
                 Logger.error(err)
             }
@@ -448,6 +451,9 @@ const main = async () => {
                 // Call origin bridge migrateFromIOUERC721ToERC721
                 await client.registerTransferOnOriginBridge(req.body.escrowHashSignature)
                 Logger.info(`Registered transfer on origin bridge`)
+
+                delete clientList[req.body.migrationId]
+                Logger.info(`Client ${req.body.migrationId} has been deleted from client list`)
             }catch(err){
                 Logger.error(err)
             }
