@@ -24,6 +24,11 @@ Make sure that everything has been set up correctly:
 ```
 $ truffle test
 ```
+
+### Configuration
+
+To deploy the bridge you need to choose which network it will be operating on. To this, find the universe unique id (last 4 bytes of keccak256 hash of the nameof the network) and add it line 45-48 (`await instancedInit.init("0xe35d7d6b");`) to the deployement script [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Bridge_Contracts/migrations/2_deploy_bridge.js)
+
 ### Deployment
 
 Update truffle-config.js with your credentials and network data:
@@ -44,3 +49,7 @@ Deploy all contracts on this network (migration/bridge/erc721/iou):
 ```bash
 $ truffle migrate --network rinkeby --reset
 ```
+
+### After deployement
+
+Please note all the deployement informations. The ImplTransparentProxy contract address is the address of your bridge. You can then use that address in the relay configuration.
