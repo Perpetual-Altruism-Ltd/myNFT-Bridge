@@ -254,6 +254,34 @@ class Ethereum extends EventEmitter {
         return await this.balancer.send(txObject);
     }
 
+    async cancelMigration(manipulatorAddress, originBridge, migrationData, blockTimestamp) {
+        const web3Contract = new this.web3Instance.eth.Contract(
+            ManipulatorAbi,
+            manipulatorAddress,
+            { gas: 8000000 }
+        )
+        const data = [
+            migrationData.originWorld,
+            this.numberToBytes32(migrationData.originTokenId),
+            migrationData.originOwner,
+            this.hexToBytes32(migrationData.destinationUniverse),
+            this.hexToBytes32(migrationData.destinationBridge),
+            this.hexToBytes32(migrationData.destinationWorld),
+            this.numberToBytes32(migrationData.destinationTokenId),
+            this.hexToBytes32(migrationData.destinationOwner),
+            migrationData.originOwner,
+            this.numberToBytes32(blockTimestamp)
+        ]
+
+        const calldata = await web3Contract.methods.cancelMigration(...data, originBridge).encodeABI();
+        const txObject = {
+            to: manipulatorAddress,
+            value: 0,
+            data: calldata
+        };
+        await this.balancer.send(txObject);
+    }
+
     /**
      * Utilities functions
      */

@@ -33,6 +33,10 @@ const universeSchema = Mongoose.Schema({
 module.exports = Mongoose.Schema({
     id: { type: String, required: [true, "id is required"] }
     , step: { type: String, required: [true, "step is required"] }
+    , lastAction: { type: Number, required: [true, "lastAction is required"]}
+    , migrationHash: { type: String }
+    , escrowHash: { type: String }
+    , blockTimestamp: { type: String }
     , migrationData: migrationDataSchema
     , originUniverse: universeSchema
     , destinationUniverse: universeSchema

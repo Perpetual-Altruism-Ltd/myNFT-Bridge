@@ -39,6 +39,7 @@ class Client {
             this.dbObject = new this.db.models.clients({
                 id: this.id,
                 step: this.step,
+                lastAction: (new Date()).getTime()/1000,
                 migrationData: this.migrationData,
                 originUniverse: this.originUniverse,
                 destinationUniverse: this.destinationUniverse
@@ -47,12 +48,16 @@ class Client {
             await this.dbObject.save()
         }else{
             this.dbObject = await this.db.models.clients.findOne({ id: this.id })
+            this.migrationHash = this.dbObject.migrationHash
+            this.blockTimestamp = this.dbObject.blockTimestamp
+            this.escrowHash = this.dbObject.escrowHash
         }
     }
 
     async annonceToBridge(){
         this.step = 'annonceToBridge';
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         try {
@@ -78,6 +83,7 @@ class Client {
     async transferToBridge(migrationHashSignature){
         this.step = 'transferToBridge';
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         this.migrationHashSignature = migrationHashSignature
@@ -94,6 +100,7 @@ class Client {
     async closeMigration(){
         this.step = 'closeMigration'
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         this.originalTokenUri = await this.originEthereumConnection.getTokenUri(this.originUniverse.manipulatorAddress, this.migrationData.originWorld, this.migrationData.originTokenId)
@@ -113,6 +120,7 @@ class Client {
     async closeRedeemMigration(){
         this.step = 'closeRedeemMigration'
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         this.creationTransferHash = (await this.destinationEthereumConnection.migrateFromIOUERC721ToERC721(
@@ -127,6 +135,7 @@ class Client {
     async registerTransferOnOriginBridge(escrowHashSigned){
         this.step = 'registerTransferOnOriginBridge'
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         await this.originEthereumConnection.registerEscrowHashSignature(
@@ -139,6 +148,7 @@ class Client {
     async verifyEscrowHashSigned(escrowHashSigned){
         this.step = 'verifyEscrowHashSigned'
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
         // this.db.collections.clients.update(this.dbObject)
         // TODO : at server restard, this.escrowHash could be null /!\
@@ -149,6 +159,7 @@ class Client {
     async updateEscrowHash(){
         this.step = 'updateEscrowHash'
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
         if(this.migrationHash) {
@@ -164,17 +175,17 @@ class Client {
         }
     }
 
-    async transferBackOriginToken(){
+    async cancelMigration(){
         this.step = "canceled"
         this.dbObject.step = this.step
+        this.dbObject.lastAction = (new Date()).getTime()/1000
         await this.dbObject.save()
 
-        const originOwner = this.migrationData.originOwner;
-        await ethereum.safeTransferFrom(
-            this.migrationData.originWorld,
+        await this.originEthereumConnection.cancelMigration(
+            this.originUniverse.manipulatorAddress,
             this.originUniverse.bridgeAddress,
-            originOwner,
-            this.migrationData.originTokenId
+            this.migrationData,
+            this.blockTimestamp
         )
     }
 
