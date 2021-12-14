@@ -84,6 +84,7 @@ export default class extends AbstractView {
     let grantRelayOperatorPrivilege = async function(){
       //Before engaging in the migration process, save mig data to localStorage
       model.storeMigDataLocalStorage();
+      model.storeMigStepLocalStorage(model.migStepManipulatorApprove);
 
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
@@ -115,6 +116,9 @@ export default class extends AbstractView {
         .then((res) => {
           //Function called when transaction accepted on blockchain. Will be executed when page EscrowToken is displayed
           console.log("Relay is now an operator");
+
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepInitMigration);
 
           //Call /initMigration from Relay
           initMigration();
@@ -173,8 +177,11 @@ export default class extends AbstractView {
         if(response.status == 200){
           let migId = response.data.migrationId;
           console.log("Migration initiated with migrationId: " + migId);
-          //Add migrationID as cookie
+          //Add migrationID as cookie. This will trigger EscrowToken to call /pollingMigration.
           model.createCookie("migrationId", migId, 31);
+
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepPollMigrationHash);
         }else{console.log(response.status + ' : ' + response.statusText);}
 
       }).catch(function (error) {

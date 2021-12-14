@@ -57,4 +57,20 @@ model.disconnectWallet = false;
 model.editMigrationForm = false;
 model.isRedeem = false;
 
+//The names of the step under processing.
+model.migStepManipulatorApprove = 'approve';
+model.migStepInitMigration = 'init';
+model.migStepPollMigrationHash = 'migrationHash';
+model.migStepSignMigrationHash = 'signMigrationHash';
+model.migStepContinueMigration = 'continue';
+model.migStepPollEscrowHash = 'escrowHash';
+model.migStepSignEscrowHash = 'signEscrowHash';
+model.migStepCloseMigration = 'close';
+model.migStepPollEndMigration = 'end';
+model.migStepMigrationSuccessful = 'success';
+
+//For instance currentMigrationStep will have 'continue value if  migrationHash has been received, and escrow hash has not been queried yet
+model.currentMigrationStep = model.migStepManipulatorApprove;
+model.resumeMigration = false;
+
 export default model;

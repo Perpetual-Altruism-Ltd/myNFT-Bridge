@@ -144,23 +144,25 @@ Model.displayConnectedWallet = function(){
   console.log("DISPLAY");
 }
 
-//=====Persistent migration data handling
+//=====Persistent migration data handling=====
 Model.storeMigDataLocalStorage = function(){
-  localStorage.setItem('migrationData', Model.migrationData);
+  localStorage.setItem('migrationData', JSON.stringify(Model.migrationData));
 }
 //Store the step that the user completed in the mig process to local storage to access it later.
-Model.storeMigStepLocalStorage = function(){
-
+Model.storeMigStepLocalStorage = function(step){
+  console.log("=====Set mig step=====: "  + step);
+  Model.currentMigrationStep = step;
+  localStorage.setItem('migrationStep', Model.currentMigrationStep);
 }
 //Tell weather there is an unfinished migration.
 Model.isMigrationPending = function(){
-
+  return Model.getPendingMigStep() != Model.migStepMigrationSuccessful;
 }
 Model.getPendingMigData = function(){
-  localStorage.getItem("migrationData");
+  return JSON.parse(localStorage.getItem("migrationData"));
 }
 Model.getPendingMigStep = function(){
-  localStorage.getItem("migrationData");
+  return localStorage.getItem("migrationStep");
 }
 //TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views

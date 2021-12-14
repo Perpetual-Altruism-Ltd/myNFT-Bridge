@@ -32,6 +32,10 @@ export default class extends AbstractView {
         document.getElementById("BCT").setAttribute('step-num', 2);
 
         escrowHashSigned = res;
+
+        //Update migStep
+        model.storeMigStepLocalStorage(model.migStepCloseMigration);
+
         //Send escrowHashSigned to relay
         closeMigration();
       }).catch((res) => {
@@ -57,6 +61,10 @@ export default class extends AbstractView {
       axios.request(options).then(function (response) {
         if(response.status == 200){
           console.log(options.url + ' answer received. Moving to mint_token');
+
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepPollEndMigration);
+
           //Move to mint_Token page
           model.navigateTo("/mint_token");
         }else{

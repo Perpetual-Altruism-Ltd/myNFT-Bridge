@@ -734,12 +734,10 @@ export default class extends AbstractView {
       let apiData = await getApiCredential();
       let mathomAPIKey = apiData.mathom.key;
       let mathomAIPUrl = apiData.mathom.url;
-      console.log('Mathom API key: ' + mathomAPIKey);
-      console.log("Mathom API url: " + mathomAIPUrl);
 
       var options = {
         method: 'GET',
-        url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
+        url: mathomAIPUrl + '/publicKey/' + /*userAccount*/ '0x00',
         headers: {'Content-Type': 'application/json'}
       };
 
@@ -1088,10 +1086,23 @@ export default class extends AbstractView {
     }
     //Show the pending migration data from localStorage
     let showPendingMigData = function(){
-      let pendingMigrationData = //TODO
-      console.log("pendingMigrationData:");
-      console.log(pendingMigrationData);
+      let pendingMigrationData = model.getPendingMigData();
+
+      document.getElementById("PendingMigOgNetwork").innerHTML = pendingMigrationData.originUniverse;
+      document.getElementById("PendingMigOgWorld").innerHTML = pendingMigrationData.originWorld;
+      document.getElementById("PendingMigOgTokenId").innerHTML = pendingMigrationData.originTokenId;
+      document.getElementById("PendingMigOgTokenName").innerHTML = pendingMigrationData.originTokenName;
+      document.getElementById("PendingMigOgTokenOwner").innerHTML = pendingMigrationData.originOwner;
+
+      document.getElementById("PendingMigDestNetwork").innerHTML = pendingMigrationData.destinationUniverse;
+      document.getElementById("PendingMigDestWorld").innerHTML = pendingMigrationData.destinationWorld;
+      document.getElementById("PendingMigDestTokenId").innerHTML = pendingMigrationData.destinationTokenId;
+      document.getElementById("PendingMigDestTokenName").innerHTML = pendingMigrationData.destinationTokenName;
+      document.getElementById("PendingMigDestTokenOwner").innerHTML = pendingMigrationData.destinationOwner;
+
+      showCard("PendingMigCard", true);
     }
+
 
     //=====Error & user messages=====
     let displayDestTokenNameMsg = function(txt){
@@ -1791,6 +1802,15 @@ export default class extends AbstractView {
       console.log(migData);
       model.navigateTo("/register_migration");
     });
+
+    //=====Resume migration process=====
+    if(model.isMigrationPending()){
+      showPendingMigData();
+
+      document.getElementById("ResumeMigBtn").addEventListener('click', function(){
+        //TODO
+      })
+    }
 
     //HANDLE WALLET CONNECTION
     //If web3 already injected

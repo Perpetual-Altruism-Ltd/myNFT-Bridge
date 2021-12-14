@@ -75,6 +75,9 @@ export default class extends AbstractView {
             setCircleValidState();
             loadingText.textContent = "Migration ended ! The token has been transferred to the destination owner.";
 
+            //Update migStep
+            model.storeMigStepLocalStorage(model.migStepMigrationSuccessful);
+
             //Then move to migration_finished page to display link to chain explorer for the token transfert transaction
             setTimeout(function () {model.navigateTo("/migration_finished");}, 3000);
           }

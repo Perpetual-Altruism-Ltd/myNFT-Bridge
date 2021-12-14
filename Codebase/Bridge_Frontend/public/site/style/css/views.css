@@ -1,6 +1,6 @@
 /*============Views===========*/
 /*Initial view */
-/*#PendingMigCard,*/
+#PendingMigCard,
 #DepartureCard,#OriginNetworkCardLine,#OgNetworkSwitchMessage,#OgContractERC721CompliantMsgCardLine,#OriginWorldCardLine,#OriginTokenIDCardLine,
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
@@ -335,7 +335,6 @@
   width: 3em;
   height: 5em;
   background-repeat: no-repeat;
-  transform: rotate(-90deg);
 
   margin-left: 2em;
   margin-right: 2em;
@@ -494,4 +493,8 @@
 #MigFinishedExplText{
   line-height: 1.56rem;
   display: inline-block;
+}
+
+#PendingMigCard{
+  margin-top: 2em;
 }

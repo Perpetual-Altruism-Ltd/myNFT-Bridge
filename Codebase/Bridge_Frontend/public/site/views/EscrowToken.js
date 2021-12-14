@@ -76,6 +76,9 @@ export default class extends AbstractView {
             setCircleHoldOnState();
             loadingText.textContent = "Please sign the migration hash to continue the migration.";
 
+            //Update migStep
+            model.storeMigStepLocalStorage(model.migStepSignMigrationHash);
+
             //Then sign migration hash
             signMigrationHash();
           }
@@ -121,7 +124,7 @@ export default class extends AbstractView {
       migrationHashListener();
     }else {
       setCircleErrorState();
-      loadingText.textContent = "No migration data found. Redirecting to wallet connection page.";
+      loadingText.textContent = "No migration data found.";
       //setTimeout(function(){model.navigateTo('wallet_connection');}, 3000);
     }
 
@@ -139,6 +142,9 @@ export default class extends AbstractView {
 
         //Resume loading circle spin
         setCircleWaitingState();
+
+        //Update migStep
+        model.storeMigStepLocalStorage(model.migStepContinueMigration);
 
         continueMigration();
       }).catch((res) => {
@@ -167,6 +173,9 @@ export default class extends AbstractView {
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepPollEscrowHash);
+
           //SetCircleWaitingState is called in escrowHashListener and delayed by 3sec
           //start listening relay for escrow hash
           escrowHashListener();
@@ -208,11 +217,14 @@ export default class extends AbstractView {
             //set circle Valid state
             setCircleValidState();
             if(migData.migrationType == model.RedeemIOUMigrationType){
-              loadingText.textContent = "IOU Token successfully put in escrow.";
+              loadingText.textContent = "IOU token successfully put in escrow.";
             }
             else {
               loadingText.textContent = "Token successfully put in escrow.";
             }
+
+            //Update migStep
+            model.storeMigStepLocalStorage(model.migStepSignEscrowHash);
 
             //Then move to signEscrow page
             //Timeout to let user see the green circle, and let him know that everything si oK

@@ -22,35 +22,69 @@
   </div><!-- end of connected wallet card -->
 
   <div class="Card" id="PendingMigCard">
-    <div class="CardLine" id="PendingMigDataCardLine">
-      <div class="DescriptionTextElementWidth">Pending migration:</div>
-
       <div class="CardLine">
-        <div>
-          <div>Origin network: <span id="PendingMigOgNetwork"></span></div>
-          <div>Origin world: <span id="PendingMigOgWorld"></span></div>
-          <div>Origin token Id: <span id="PendingMigOgTokenId"></span></div>
-          <div>Origin token name: <span id="PendingMigOgTokenName"></span></div>
-          <div>Origin owner: <span id="PendingMigOgTokenOwner"></span></div>
-        </div>
-
-        <div id="PendingMigDataArrow">
-        </div>
+        <div class="DescriptionTextElementWidth">Pending migration:</div>
 
         <div>
-          <div>Destination network: <span id="PendingMigDestNetwork"></span></div>
-          <div>Destination world: <span id="PendingMigDestWorld"></span></div>
-          <div>Destination token Id: <span id="PendingMigDestTokenId"></span></div>
-          <div>Destination token name: <span id="PendingMigDestTokenName"></span></div>
-          <div>Destination owner: <span id="PendingMigDestTokenOwner"></span></div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Origin network:</div>
+            <div id="PendingMigOgNetwork" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Origin world:</div>
+            <div id="PendingMigOgWorld" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Origin token Id:</div>
+            <div id="PendingMigOgTokenId" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Origin token name:</div>
+            <div id="PendingMigOgTokenName" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Origin owner:</div>
+            <div id="PendingMigOgTokenOwner" class="DataText"></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="CenteredCardLine" id="PendingMigBtnCardLine">
-      <button class="ColoredButton" id="ResumeMigBtn">Resume migration</button>
-    </div>
-  </div><!-- end of pending migration card -->
+      <div class="CenteredCardLine">
+        <div id="PendingMigDataArrow">
+        </div>
+      </div>
+
+      <div class="CardLine FormElementMargin">
+        <div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Destination network:</div>
+            <div id="PendingMigDestNetwork" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Destination world:</div>
+            <div id="PendingMigDestWorld" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Destination token Id:</div>
+            <div id="PendingMigDestTokenId" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Destination token name:</div>
+            <div id="PendingMigDestTokenName" class="DataText"></div>
+          </div>
+          <div class="CardLine">
+            <div class="DescriptionTextElementWidth">Destination owner:</div>
+            <div id="PendingMigDestTokenOwner" class="DataText"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="CenteredCardLine" id="PendingMigBtnCardLine">
+        <button class="ColoredButton" id="ResumeMigBtn">Resume migration</button>
+      </div>
+    </div><!-- end of pending migration card -->
+
+
 
 
 
