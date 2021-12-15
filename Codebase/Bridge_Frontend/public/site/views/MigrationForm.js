@@ -1808,7 +1808,20 @@ export default class extends AbstractView {
       showPendingMigData();
 
       document.getElementById("ResumeMigBtn").addEventListener('click', function(){
-        //TODO
+        //Retrieve migData from pending mig
+        model.migrationData = model.getPendingMigData();
+        migData = model.migrationData;
+
+        //Redirecting to the right step
+        let pendingMigStep = model.getPendingMigStep();
+        //Set this var to true so that the target view resume to the right action to do within
+        //all the actions performed in this view
+        model.resumeMigration = true;
+
+        //Redirecting to /register_migration
+        if(pendingMigStep == model.migStepManipulatorApprove || pendingMigStep == model.migStepInitMigration){
+          model.navigateTo("/register_migration");
+        }
       })
     }
 

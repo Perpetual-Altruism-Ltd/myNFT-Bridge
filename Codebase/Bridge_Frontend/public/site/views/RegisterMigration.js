@@ -80,6 +80,18 @@ export default class extends AbstractView {
       }
     }
 
+    let onManipulatorGrantedAsOperator = function(){
+      console.log('Manipulator is now approved');
+      //Avdance 1 step in breadcrumb trail
+      document.getElementById("BCT").setAttribute('step-num', 1);
+
+      //Delete cookies from previous migration, to let place to the new one which will me
+      model.eraseCookie("migrationId");
+
+      //If approval accepted by user: go to next page
+      model.navigateTo("/migration_process");
+    }
+
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
       //Before engaging in the migration process, save mig data to localStorage
@@ -102,15 +114,7 @@ export default class extends AbstractView {
             document.getElementById("RegisterButton").classList.remove('Selected');
           }
           else{
-            console.log('Approval accepted by user');
-            //Avdance 1 step in breadcrumb trail
-            document.getElementById("BCT").setAttribute('step-num', 1);
-
-            //Delete cookies from previous migration, to let place to the new one which will me
-            model.eraseCookie("migrationId");
-
-            //If approval accepted by user: go to next page
-            model.navigateTo("/escrow_token");
+            onManipulatorGrantedAsOperator();
           }
         })
         .then((res) => {
@@ -244,6 +248,27 @@ export default class extends AbstractView {
         grantRelayOperatorPrivilege();
       }
     });
+
+    //Resume migration handling
+    if(model.resumeMigration){
+      model.resumeMigration = false;
+
+      let pendingMigStep = model.getPendingMigStep();
+
+      //Ask the user to approve manipulator
+      if(pendingMigStep == model.migStepManipulatorApprove){
+        document.getElementById("RegisterButton").click();
+      }
+      //call /initMigration route to relay
+      else if(pendingMigStep == model.migStepInitMigration){
+        initMigration();
+
+        onManipulatorGrantedAsOperator();
+      }else{
+        console.error("Unknown migration step: " + pendingMigStep);
+        model.navigateTo("/migration_form");
+      }
+    }
   }
 
   async getHtml(callback){

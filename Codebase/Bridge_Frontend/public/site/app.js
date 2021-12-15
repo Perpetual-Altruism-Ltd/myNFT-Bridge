@@ -2,9 +2,7 @@
 import WalletConnection from './views/WalletConnection.js';
 import MigrationForm from './views/MigrationForm.js';
 import RegisterMigration from './views/RegisterMigration.js';
-import EscrowToken from './views/EscrowToken.js';
-import SignEscrow from './views/SignEscrow.js';
-import MintToken from './views/MintToken.js';
+import MigrationProcess from './views/MigrationProcess.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
 //Components
@@ -21,9 +19,7 @@ const router = async () => {
           { path: "/wallet_connection", view: WalletConnection },
           { path: "/migration_form", view: MigrationForm },
           { path: "/register_migration", view: RegisterMigration },
-          { path: "/escrow_token", view: EscrowToken },
-          { path: "/sign_escrow", view: SignEscrow },
-          { path: "/mint_token", view: MintToken },
+          { path: "/migration_process", view: MigrationProcess },
           { path: "/migration_finished", view: MigrationFinished },
       ];
 
@@ -150,7 +146,7 @@ Model.storeMigDataLocalStorage = function(){
 }
 //Store the step that the user completed in the mig process to local storage to access it later.
 Model.storeMigStepLocalStorage = function(step){
-  console.log("=====Set mig step=====: "  + step);
+  console.log("=====New mig step=====: "  + step);
   Model.currentMigrationStep = step;
   localStorage.setItem('migrationStep', Model.currentMigrationStep);
 }

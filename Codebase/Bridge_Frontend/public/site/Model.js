@@ -49,7 +49,9 @@ model.listeningTimeOut = 1800; //seconds
 model.listeningRefreshFrequency = 5;//seconds
 
 model.migrationHash = "";
+model.migrationHashSigned = "";
 model.escrowHash = "";
+model.escrowHashSigned = "";
 
 model.destinationTokenTransfertTxHash = "";
 
