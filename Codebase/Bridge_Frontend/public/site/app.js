@@ -150,6 +150,16 @@ Model.storeMigStepLocalStorage = function(step){
   Model.currentMigrationStep = step;
   localStorage.setItem('migrationStep', Model.currentMigrationStep);
 }
+//Needs to be separated from migData because migData set to localstorage when register btn
+//clicked, whereas migId retrieved after.
+//Maintain model.migrationData.migrationId updated with the migId in local storage
+Model.storeMigrationIdStorage = function(migId){
+  Model.migrationData.migrationId = migId;
+  localStorage.setItem('migrationId', Model.migrationData.migrationId);
+}
+Model.getStoredMigrationId = function(){
+  return localStorage.getItem("migrationId");
+}
 //Tell weather there is an unfinished migration.
 Model.isMigrationPending = function(){
   return Model.getPendingMigStep() != Model.migStepMigrationSuccessful;

@@ -86,7 +86,8 @@ export default class extends AbstractView {
       document.getElementById("BCT").setAttribute('step-num', 1);
 
       //Delete cookies from previous migration, to let place to the new one which will me
-      model.eraseCookie("migrationId");
+      //model.eraseCookie("migrationId");TODELETE
+      model.storeMigrationIdStorage("");
 
       //If approval accepted by user: go to next page
       model.navigateTo("/migration_process");
@@ -182,7 +183,8 @@ export default class extends AbstractView {
           let migId = response.data.migrationId;
           console.log("Migration initiated with migrationId: " + migId);
           //Add migrationID as cookie. This will trigger EscrowToken to call /pollingMigration.
-          model.createCookie("migrationId", migId, 31);
+          //model.createCookie("migrationId", migId, 31);TODELETE
+          model.storeMigrationIdStorage(migId);
 
           //Update migStep
           model.storeMigStepLocalStorage(model.migStepPollMigrationHash);

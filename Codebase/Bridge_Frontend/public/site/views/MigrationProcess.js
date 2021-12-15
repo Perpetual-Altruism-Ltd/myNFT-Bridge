@@ -54,6 +54,9 @@ export default class extends AbstractView {
       model.migrationHash = migHash;
       console.log("Migration hash: " + model.migrationHash);
 
+      //Validate the manipulator approval step
+      document.getElementById("BCT").setAttribute('step-num', 1);
+
       //display valid state (green plain line)
       setCircleHoldOnState();
       loadingText.textContent = "Please sign the migration hash to continue the migration.";
@@ -67,7 +70,7 @@ export default class extends AbstractView {
 
     let onMigrationHashSigned = function(migHashSigned){
       console.log("Migration hash signed: " + migHashSigned);
-      loadingText.textContent = "Sending signature to relay.";
+      loadingText.textContent = "The signature is being sent to the relay...";
       model.migrationHashSigned = migHashSigned;
 
       //Advance one step further in breadcrumb
@@ -86,6 +89,9 @@ export default class extends AbstractView {
       //Update migStep
       model.storeMigStepLocalStorage(model.migStepPollEscrowHash);
 
+      //Set it again in case migration is resumed here.
+      document.getElementById("BCT").setAttribute('step-num', 2);
+
       //SetCircleWaitingState is called in escrowHashListener and delayed by 3sec
       //start listening relay for escrow hash
       escrowHashListener();
@@ -95,13 +101,16 @@ export default class extends AbstractView {
       model.escrowHash = escrowHash;
       console.log("Escrow hash received: " + model.escrowHash);
 
+      //Set it again in case migration is resumed here.
+      document.getElementById("BCT").setAttribute('step-num', 2);
+
       //set circle Valid state
       setCircleHoldOnState();
       if(migData.migrationType == model.RedeemIOUMigrationType){
-        loadingText.textContent = "IOU token successfully put in escrow.";
+        loadingText.innerHTML = "IOU token successfully put in escrow.<br>Please sign the escrow hash.";
       }
       else {
-        loadingText.textContent = "Token successfully put in escrow.";
+        loadingText.innerHTML = "Token successfully put in escrow.<br>Please sign the escrow hash.";
       }
 
       //Update migStep
@@ -116,6 +125,10 @@ export default class extends AbstractView {
       //Advance one step further in breadcrumb trail
       document.getElementById("BCT").setAttribute('step-num', 3);
 
+      //set circle to waiting state. Waiting for escrow hash to be sent + poll end mig
+      setCircleWaitingState();
+      loadingText.textContent = "The signature is being sent to the relay...";
+
       model.escrowHashSigned = escrowHashSigned;
 
       //Update migStep
@@ -127,6 +140,10 @@ export default class extends AbstractView {
 
     let onMigrationClosed = function(){
       console.log("Escrow hash signed sent!");
+
+      //Set it again in case migration is resumed here.
+      document.getElementById("BCT").setAttribute('step-num', 3);
+
       //Update migStep
       model.storeMigStepLocalStorage(model.migStepPollEndMigration);
 
@@ -136,6 +153,9 @@ export default class extends AbstractView {
 
     //=====Migration process functions=====
     let migrationHashListener = async function(){
+      //Validate the manipulator approval step
+      document.getElementById("BCT").setAttribute('step-num', 1);
+
       //Construct request
       let selectedRelayIndex = migData.migrationRelayIndex;
       let relayURL = bridgeApp.relays[selectedRelayIndex].url;
@@ -381,6 +401,9 @@ export default class extends AbstractView {
       }
 
       console.log("Start listening for destination token transfert to owner");
+      setTimeout(() => {
+        loadingText.textContent = "Please wait for the new token to be transferred to the destination owner...";
+      }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
@@ -428,6 +451,7 @@ export default class extends AbstractView {
         model.resumeMigration = false;
 
         let pendingMigStep = model.getPendingMigStep();
+        console.log("Resuming migration from step " + pendingMigStep);
 
         //Start polling mig hash
         if(pendingMigStep == model.migStepPollMigrationHash){
@@ -436,6 +460,7 @@ export default class extends AbstractView {
         }
         //Ask user to sign mig hash. Mig hash is retrieved from migData.migrationHash
         else if(pendingMigStep == model.migStepSignMigrationHash){
+          //Will call signMigrationHash()
           onMigrationHashReceived(model.migrationHash);
         }
         else if(pendingMigStep == model.migStepContinueMigration){
@@ -443,6 +468,8 @@ export default class extends AbstractView {
           onMigrationHashSigned(model.migrationHashSigned);
         }
         else if(pendingMigStep == model.migStepPollEscrowHash){
+          //Display msg without timeout because resume migration here
+          loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge...";
           //Will call escrowHashListener()
           onContinueMigrationResponse();
         }
@@ -455,6 +482,8 @@ export default class extends AbstractView {
           onEscrowHashSigned(model.escrowHashSigned);
         }
         else if(pendingMigStep == model.migStepPollEndMigration){
+          //Display msg without timeout because resume migration here
+          loadingText.textContent = "Please wait for the new token to be transferred to the destination owner...";
           //Will call endMigrationListener()
           onMigrationClosed();
         }

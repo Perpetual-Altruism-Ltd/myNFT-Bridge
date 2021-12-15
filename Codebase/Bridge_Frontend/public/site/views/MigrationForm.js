@@ -1807,6 +1807,8 @@ export default class extends AbstractView {
     if(model.isMigrationPending()){
       showPendingMigData();
 
+      console.log("Pending migration step: " + model.getPendingMigStep());
+
       document.getElementById("ResumeMigBtn").addEventListener('click', function(){
         //Retrieve migData from pending mig
         model.migrationData = model.getPendingMigData();
@@ -1821,6 +1823,9 @@ export default class extends AbstractView {
         //Redirecting to /register_migration
         if(pendingMigStep == model.migStepManipulatorApprove || pendingMigStep == model.migStepInitMigration){
           model.navigateTo("/register_migration");
+        }
+        else {
+          model.navigateTo("/migration_process");
         }
       })
     }

@@ -34,6 +34,7 @@ model.migrationData.destinationWorld = "";
 model.migrationData.destinationTokenId = "";
 model.migrationData.destinationTokenName = "";
 model.migrationData.destinationOwner = "";
+model.migrationData.migrationId = "";
 
 model.migrationData.metadataDestinationUniverseUniqueId = "";
 model.migrationData.metadataDestinationUniverseIndex = 0;
