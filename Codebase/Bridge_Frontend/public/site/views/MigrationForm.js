@@ -232,7 +232,6 @@ export default class extends AbstractView {
       //Dest network
       //Clear Destination networks before fill it again
       clearDropDownOptions("DestinationNetworkSelector");
-      console.log("DestinationNetworkSelector cleared");
       //Clear previously retrieved destWorld
       clearDropDownOptions("DestinationWorldSelector");
       //Show the available destination networks for the ogNet selected
@@ -249,7 +248,6 @@ export default class extends AbstractView {
       //If migData already filled, prefill migration form
       //Once wallet loaded, chain is switched, and dest net loaded:
       //we can prefill all form data if user come from register_mig & clicked edit btn
-      console.log("isMigDataFilled(): " + model.isMigDataFilled());
       if(model.isMigDataFilled()){prefillFormWithMigData();}
       else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
         document.getElementById("FetchDataButton").click();//Will reset model.editMigrationForm
@@ -1319,13 +1317,13 @@ export default class extends AbstractView {
         case model.MintOUIMigrationType:
           btnToSelect = document.getElementById("IOUMigrationButton");
           migData.migrationType = model.MintOUIMigrationType;
-          model.isRedeem = false;
+          migData.isRedeem = false;
         break;
 
         case model.RedeemIOUMigrationType:
           btnToSelect = document.getElementById("RedeemButton");
           migData.migrationType = model.RedeemIOUMigrationType;
-          model.isRedeem = true;
+          migData.isRedeem = true;
         break;
       }
       //Then select it
@@ -1813,6 +1811,11 @@ export default class extends AbstractView {
         //Retrieve migData from pending mig
         model.migrationData = model.getPendingMigData();
         migData = model.migrationData;
+        //Retrieve hash values
+        let hashValues = model.getHashValues();
+        if(hashValues != null && hashValues != undefined){
+          model.hash = hashValues;
+        }
 
         //Redirecting to the right step
         let pendingMigStep = model.getPendingMigStep();

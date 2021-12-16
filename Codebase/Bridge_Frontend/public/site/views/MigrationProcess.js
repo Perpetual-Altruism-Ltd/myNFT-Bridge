@@ -51,8 +51,14 @@ export default class extends AbstractView {
 
     //=====Callback functions=====
     let onMigrationHashReceived = function(migHash){
-      model.migrationHash = migHash;
-      console.log("Migration hash: " + model.migrationHash);
+      console.log("Migration hash: " + migHash);
+
+      model.hash.migrationHash = migHash;
+      //Hashes has been modified : save to localstorage
+      model.storeHashValuesLocalStorage();
+
+      //Update migStep
+      model.storeMigStepLocalStorage(model.migStepSignMigrationHash);
 
       //Validate the manipulator approval step
       document.getElementById("BCT").setAttribute('step-num', 1);
@@ -61,9 +67,6 @@ export default class extends AbstractView {
       setCircleHoldOnState();
       loadingText.textContent = "Please sign the migration hash to continue the migration.";
 
-      //Update migStep
-      model.storeMigStepLocalStorage(model.migStepSignMigrationHash);
-
       //Then sign migration hash
       signMigrationHash();
     }
@@ -71,16 +74,18 @@ export default class extends AbstractView {
     let onMigrationHashSigned = function(migHashSigned){
       console.log("Migration hash signed: " + migHashSigned);
       loadingText.textContent = "The signature is being sent to the relay...";
-      model.migrationHashSigned = migHashSigned;
+      model.hash.migrationHashSigned = migHashSigned;
+      //Hashes has been modified : save to localstorage
+      model.storeHashValuesLocalStorage();
+
+      //Update migStep
+      model.storeMigStepLocalStorage(model.migStepContinueMigration);
 
       //Advance one step further in breadcrumb
       document.getElementById("BCT").setAttribute('step-num', 2);
 
       //Resume loading circle spin
       setCircleWaitingState();
-
-      //Update migStep
-      model.storeMigStepLocalStorage(model.migStepContinueMigration);
 
       continueMigration();
     }
@@ -98,8 +103,14 @@ export default class extends AbstractView {
     }
 
     let onEscrowHashReceived = function(escrowHash){
-      model.escrowHash = escrowHash;
-      console.log("Escrow hash received: " + model.escrowHash);
+      console.log("Escrow hash received: " + escrowHash);
+
+      //Update migStep
+      model.storeMigStepLocalStorage(model.migStepSignEscrowHash);
+
+      model.hash.escrowHash = escrowHash;
+      //Hashes has been modified : save to localstorage
+      model.storeHashValuesLocalStorage();
 
       //Set it again in case migration is resumed here.
       document.getElementById("BCT").setAttribute('step-num', 2);
@@ -112,9 +123,6 @@ export default class extends AbstractView {
       else {
         loadingText.innerHTML = "Token successfully put in escrow.<br>Please sign the escrow hash.";
       }
-
-      //Update migStep
-      model.storeMigStepLocalStorage(model.migStepSignEscrowHash);
 
       //Then ask user to sign escrow hash
       signEscrowHash();
@@ -129,12 +137,14 @@ export default class extends AbstractView {
       setCircleWaitingState();
       loadingText.textContent = "The signature is being sent to the relay...";
 
-      model.escrowHashSigned = escrowHashSigned;
+      model.hash.escrowHashSigned = escrowHashSigned;
+      //Hashes has been modified : save to localstorage
+      model.storeHashValuesLocalStorage();
 
       //Update migStep
       model.storeMigStepLocalStorage(model.migStepCloseMigration);
 
-      //Send model.escrowHashSigned to relay
+      //Send model.hash.escrowHashSigned to relay
       closeMigration();
     }
 
@@ -155,6 +165,11 @@ export default class extends AbstractView {
     let migrationHashListener = async function(){
       //Validate the manipulator approval step
       document.getElementById("BCT").setAttribute('step-num', 1);
+
+      //If already approved display msg. Else, the msg will be displayed by registerMigration view l136
+      if(model.migStepManipulatorApprove == model.migStepPollMigrationHash){
+          loadingText.textContent = "The migration is being registered on origin blockchain.";
+      }
 
       //Construct request
       let selectedRelayIndex = migData.migrationRelayIndex;
@@ -187,12 +202,12 @@ export default class extends AbstractView {
 
       //Wait until timeout or migrationHash received
       let i = 0;
-      while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.migrationHash == ""){
+      while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.hash.migrationHash == ""){
         //Refresh migrationId from cookies. Waiting the return of the /initMigration request
-        let migId = model.readCookie("migrationId");
+        let migId = model.getMigrationId();
         options.data.migrationId = migId;
         //Ask relay for migration hash, only if migId retrieve from /initMigration
-        if(migId != null && migId != undefined){
+        if(migId != null && migId != undefined && migId != ""){
           axios.request(options).then(function (response) {
             requestCallback(response);
           }).catch(function (error) {
@@ -207,7 +222,7 @@ export default class extends AbstractView {
       }
 
       //If timeout: error message
-      if(model.migrationHash == ""){
+      if(model.hash.migrationHash == ""){
         setCircleErrorState();
         loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team for support.";
       }
@@ -215,7 +230,7 @@ export default class extends AbstractView {
 
     let signMigrationHash = async function(){
       //personal_sign
-      window.ethereum.request({ method: 'personal_sign', params: [ model.migrationHash, account ] })
+      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.migrationHash, account ] })
       .then((res) =>{
         onMigrationHashSigned(res);
       }).catch((res) => {
@@ -239,8 +254,8 @@ export default class extends AbstractView {
         data: {}
       };
       options.url = relayURL + '/continueMigration';
-      options.data.migrationId = model.readCookie("migrationId");
-      options.data.migrationHashSignature = model.migrationHashSigned;
+      options.data.migrationId = model.getMigrationId();
+      options.data.migrationHashSignature = model.hash.migrationHashSigned;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
@@ -270,7 +285,7 @@ export default class extends AbstractView {
         data: {}
       };
       options.url = relayURL + '/pollingEscrow';
-      options.data.migrationId = model.readCookie("migrationId");
+      options.data.migrationId = model.getMigrationId();
 
       let requestCallback = function(response){
         if(response.status == 200){
@@ -288,13 +303,16 @@ export default class extends AbstractView {
 
       console.log("Start listening for escrow hash");
       setTimeout(() => {
-        setCircleWaitingState();
-        loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge...";
+        //Display waiting msg only if we didn't executed onEscrowHashReceived yet. i.e currentStep != model.migStepSignEscrowHash
+        if(model.currentMigrationStep != model.migStepSignEscrowHash){
+          setCircleWaitingState();
+          loadingText.textContent = "Please wait for your NFT to be transferred into the origin bridge...";
+        }
       }, 3000);
 
       //Wait until timeout or migrationHash received
       let i = 0;
-      while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.escrowHash == ""){
+      while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.hash.escrowHash == ""){
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
@@ -309,7 +327,7 @@ export default class extends AbstractView {
       }
 
       //If timeout: error message
-      if(model.escrowHash == ""){
+      if(model.hash.escrowHash == ""){
         setCircleErrorState();
         loadingText.textContent = "Couldn't retrieve escrow hash from relay. Please contact our team.";
       }
@@ -317,7 +335,7 @@ export default class extends AbstractView {
 
     let signEscrowHash = async function(){
       //Ask the wallet to prompt user to sign data
-      window.ethereum.request({ method: 'personal_sign', params: [ model.escrowHash, account ] })
+      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.escrowHash, account ] })
       .then((res) =>{
         onEscrowHashSigned(res);
       }).catch((res) => {
@@ -339,9 +357,9 @@ export default class extends AbstractView {
         headers: {'Content-Type': 'application/json'},
         data: {}
       };
-      options.url = relayURL + ((model.isRedeem) ? '/closeRedeemMigration' : '/closeMigration');
-      options.data.migrationId = model.readCookie("migrationId");
-      options.data.escrowHashSignature = model.escrowHashSigned;
+      options.url = relayURL + ((migData.isRedeem) ? '/closeRedeemMigration' : '/closeMigration');
+      options.data.migrationId = model.getMigrationId();
+      options.data.escrowHashSignature = model.hash.escrowHashSigned;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
@@ -370,7 +388,7 @@ export default class extends AbstractView {
         data: {}
       };
       options.url = relayURL + '/pollingEndMigration';
-      options.data.migrationId = model.readCookie("migrationId");
+      options.data.migrationId = model.getMigrationId();
 
       let requestCallback = function(response){
         if(response.status == 200){
@@ -389,6 +407,13 @@ export default class extends AbstractView {
 
             //Update migStep
             model.storeMigStepLocalStorage(model.migStepMigrationSuccessful);
+
+            //Clear model.hash
+            model.hash.migrationHash = "";
+            model.hash.migrationHashSigned = "";
+            model.hash.escrowHash = "";
+            model.hash.escrowHashSigned = "";
+            model.storeHashValuesLocalStorage();
 
             //Then move to migration_finished page to display link to chain explorer for the token transfert transaction
             setTimeout(function () {model.navigateTo("/migration_finished");}, 3000);
@@ -455,17 +480,17 @@ export default class extends AbstractView {
 
         //Start polling mig hash
         if(pendingMigStep == model.migStepPollMigrationHash){
-          //Will call signMigrationHash()
+          //Will call signMigrationHash() when migHash will be received
           migrationHashListener();
         }
         //Ask user to sign mig hash. Mig hash is retrieved from migData.migrationHash
         else if(pendingMigStep == model.migStepSignMigrationHash){
           //Will call signMigrationHash()
-          onMigrationHashReceived(model.migrationHash);
+          onMigrationHashReceived(model.hash.migrationHash);
         }
         else if(pendingMigStep == model.migStepContinueMigration){
           //Will call continueMigration()
-          onMigrationHashSigned(model.migrationHashSigned);
+          onMigrationHashSigned(model.hash.migrationHashSigned);
         }
         else if(pendingMigStep == model.migStepPollEscrowHash){
           //Display msg without timeout because resume migration here
@@ -475,11 +500,11 @@ export default class extends AbstractView {
         }
         else if(pendingMigStep == model.migStepSignEscrowHash){
           //Will call signEscrowHash()
-          onEscrowHashReceived(model.escrowHash);
+          onEscrowHashReceived(model.hash.escrowHash);
         }
         else if(pendingMigStep == model.migStepCloseMigration){
           //Will call closeMigration()
-          onEscrowHashSigned(model.escrowHashSigned);
+          onEscrowHashSigned(model.hash.escrowHashSigned);
         }
         else if(pendingMigStep == model.migStepPollEndMigration){
           //Display msg without timeout because resume migration here

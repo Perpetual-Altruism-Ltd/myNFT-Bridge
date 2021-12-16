@@ -85,9 +85,8 @@ export default class extends AbstractView {
       //Avdance 1 step in breadcrumb trail
       document.getElementById("BCT").setAttribute('step-num', 1);
 
-      //Delete cookies from previous migration, to let place to the new one which will me
-      //model.eraseCookie("migrationId");TODELETE
-      model.storeMigrationIdStorage("");
+      //Delete migId from previous migration, to let place to the new one which will me
+      model.storeMigrationIdLocalStorage("");
 
       //If approval accepted by user: go to next page
       model.navigateTo("/migration_process");
@@ -98,6 +97,11 @@ export default class extends AbstractView {
       //Before engaging in the migration process, save mig data to localStorage
       model.storeMigDataLocalStorage();
       model.storeMigStepLocalStorage(model.migStepManipulatorApprove);
+
+      //Instantiate contract to call approve (If not already done in migration_form)
+      if(contracts.originalChainERC721Contract == undefined){
+        contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, migData.originWorld);
+      }
 
       try{
         let selectedRelayIndex = migData.migrationRelayIndex;
@@ -176,15 +180,14 @@ export default class extends AbstractView {
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;
       options.data.migrationData.destinationOwner = migData.destinationOwner.toLowerCase();
       options.data.operatorHash = "0x00";//Not used yet
-      options.data.redeem = model.isRedeem;
+      options.data.redeem = migData.isRedeem;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
           let migId = response.data.migrationId;
           console.log("Migration initiated with migrationId: " + migId);
           //Add migrationID as cookie. This will trigger EscrowToken to call /pollingMigration.
-          //model.createCookie("migrationId", migId, 31);TODELETE
-          model.storeMigrationIdStorage(migId);
+          model.storeMigrationIdLocalStorage(migId);
 
           //Update migStep
           model.storeMigStepLocalStorage(model.migStepPollMigrationHash);

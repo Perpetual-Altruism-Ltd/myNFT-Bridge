@@ -141,6 +141,7 @@ Model.displayConnectedWallet = function(){
 }
 
 //=====Persistent migration data handling=====
+//=====Setters=====
 Model.storeMigDataLocalStorage = function(){
   localStorage.setItem('migrationData', JSON.stringify(Model.migrationData));
 }
@@ -153,11 +154,19 @@ Model.storeMigStepLocalStorage = function(step){
 //Needs to be separated from migData because migData set to localstorage when register btn
 //clicked, whereas migId retrieved after.
 //Maintain model.migrationData.migrationId updated with the migId in local storage
-Model.storeMigrationIdStorage = function(migId){
-  Model.migrationData.migrationId = migId;
-  localStorage.setItem('migrationId', Model.migrationData.migrationId);
+Model.storeMigrationIdLocalStorage = function(migId){
+  localStorage.setItem('migrationId', migId);
 }
-Model.getStoredMigrationId = function(){
+Model.storeHashValuesLocalStorage = function(){
+  localStorage.setItem('hashValues', JSON.stringify(Model.hash));
+}
+
+//=====Getters=====
+Model.getHashValues = function(){
+  let hashValues = JSON.parse(localStorage.getItem("hashValues"));
+  return hashValues;
+}
+Model.getMigrationId = function(){
   return localStorage.getItem("migrationId");
 }
 //Tell weather there is an unfinished migration.
