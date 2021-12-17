@@ -506,7 +506,7 @@ export default class extends AbstractView {
 
                         migData.metadataDestinationWorld  = ogTokenMetaData.migrationData.originWorld;
                         migData.metadataDestinationTokenId  = ogTokenMetaData.migrationData.originTokenId;
-                        migData.metadataDestinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.metadataDestinationUniverseIndex)].bridgeAddress
+
 
                         //Show network hint to redeem IOU
                         displayRedeemNetworkHintMsg(true);
@@ -1450,7 +1450,6 @@ export default class extends AbstractView {
       migData.metadataDestinationUniverse = "";
       migData.metadataDestinationWorld = "";
       migData.metadataDestinationTokenId = "";
-      migData.metadataDestinationBridgeAddr = "";
     }
 
     let mintPrefillTest = function(){
@@ -1587,7 +1586,6 @@ export default class extends AbstractView {
       migData.destinationUniverseUniqueId = destUnivUniqueId;
       migData.destinationNetworkId = destNetworkId;
       migData.destinationUniverse = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].name;
-      migData.destinationBridgeAddr = bridgeApp.networks[Math.max(0, migData.destinationUniverseIndex)].bridgeAddress;
 
       //Enable redeem if network dest if same as IOU metadata origin
       enableRedeemBtnIfNetworkMatch();

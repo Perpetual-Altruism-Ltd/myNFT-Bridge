@@ -40,7 +40,6 @@ model.migrationData.metadataDestinationUniverseIndex = 0;
 model.migrationData.metadataDestinationUniverse = "";
 model.migrationData.metadataDestinationWorld = "";
 model.migrationData.metadataDestinationTokenId = "";
-model.migrationData.metadataDestinationBridgeAddr = "";
 
 model.hash = {};
 model.hash.migrationHash = "";

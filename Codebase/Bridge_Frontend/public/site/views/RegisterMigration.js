@@ -214,7 +214,6 @@ export default class extends AbstractView {
       options.data.migrationData.originTokenId = migData.originTokenId;
       options.data.migrationData.originOwner = migData.originOwner.toLowerCase();
       options.data.migrationData.destinationUniverse = migData.destinationUniverseUniqueId.toLowerCase();
-      options.data.migrationData.destinationBridge = migData.destinationBridgeAddr.toLowerCase();
       options.data.migrationData.destinationWorld = migData.destinationWorld.toLowerCase();
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;
       options.data.migrationData.destinationOwner = migData.destinationOwner.toLowerCase();
