@@ -162,4 +162,34 @@ contract Manipulator is MemoryStructure {
             if iszero(result) { revert(ptr, add(0x184, sub(_data.length, 0x140))) } // If result is zero, revert
         }
     }
+
+    function cancelMigration(
+        address _originWorld, 
+        uint256 _originTokenId, 
+        address _originOwner,
+        bytes32 _destinationUniverse,
+        bytes32 _destinationBridge,
+        bytes32 _destinationWorld,
+        bytes32 _destinationTokenId,
+        bytes32 _destinationOwner,
+        address _signee,
+        bytes32 _originHeight,
+        address _contractAddress
+    ) external onlyOwnerOrOperator {
+        bytes memory payload = abi.encodeWithSignature(
+            "cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)"
+            , _originWorld
+            , _originTokenId
+            , _originOwner
+            , _destinationUniverse
+            , _destinationBridge
+            , _destinationWorld
+            , _destinationTokenId
+            , _destinationOwner
+            , _signee
+            , _originHeight
+            );
+        (bool success, bytes memory result) = _contractAddress.call(payload);
+        if(!success) revert("Call of child contract failed"); 
+    }
 }

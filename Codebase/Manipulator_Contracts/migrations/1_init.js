@@ -4,6 +4,19 @@ const TransparentProxy = artifacts.require("TransparentProxy")
 const Manipulator = artifacts.require("Manipulator")
 const IOU = artifacts.require("IOU")
 
+/*module.exports = async (deployer, network, accounts) => {
+    await deployer.deploy(Manipulator)
+
+    const instancedProxy = await ERC1538Delegate.at("0x8e0bbeaE7CDC5A44bE4C5dA6B2353636064F60Aa")
+
+    await instancedProxy.updateContract(
+        Manipulator.address,
+        "cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
+        "ManipulatorAddFunc"
+    )
+}*/
+
+
 module.exports = async (deployer, network, accounts) => {
     //Deploying the logic code of the proxyfication
     console.log("Deploying the proxy contract logic...")

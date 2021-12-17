@@ -25,6 +25,69 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "_originWorld",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_originTokenId",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_originOwner",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_destinationUniverse",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_destinationBridge",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_destinationWorld",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_destinationTokenId",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_destinationOwner",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "address",
+				"name": "_signee",
+				"type": "address"
+			},
+			{
+				"internalType": "bytes32",
+				"name": "_originHeight",
+				"type": "bytes32"
+			},
+			{
+				"internalType": "address",
+				"name": "_contractAddress",
+				"type": "address"
+			}
+		],
+		"name": "cancelMigration",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "bytes32",
 				"name": "_migrationHash",
 				"type": "bytes32"
@@ -230,13 +293,7 @@
 			}
 		],
 		"name": "registerEscrowHashSignature",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
