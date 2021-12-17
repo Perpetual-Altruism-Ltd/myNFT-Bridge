@@ -69,7 +69,7 @@ const main = async () => {
     }
 
     async function populateClientList(){
-        const clients = await db.models.clients.find({ step: { $ne: 'registerTransferOnOriginBridge' } })
+        const clients = await db.models.clients.find({ $and: [{step: {$ne: 'registerTransferOnOriginBridge'} }, {step: {$ne: 'canceled'} }] })
         clients.forEach(client => {
             clientList[client.id] = new Client(
                 client.migrationData
@@ -84,11 +84,28 @@ const main = async () => {
         })
     }
 
+    async function clientWatcher(){
+        while(true){
+            await sleep(100)
+            Object.keys(clientList).forEach(async clientKey => {
+                const client = clientList[clientKey]
+                if((((new Date()).getTime()/1000)- client.dbObject.lastAction) > 60*60*24 && (client.step == 'transferToBridge' || client.step == 'updateEscrowHash') ){
+                    Logger.info(`Migration failed ! Transferring back token to origin owner.`)
+                    await client.cancelMigration()
+                    delete clientList[client.id]
+                    Logger.info(`Token (id: ${client.migrationData.originTokenId}, world: ${client.migrationData.originWorld}, universe: ${client.migrationData.originUniverse}) sent back to original owner (${client.migrationData.originOwner})!`)
+                }
+            })
+        }
+    }
+
     connectRpc()
 
     await premintStock()
 
     await populateClientList()
+
+    clientWatcher()
 
     const app = Express()
 
