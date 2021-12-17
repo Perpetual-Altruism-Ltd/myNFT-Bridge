@@ -922,7 +922,7 @@ export default class extends AbstractView {
       //Retrieve NFT collection of user
       //TODO
       console.log("----TODO---ADDING NFT");
-      addNFTToCollection("Yeyy",
+      /*addNFTToCollection("Yeyy",
         "0x07dac20e",
         "0xCDD05c5881D2E234D651472a95c86691F4f25dE9",
         "1",
@@ -940,7 +940,7 @@ export default class extends AbstractView {
         "300",
         true,
         "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");
-      fetchUserNFTCollection();
+      fetchUserNFTCollection();*/
 
     }
     //autoconnect to metamask if injected
