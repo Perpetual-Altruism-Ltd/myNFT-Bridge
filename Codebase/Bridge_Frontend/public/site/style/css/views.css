@@ -4,7 +4,7 @@
 #TokenDataCard,#TokenErrorMessage,#OriginWorldNameCardLine,#OriginWorldSymbolCardLine,#OriginTokenOwnerCardLine,#OriginTokenURICardLine,#MetadataCard,
 #BreakLineCardContainer,
 #MigrationCard,#MigrationTypeCardLine,#MigTypeDescriptionMessage,#MigrationRelayCardLine,
-#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine,
+#ArrivalCard,#DestNetworkCardLine,#DestWorldRedeemCardLine,#DestWorldCardLine,#DestWorldNameCardLine,#DestWorldSymbolCardLine,#DestTokenIdCardLine,#DestTokenNameCardLine,#DestOwnerCardLine,#DestOwnerMessage,
 #CompleteMigrationCard
 {
   /*-webkit-transition: max-height .25s ease;
@@ -78,6 +78,7 @@
 @keyframes loading-circle_spin { 100% { -webkit-transform: rotate(360deg); transform:rotate(360deg); } }
 
 /* Careful, this css property needs to be after clickableRoundButton definition for proper overwrite*/
+/* If you want to edit the properties of the buttons inside NFT cards, edit the CSS inside the nftCards.js*/
 .ColoredButton{
   padding: 8px 16px;
   -webkit-box-pack: center;

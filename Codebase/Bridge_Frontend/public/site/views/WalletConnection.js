@@ -18,7 +18,7 @@ export default class extends AbstractView {
     var endLoadMetamaskConnection = async function () {
       //set callback function called when a wallet is connected
       connectionCallback = function(){
-        console.log("Wallet connected");
+        console.log("Wallet connected from wallet_connection");
         model.navigateTo('/migration_form');
       };
 

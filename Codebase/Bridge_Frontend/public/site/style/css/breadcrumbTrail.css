@@ -1,3 +1,10 @@
+/* WHENEVER YOU MODIFY THIS FILE, ALWAYS REFRESH THE breadcrumbStyle() FUNCTION IN breadcrumbTrailHandler.js FILE.
+THIS CSS IS NOT USED ANYWHERE ELSE THAN IN THE FILE breadcrumbTrailHandler.js;
+THIS FILE'S ONLY PURPOSE IS TO HAVE A SYNTAX COLORATION FOR CSS.
+Loading the CSS directly in the .js file resolve the issue of Flash Of Unstyled Content (FOUC) at the loading stage of the page
+
+*/
+
 .BreadcrumbContainer{
   font-size: 0.75em;
   justify-content: center;/* Center horizontally */
@@ -73,13 +80,15 @@
 }
 .BreadcrumbStepArrow::before{
   left: 0px;
-  top: -0.5em;
+  /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+  top: calc(-1px - 0.5em);
   transform: rotate(-45deg);
   background-color: #af1540;
 }
 .BreadcrumbStepArrow::after{
   left: 0px;
-  top: 0.5em;
+  /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+  top: calc(0.5em - 1px);
   transform: rotate(45deg);
   background-color: #af1540;
 }

@@ -186,14 +186,14 @@ const main = async () => {
             return
         }
         const { migrationData } = req.body
-        const originUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.originUniverse)
+        const originUniverse = Conf.universes.find(universe => universe.uniqueId.toLowerCase() == migrationData.originUniverse.toLowerCase())
         if(!originUniverse){
             res.status(400)
             res.send({ status: `Can't find origin universe ${migrationData.originUniverse}` })
             Logger.error(`Can't find origin universe ${migrationData.originUniverse}`)
             return
         }
-        const destinationUniverse = Conf.universes.find(universe => universe.uniqueId == migrationData.destinationUniverse)
+        const destinationUniverse = Conf.universes.find(universe => universe.uniqueId.toLowerCase() == migrationData.destinationUniverse.toLowerCase())
         if(!destinationUniverse){
             res.status(400)
             res.send({ status: `Can't find destination universe ${migrationData.destinationUniverse}` })
@@ -204,7 +204,7 @@ const main = async () => {
         migrationData.destinationBridge = destinationUniverse.bridgeAddress
 
         if(!req.body.redeem){
-            const destinationWorld = destinationUniverse.worlds.find(world => world.address == migrationData.destinationWorld)
+            const destinationWorld = destinationUniverse.worlds.find(world => world.address.toLowerCase() == migrationData.destinationWorld.toLowerCase())
             if(!destinationWorld){
                 res.status(400)
                 res.send({ status: `Can't find destination world ${migrationData.destinationWorld}` })
@@ -214,7 +214,7 @@ const main = async () => {
         }
 
         const originUniverseRpc = universesRpc[originUniverse.uniqueId]
-        const isErc721 = await originUniverseRpc.isErc721(migrationData.originWorld);
+        const isErc721 = await originUniverseRpc.isErc721(migrationData.originWorld.toLowerCase());
         if(!isErc721){
             res.status(400)
             res.send({ status: `This address is not from an ERC-721 smartcontract` })
@@ -234,7 +234,7 @@ const main = async () => {
         }
 
         if(req.body.redeem){
-            const originWorld = originUniverse.worlds.find(world => world.address == migrationData.originWorld)
+            const originWorld = originUniverse.worlds.find(world => world.address.toLowerCase() == migrationData.originWorld.toLowerCase())
             if(!originWorld){
                 res.status(400)
                 res.send({ status: `Can't find origin world ${migrationData.originWorld}` })

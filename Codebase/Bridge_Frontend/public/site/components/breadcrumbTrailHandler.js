@@ -94,7 +94,6 @@ const breadcrumbStyle = () => {
 
   /*=====Strait line=====*/
   .BreadcrumbStepLink{
-    /* position: absolute; */
     width: 5vw;
     height: 2px;
     border-top: 1px dashed #af1540;
@@ -119,13 +118,15 @@ const breadcrumbStyle = () => {
   }
   .BreadcrumbStepArrow::before{
     left: 0px;
-    top: -0.5em;
+    /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+    top: calc(-0.5em - 1px);
     transform: rotate(-45deg);
     background-color: #af1540;
   }
   .BreadcrumbStepArrow::after{
     left: 0px;
-    top: 0.5em;
+    /* offset of 1px to compensate the fact that the dashed line is actually the border-top of BreadcrumbStepLink, and thus not centered vertically*/
+    top: calc(0.5em - 1px);
     transform: rotate(45deg);
     background-color: #af1540;
   }
@@ -134,8 +135,7 @@ const breadcrumbStyle = () => {
   }
   .StepCompleted > .BreadcrumbStepArrow::after{
     width: 2px;
-  }
-`;
+  }`;
   return cssStyle;/* Using htmlContent variable is to have the synthax coloration for HTML*/
 }
 
@@ -147,15 +147,16 @@ class BreadcrumbTrail extends HTMLElement {
     this.attachShadow({mode: 'open'}); // sets and returns 'this.shadowRoot'
 
     //Add style
-    const linkElem = document.createElement('link');
+    /*const linkElem = document.createElement('link');
     linkElem.setAttribute('rel', 'stylesheet');
     linkElem.setAttribute('href', '/site/style/css/breadcrumbTrail.css');
-    this.shadowRoot.appendChild(linkElem);
+    this.shadowRoot.appendChild(linkElem);*/
 
     //Add HTML elements making the breadcrumb trail
     const container = document.createElement('breadcrumbTrailContainer');
     container.innerHTML = breadcrumbStruct();
-    this.shadowRoot.appendChild(container);
+    // this.shadowRoot.appendChild(style, container);
+    this.shadowRoot.append(breadcrumbStyle(), container);
   }
 
   /* Register which attributes to watch for changes */
@@ -174,7 +175,6 @@ class BreadcrumbTrail extends HTMLElement {
     let steps = bcContainer.querySelectorAll(".BreadcrumbStepContainer");
     //Add StepCompleted class to the firsts steps
     steps.forEach((step, i) => {
-      console.log(step);
       if(i < stepNum){
         step.classList.add("StepCompleted");
       }else{
@@ -184,7 +184,6 @@ class BreadcrumbTrail extends HTMLElement {
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
-    console.log("attributeChangedCallback " + attrName + ', ' + oldVal + ', ' + newVal);
     if(attrName == "step-num") {
       this.setCompletedStep(newVal);
     }

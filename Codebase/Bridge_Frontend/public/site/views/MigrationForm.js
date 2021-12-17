@@ -512,6 +512,19 @@ export default class extends AbstractView {
 
                         //Show network hint to redeem IOU
                         displayRedeemNetworkHintMsg(true);
+
+                        //If user clicked redeem from nft card, prefill dest form fields
+                        if(window.prefillRedeemForm){
+                          //select dest network
+                          selectDropDownOptionByUniqueID("DestinationNetworkSelector", migData.metadataDestinationUniverseUniqueId);
+                          triggerDropDownOnChange("DestinationNetworkSelector");
+
+                          //Click redeem btn
+                          document.getElementById("RedeemButton").click();
+
+                          //Unset prefillRedeemForm for next time
+                          window.prefillRedeemForm = false;
+                        }
                       }
                       else{
                         //Hide redeem network hint as token is not an IOU
@@ -676,6 +689,81 @@ export default class extends AbstractView {
       return isERC721;
     }
 
+    //=====NFT Collection=====
+    //Universe is the uniqueId
+    let addNFTToCollection = function(name, universe, world, tokenId, isIOU, imgSrc){
+      let cont = document.getElementById("NFTCollectionCustomComponent");
+      let newNftCard = document.createElement("nft-card");
+      newNftCard.setAttribute('slot', "NFTElement");
+      newNftCard.setAttribute('name', name);
+      newNftCard.setAttribute('universe', universe);
+      newNftCard.setAttribute('world', world);
+      newNftCard.setAttribute('tokenid', tokenId);
+      newNftCard.setAttribute('is-iou', isIOU);
+      newNftCard.setAttribute('imgsrc', imgSrc);
+
+      cont.appendChild(newNftCard);
+    }
+    //Retrieve the Mathom API key from frontend's server
+    let getApiCredential = async function(){
+      let pathApiKeyJson = '/api_credential.json';
+      var options = {
+        method: 'GET',
+        url: pathApiKeyJson,
+        headers: {'Content-Type': 'application/json'}
+      };
+
+      try{
+        let response = await axios.request(options);
+        if(response.status == 200){
+          return response.data;
+        }else{
+          console.log(response.status + ' : ' + response.statusText);
+          return '';
+        }
+      }catch(error){
+        console.error(error);
+        return '';
+      }
+    }
+    let fetchUserNFTCollection = async function(){
+      //Refresh user account addr
+      refreshConnectedAccount();
+
+      //Retrieve api credential key from frontend's server
+      let apiData = await getApiCredential();
+      let mathomAPIKey = apiData.mathom.key;
+      let mathomAIPUrl = apiData.mathom.url;
+      console.log('Mathom API key: ' + mathomAPIKey);
+
+      let apiUrl = 'https://mathomhouse.mynft.com';
+      var options = {
+        method: 'GET',
+        url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
+        headers: {'Content-Type': 'application/json'}
+      };
+
+      //Sent request to mathom, to get list of NFT of the user
+      try{
+        let response = await axios.request(options)
+        if(response.status == 200){
+          let nftList = response.data;
+          for(let nft of nftList){
+            let mdata = nft.metadata;
+            //Determine weather this nft is an IOU
+            let isIOU = isIOUToken(mdata);
+
+            //Add nft to nft collection
+            addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+          }
+        }else{
+          console.log(response.status + ' : ' + response.statusText);
+        }
+      }catch(error){
+        console.error(error);
+      }
+    }
+
     //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
     //And display it into dropDown.
@@ -830,6 +918,30 @@ export default class extends AbstractView {
           }
         }
       }
+
+      //Retrieve NFT collection of user
+      //TODO
+      console.log("----TODO---ADDING NFT");
+      addNFTToCollection("Yeyy",
+        "0x07dac20e",
+        "0xCDD05c5881D2E234D651472a95c86691F4f25dE9",
+        "1",
+        false,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png");
+      addNFTToCollection("Rabbbit in a rabbit hole",
+        "0xee0bec75",
+        "0x27C9c55b44656c13A4F5224F55cB22050F9c1712",
+        "1",
+        false,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Erika-Christensen-Rabbit/Cryptograph.png");
+      addNFTToCollection("Mat",
+        "0x07dac20e",
+        "0xf2E02E4ee09428755C78658a636B31a289d772B6",
+        "300",
+        true,
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");
+      fetchUserNFTCollection();
+
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {
@@ -897,7 +1009,7 @@ export default class extends AbstractView {
       disableRedeemBtn(true);
 
       //Unselect relay
-      unselectDropDown("RelaySelector");
+      unselectRelaySelector();
 
       //Reset dest token ID
       setDestinationTokenId("");
@@ -1075,7 +1187,7 @@ export default class extends AbstractView {
         break;
 
         case model.RedeemIOUMigrationType:
-          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU will give you back the NFT it represent on the destination chain.";
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU will give you back the token it represents on the destination chain.";
         break;
 
         case "":
@@ -1206,6 +1318,11 @@ export default class extends AbstractView {
       //Finally show the text explaining the migration type
       showMigrationTypeDescription(true, migType);
     }
+    let unselectRelaySelector = function(){
+      migData.migrationRelayIndex = 0;
+      migData.migrationRelay = ""
+      unselectDropDown("RelaySelector");
+    }
 
     //=====Data display=====
     //These functions make sure the value displayed is always the same as the variable in migData
@@ -1321,6 +1438,10 @@ export default class extends AbstractView {
       migData.metadataDestinationBridgeAddr = "";
     }
 
+    let mintPrefillTest = function(){
+      console.log("YEY, Nailed it!");
+    }
+
     //Setup custom selector
     setupDropDown("OriginNetworkSelector", "Select the network where the token is currently.");
     setupDropDown("RelaySelector", "Select the relay you trust to operate the migration.");
@@ -1420,9 +1541,6 @@ export default class extends AbstractView {
 
       //Reset migration buttons. Unselect the previously selected button.
       unselectMigrationButtons();
-      //Clear drop downs
-      //clearDropDownOptions("RelaySelector");
-      //load available relay from network_list and relay_list
 
       //HIDE form fields further than one step from dest network drop down
       showFormFieldsAfterMigButtons(false);
@@ -1577,7 +1695,7 @@ export default class extends AbstractView {
       //Reset previous migData destination var
       setDestinationTokenId("");
       //Unselect relay dropdown
-      unselectDropDown("RelaySelector");
+      unselectRelaySelector();
 
       //Display next form field: relay drop down
       showCardLine("MigrationRelayCardLine", true);
@@ -1675,8 +1793,7 @@ export default class extends AbstractView {
     }
     else if(model.isProviderLoaded()){
       console.log("Westron already loaded, perfect.");
-      //Display connected addr + ogNet & prefill it
-      displayConnectedWallet();
+      //displayConnectedWallet will be called when relays & networks are loaded from networks_list.json
     }
     //If metamask available: autoconnect without redirecting to connection page.
     else if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {

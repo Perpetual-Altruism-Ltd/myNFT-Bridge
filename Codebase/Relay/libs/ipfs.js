@@ -6,14 +6,14 @@ class IPFSClient {
     constructor() {
 
         const conf = {
-            host: Conf.infuraIpfs.host,
-            port: Conf.infuraIpfs.port,
-            protocol: Conf.infuraIpfs.protocol
+            host: Conf.ipfs.host,
+            port: Conf.ipfs.port,
+            protocol: Conf.ipfs.protocol
         }
 
-        if(Conf.infuraIpfs.projectId && Conf.infuraIpfs.projectSecret)
+        if(Conf.ipfs.projectId && Conf.ipfs.projectSecret)
             conf.headers = {
-                authorization: 'Basic ' + Buffer.from(Conf.infuraIpfs.projectId + ':' + Conf.infuraIpfs.projectSecret).toString('base64')
+                authorization: 'Basic ' + Buffer.from(Conf.ipfs.projectId + ':' + Conf.ipfs.projectSecret).toString('base64')
             }
 
         this.ipfsInstance = IPFS.create(conf)

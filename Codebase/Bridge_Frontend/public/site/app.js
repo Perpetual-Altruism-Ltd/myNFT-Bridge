@@ -7,7 +7,10 @@ import SignEscrow from './views/SignEscrow.js';
 import MintToken from './views/MintToken.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
+//Components
 import BreadcrumbTrail from './components/breadcrumbTrailHandler.js';
+import NFTCollection from './components/nftCollection.js';
+import NFTCard from './components/nftCard.js';
 
 import Model from './Model.js';
 
@@ -58,7 +61,6 @@ const router = async () => {
         //Exceptions for pages wallet_connection and migration_form which load themselves the provider
         if(!Model.isProviderLoaded() &&
           match.route.path != "/wallet_connection" &&
-          match.route.path != "/register_migration" &&
           match.route.path != "/migration_form"){
           console.log("No provider loaded. Redirecting to wallet_connection.");
           navigateTo('/wallet_connection');
@@ -71,8 +73,10 @@ const router = async () => {
       });
 }
 
-//init breadcrumb trail behaviour
+//init all components behaviour
 window.customElements.define('breadcrumb-trail', BreadcrumbTrail);
+window.customElements.define('nft-collection', NFTCollection);
+window.customElements.define('nft-card', NFTCard);
 
 /*=====Model functions=====*/
 const navigateTo = url => {
@@ -116,6 +120,7 @@ Model.isMigDataFilled = function(){
     !(migData.originWorld.includes(' ')) &&
     migData.originTokenId &&
     !(migData.originTokenId.includes(' ')) &&
+    migData.migrationRelay &&
     migData.destinationUniverseUniqueId &&
     migData.migrationType &&
     migData.destinationWorld &&
@@ -135,7 +140,10 @@ Model.isProviderLoaded = function(){
     return userAccount != "" && window.web3.eth != undefined;
   }else{return false;}
 }
-Model.bcTrail = new BreadcrumbTrail();
+Model.displayConnectedWallet = function(){
+  console.log("DISPLAY");
+}
+//TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
 initDropDownBehaviour();
 

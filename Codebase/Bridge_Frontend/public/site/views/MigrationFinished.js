@@ -66,7 +66,7 @@ export default class extends AbstractView {
 
     //Ask provider to prompt user to add the destination token to wallet
     let promptAddNFTToWallet = async function () {
-      let tokenSymbol = migData.migrationType == model.MintOUIMigrationType ? 'IOU' : 'TKN';
+      let tokenSymbol = /*migData.migrationType == model.MintOUIMigrationType ? 'IOU' :*/ 'TKN';
       console.log('tokenSymbol ' + tokenSymbol);
 
       window.ethereum.request({
@@ -182,7 +182,11 @@ export default class extends AbstractView {
       clearMigData();
       model.navigateTo("/migration_form");
     });
-    document.getElementById("AddTokenWalletButton").addEventListener('click', async() =>{
+    document.getElementById("AddTokenWalletButton").addEventListener('click', async function(e) {
+      //Prevent double clicks
+      //We can use 'this' inside the event listener, AND IF NON ARROW function (=>)
+      this.setAttribute('disabled', 'true');
+
       //Prompt user to add the dest token to his wallet
       if(areDestTokenDataFilled()){
         promptSwitchDestChainAndAddToken(migData.destinationNetworkId);
