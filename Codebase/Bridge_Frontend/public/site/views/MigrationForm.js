@@ -232,7 +232,6 @@ export default class extends AbstractView {
       //Dest network
       //Clear Destination networks before fill it again
       clearDropDownOptions("DestinationNetworkSelector");
-      console.log("DestinationNetworkSelector cleared");
       //Clear previously retrieved destWorld
       clearDropDownOptions("DestinationWorldSelector");
       //Show the available destination networks for the ogNet selected
@@ -249,7 +248,6 @@ export default class extends AbstractView {
       //If migData already filled, prefill migration form
       //Once wallet loaded, chain is switched, and dest net loaded:
       //we can prefill all form data if user come from register_mig & clicked edit btn
-      console.log("isMigDataFilled(): " + model.isMigDataFilled());
       if(model.isMigDataFilled()){prefillFormWithMigData();}
       else if(migData.originWorld && migData.originTokenId){//if data filled, fetch token data
         document.getElementById("FetchDataButton").click();//Will reset model.editMigrationForm
@@ -734,12 +732,10 @@ export default class extends AbstractView {
       let apiData = await getApiCredential();
       let mathomAPIKey = apiData.mathom.key;
       let mathomAIPUrl = apiData.mathom.url;
-      console.log('Mathom API key: ' + mathomAPIKey);
 
-      let apiUrl = 'https://mathomhouse.mynft.com';
       var options = {
         method: 'GET',
-        url: mathomAIPUrl + '/api/nfts/publicKey/' + /*userAccount*/ '0x00',
+        url: mathomAIPUrl + '/publicKey/' + /*userAccount*/ '0x00',
         headers: {'Content-Type': 'application/json'}
       };
 
@@ -1087,6 +1083,25 @@ export default class extends AbstractView {
         showCardLine("DestWorldCardLine", true);
       }
     }
+    //Show the pending migration data from localStorage
+    let showPendingMigData = function(){
+      let pendingMigrationData = model.getPendingMigData();
+
+      document.getElementById("PendingMigOgNetwork").innerHTML = pendingMigrationData.originUniverse;
+      document.getElementById("PendingMigOgWorld").innerHTML = pendingMigrationData.originWorld;
+      document.getElementById("PendingMigOgTokenId").innerHTML = pendingMigrationData.originTokenId;
+      document.getElementById("PendingMigOgTokenName").innerHTML = pendingMigrationData.originTokenName;
+      document.getElementById("PendingMigOgTokenOwner").innerHTML = pendingMigrationData.originOwner;
+
+      document.getElementById("PendingMigDestNetwork").innerHTML = pendingMigrationData.destinationUniverse;
+      document.getElementById("PendingMigDestWorld").innerHTML = pendingMigrationData.destinationWorld;
+      document.getElementById("PendingMigDestTokenId").innerHTML = pendingMigrationData.destinationTokenId;
+      document.getElementById("PendingMigDestTokenName").innerHTML = pendingMigrationData.destinationTokenName;
+      document.getElementById("PendingMigDestTokenOwner").innerHTML = pendingMigrationData.destinationOwner;
+
+      showCard("PendingMigCard", true);
+    }
+
 
     //=====Error & user messages=====
     let displayDestTokenNameMsg = function(txt){
@@ -1303,13 +1318,13 @@ export default class extends AbstractView {
         case model.MintOUIMigrationType:
           btnToSelect = document.getElementById("IOUMigrationButton");
           migData.migrationType = model.MintOUIMigrationType;
-          model.isRedeem = false;
+          migData.isRedeem = false;
         break;
 
         case model.RedeemIOUMigrationType:
           btnToSelect = document.getElementById("RedeemButton");
           migData.migrationType = model.RedeemIOUMigrationType;
-          model.isRedeem = true;
+          migData.isRedeem = true;
         break;
       }
       //Then select it
@@ -1785,6 +1800,38 @@ export default class extends AbstractView {
       console.log(migData);
       model.navigateTo("/register_migration");
     });
+
+    //=====Resume migration process=====
+    if(model.isMigrationPending()){
+      showPendingMigData();
+
+      console.log("Pending migration step: " + model.getPendingMigStep());
+
+      document.getElementById("ResumeMigBtn").addEventListener('click', function(){
+        //Retrieve migData from pending mig
+        model.migrationData = model.getPendingMigData();
+        migData = model.migrationData;
+        //Retrieve hash values
+        let hashValues = model.getHashValues();
+        if(hashValues != null && hashValues != undefined){
+          model.hash = hashValues;
+        }
+
+        //Redirecting to the right step
+        let pendingMigStep = model.getPendingMigStep();
+        //Set this var to true so that the target view resume to the right action to do within
+        //all the actions performed in this view
+        model.resumeMigration = true;
+
+        //Redirecting to /register_migration
+        if(pendingMigStep == model.migStepManipulatorApprove || pendingMigStep == model.migStepInitMigration){
+          model.navigateTo("/register_migration");
+        }
+        else {
+          model.navigateTo("/migration_process");
+        }
+      })
+    }
 
     //HANDLE WALLET CONNECTION
     //If web3 already injected

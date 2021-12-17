@@ -120,8 +120,29 @@ export default class extends AbstractView {
 
     }
 
+    let onManipulatorGrantedAsOperator = function(){
+      console.log('Manipulator is now approved');
+      //Avdance 1 step in breadcrumb trail
+      document.getElementById("BCT").setAttribute('step-num', 1);
+
+      //Delete migId from previous migration, to let place to the new one which will me
+      model.storeMigrationIdLocalStorage("");
+
+      //If approval accepted by user: go to next page
+      model.navigateTo("/migration_process");
+    }
+
     //Ask user to grant the relay as an operator by calling approve from ERC721 contract
     let grantRelayOperatorPrivilege = async function(){
+      //Before engaging in the migration process, save mig data to localStorage
+      model.storeMigDataLocalStorage();
+      model.storeMigStepLocalStorage(model.migStepManipulatorApprove);
+
+      //Instantiate contract to call approve (If not already done in migration_form)
+      if(contracts.originalChainERC721Contract == undefined){
+        contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, migData.originWorld);
+      }
+
       try{
         let manipulatorAddr = await getManipulatorAddrFromRelay();
         let originTokenId = parseInt(migData.originTokenId);
@@ -137,20 +158,15 @@ export default class extends AbstractView {
             document.getElementById("RegisterButton").classList.remove('Selected');
           }
           else{
-            console.log('Approval accepted by user');
-            //Avdance 1 step in breadcrumb trail
-            document.getElementById("BCT").setAttribute('step-num', 1);
-
-            //Delete cookies from previous migration, to let place to the new one which will me
-            model.eraseCookie("migrationId");
-
-            //If approval accepted by user: go to next page
-            model.navigateTo("/escrow_token");
+            onManipulatorGrantedAsOperator();
           }
         })
         .then((res) => {
           //Function called when transaction accepted on blockchain. Will be executed when page EscrowToken is displayed
           console.log("Relay is now an operator");
+
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepInitMigration);
 
           //Call /initMigration from Relay
           initMigration();
@@ -203,14 +219,17 @@ export default class extends AbstractView {
       options.data.migrationData.destinationTokenId = migData.destinationTokenId;
       options.data.migrationData.destinationOwner = migData.destinationOwner.toLowerCase();
       options.data.operatorHash = "0x00";//Not used yet
-      options.data.redeem = model.isRedeem;
+      options.data.redeem = migData.isRedeem;
 
       axios.request(options).then(function (response) {
         if(response.status == 200){
           let migId = response.data.migrationId;
           console.log("Migration initiated with migrationId: " + migId);
-          //Add migrationID as cookie
-          model.createCookie("migrationId", migId, 31);
+          //Add migrationID as cookie. This will trigger EscrowToken to call /pollingMigration.
+          model.storeMigrationIdLocalStorage(migId);
+
+          //Update migStep
+          model.storeMigStepLocalStorage(model.migStepPollMigrationHash);
         }else{console.log(response.status + ' : ' + response.statusText);}
 
       }).catch(function (error) {
@@ -273,6 +292,27 @@ export default class extends AbstractView {
         grantRelayOperatorPrivilege();
       }
     });
+
+    //Resume migration handling
+    if(model.resumeMigration){
+      model.resumeMigration = false;
+
+      let pendingMigStep = model.getPendingMigStep();
+
+      //Ask the user to approve manipulator
+      if(pendingMigStep == model.migStepManipulatorApprove){
+        document.getElementById("RegisterButton").click();
+      }
+      //call /initMigration route to relay
+      else if(pendingMigStep == model.migStepInitMigration){
+        initMigration();
+
+        onManipulatorGrantedAsOperator();
+      }else{
+        console.error("Unknown migration step: " + pendingMigStep);
+        model.navigateTo("/migration_form");
+      }
+    }
   }
 
   async getHtml(callback){

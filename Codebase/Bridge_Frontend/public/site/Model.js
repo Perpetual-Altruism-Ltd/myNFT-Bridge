@@ -33,6 +33,7 @@ model.migrationData.destinationWorld = "";
 model.migrationData.destinationTokenId = "";
 model.migrationData.destinationTokenName = "";
 model.migrationData.destinationOwner = "";
+model.migrationData.isRedeem = false;
 
 model.migrationData.metadataDestinationUniverseUniqueId = "";
 model.migrationData.metadataDestinationUniverseIndex = 0;
@@ -41,19 +42,37 @@ model.migrationData.metadataDestinationWorld = "";
 model.migrationData.metadataDestinationTokenId = "";
 model.migrationData.metadataDestinationBridgeAddr = "";
 
+model.hash = {};
+model.hash.migrationHash = "";
+model.hash.migrationHashSigned = "";
+model.hash.escrowHash = "";
+model.hash.escrowHashSigned = "";
+
 model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
 
 model.listeningTimeOut = 1800; //seconds
 model.listeningRefreshFrequency = 5;//seconds
 
-model.migrationHash = "";
-model.escrowHash = "";
-
 model.destinationTokenTransfertTxHash = "";
 
 model.disconnectWallet = false;
 model.editMigrationForm = false;
-model.isRedeem = false;
+
+//The names of the step under processing.
+model.migStepManipulatorApprove = 'approve';
+model.migStepInitMigration = 'init';
+model.migStepPollMigrationHash = 'migrationHash';
+model.migStepSignMigrationHash = 'signMigrationHash';
+model.migStepContinueMigration = 'continue';
+model.migStepPollEscrowHash = 'escrowHash';
+model.migStepSignEscrowHash = 'signEscrowHash';
+model.migStepCloseMigration = 'close';
+model.migStepPollEndMigration = 'end';
+model.migStepMigrationSuccessful = 'success';
+
+//For instance currentMigrationStep will have 'continue value if  migrationHash has been received, and escrow hash has not been queried yet
+model.currentMigrationStep = model.migStepManipulatorApprove;
+model.resumeMigration = false;
 
 export default model;

@@ -2,9 +2,7 @@
 import WalletConnection from './views/WalletConnection.js';
 import MigrationForm from './views/MigrationForm.js';
 import RegisterMigration from './views/RegisterMigration.js';
-import EscrowToken from './views/EscrowToken.js';
-import SignEscrow from './views/SignEscrow.js';
-import MintToken from './views/MintToken.js';
+import MigrationProcess from './views/MigrationProcess.js';
 import MigrationFinished from './views/MigrationFinished.js';
 
 //Components
@@ -21,9 +19,7 @@ const router = async () => {
           { path: "/wallet_connection", view: WalletConnection },
           { path: "/migration_form", view: MigrationForm },
           { path: "/register_migration", view: RegisterMigration },
-          { path: "/escrow_token", view: EscrowToken },
-          { path: "/sign_escrow", view: SignEscrow },
-          { path: "/mint_token", view: MintToken },
+          { path: "/migration_process", view: MigrationProcess },
           { path: "/migration_finished", view: MigrationFinished },
       ];
 
@@ -142,6 +138,46 @@ Model.isProviderLoaded = function(){
 }
 Model.displayConnectedWallet = function(){
   console.log("DISPLAY");
+}
+
+//=====Persistent migration data handling=====
+//=====Setters=====
+Model.storeMigDataLocalStorage = function(){
+  localStorage.setItem('migrationData', JSON.stringify(Model.migrationData));
+}
+//Store the step that the user completed in the mig process to local storage to access it later.
+Model.storeMigStepLocalStorage = function(step){
+  console.log("=====New mig step=====: "  + step);
+  Model.currentMigrationStep = step;
+  localStorage.setItem('migrationStep', Model.currentMigrationStep);
+}
+//Needs to be separated from migData because migData set to localstorage when register btn
+//clicked, whereas migId retrieved after.
+//Maintain model.migrationData.migrationId updated with the migId in local storage
+Model.storeMigrationIdLocalStorage = function(migId){
+  localStorage.setItem('migrationId', migId);
+}
+Model.storeHashValuesLocalStorage = function(){
+  localStorage.setItem('hashValues', JSON.stringify(Model.hash));
+}
+
+//=====Getters=====
+Model.getHashValues = function(){
+  let hashValues = JSON.parse(localStorage.getItem("hashValues"));
+  return hashValues;
+}
+Model.getMigrationId = function(){
+  return localStorage.getItem("migrationId");
+}
+//Tell weather there is an unfinished migration.
+Model.isMigrationPending = function(){
+  return Model.getPendingMigStep() != Model.migStepMigrationSuccessful;
+}
+Model.getPendingMigData = function(){
+  return JSON.parse(localStorage.getItem("migrationData"));
+}
+Model.getPendingMigStep = function(){
+  return localStorage.getItem("migrationStep");
 }
 //TODELETEModel.bcTrail = new BreadcrumbTrail();
 //Initialize javascript context for all views
