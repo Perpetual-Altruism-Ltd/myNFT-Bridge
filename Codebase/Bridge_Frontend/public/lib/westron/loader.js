@@ -16,7 +16,7 @@ let loadWestron = function(){
 	document.body.appendChild(ConnectorManager);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+/*document.addEventListener("DOMContentLoaded", () => {
 	//loadWestron();
 	//This function is now called on waller_connection page
-});
+});*/

@@ -266,14 +266,14 @@ export default class extends AbstractView {
       this.classList.add('Selected');
 
       //refresh user wallet account
-      userAccount = window.web3.currentProvider.selectedAddress;
+      userAccount = window.connector.web3.currentProvider.selectedAddress;
 
       //If not right account connected to wallet
       if(userAccount != migData.originOwner){
         alert("The NFT owner is " + migData.originOwner + ". Please connect to this account through your wallet.");
       }
       //Else, check wallet connected network, and prompt user to switch if wrong network.
-      else if(parseInt(window.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
+      else if(parseInt(window.connector.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
         alert("The NFT you want to migrate is on the blochain " + migData.originUniverse + ". Please change the network you are connected to with your wallet.");
         promptSwitchChainThenGrantOperator('0x' + migData.originNetworkId.toString(16));
       }

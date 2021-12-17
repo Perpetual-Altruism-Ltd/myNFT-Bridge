@@ -23,7 +23,8 @@ export default class extends AbstractView {
       };
 
       //Connecting to metmask if injected
-      if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
+      //NOTE: i do not believe that automatically connecting to metamask is a good idea. at all.
+      /*if (window.ethereum) {
           if (connector == null || !connector.isConnected) {
               connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
               connectedButton = connectMetaMaskButton;
@@ -32,20 +33,25 @@ export default class extends AbstractView {
           } else {
               connector.disconnection();
           }
-      }
+      }*/
     }
+
+    window.connectionCallback = function(){
+      console.log("Wallet connected");
+      model.navigateTo('/migration_form');
+    };
 
     //If user want to disconnect his wallet, call disconnect from westron lib
     //+ set wallet connection buttons listeners. This is required as the view (HTML content) has been loaded again
     if(model.disconnectWallet){
-      connector.disconnection();
+      window.connector.disconnection();
       //set again buttons onClick functions
       setConnectWalletButtonsListeners();
 
       model.disconnectWallet = false;
     }else{
       //Load westron lib, to add the behaviour to connection buttons
-      loadWestron();
+      //but don't actually do this because loadWeastron is called in the pollWestronLoaded function now.
     }
 
     //Once loadWestron started, wait for it to finish by polling. Timeout after 50ms*100 = 5sec
@@ -53,13 +59,13 @@ export default class extends AbstractView {
     let cmptr = 0;
     let pollWestronLoaded = async function(){
       try{
-        await endLoadMetamaskConnection();
+        await loadWestron();
         console.log("Westron lib loaded after " + cmptr + " attempts.");
       }catch(err){
         cmptr++;
         if(cmptr > 100){
           console.log("Westron loading timed out.");
-          alert('It seems that you have no wallet provider installed. You can install metamask in few minutes by visiting https://metamask.io/')
+          //alert('It seems that you have no wallet provider installed. You can install metamask in few minutes by visiting https://metamask.io/')
         }else {
           setTimeout(pollWestronLoaded, 50);
         }

@@ -14,7 +14,7 @@ export default class extends AbstractView {
     let contracts = model.contracts;
     let migData = model.migrationData;
     let migrationHashSigned = "";
-    let account = window.web3.currentProvider.selectedAddress;
+    let account = window.connector.web3.currentProvider.selectedAddress;
     let loadingText = document.getElementById("RegistrationLoadingText");
 
     function sleep(ms) {

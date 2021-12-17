@@ -21,7 +21,7 @@ let connectFortmaticButton = null;
 let connectVenlyButton = null;
 let connectCoinbaseButton = null;
 
-let connectionCallback = function(){console.log("No callback defined yet.");};
+//let connectionCallback = function(){console.log("No callback defined yet.");};
 
 let setConnectWalletButtonsListeners = function(){
 
@@ -38,91 +38,91 @@ let setConnectWalletButtonsListeners = function(){
 
 	// Button click listener
 	connectMetaMaskButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
 			connectedButton = connectMetaMaskButton;
 			providerConnected = "MetaMask";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectTorusButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.TORUS);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.TORUS);
 			connectedButton = connectTorusButton;
 			providerConnected = "Torus";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectWalletConnectButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.WALLETCONNECT);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.WALLETCONNECT);
 			connectedButton = connectWalletConnectButton;
 
 			providerConnected = "WalletConnect";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectPortisButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.PORTIS);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.PORTIS);
 			connectedButton = connectPortisButton;
 			providerConnected = "Portis";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectBitskiButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.BITSKI);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.BITSKI);
 			connectedButton = connectBitskiButton;
 			providerConnected = "Bitski";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectFortmaticButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.FORTMATIC);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.FORTMATIC);
 			connectedButton = connectFortmaticButton;
 			providerConnected = "Fortmatic";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectVenlyButton.addEventListener("click", async() =>  {
-		if(connector == null || !connector.isConnected) {
-			connector  = await ConnectorManager.instantiate(ConnectorManager.providers.VENLY);
+		if(window.connector == null || !window.connector.isConnected) {
+			window.connector  = await ConnectorManager.instantiate(ConnectorManager.providers.VENLY);
 			connectedButton = connectVenlyButton;
 			providerConnected = "Venly";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 
 	connectCoinbaseButton.addEventListener("click", async () => {
-		if (connector == null || !connector.isConnected) {
-			connector = await ConnectorManager.instantiate(ConnectorManager.providers.COINBASE);
+		if (window.connector == null || !window.connector.isConnected) {
+			window.connector = await ConnectorManager.instantiate(ConnectorManager.providers.COINBASE);
 			connectedButton = connectCoinbaseButton;
 			providerConnected = "Coinbase";
 			connection();
 		} else {
-			connector.disconnection();
+			window.connector.disconnection();
 		}
 	});
 }
@@ -149,14 +149,14 @@ function setDisabledConnectButtons(value) {
 
 /** Initialize the connector with events onConnection and onDisconnection */
 function initConnector() {
-	connector.onConnection = async () => {
+	window.connector.onConnection = async () => {
 		if(connectedButton){connectedButton.disabled = false;}
 
-		const accounts = await connector.web3.eth.getAccounts();
+		const accounts = await window.connector.web3.eth.getAccounts();
 		//document.querySelector(".address").innerHTML = accounts[0];
 	};
 
-	connector.onDisconnection = () => {
+	window.connector.onDisconnection = () => {
 		setDisabledConnectButtons(false);
 		//document.querySelector(".address").innerHTML = "";
 		if(connectedButton){connectedButton.innerHTML = "<div class='ConnectBtnTextContainer'>Connect " + providerConnected + "</div>";}
@@ -164,23 +164,26 @@ function initConnector() {
 		providerConnected = "";
 	};
 
-	connector.onAccountChanged = (account) => {
+	window.connector.onAccountChanged = (account) => {
 		//document.querySelector(".address").innerHTML = account;
 	};
 }
 
 /** Local function called when a connection/disconnection is engaged to update the frontend */
 async function connection(callback) {
+	console.log("CallbackConnection");
 	initConnector();
 	setDisabledConnectButtons(true);
 
-	if (await connector.connection()) {
+	if (await window.connector.connection()) {
 		if(connectedButton){connectedButton.innerHTML = "<div class='ConnectBtnTextContainer'>Disconnect " + providerConnected + "</div>";}
-		web3 = connector.web3;
+		//DAG note: this shouuuld be unused, but i'm going to leave it just in case.
+		web3 = window.connector.web3;
 
 		//Call the callback function once connected
 		//Need to be a function stored in this context as connection can be called by wallet conn buttons after
-    if(connectionCallback){connectionCallback();}
+		//console.log(window.connectionCallback);
+    if(window.connectionCallback){window.connectionCallback();}
 	} else {
 		setDisabledConnectButtons(false);
 		console.log("Connection failed");
