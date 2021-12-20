@@ -13,7 +13,7 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
     let migData = model.migrationData;
-    let account = window.web3.currentProvider.selectedAddress;
+    let account = window.web3.currentProvider.selectedAddress.toLowerCase();
     let loadingText = document.getElementById("RegistrationLoadingText");
 
     function sleep(ms) {
