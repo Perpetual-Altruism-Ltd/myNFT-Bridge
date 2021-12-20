@@ -968,7 +968,7 @@ export default class extends AbstractView {
     }
     //Refresh userAccount global var from provider
     let refreshConnectedAccount = function(){
-      userAccount = window.web3.currentProvider.selectedAddress;
+      userAccount = window.web3.currentProvider.selectedAddress.toLowerCase();
     }
 
     //=====Display functions=====
