@@ -96,8 +96,6 @@ export default class extends AbstractView {
       try{
         let response = await axios.request(options);
         if(response.status == 200){
-          console.log("Response:");
-          console.log(response);
           let manipAddr = response.data.manipulatorAddress;
           console.log("Manipulator addr retrieved from relay: " + manipAddr);
 

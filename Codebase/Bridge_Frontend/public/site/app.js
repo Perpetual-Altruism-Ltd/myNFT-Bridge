@@ -171,7 +171,8 @@ Model.getMigrationId = function(){
 }
 //Tell weather there is an unfinished migration.
 Model.isMigrationPending = function(){
-  return Model.getPendingMigStep() != Model.migStepMigrationSuccessful;
+  let storedStep = Model.getPendingMigStep();
+  return storedStep != null &&  storedStep != undefined && storedStep != '' && storedStep != Model.migStepMigrationSuccessful;
 }
 Model.getPendingMigData = function(){
   return JSON.parse(localStorage.getItem("migrationData"));

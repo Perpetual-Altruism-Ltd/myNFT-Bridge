@@ -1086,6 +1086,7 @@ export default class extends AbstractView {
     //Show the pending migration data from localStorage
     let showPendingMigData = function(){
       let pendingMigrationData = model.getPendingMigData();
+      if(pendingMigrationData == null || pendingMigrationData == undefined){return;}
 
       document.getElementById("PendingMigOgNetwork").innerHTML = pendingMigrationData.originUniverse;
       document.getElementById("PendingMigOgWorld").innerHTML = pendingMigrationData.originWorld;
@@ -1801,9 +1802,9 @@ export default class extends AbstractView {
 
     //=====Resume migration process=====
     if(model.isMigrationPending()){
-      showPendingMigData();
-
       console.log("Pending migration step: " + model.getPendingMigStep());
+
+      showPendingMigData();
 
       document.getElementById("ResumeMigBtn").addEventListener('click', function(){
         //Retrieve migData from pending mig
