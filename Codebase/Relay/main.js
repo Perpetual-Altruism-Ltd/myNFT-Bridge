@@ -250,6 +250,15 @@ const main = async () => {
             return
         }
 
+        const tokenUri = await originUniverseRpc.getTokenUri(originUniverse.manipulatorAddress, migrationData.originWorld, migrationData.originTokenId)
+        const tokenMetadata = (await Axios.get(tokenUri)).data
+        if((!tokenMetadata.image && !tokenMetadata.video) || !tokenMetadata.description) {
+            res.status(400)
+            res.send({ status: `Can't retrieve valid metadata on this NFT` })
+            Logger.error(`Can't retrieve a valid metadata on this NFT`)
+            return
+        }
+
         if(req.body.redeem){
             const originWorld = originUniverse.worlds.find(world => world.address.toLowerCase() == migrationData.originWorld.toLowerCase())
             if(!originWorld){
@@ -258,9 +267,6 @@ const main = async () => {
                 Logger.error(`Can't find origin world ${migrationData.originWorld}`)
                 return
             }
-
-            const tokenUri = await originUniverseRpc.getTokenUri(originUniverse.manipulatorAddress, migrationData.originWorld, migrationData.originTokenId)
-            const tokenMetadata = (await Axios.get(tokenUri)).data
 
             if(migrationData.destinationUniverse != tokenMetadata.migrationData.originUniverse
                 || migrationData.destinationWorld != tokenMetadata.migrationData.originWorld
