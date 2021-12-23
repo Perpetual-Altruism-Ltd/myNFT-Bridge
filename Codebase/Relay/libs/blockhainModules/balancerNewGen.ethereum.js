@@ -93,7 +93,7 @@ class TransactionBalancerNewGen {
                 gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
                 ...(!this.universe.eip1559 && { gasPrice: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
                 ...(this.universe.eip1559 && { maxFeePerGas: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
-                ...(this.universe.eip1559 && { maxPriorityFeePerGas: (((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.1).toFixed(0) }),
+                ...(this.universe.eip1559 && { maxPriorityFeePerGas: (((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.5).toFixed(0) }),
                 ...this.transactionConfig,
                 ...transaction
             }
