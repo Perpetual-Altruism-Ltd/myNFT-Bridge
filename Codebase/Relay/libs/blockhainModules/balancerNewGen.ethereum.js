@@ -91,9 +91,9 @@ class TransactionBalancerNewGen {
 
             const fullTransaction = {
                 gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
-                gasPrice: (await this.web3Instance.eth.getGasPrice()) * 1.2,
-                ...(this.universe.eip1559 && { maxFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('30', 'gwei')) }),
-                ...(this.universe.eip1559 && { maxPriorityFeePerGas: this.web3Instance.utils.toHex(this.web3Instance.utils.toWei('3.5', 'gwei')) }),
+                ...(!this.universe.eip1559 && { gasPrice: (await this.web3Instance.eth.getGasPrice()) * 1.2 }),
+                ...(this.universe.eip1559 && { maxFeePerGas: (await this.web3Instance.eth.getGasPrice()) * 1.2 }),
+                ...(this.universe.eip1559 && { maxPriorityFeePerGas: this.web3Instance.utils.toHex((await this.web3Instance.eth.getMaxPriorityFeePerGas()) * 1.2) }),
                 ...this.transactionConfig,
                 ...transaction
             }
