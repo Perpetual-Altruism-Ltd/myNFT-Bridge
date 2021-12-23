@@ -21,7 +21,6 @@
         "minimalWalletAmount": 0.0001
     },
     "universes": [
-
         {
             "name":"Ethereum Testnet Rinkeby",
             "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",

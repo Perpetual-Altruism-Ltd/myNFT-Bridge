@@ -19,6 +19,8 @@
  */
 
 const HDWalletProvider = require('@truffle/hdwallet-provider');
+const Web3 = require("web3");
+const web3 = new Web3();
 // const infuraKey = "fj4jll3k.....";
 //
 // const fs = require('fs');
@@ -65,6 +67,15 @@ module.exports = {
       network_id: 5777,       // Rinkeby's id
       gas: 6721975,        // Rinkeby has a lower block limit than mainnet
       confirmations: 0,    // # of confs to wait between deployments. (default: 0)
+      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+    mainnet: {
+      provider: () => new HDWalletProvider('', `wss://mainnet.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de`),
+      network_id: 1,       // Rinkeby's id
+      //gas: 30000000,        // Rinkeby has a lower block limit than mainnet
+      gasPrice: web3.utils.toWei('90', 'gwei'),
+      confirmations: 2,    // # of confs to wait between deployments. (default: 0)
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },    
