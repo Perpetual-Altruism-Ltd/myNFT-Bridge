@@ -46,7 +46,8 @@ module.exports = async(deployer, network, accounts) => {
     //await instancedInit.init("0x07dac20e"); //  RINKEBY
     //await instancedInit.init("0xee0bec75"); // KOVAN
     //await instancedInit.init("0xe35d7d6b"); // POLKADOT TESTNET MOONBASE ALPHA
-    await instancedInit.init("0x6d2f0e37") // Ethereum Mainnet
+    //await instancedInit.init("0x6d2f0e37") // Ethereum Mainnet
+    await instancedInit.init("0x06551a5b") // Polkadot Moonriver
 
     //Adding ImplERC721TokenReceiver features
     console.log("Adding ERC721TokenReceiver features...");

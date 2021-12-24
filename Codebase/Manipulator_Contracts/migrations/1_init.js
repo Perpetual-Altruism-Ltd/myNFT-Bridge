@@ -5,12 +5,12 @@ const Manipulator = artifacts.require("Manipulator")
 const IOU = artifacts.require("IOU")
 
 /*module.exports = async (deployer, network, accounts) => {
-    await deployer.deploy(Manipulator)
+    //await deployer.deploy(Manipulator)
 
-    const instancedProxy = await ERC1538Delegate.at("0x8e0bbeaE7CDC5A44bE4C5dA6B2353636064F60Aa")
+    const instancedProxy = await ERC1538Delegate.at("0xe4577D73Fa5eA7414c966e756D73300A6B821150")
 
     await instancedProxy.updateContract(
-        Manipulator.address,
+        "0x04a5B52f420D81Eb1f1da094ee5D6af238E2eA4b",
         "cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
         "ManipulatorAddFunc"
     )
@@ -55,7 +55,7 @@ module.exports = async (deployer, network, accounts) => {
         "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
         "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
         "registerEscrowHashSignature(bytes32,bytes,address)"+
-        "migrateFromIOUERC721ToERC721(bytes,address)",
+        "migrateFromIOUERC721ToERC721(bytes,address)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
         "Manipulator"
     )
     
