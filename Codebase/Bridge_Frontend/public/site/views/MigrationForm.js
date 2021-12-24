@@ -202,7 +202,7 @@ export default class extends AbstractView {
         //Unselect ogNet
         unselectDropDown("OriginNetworkSelector");
         //Display unsupported net msg
-        displayOgNetworkSwitchMsg("Your provider's network is not yet supported.", true);
+        displayOgNetworkSwitchMsg("The selected network is not yet supported.", true);
         return;
       }
       else {
