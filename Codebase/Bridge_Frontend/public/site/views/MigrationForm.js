@@ -202,7 +202,7 @@ export default class extends AbstractView {
         //Unselect ogNet
         unselectDropDown("OriginNetworkSelector");
         //Display unsupported net msg
-        displayOgNetworkSwitchMsg("Your provider's network is not yet supported. Drop us a message to request it.");
+        displayOgNetworkSwitchMsg("The selected network is not yet supported.", true);
         return;
       }
       else {
@@ -968,7 +968,9 @@ export default class extends AbstractView {
     }
     //Refresh userAccount global var from provider
     let refreshConnectedAccount = function(){
-      userAccount = window.web3.currentProvider.selectedAddress;
+      let rawAddr = window.web3.currentProvider.selectedAddress;
+      if(rawAddr){userAccount = rawAddr.toLowerCase();}
+      else{userAccount = '';}
     }
 
     //=====Display functions=====
@@ -1118,10 +1120,14 @@ export default class extends AbstractView {
       //Set the text
       elem.textContent = "The original token of this IOU is in the network " + migData.metadataDestinationUniverse + ". You need to select this network to redeem the IOU.";
     }
-    let displayOgNetworkSwitchMsg = function(txt){
+    let displayOgNetworkSwitchMsg = function(txt, displayRequest){
       let errorMsg = document.getElementById("OgNetworkSwitchMessage");
       errorMsg.innerHTML = txt;
       showCardLine("OgNetworkSwitchMessage", true);
+
+      if(displayRequest){
+        errorMsg.innerHTML = '<div>' + txt + '<br><a target="_blank" href="mailto:bridge@mynft.com?subject=Bridge%20network%20request">Drop us a message to request it.</a></div>';
+      }
     }
     //Token error msg, same as contract error. Display error msg below tokenID input.
     let displayErrorMsg = function(txt){
@@ -1891,7 +1897,7 @@ export default class extends AbstractView {
             //Only prompt if ogNet is set & origin owner is not retrieved & ogNet different from wallet net
             if(!migData.originOwner &&  chainIDSelected != providerNetwork){
               //Display user message jutifying why to switch network
-              displayOgNetworkSwitchMsg("Please change your provider network to the one you selected above.");
+              displayOgNetworkSwitchMsg("Please change your provider network to the one you selected above.", false);
 
               //Change ogNetwork migData & fetch data if possible
               promptSwitchChainFetchedData(chainIDSelected);

@@ -15,6 +15,12 @@ export default class extends AbstractView {
     let migData = model.migrationData;
     let userAccount = "";
 
+    let refreshConnectedAccount = function(){
+      let rawAddr = window.web3.currentProvider.selectedAddress;
+      if(rawAddr){userAccount = rawAddr.toLowerCase();}
+      else{userAccount = '';}
+    }
+
     //When user accept to switch, it will be asked to grant relay as operator of his NFT
     let promptSwitchChainThenGrantOperator = async function (ID) {
       window.ethereum.request({
@@ -273,7 +279,7 @@ export default class extends AbstractView {
       this.classList.add('Selected');
 
       //refresh user wallet account
-      userAccount = window.web3.currentProvider.selectedAddress;
+      refreshConnectedAccount();
 
       //If not right account connected to wallet
       if(userAccount != migData.originOwner){
