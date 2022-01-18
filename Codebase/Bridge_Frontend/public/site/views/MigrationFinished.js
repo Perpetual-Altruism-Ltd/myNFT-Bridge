@@ -133,7 +133,7 @@ export default class extends AbstractView {
         if(error.response.data){
           //Display error message
           let tokenURIContainer = document.getElementById("TokenURIContainer");
-          tokenURIContainer.innerHTML = "Could not load new tokenURI. Please contact our team.";
+          tokenURIContainer.innerHTML = "Could not load new tokenURI. Please contact us to report the bug with the link in the upper right corner.";
         }
         console.error(error);
       });

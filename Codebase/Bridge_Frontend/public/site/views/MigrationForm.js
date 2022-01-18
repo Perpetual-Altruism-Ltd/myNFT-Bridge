@@ -595,12 +595,12 @@ export default class extends AbstractView {
           //Load token metadata + display name
           loadDestTokenMetadata(tokenURI);
         }else{
-          displayDestTokenNameMsg("Could not retrieve the token's URI. Please contact our team to report the bug.");
+          displayDestTokenNameMsg("Could not retrieve the token's URI. Please contact us to report the bug with the link in the upper right corner.");
           console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
           console.log(response.status + ' : ' + response.statusText);
         }
       }).catch(function (error) {
-        displayDestTokenNameMsg("Relay is not responding. Please contact our team to report the bug.");
+        displayDestTokenNameMsg("Relay is not responding. Please contact us to report the bug with the link in the upper right corner.");
         console.log("Could not get tokenURI() for: contractAddress " + migData.destinationWorld + "   tokenID:" + migData.destinationTokenId);
       });
     }
@@ -623,10 +623,10 @@ export default class extends AbstractView {
 
             setDestTokenName(true, metadata.name);
           } else {
-            displayDestTokenNameMsg("Couldn't retrieve the original token's name. Please contact our team to report the bug.");
+            displayDestTokenNameMsg("Couldn't retrieve the original token's name. Please contact us to report the bug with the link in the upper right corner.");
           }
         }else{
-          displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team to report the bug.");
+          displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact us to report the bug with the link in the upper right corner.");
           console.log(response.status + ' : ' + response.statusText);
         }
       }
@@ -635,7 +635,7 @@ export default class extends AbstractView {
       axios.get(URI, options).then(function (response) {
         requestCallback(response);
       }).catch(function (error) {
-        displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact our team and report the bug.");
+        displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact us to report the bug with the link in the upper right corner.");
         console.error(error);
       });
 
@@ -1803,6 +1803,12 @@ export default class extends AbstractView {
 
       console.log('===Migration Data===');
       console.log(migData);
+
+      //Add to the contact us href's link: MigData to help debug in case of bug report
+      let mailBody = "^^^^^^^^^^^Enter the description of the bug above.^^^^^^^^^^^ \n";
+      mailBody += encodeURI(JSON.stringify(migData));
+      document.getElementById("ContactUsLink").href = "mailto:bridge@mynft.com?subject=Bridge%20bug%20report&body=" + mailBody;
+
       model.navigateTo("/register_migration");
     });
 

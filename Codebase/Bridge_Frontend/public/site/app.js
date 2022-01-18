@@ -194,11 +194,13 @@ window.addEventListener("popstate", function(event){
 });
 
 
-//Add bug report button function
-document.getElementById("ReportBugBtn").addEventListener('click', async function(){
+//Set 'contact us' link's href
+document.getElementById("ContactUsLink").href = "mailto:bridge@mynft.com";
+
+/*('click', async function(){
   let mailBody = "^^^^^^^^^^^Enter the description of the bug above^^^^^^^^^^^ \n";
   mailBody += encodeURI(JSON.stringify(Model.migrationData));
 
   //OPen new tab for mailto
   window.open("mailto:bridge@mynft.com?subject=Bridge%20bug%20report&body=" + mailBody);
-})
+})*/

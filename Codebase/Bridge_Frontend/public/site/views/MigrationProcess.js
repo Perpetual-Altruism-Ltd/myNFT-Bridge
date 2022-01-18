@@ -193,7 +193,7 @@ export default class extends AbstractView {
           }
         }else{
           setCircleErrorState();
-          loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
+          loadingText.textContent = "Couldn't retrive migration hash. Please contact us to report the bug with the link in the upper right corner.";
           console.log(response.status + ' : ' + response.statusText);
         }
       }
@@ -212,7 +212,7 @@ export default class extends AbstractView {
             requestCallback(response);
           }).catch(function (error) {
             setCircleErrorState();
-            loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
+            loadingText.textContent = "Couldn't retrive migration hash.  Please contact us to report the bug with the link in the upper right corner.";
             console.error(error);
           });
         }
@@ -224,7 +224,7 @@ export default class extends AbstractView {
       //If timeout: error message
       if(model.hash.migrationHash == ""){
         setCircleErrorState();
-        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team for support.";
+        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact us to report the bug with the link in the upper right corner.";
       }
     }
 
@@ -236,7 +236,7 @@ export default class extends AbstractView {
       }).catch((res) => {
         //If user canceled signature, display error msg + ask to sign again
         setCircleErrorState();
-        loadingText.textContent = "Retry to sign the migration hash or contact our team if the issue persists.";
+        loadingText.textContent = "Retry to sign the migration hash or contact us if the issue persists.";
         //Show re sign button
         document.getElementById("ResignButton").style.display = 'flex';
         console.log("Signature error: " + JSON.stringify(res));
