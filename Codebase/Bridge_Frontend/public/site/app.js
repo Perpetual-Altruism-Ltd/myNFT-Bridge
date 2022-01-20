@@ -130,10 +130,10 @@ Model.isMigDataFilled = function(){
 }
 //Return true if a provider is loaded.
 Model.isProviderLoaded = function(){
-  if(window.web3){
-    let userAccount = window.web3.currentProvider.selectedAddress;
+  if(window.connector){
+    let userAccount = window.connector.web3.currentProvider.selectedAddress;
     //If web3 already injected
-    return userAccount != "" && window.web3.eth != undefined;
+    return userAccount != "" && (window.connector.connected || window.connector.isConnected);
   }else{return false;}
 }
 Model.displayConnectedWallet = function(){

@@ -17,13 +17,16 @@ export default class extends AbstractView {
     //Connect to metamask if wallet installed
     var endLoadMetamaskConnection = async function () {
       //set callback function called when a wallet is connected
-      connectionCallback = function(){
+      window.connectionCallback = function(){
         console.log("Wallet connected from wallet_connection");
         model.navigateTo('/migration_form');
       };
 
+      //NOPE!
+      //A: metamask doesn't inject web3 anymore, that's why westron does.
+      //B: this isn't great if a user has multiple wallets
       //Connecting to metmask if injected
-      if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
+      /*if (window.web3.__isMetaMaskShim__ && window.web3.currentProvider.selectedAddress != null) {
           if (connector == null || !connector.isConnected) {
               connector = await ConnectorManager.instantiate(ConnectorManager.providers.METAMASK);
               connectedButton = connectMetaMaskButton;
@@ -32,25 +35,31 @@ export default class extends AbstractView {
           } else {
               connector.disconnection();
           }
-      }
+      }*/
     }
 
     //If user want to disconnect his wallet, call disconnect from westron lib
     //+ set wallet connection buttons listeners. This is required as the view (HTML content) has been loaded again
     if(model.disconnectWallet){
-      connector.disconnection();
+      window.connector.disconnection();
       //set again buttons onClick functions
-      setConnectWalletButtonsListeners();
-
       model.disconnectWallet = false;
+      setConnectWalletButtonsListeners();
     }else{
       //Load westron lib, to add the behaviour to connection buttons
       loadWestron();
+
     }
+
+    window.connectionCallback = function(){
+      console.log("Wallet connected from wallet_connection");
+      model.navigateTo('/migration_form');
+    };
+
 
     //Once loadWestron started, wait for it to finish by polling. Timeout after 50ms*100 = 5sec
     //Then auto connect to metamask if wallet exists
-    let cmptr = 0;
+    /*let cmptr = 0;
     let pollWestronLoaded = async function(){
       try{
         await endLoadMetamaskConnection();
@@ -64,9 +73,9 @@ export default class extends AbstractView {
           setTimeout(pollWestronLoaded, 50);
         }
       }
-    }
+    }*/
     //Start polling for westron to be loaded
-    pollWestronLoaded();
+    //pollWestronLoaded();
 
     document.getElementById("RequestWalletBtn").addEventListener('click', function(){
       window.open("mailto:bridge@mynft.com?subject=Network%20request");

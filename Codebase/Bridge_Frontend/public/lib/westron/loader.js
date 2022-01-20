@@ -9,11 +9,14 @@ let loadWestron = function(){
 	index.setAttribute("type","text/javascript");
 	index.setAttribute("src","/lib/westron/index.js");
 	document.body.appendChild(index);
+	console.log("Westron Index Loaded.");
 
 	var ConnectorManager = document.createElement("script");
 	ConnectorManager.setAttribute("type","text/javascript");
 	ConnectorManager.setAttribute("src","/lib/westron/ConnectorManager.js");
 	document.body.appendChild(ConnectorManager);
+	console.log('connectorManager Loaded.');
+
 }
 
 document.addEventListener("DOMContentLoaded", () => {
