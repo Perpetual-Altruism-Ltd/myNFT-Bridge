@@ -13,7 +13,7 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
     let migData = model.migrationData;
-    let account = window.web3.currentProvider.selectedAddress.toLowerCase();
+    let account = window.connector.web3.currentProvider.selectedAddress.toLowerCase();
     let loadingText = document.getElementById("RegistrationLoadingText");
 
     function sleep(ms) {
@@ -149,7 +149,7 @@ export default class extends AbstractView {
     }
 
     let onMigrationClosed = function(){
-      console.log("Escrow hash signed sent!");
+      console.log("Escrow hash signed sent!"); // signed and sent ?
 
       //Set it again in case migration is resumed here.
       document.getElementById("BCT").setAttribute('step-num', 3);
@@ -230,7 +230,7 @@ export default class extends AbstractView {
 
     let signMigrationHash = async function(){
       //personal_sign
-      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.migrationHash, account ] })
+      window.connector.web3.currentProvider.request({ method: 'personal_sign', params: [ model.hash.migrationHash, account ] })
       .then((res) =>{
         onMigrationHashSigned(res);
       }).catch((res) => {
@@ -335,7 +335,7 @@ export default class extends AbstractView {
 
     let signEscrowHash = async function(){
       //Ask the wallet to prompt user to sign data
-      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.escrowHash, account ] })
+      window.connector.web3.currentProvider.request({ method: 'personal_sign', params: [ model.hash.escrowHash, account ] }) //look into eip712?
       .then((res) =>{
         onEscrowHashSigned(res);
       }).catch((res) => {

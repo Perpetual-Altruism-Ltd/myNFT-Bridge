@@ -69,7 +69,7 @@ export default class extends AbstractView {
       let tokenSymbol = /*migData.migrationType == model.MintOUIMigrationType ? 'IOU' :*/ 'TKN';
       console.log('tokenSymbol ' + tokenSymbol);
 
-      window.ethereum.request({
+      window.connector.web3.currentProvider.request({
         method: 'wallet_watchAsset',
         params: { type: 'ERC20',
           options: {
@@ -89,7 +89,7 @@ export default class extends AbstractView {
     //Prompt user to switch to destNetwork in order to add dest token
     let promptSwitchDestChainAndAddToken = async function (ID) {
       try{
-        window.ethereum.request({
+        window.connector.web3.currentProvider.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
         }).then((res) =>{
