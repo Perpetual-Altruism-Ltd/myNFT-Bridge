@@ -735,7 +735,7 @@ export default class extends AbstractView {
 
       var options = {
         method: 'GET',
-        url: mathomAIPUrl + '/publicKey/' + /*userAccount*/ '0x00',
+        url: mathomAIPUrl + '/publicKey/' + userAccount,
         headers: {'Content-Type': 'application/json'}
       };
 
