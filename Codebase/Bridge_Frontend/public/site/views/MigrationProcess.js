@@ -432,14 +432,21 @@ export default class extends AbstractView {
 
       //Wait until timeout or migrationHash received
       let i = 0;
+      let retryNbr = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
-          setCircleErrorState();
-          loadingText.textContent = "Relay not responding. Please contact our team.";
-          console.error(error);
+          if(retryNbr < 2){
+            console.log("Error from pollingEndMigration; retrying");
+            model.destinationTokenTransfertTxHash = "";
+            i = 0;
+          }else{
+            setCircleErrorState();
+            loadingText.textContent = "Relay not responding. Please contact our team.";
+            console.error(error);
+          }
         });
 
         await sleep(model.listeningRefreshFrequency*1000);
