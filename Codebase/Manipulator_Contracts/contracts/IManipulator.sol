@@ -5,7 +5,7 @@ pragma solidity 0.8.9;
 /// any smart contracts implementing Bridge or IOU interfaces
 interface IManipulator {
     /// @notice Initiate the owner of the contract
-    function init() external;
+    function init(address _owner) external;
 
     /// @notice Set or reaffirm the approved address for this proxy smart contract
     /// @dev Throws unless `msg.sender` is the current smart contract owner
@@ -108,7 +108,6 @@ interface IManipulator {
     /// @notice Call registerEscrowHashSignature() function from another contract
     /// Allow a token deposited to the bridge to be sent to anyone by it's migrating relay
     /// @param _migrationHash The bytes32 migrationHash that was generated when pre-registering the migration
-    /// @param _escrowHashSigned
     /// @param _contractAddress The address of the remote contract
     function registerEscrowHashSignature(
         bytes32 _migrationHash,

@@ -2,12 +2,13 @@
 pragma solidity 0.8.9;
 
 import "./MemoryStructure.sol";
+import "./IManipulator.sol";
 
 /// @author Alexandre Guillioud
 /// @title Manipulator
 /// @notice A proxy smart contract that to allow multiple relays (addresses) to call a
 /// any smart contracts implementing Bridge or IOU interfaces
-contract Manipulator is MemoryStructure {
+contract Manipulator is MemoryStructure, IManipulator{
     constructor() {}
 
     modifier onlyOwnerOrOperator {
@@ -15,7 +16,7 @@ contract Manipulator is MemoryStructure {
       _;
    }
 
-    function init(address _owner) external {
+    function init(address _owner) external override {
         require(owner == address(0), "Owner already set");
         owner = _owner;
     }
@@ -24,7 +25,7 @@ contract Manipulator is MemoryStructure {
     /// @dev Throws unless `msg.sender` is the current smart contract owner
     /// @param _address The new approved proxy caller
     /// @param _allowed True if the operator is approved, false to revoke approval
-    function approve(address _address, bool _allowed) external {
+    function approve(address _address, bool _allowed) external override {
         require(msg.sender == owner, "Function restricted to contract owner");
         operators[_address] = _allowed;
     }
@@ -33,41 +34,41 @@ contract Manipulator is MemoryStructure {
     *   Manipulate an IOU contract
     */
 
-    function mintedTokens(address _contractAddress) external onlyOwnerOrOperator returns (uint256) {
+    function mintedTokens(address _contractAddress) external override onlyOwnerOrOperator returns (uint256) {
         bytes memory payload = abi.encodeWithSignature("mintedTokens()");
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
         return abi.decode(result, (uint256));
     }
 
-    function mint(address _contractAddress) external onlyOwnerOrOperator returns (uint256) {
+    function mint(address _contractAddress) external override onlyOwnerOrOperator returns (uint256) {
         bytes memory payload = abi.encodeWithSignature("mint()");
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
         return abi.decode(result, (uint256));
     }
 
-    function setTokenUri (uint256 _tokenId, string calldata _tokenUri, address _contractAddress) external onlyOwnerOrOperator {
+    function setTokenUri (uint256 _tokenId, string calldata _tokenUri, address _contractAddress) external override onlyOwnerOrOperator {
         bytes memory payload = abi.encodeWithSignature("setTokenUri(uint256,string)", _tokenId, _tokenUri);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
     }
 
-    function tokenURI(uint256 _tokenId, address _contractAddress) external onlyOwnerOrOperator returns(string memory){
+    function tokenURI(uint256 _tokenId, address _contractAddress) external override onlyOwnerOrOperator returns(string memory){
         bytes memory payload = abi.encodeWithSignature("tokenURI(uint256)", _tokenId);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
         return abi.decode(result, (string));
     }
 
-    function premintFor(address _preminter, address _contractAddress) external onlyOwnerOrOperator returns (uint256) {
+    function premintFor(address _preminter, address _contractAddress) external override onlyOwnerOrOperator returns (uint256) {
         bytes memory payload = abi.encodeWithSignature("premintFor(address)", _preminter);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
         return abi.decode(result, (uint256));
     }
 
-    function safeTransferFrom(address _from, address _to, uint256 _tokenId, address _contractAddress) external onlyOwnerOrOperator{
+    function safeTransferFrom(address _from, address _to, uint256 _tokenId, address _contractAddress) external override onlyOwnerOrOperator{
         bytes memory payload = abi.encodeWithSignature("safeTransferFrom(address,address,uint256)", _from, _to, _tokenId);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
@@ -77,7 +78,7 @@ contract Manipulator is MemoryStructure {
     *   Manipulate a bridge
     */
 
-    function getProofOfEscrowHash(bytes32 _migrationHash, address _contractAddress) external onlyOwnerOrOperator returns (bytes32){
+    function getProofOfEscrowHash(bytes32 _migrationHash, address _contractAddress) external override onlyOwnerOrOperator returns (bytes32){
         bytes memory payload = abi.encodeWithSignature("getProofOfEscrowHash(bytes32)", _migrationHash);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
@@ -94,7 +95,7 @@ contract Manipulator is MemoryStructure {
         , bytes32 _destinationOwner
         , bytes32 _signee
         , address _contractAddress
-        ) external onlyOwnerOrOperator returns (string memory){
+        ) external override onlyOwnerOrOperator returns (string memory){
         bytes4 signature = bytes4(keccak256("migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)"));
 
         assembly{
@@ -119,7 +120,7 @@ contract Manipulator is MemoryStructure {
         bytes32 _migrationHash
         , bytes calldata _escrowHashSigned
         , address _contractAddress
-        ) external onlyOwnerOrOperator {
+        ) external override onlyOwnerOrOperator {
         bytes memory payload = abi.encodeWithSignature("registerEscrowHashSignature(bytes32,bytes)", _migrationHash, _escrowHashSigned);
         (bool success, bytes memory result) = _contractAddress.call(payload);
         if(!success) revert("Call of child contract failed");
@@ -146,7 +147,7 @@ contract Manipulator is MemoryStructure {
         
     */
 
-    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _contractAddress) external onlyOwnerOrOperator {
+    function migrateFromIOUERC721ToERC721(bytes calldata _data, address _contractAddress) external override onlyOwnerOrOperator {
         bytes4 signature = bytes4(keccak256("migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)"));
 
         assembly{
@@ -175,7 +176,7 @@ contract Manipulator is MemoryStructure {
         address _signee,
         bytes32 _originHeight,
         address _contractAddress
-    ) external onlyOwnerOrOperator {
+    ) external override onlyOwnerOrOperator {
         bytes memory payload = abi.encodeWithSignature(
             "cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)"
             , _originWorld
