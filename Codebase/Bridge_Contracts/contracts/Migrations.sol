@@ -1,19 +1,21 @@
 // SPDX-License-Identifier: Unlicense
 pragma solidity 0.8.9;
 
-contract Migrations {
-  address public owner = msg.sender;
-  uint public last_completed_migration;
+import "./IMigrations.sol";
 
-  modifier restricted() {
-    require(
-      msg.sender == owner,
-      "This function is restricted to the contract's owner"
-    );
-    _;
-  }
+contract Migrations is IMigrations {
+    address public owner = msg.sender;
+    uint256 public last_completed_migration;
 
-  function setCompleted(uint completed) public restricted {
-    last_completed_migration = completed;
-  }
+    modifier restricted() {
+        require(
+            msg.sender == owner,
+            "This function is restricted to the contract's owner"
+        );
+        _;
+    }
+
+    function setCompleted(uint256 completed) public override restricted {
+        last_completed_migration = completed;
+    }
 }
