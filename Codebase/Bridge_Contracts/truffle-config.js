@@ -70,6 +70,16 @@ module.exports = {
       timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
+    moonbeam: {
+      //
+        provider: () => new HDWalletProvider('', `http://moonbeam.mynft.com:9933`),
+        network_id: 1284,       // Moonriver's id
+        gas: 4600000,        // Moonriver has a lower block limit than mainnet
+        //gasPrice: web3.utils.toWei('1', 'gwei'),
+        confirmations: 2,    // # of confs to wait between deployments. (default: 0)
+        timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+        skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      },    
     moonriver: {
       provider: () => new HDWalletProvider('', `http://moonriver.mynft.com:9933`),
       network_id: 1285,       // Moonriver's id
