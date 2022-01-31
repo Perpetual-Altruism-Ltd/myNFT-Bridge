@@ -13,7 +13,7 @@ export default class extends AbstractView {
     let ABIS = model.ABIS;
     let contracts = model.contracts;
     let migData = model.migrationData;
-    let account = window.web3.currentProvider.selectedAddress.toLowerCase();
+    let account = window.connector.web3.currentProvider.selectedAddress.toLowerCase();
     let loadingText = document.getElementById("RegistrationLoadingText");
 
     function sleep(ms) {
@@ -149,7 +149,7 @@ export default class extends AbstractView {
     }
 
     let onMigrationClosed = function(){
-      console.log("Escrow hash signed sent!");
+      console.log("Escrow hash signed sent!"); // signed and sent ?
 
       //Set it again in case migration is resumed here.
       document.getElementById("BCT").setAttribute('step-num', 3);
@@ -193,7 +193,7 @@ export default class extends AbstractView {
           }
         }else{
           setCircleErrorState();
-          loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
+          loadingText.textContent = "Couldn't retrive migration hash. Please contact us to report the bug with the link in the upper right corner.";
           console.log(response.status + ' : ' + response.statusText);
         }
       }
@@ -212,7 +212,7 @@ export default class extends AbstractView {
             requestCallback(response);
           }).catch(function (error) {
             setCircleErrorState();
-            loadingText.textContent = "Couldn't retrive migration hash. Please contact our team for support.";
+            loadingText.textContent = "Couldn't retrive migration hash.  Please contact us to report the bug with the link in the upper right corner.";
             console.error(error);
           });
         }
@@ -224,19 +224,19 @@ export default class extends AbstractView {
       //If timeout: error message
       if(model.hash.migrationHash == ""){
         setCircleErrorState();
-        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact our team for support.";
+        loadingText.textContent = "Couldn't retrieve migration data hash from relay. Please contact us to report the bug with the link in the upper right corner.";
       }
     }
 
     let signMigrationHash = async function(){
       //personal_sign
-      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.migrationHash, account ] })
+      window.connector.web3.currentProvider.request({ method: 'personal_sign', params: [ model.hash.migrationHash, account ] })
       .then((res) =>{
         onMigrationHashSigned(res);
       }).catch((res) => {
         //If user canceled signature, display error msg + ask to sign again
         setCircleErrorState();
-        loadingText.textContent = "Retry to sign the migration hash or contact our team if the issue persists.";
+        loadingText.textContent = "Retry to sign the migration hash or contact us if the issue persists.";
         //Show re sign button
         document.getElementById("ResignButton").style.display = 'flex';
         console.log("Signature error: " + JSON.stringify(res));
@@ -335,7 +335,7 @@ export default class extends AbstractView {
 
     let signEscrowHash = async function(){
       //Ask the wallet to prompt user to sign data
-      window.ethereum.request({ method: 'personal_sign', params: [ model.hash.escrowHash, account ] })
+      window.connector.web3.currentProvider.request({ method: 'personal_sign', params: [ model.hash.escrowHash, account ] }) //look into eip712?
       .then((res) =>{
         onEscrowHashSigned(res);
       }).catch((res) => {
@@ -432,14 +432,21 @@ export default class extends AbstractView {
 
       //Wait until timeout or migrationHash received
       let i = 0;
+      let retryNbr = 0;
       while(i < model.listeningTimeOut/model.listeningRefreshFrequency && model.destinationTokenTransfertTxHash == ""){
         //Ask relay for migration hash
         axios.request(options).then(function (response) {
           requestCallback(response);
         }).catch(function (error) {
-          setCircleErrorState();
-          loadingText.textContent = "Relay not responding. Please contact our team.";
-          console.error(error);
+          if(retryNbr < 2){
+            console.log("Error from pollingEndMigration; retrying");
+            model.destinationTokenTransfertTxHash = "";
+            i = 0;
+          }else{
+            setCircleErrorState();
+            loadingText.textContent = "Relay not responding. Please contact our team.";
+            console.error(error);
+          }
         });
 
         await sleep(model.listeningRefreshFrequency*1000);

@@ -10,6 +10,8 @@ app.use(Cors())
 
 app.use(Express.static('public'))
 
+app.use('/conf', function(req,res){res.send(Conf);});
+
 app.use(function(req, res, next) {
     res.sendFile('index.html', {root: 'public'});
 });

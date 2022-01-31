@@ -16,14 +16,14 @@ export default class extends AbstractView {
     let userAccount = "";
 
     let refreshConnectedAccount = function(){
-      let rawAddr = window.web3.currentProvider.selectedAddress;
+      let rawAddr = window.connector.web3.currentProvider.selectedAddress;
       if(rawAddr){userAccount = rawAddr.toLowerCase();}
       else{userAccount = '';}
     }
 
     //When user accept to switch, it will be asked to grant relay as operator of his NFT
     let promptSwitchChainThenGrantOperator = async function (ID) {
-      window.ethereum.request({
+      window.connector.web3.currentProvider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
@@ -32,13 +32,14 @@ export default class extends AbstractView {
       }).catch((res) => {
         console.log("Network switch canceled or error");
         alert("Please accept the metamask switch network prompt in order to continue your NFT migration.");
+        // should perhaps change wording; not everyone uses metamask
         //Unselect btn to allow user to re click
         document.getElementById("RegisterButton").classList.remove('Selected');
       });
     }
     //Once user accept to switch, it will be redirected to migration_form
     let promptSwitchChainThenEditForm = async function (ID) {
-      window.ethereum.request({
+      window.connector.web3.currentProvider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: ID}], // chainId must be in hexadecimal numbers
       }).then((res) =>{
@@ -48,6 +49,7 @@ export default class extends AbstractView {
       }).catch((res) => {
         console.log("Network switch canceled or error");
         alert("Please accept the metamask switch network prompt in order to edit your migration.");
+        // should perhaps change wording; not everyone uses metamask
       });
     }
 
@@ -114,7 +116,7 @@ export default class extends AbstractView {
         if(error.response.data){
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){
-            loadingText.textContent = error.response.data.status + ". Please contact our team.";
+            loadingText.textContent = error.response.data.status + ". Please contact us to report the bug with the link in the upper right corner";
           }
         }
         console.error(error);
@@ -144,7 +146,7 @@ export default class extends AbstractView {
 
       //Instantiate contract to call approve (If not already done in migration_form)
       if(contracts.originalChainERC721Contract == undefined){
-        contracts.originalChainERC721Contract = new window.web3.eth.Contract(ABIS.ERC721, migData.originWorld);
+        contracts.originalChainERC721Contract = new window.connector.web3.eth.Contract(ABIS.ERC721, migData.originWorld);
       }
 
       try{
@@ -242,7 +244,7 @@ export default class extends AbstractView {
         if(error.response.data){
           let loadingText = document.getElementById("RegistrationLoadingText");
           if(loadingText != null && loadingText != undefined){
-            loadingText.textContent = error.response.data.status + ". Please contact our team.";
+            loadingText.textContent = error.response.data.status + ". Please contact us to report the bug with the link in the upper right corner";
           }
         }
         console.error(error);
@@ -286,7 +288,7 @@ export default class extends AbstractView {
         alert("The NFT owner is " + migData.originOwner + ". Please connect to this account through your wallet.");
       }
       //Else, check wallet connected network, and prompt user to switch if wrong network.
-      else if(parseInt(window.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
+      else if(parseInt(window.connector.web3.currentProvider.chainId) != parseInt(migData.originNetworkId)){
         alert("The NFT you want to migrate is on the blochain " + migData.originUniverse + ". Please change the network you are connected to with your wallet.");
         promptSwitchChainThenGrantOperator('0x' + migData.originNetworkId.toString(16));
       }

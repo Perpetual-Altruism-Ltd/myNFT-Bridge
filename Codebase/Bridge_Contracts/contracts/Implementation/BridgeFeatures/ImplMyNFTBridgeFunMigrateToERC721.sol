@@ -10,11 +10,11 @@ import "../../MyNFTBridge.sol";
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
 contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
-    // Event emitted when an ERC-721 IOU migration is registered. 
+    // Event emitted when an ERC-721 IOU migration is registered.
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
     event MigrationDeparturePreRegisteredERC721IOU(
-        address indexed _originWorld, 
-        uint256 indexed _originTokenId, 
+        address indexed _originWorld,
+        uint256 indexed _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -26,11 +26,11 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     );
 
 
-    // Event emitted when an ERC-721 IOU migration is registered. 
+    // Event emitted when an ERC-721 IOU migration is registered.
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
     event MigrationDeparturePreRegisteredERC721Full(
-        address indexed _originWorld, 
-        uint256 indexed _originTokenId, 
+        address indexed _originWorld,
+        uint256 indexed _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -50,21 +50,21 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// The latest migration data would be bound to a token when the token is deposited in escrow
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge. If the destination
     /// bridge is on an EVM, it is most likely an address.
-    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token .
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
     function migrateToERC721IOU(
-        address _originWorld, 
-        uint256 _originTokenId, 
+        address _originWorld,
+        uint256 _originTokenId,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -79,7 +79,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
         // Note that if the bridge own the token, registering a new migration is not possible
         require(
-            msg.sender == tOwner || 
+            msg.sender == tOwner ||
             ERC721(_originWorld).isApprovedForAll(tOwner, msg.sender) ||
             msg.sender == ERC721(_originWorld).getApproved(_originTokenId),
             "msg.sender is not the token owner, an operator, or the accredited address for the token"
@@ -89,9 +89,9 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         require(!isIOUForbidden[_originWorld], "The token creator have forbidden IOU migrations for this world");
 
         //Generating the migration hash
-        bytes32 migrationHash = generateMigrationHashArtificialLocalIOU(   
-            _originWorld, 
-            _originTokenId, 
+        bytes32 migrationHash = generateMigrationHashArtificialLocalIOU(
+            _originWorld,
+            _originTokenId,
             tOwner,
             _destinationUniverse,
             _destinationBridge,
@@ -100,7 +100,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             _destinationOwner,
             _signee
         );
- 
+
 
         require(!migrationsRegistered[migrationHash], "This migration was already registered");
 
@@ -112,8 +112,8 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
         //Emiting the registration event
         emit MigrationDeparturePreRegisteredERC721IOU(
-            _originWorld, 
-            _originTokenId, 
+            _originWorld,
+            _originTokenId,
             tOwner,
             _destinationUniverse,
             _destinationBridge,
@@ -135,21 +135,21 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
      /// Can be called by the owner of the ERC-721 token or one of it's operator/approved address
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
     /// @param _destinationBridge An array of 32 bytes representing the destination bridge. If the destination
     /// bridge is on an EVM, it is most likely an address.
-    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner An array of 32 bytes representing the final owner of the migrated token .
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
     function migrateToERC721Full(
-        address _originWorld, 
-        uint256 _originTokenId, 
+        address _originWorld,
+        uint256 _originTokenId,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
         bytes32 _destinationWorld,
@@ -163,7 +163,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         //PUSH of tokenOwner for gas optimization
         address tOwner = ERC721(_originWorld).ownerOf(_originTokenId);
         require(
-            msg.sender == tOwner || 
+            msg.sender == tOwner ||
             ERC721(_originWorld).isApprovedForAll(tOwner, msg.sender) ||
             msg.sender == ERC721(_originWorld).getApproved(_originTokenId),
             "msg.sender is not the token owner, an operator, or the accredited address for the token"
@@ -181,9 +181,9 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             "This migration is not acceptable for the token creator"
         );
 
-        bytes32 migrationHash = generateMigrationHashArtificialLocalFull(   
-            _originWorld, 
-            _originTokenId, 
+        bytes32 migrationHash = generateMigrationHashArtificialLocalFull(
+            _originWorld,
+            _originTokenId,
             tOwner,
             _destinationUniverse,
             _destinationBridge,
@@ -203,8 +203,8 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
         //Emiting the registration event
         emit MigrationDeparturePreRegisteredERC721Full(
-            _originWorld, 
-            _originTokenId, 
+            _originWorld,
+            _originTokenId,
             tOwner,
             _destinationUniverse,
             _destinationBridge,
@@ -227,7 +227,7 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
 
     /// @notice Get the latest proof of escrow hash associated with a migration hash.
-    /// @dev Throw if the token has not been deposited yet. To prevent front running, please wrap the safeTransfer transaction 
+    /// @dev Throw if the token has not been deposited yet. To prevent front running, please wrap the safeTransfer transaction
     /// and check the deposit using this function.
     /// @param _migrationHash The bytes32 migrationHash that was generated when pre-registering the migration
     /// @return The proof of escrowHash associated with a migration (if any)
@@ -241,17 +241,17 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// @notice Check if an origin NFT token can be migrated to a different token as an IOU migration
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// _param _originTokenId The token ID of the token representing the NFT
-    /// _param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// _param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// _param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// _param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// _param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// _param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @return TRUE if token can be migrated, FALSE if it can't.
     function acceptedMigrationDestinationERC721IOU(
-        address _originWorld, 
-        uint256 /*_originTokenId*/, 
-        bytes32 /*_destinationUniverse*/, 
+        address _originWorld,
+        uint256 /*_originTokenId*/,
+        bytes32 /*_destinationUniverse*/,
         bytes32 /*_destinationWorld*/,
         bytes32 /*_destinationTokenId*/
     ) external view returns(bool){
@@ -263,56 +263,56 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// @notice Check if an origin NFT token can be migrated to a different token as a full migration
     /// @param _originWorld The smart contract address of the token currently representing the NFT
     /// @param _originTokenId The token ID of the token representing the NFT
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @return TRUE if token can be migrated, FALSE if it can't.
     function acceptedMigrationDestinationERC721Full(
-        address _originWorld, 
-        uint256 _originTokenId, 
-        bytes32 _destinationUniverse, 
+        address _originWorld,
+        uint256 _originTokenId,
+        bytes32 _destinationUniverse,
         bytes32 _destinationWorld,
         bytes32 _destinationTokenId
     ) external view returns(bool){
         return FullMigrationController(fullMigrationsDelegates[_originWorld]).acceptableMigration(
-            _originWorld, 
-            _originTokenId, 
-            _destinationUniverse, 
-            _destinationWorld, 
+            _originWorld,
+            _originTokenId,
+            _destinationUniverse,
+            _destinationWorld,
             _destinationTokenId
         );
     }
 
-    
+
     /// @notice Generate a hash that would be generated when registering an IOU ERC721 migration
     /// @param _originUniverse The bytes32 identifier of the Universe this bridge is deployed in
     /// @param _originBridge the address of bridge the original token is gonna be in escrow with
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
     /// @param _originOwner The original owner of the token when migration is registered
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
+    /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token .
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
     /// @param _originHeight The height of the origin universe (usually block.timestamp)
     /// If the owner has access to a private key, it should be the owner.
     /// @return The bytes32 migrationHash that would be generated in such a migration
-    function generateMigrationHashERC721IOU(   
-        bytes32 _originUniverse, 
+    function generateMigrationHashERC721IOU(
+        bytes32 _originUniverse,
         address _originBridge,
-        address _originWorld, 
-        uint256 _originTokenId, 
+        address _originWorld,
+        uint256 _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -322,12 +322,12 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32){
-        return generateMigrationHashArtificial(   
-            true,     
-            _originUniverse, 
+        return generateMigrationHashArtificial(
+            true,
+            _originUniverse,
             bytes32(uint(uint160(address(_originBridge)))),
-            bytes32(uint(uint160(_originWorld))), 
-            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originWorld))),
+            bytes32(_originTokenId),
             bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
@@ -346,26 +346,26 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     /// @param _originWorld The smart contract address of the original token representing the NFT
     /// @param _originTokenId The token ID of the original token representing the NFT
     /// @param _originOwner The original owner of the token when migration is registered
-    /// @param _destinationUniverse An array of 32 bytes representing the destination universe. 
+    /// @param _destinationUniverse An array of 32 bytes representing the destination universe.
     /// eg : "Ropsten", "Moonbeam". Please refer to the documentation for a standardized list of destination.
-    /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token. 
+    /// @param _destinationBridge An array of 32 bytes representing the destination bridge of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
+    /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token.
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
+    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token.
     /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
-    /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token . 
+    /// @param _destinationOwner  An array of 32 bytes representing the final owner of the migrated token .
     /// If the destination world is on an EVM, it is most likely an address.
     /// @param _signee The address that will be verified as signing the transfer as legitimate on the destination
     /// If the owner has access to a private key, it should be the owner.
     /// @param _originHeight The height of the origin universe (usually block.timestamp)
     /// If the owner has access to a private key, it should be the owner.
     /// @return The bytes32 migrationHash that would be generated in such a migration
-    function generateMigrationHashERC721Full(   
-        bytes32 _originUniverse, 
+    function generateMigrationHashERC721Full(
+        bytes32 _originUniverse,
         address _originBridge,
-        address _originWorld, 
-        uint256 _originTokenId, 
+        address _originWorld,
+        uint256 _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -375,12 +375,12 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32){
-        return generateMigrationHashArtificial(   
-            false,     
-            _originUniverse, 
+        return generateMigrationHashArtificial(
+            false,
+            _originUniverse,
             bytes32(uint(uint160(address(_originBridge)))),
-            bytes32(uint(uint160(_originWorld))), 
-            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originWorld))),
+            bytes32(_originTokenId),
             bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
@@ -394,9 +394,9 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
 
 
     //Generate a migration hash for an IOU migration
-    function generateMigrationHashArtificialLocalIOU(   
-        address _originWorld, 
-        uint256 _originTokenId, 
+    function generateMigrationHashArtificialLocalIOU(
+        address _originWorld,
+        uint256 _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -407,11 +407,11 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     ) internal view returns(bytes32){
 
         return generateMigrationHashArtificial(
-            true,     
-            localUniverse, 
+            true,
+            localUniverse,
             bytes32(uint(uint160(address(this)))),
-            bytes32(uint(uint160(_originWorld))),  
-            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originWorld))),
+            bytes32(_originTokenId),
             bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
@@ -424,9 +424,9 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     }
 
     //Generate a migration hash for a full migration
-    function generateMigrationHashArtificialLocalFull(   
-        address _originWorld, 
-        uint256 _originTokenId, 
+    function generateMigrationHashArtificialLocalFull(
+        address _originWorld,
+        uint256 _originTokenId,
         address _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -437,11 +437,11 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
     ) internal view returns(bytes32){
 
         return generateMigrationHashArtificial(
-            true,     
-            localUniverse, 
+            true,
+            localUniverse,
             bytes32(uint(uint160(address(this)))),
-            bytes32(uint(uint160(_originWorld))),  
-            bytes32(_originTokenId), 
+            bytes32(uint(uint160(_originWorld))),
+            bytes32(_originTokenId),
             bytes32(uint(uint160(_originOwner))),
             _destinationUniverse,
             _destinationBridge,
@@ -452,15 +452,15 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             bytes32(block.timestamp)
         );
     }
-    
+
 
     //Generate a migration hash for a query
-    function generateMigrationHashArtificial(   
-        bool _isIOU,     
-        bytes32 _originUniverse, 
+    function generateMigrationHashArtificial(
+        bool _isIOU,
+        bytes32 _originUniverse,
         bytes32 _originBridge,
-        bytes32 _originWorld, 
-        bytes32 _originTokenId, 
+        bytes32 _originWorld,
+        bytes32 _originTokenId,
         bytes32 _originOwner,
         bytes32 _destinationUniverse,
         bytes32 _destinationBridge,
@@ -473,14 +473,14 @@ contract ImplMyNFTBridgeFunMigrateToERC721  is ImplMemoryStructure {
             return keccak256(
                 abi.encodePacked(
                     _isIOU,
-                    _originUniverse, 
+                    _originUniverse,
                     _originBridge,
-                    _originWorld, 
+                    _originWorld,
                     _originTokenId,
                     _originOwner,
-                    _destinationUniverse, 
-                    _destinationBridge, 
-                    _destinationWorld, 
+                    _destinationUniverse,
+                    _destinationBridge,
+                    _destinationWorld,
                     _destinationTokenId,
                     _destinationOwner,
                     _signee,
