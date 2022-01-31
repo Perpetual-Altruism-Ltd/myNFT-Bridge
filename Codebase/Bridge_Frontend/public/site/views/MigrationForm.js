@@ -1,4 +1,5 @@
 import AbstractView from './AbstractView.js';
+import Conf from '../../../conf' assert { type: "json" };
 
 
 /*******************************Read before modifying code
@@ -473,6 +474,9 @@ export default class extends AbstractView {
     //Load token metadata from TokenURI
     let loadOgTokenMetaData = async function () {
       let OGTokenMetadataPath = document.getElementById("OGTokenURI").innerHTML;
+      //Transform ipfs://... url into https://ipfs.infura.io/...
+      OGTokenMetadataPath = ipfsURLStandardisation(OGTokenMetadataPath);
+      console.log("IPFS modif tokenURI: " + OGTokenMetadataPath);
 
       if(OGTokenMetadataPath == "Not Specified" || OGTokenMetadataPath == null){
           return;
@@ -545,19 +549,21 @@ export default class extends AbstractView {
                       }
 
                       //Img loading
-                      let ext4 = ogTokenMetaData.image.substr(ogTokenMetaData.image.length - 4).toLowerCase();
+                      let imgURL = ogTokenMetaData.image;
+                      imgURL = ipfsURLStandardisation(imgURL);
+                      let ext4 = imgURL.substr(imgURL.length - 4).toLowerCase();
 
                       if(isIOUToken(ogTokenMetaData) || ext4 == ".png" || ext4 == ".jpg" || ext4 == "jpeg" || ext4 == ".gif" || ext4 == "webp" || ext4== ".svg" || ext4 == "jfif"){
-                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(ogTokenMetaData.image) +'">';
+                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<br><img class="imgassetpreview" src="' + encodeURI(imgURL) +'">';
                       }else if(ext4 == ".mp4"){
                         document.getElementById("OGTokenMetaImagePath").innerHTML =
                         `<video class="videoPlayer" controls autoplay muted loop>
-                          <source src="` + encodeURI(ogTokenMetaData.image) + `" type="video/mp4">
+                          <source src="` + encodeURI(imgURL) + `" type="video/mp4">
                           Your browser does not support the video tag.
                         </video>`
                       }
-                      else if(ogTokenMetaData.image != null) {
-                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(ogTokenMetaData.image) + '">' + encodeURI(ogTokenMetaData.image) + '</a>';
+                      else if(imgURL != null) {
+                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(imgURL) + '">' + encodeURI(imgURL) + '</a>';
                       }
 
                       //enable or not redeem btn depending on the type of token (iou or not)
@@ -1256,6 +1262,15 @@ export default class extends AbstractView {
       //Refresh userAccount global var
       refreshConnectedAccount();
       document.getElementById("CompleteButton").disabled = !(model.isMigDataFilled()) || (migData.originOwner != userAccount);
+    }
+
+    let ipfsURLStandardisation = function(tokenURI){
+      const regexIpfs = /(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(\/.*)*/
+      let res = tokenURI;
+      if(regexIpfs.test(tokenURI)){
+          res = `${Conf.ipfs.gatewayUrl}/ipfs/${tokenURI.match(regexIpfs)[0]}`
+      }
+      return res;
     }
 
     //=====Input setters=====
