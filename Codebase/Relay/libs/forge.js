@@ -2,6 +2,7 @@ const Jimp = require('jimp')
 const Gimli = require('./gimli')
 const Saruman = require('./saruman')
 const Axios = require('axios')
+const { normalizeLink } = require('./utils')
 const IPFSClient = require('./ipfs')
 const Conf = require('../conf')
 
@@ -32,7 +33,7 @@ class Forge {
      */
     async _uploadVideo(videoUrl){
         if(Conf.sarumanUrl){
-            const urls = await this.sarumanClient.createScreenshot(videoUrl)
+            const urls = await this.sarumanClient.createScreenshot(normalizeLink(videoUrl))
             return urls.ipfsUrl
         }else{
             throw "Missing SarumanUrl. Can't create an IOU from a token with a video link";
@@ -53,7 +54,7 @@ class Forge {
      * @param {string} imageUri : The url of the image to modify
      */
      async _forgeImage(imageUri){
-        const image = await Jimp.read(imageUri)
+        const image = await Jimp.read(normalizeLink(imageUri))
         // Resize original image
         if(image.bitmap.height < image.bitmap.width) image.resize(512, Jimp.AUTO)
         else image.resize(Jimp.AUTO, 512)
@@ -104,7 +105,7 @@ class Forge {
      * @param {string} originalTokenUri 
      */
     async forgeIOUMetadata(originalTokenUri, migrationData){
-        const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
+        const originalTokenMetadata = (await Axios.get(normalizeLink(originalTokenUri))).data
         const forgedMetadata = await this._forgeMetadata(originalTokenMetadata, migrationData)
         let ipfsUrl
         if(Conf.gimliUrl){

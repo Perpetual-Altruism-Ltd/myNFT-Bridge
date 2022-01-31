@@ -4,7 +4,6 @@ const Conf = require('../conf')
 
 class IPFSClient {
     constructor() {
-
         const conf = {
             host: Conf.ipfs.host,
             port: Conf.ipfs.port,
