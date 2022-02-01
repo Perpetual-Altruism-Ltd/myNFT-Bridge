@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 import "../ImplMemoryStructure.sol";
 import "../ERC721.sol";
 import "../../MyNFTBridge.sol";
-import "./IMyNFTBridgeFunMigrateToERC721.sol";
+import "./IBridgeFunMigrateToERC721.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplMyNFTBridgeFunMigrateToERC721

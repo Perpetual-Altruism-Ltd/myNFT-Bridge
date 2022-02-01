@@ -2,7 +2,7 @@
 pragma solidity 0.8.9;
 
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
-interface IMyNFTBridgeFunMigrateToERC721 {
+interface IBridgeFunMigrateToERC721 {
     // Event emitted when an ERC-721 IOU migration is registered.
     // Indexed parameter will be included into the transaction logs, hence being usable to programmaticaly parse them and query them through RPC
     event MigrationDeparturePreRegisteredERC721IOU(
