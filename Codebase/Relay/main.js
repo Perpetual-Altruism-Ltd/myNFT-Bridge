@@ -9,7 +9,7 @@ const Ethereum = require('./libs/blockhainModules/ethereum')
 const TransactionBalancer = require('./libs/blockhainModules/balancer.ethereum')
 const JoiSchemas = require('./libs/joiSchemas')
 const Db = require('./libs/db')
-const { sleep } = require('./libs/utils')
+const { sleep, normalizeLink } = require('./libs/utils')
 const Axios = require('axios')
 const RateLimit = require("express-rate-limit");
 
@@ -27,7 +27,7 @@ const main = async () => {
     }
 
     async function premintStock(){
-        const deliveredNotMintedTokens = await db.models.premintedTokens.find({
+        /*const deliveredNotMintedTokens = await db.models.premintedTokens.find({
             delivered: true
             , minted: false
         })
@@ -35,7 +35,7 @@ const main = async () => {
         deliveredNotMintedTokens.forEach(token => {
             token.delivered = false
             token.save()
-        })
+        })*/
 
         Conf.universes.forEach(universe => {
             const ethereum = universesRpc[universe.uniqueId]
@@ -251,7 +251,16 @@ const main = async () => {
         }
 
         const tokenUri = await originUniverseRpc.getTokenUri(originUniverse.manipulatorAddress, migrationData.originWorld, migrationData.originTokenId)
-        const tokenMetadata = (await Axios.get(tokenUri)).data
+        let tokenMetadata
+        try{
+            tokenMetadata = (await Axios.get(normalizeLink(tokenUri))).data
+        }catch(err){
+            console.log(err)
+            res.status(400)
+            res.send({ status: `Can't retrieve valid metadata on this NFT` })
+            Logger.error(`Can't retrieve a valid metadata on this NFT`)
+            return
+        }
         if((!tokenMetadata.image && !tokenMetadata.video) || !tokenMetadata.description) {
             res.status(400)
             res.send({ status: `Can't retrieve valid metadata on this NFT` })
