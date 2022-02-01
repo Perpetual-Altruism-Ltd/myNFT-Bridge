@@ -4,14 +4,13 @@ pragma solidity 0.8.9;
 import "../ImplMemoryStructure.sol";
 import "../ERC721.sol";
 import "../../Bridge.sol";
-import "./IBridgeFunMigrateToERC721.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplBridgeFunMigrateToERC721
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
 contract ImplBridgeFunMigrateToERC721 is
     ImplMemoryStructure,
-    IBridgeFunMigrateToERC721
+    BridgeERC721Departure
 {
     /// @notice Declare the intent to migrate an ERC-721 token to a different bridge as an IOU token.
     /// Calling this functionIt will assume that the migrating owner is the current owner at function call.
