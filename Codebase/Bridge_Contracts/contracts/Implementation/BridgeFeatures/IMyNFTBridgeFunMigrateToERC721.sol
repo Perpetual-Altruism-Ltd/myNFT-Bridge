@@ -4,7 +4,7 @@ pragma solidity 0.8.9;
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
 interface IMyNFTBridgeFunMigrateToERC721 {
     // Event emitted when an ERC-721 IOU migration is registered.
-    // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
+    // Indexed parameter will be included into the transaction logs, hence being usable to programmaticaly parse them and query them through RPC
     event MigrationDeparturePreRegisteredERC721IOU(
         address indexed _originWorld,
         uint256 indexed _originTokenId,
@@ -19,7 +19,7 @@ interface IMyNFTBridgeFunMigrateToERC721 {
     );
 
     // Event emitted when an ERC-721 IOU migration is registered.
-    // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
+    // Indexed parameter will be included into the transaction logs, hence being usable to programmaticaly parse them and query them through RPC
     event MigrationDeparturePreRegisteredERC721Full(
         address indexed _originWorld,
         uint256 indexed _originTokenId,
