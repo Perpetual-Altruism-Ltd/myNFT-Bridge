@@ -9,6 +9,7 @@ import "./IMyNFTBridgeFunMigrateToERC721.sol";
 /// @author Guillaume Gonnaud 2021
 /// @title ImplMyNFTBridgeFunMigrateToERC721
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
+
 contract ImplMyNFTBridgeFunMigrateToERC721 is
     ImplMemoryStructure,
     IMyNFTBridgeFunMigrateToERC721

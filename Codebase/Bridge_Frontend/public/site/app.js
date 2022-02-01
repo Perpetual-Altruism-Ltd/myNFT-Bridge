@@ -130,10 +130,10 @@ Model.isMigDataFilled = function(){
 }
 //Return true if a provider is loaded.
 Model.isProviderLoaded = function(){
-  if(window.web3){
-    let userAccount = window.web3.currentProvider.selectedAddress;
+  if(window.connector){
+    let userAccount = window.connector.web3.currentProvider.selectedAddress;
     //If web3 already injected
-    return userAccount != "" && window.web3.eth != undefined;
+    return userAccount != "" && (window.connector.connected || window.connector.isConnected);
   }else{return false;}
 }
 Model.displayConnectedWallet = function(){
@@ -194,11 +194,13 @@ window.addEventListener("popstate", function(event){
 });
 
 
-//Add bug report button function
-document.getElementById("ReportBugBtn").addEventListener('click', async function(){
+//Set 'contact us' link's href
+document.getElementById("ContactUsLink").href = "mailto:bridge@mynft.com";
+
+/*('click', async function(){
   let mailBody = "^^^^^^^^^^^Enter the description of the bug above^^^^^^^^^^^ \n";
   mailBody += encodeURI(JSON.stringify(Model.migrationData));
 
   //OPen new tab for mailto
   window.open("mailto:bridge@mynft.com?subject=Bridge%20bug%20report&body=" + mailBody);
-})
+})*/
