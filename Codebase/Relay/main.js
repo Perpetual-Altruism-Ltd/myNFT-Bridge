@@ -27,7 +27,7 @@ const main = async () => {
     }
 
     async function premintStock(){
-        const deliveredNotMintedTokens = await db.models.premintedTokens.find({
+        /*const deliveredNotMintedTokens = await db.models.premintedTokens.find({
             delivered: true
             , minted: false
         })
@@ -35,7 +35,7 @@ const main = async () => {
         deliveredNotMintedTokens.forEach(token => {
             token.delivered = false
             token.save()
-        })
+        })*/
 
         Conf.universes.forEach(universe => {
             const ethereum = universesRpc[universe.uniqueId]
