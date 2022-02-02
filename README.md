@@ -58,6 +58,10 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 - Then you can configure and launch the relay. All the informations are [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/RELAY.md)
 - And lastly you must configure and launch a frontend server, [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/FRONTEND.md)
 
+## Smart contract architecture
+
+You can find all the interface of the smart contract [here](CONTRACT_ARCHI.md).
+
 ## Thanks to
 
 The Web3 Foundation for supporting the creation of an NFT Migration protocol, which was the foundational work to build this NFT bridge, and to everyone who contributed to it.

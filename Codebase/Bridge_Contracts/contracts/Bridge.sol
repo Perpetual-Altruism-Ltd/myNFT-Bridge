@@ -4,9 +4,9 @@ pragma solidity 0.8.9;
 import "./Implementation/ERC721.sol";
 
 /// @author Guillaume Gonnaud 2021
-/// @title MyNFTBridgeERC721Departure
+/// @title BridgeERC721Departure
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 NFT from the bridge universe
-interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
+interface BridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
@@ -259,12 +259,10 @@ interface MyNFTBridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
 }
 
-
-
 /// @author Guillaume Gonnaud 2021
-/// @title MyNFTBridgeERC721toERC721Arrival
+/// @title BridgeERC721toERC721Arrival
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
-interface MyNFTBridgeERC721toERC721Arrival {
+interface BridgeERC721toERC721Arrival {
 
     // Event emitted when an ERC-721 IOU migration is registered. 
     // Indexed parameter suppose that those events are gonna be parsed for checking provenance of a migrated token
@@ -474,12 +472,11 @@ interface MyNFTBridgeERC721toERC721Arrival {
     ) external view returns(bool);
 
 }
-    
 
 /// @author Guillaume Gonnaud 2021
-/// @title MyNFTBridgeControl
+/// @title BridgeControl
 /// @notice Represent the core bridge functions necessary to setup and interact with potentials migrations
-interface MyNFTBridgeControl {
+interface BridgeControl {
     
     /// @notice Check if an address is designed as a relay for a specific world
     /// @param _relay The address you wish to check as a relay
@@ -497,11 +494,9 @@ interface MyNFTBridgeControl {
 }
 
 /// @author Guillaume Gonnaud 2021
-/// @title MyNFTBridge
+/// @title Bridge
 /// @notice Represent the ABI of all the core Bridge functions
-interface MyNFTBridge is  ERC721TokenReceiver, MyNFTBridgeERC721Departure, MyNFTBridgeERC721toERC721Arrival, MyNFTBridgeControl{
-
-}
+interface Bridge is  ERC721TokenReceiver, BridgeERC721Departure, BridgeERC721toERC721Arrival, BridgeControl{}
 
 /// @author Guillaume Gonnaud 2021
 /// @title FullMigrationController
@@ -551,7 +546,7 @@ interface FullMigrationController {
     ) external;
 }
 
-interface MyNftBridgeMigrationInfo{
+interface BridgeMigrationInfo{
 
     /// @notice Return the URI where one can get all the metadata regarding a migration of any token located in the same universe as the bridge
     function ERC721MigrationURI( 
