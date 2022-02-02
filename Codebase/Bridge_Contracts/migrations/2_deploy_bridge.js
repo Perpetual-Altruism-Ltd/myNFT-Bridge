@@ -2,10 +2,10 @@ const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
 const ERC1538Delegate = artifacts.require("ERC1538Delegate");
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
 
-const ImplMyNFTBridgeFunInit = artifacts.require("ImplMyNFTBridgeFunInit");
+const ImplMyNFTBridgeFunInit = artifacts.require("ImplBridgeFunInit");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
-const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateToERC721");
-const ImplMyNFTBridgeFunMigrateFromERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateFromERC721");
+const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
+const ImplMyNFTBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
 
 module.exports = async(deployer, network, accounts) => {
 
