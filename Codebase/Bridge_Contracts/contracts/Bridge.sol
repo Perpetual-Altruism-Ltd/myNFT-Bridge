@@ -259,8 +259,6 @@ interface BridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
 
 }
 
-
-
 /// @author Guillaume Gonnaud 2021
 /// @title BridgeERC721toERC721Arrival
 /// @notice Represent the core bridge functions necessary to migrate an ERC-721 toward the bridge universe as an ERC-721 token
@@ -474,7 +472,6 @@ interface BridgeERC721toERC721Arrival {
     ) external view returns(bool);
 
 }
-    
 
 /// @author Guillaume Gonnaud 2021
 /// @title BridgeControl
@@ -499,9 +496,7 @@ interface BridgeControl {
 /// @author Guillaume Gonnaud 2021
 /// @title Bridge
 /// @notice Represent the ABI of all the core Bridge functions
-interface Bridge is  ERC721TokenReceiver, BridgeERC721Departure, BridgeERC721toERC721Arrival, BridgeControl{
-
-}
+interface Bridge is  ERC721TokenReceiver, BridgeERC721Departure, BridgeERC721toERC721Arrival, BridgeControl{}
 
 /// @author Guillaume Gonnaud 2021
 /// @title FullMigrationController
