@@ -758,21 +758,33 @@ export default class extends AbstractView {
           let displayOnlyValid = document.getElementById('ShowOnlyValidNFT').checked;
           let nftList = response.data;
           console.log(nftList);
-          for(let nft of nftList){
-            if(nft.status == "METADATAANDIMAGE"){
-              let mdata = nft.metadata;
-              //Determine wether this nft is an IOU
-              let isIOU = isIOUToken(mdata);
 
-              //Add nft to nft collection
-              addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+          //Extract the known network uniqueID list
+          let knownNetUniqueIDList = [];
+          bridgeApp.networks.forEach(n => {knownNetUniqueIDList.push(n.uniqueId)});
+
+          for(let nft of nftList){
+            //Filter NFT who are on the known chains (According to network_list.json)
+            if(knownNetUniqueIDList.includes(nft.universe)){
+              //Display only NFT which have Metadata
+              if(nft.status == "METADATAANDIMAGE"){
+                let mdata = nft.metadata;
+                //Determine wether this nft is an IOU
+                let isIOU = isIOUToken(mdata);
+
+                //Add nft to nft collection
+                addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+              }
+              else if(nft.status == "ONLYMETADATA" && !displayOnlyValid){
+                let mdata = nft.metadata;
+                let isIOU = isIOUToken(mdata);
+                addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, '/site/medias/noMediaBg.png');
+              }/*else if(nft.status ==  "NOMETADATA" && !displayOnlyValid){
+                addNFTToCollection("Token ID: " + parseInt(nft.tokenId), nft.universe, nft.world, nft.tokenId, false, '/site/medias/noMediaBg.png');
+              }*/
             }
-            else if(nft.status == "ONLYMETADATA" && !displayOnlyValid){
-              let mdata = nft.metadata;
-              let isIOU = isIOUToken(mdata);
-              addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, '/site/medias/noMediaBg.png');
-            }else if(nft.status ==  "NOMETADATA" && !displayOnlyValid){
-              addNFTToCollection("Token ID: " + nft.tokenId, nft.universe, nft.world, nft.tokenId, false, '/site/medias/noMediaBg.png');
+            else{
+              console.log(nft.network + " network isn't handled by this bridge.");
             }
           }
         }else{
