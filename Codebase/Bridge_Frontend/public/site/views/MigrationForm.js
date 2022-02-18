@@ -701,6 +701,8 @@ export default class extends AbstractView {
       newNftCard.setAttribute('slot', "NFTElement");
       newNftCard.setAttribute('name', name);
       newNftCard.setAttribute('universe', universe);
+      let netName = bridgeApp.net[universe].name;
+      newNftCard.setAttribute('network-name', netName);
       newNftCard.setAttribute('world', world);
       newNftCard.setAttribute('tokenid', tokenId);
       newNftCard.setAttribute('is-iou', isIOU);

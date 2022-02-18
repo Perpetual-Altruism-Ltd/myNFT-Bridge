@@ -18,6 +18,7 @@ const nftCardStruct = () => {
     <div>
       <img class="NFTImage">
       <div class="NFTNameText"></div>
+      <div class="NFTNetworkText"></div>
     </div>
 
     <div class="ControlContainer">
@@ -67,7 +68,7 @@ const nftCardStyle = () => {
     width: 100%;
     height: auto;
   }
-  .NFTNameText{
+  .NFTNameText, .NFTNetworkText{
     text-align: center;
     word-break: break-word;
     margin-top: 1em;
@@ -180,7 +181,7 @@ class NFTCard extends HTMLElement {
 
   /* Register which attributes to watch for changes */
   static get observedAttributes() {
-    return ['name', 'imgsrc', 'is-iou', 'universe', 'world', 'tokenid'];
+    return ['name', 'imgsrc', 'is-iou', 'universe', 'network-name', 'world', 'tokenid'];
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
@@ -191,8 +192,17 @@ class NFTCard extends HTMLElement {
     }
     //NFT MEDIA
     else if(attrName == 'imgsrc'){
-      let imgElem = this.shadowRoot.querySelector(".NFTImage");
-      imgElem.src = newVal;
+      let img = this.shadowRoot.querySelector(".NFTImage");
+      //imgElem.src = newVal;
+
+      img.onload = function(){
+        console.log(newVal + " loaded OK.");
+      };
+      img.onerror = function(){
+        console.log(newVal + ' error on loading');
+        img.src = '/site/medias/noMediaBg.png';
+      };
+      img.src = newVal;
     }
     //ENABLE or not REDEEM BTN
     else if(attrName == 'is-iou'){
@@ -204,6 +214,11 @@ class NFTCard extends HTMLElement {
     //SAVE NFT DATA
     else if(attrName == 'universe'){//Origin universe unique ID
       this.universe = newVal;
+    }
+    else if(attrName == 'network-name'){
+      //Display the name of the network
+      let networkElem = this.shadowRoot.querySelector(".NFTNetworkText");
+      networkElem.textContent = newVal;
     }
     else if(attrName == 'world'){
       this.world = newVal;
