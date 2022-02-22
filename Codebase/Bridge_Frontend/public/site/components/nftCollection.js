@@ -9,6 +9,7 @@ To use it: 2 steps
     window.customElements.define('nft-collection', NFTCollection);
   In the app module of the website
 
+Whenever you change the value of the attribute 'reset-scroll', the scroll will set itself to 0. It's useful when deleting nfts.
 */
 const nftCollectionStruct = () => {
   let htmlContent = {};
@@ -33,7 +34,7 @@ const nftCollectionStyle = () => {
   let cssStyle = document.createElement('style');
   cssStyle.textContent = `.NFTCollectionComponent{
     width: 100%;
-    height: 20em;
+    height: 22em;
     overflow: hidden;
     position: relative;
 
@@ -94,10 +95,12 @@ const nftCollectionStyle = () => {
   .LeftButton{
     background-image: linear-gradient(to right, #000 0%, #fff 100%);
     left: 0;
+    color: #af1540;
   }
   .RightButton{
     background-image: linear-gradient(to right, #fff 0%, #000 100%);
     right: 0;
+    color: #af1540;
   }
 `;
   return cssStyle;/* Using htmlContent variable is to have the synthax coloration for HTML*/
@@ -161,13 +164,19 @@ class NFTCollection extends HTMLElement {
     })
   }
 
+
+
   /* Register which attributes to watch for changes */
   static get observedAttributes() {
-    return [''];
+    return ['reset-scroll'];
   }
 
   attributeChangedCallback(attrName, oldVal, newVal) {
     console.log("attributeChangedCallback " + attrName + ', ' + oldVal + ', ' + newVal);
+    if(attrName == 'reset-scroll'){
+      let container = this.shadowRoot.querySelector(".CollectionContainer");
+      container.style.left = '0em';
+    }
   }
 }
 

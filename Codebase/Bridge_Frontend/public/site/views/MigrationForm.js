@@ -701,6 +701,8 @@ export default class extends AbstractView {
       newNftCard.setAttribute('slot', "NFTElement");
       newNftCard.setAttribute('name', name);
       newNftCard.setAttribute('universe', universe);
+      let netName = bridgeApp.net[universe].name;
+      newNftCard.setAttribute('network-name', netName);
       newNftCard.setAttribute('world', world);
       newNftCard.setAttribute('tokenid', tokenId);
       newNftCard.setAttribute('is-iou', isIOU);
@@ -741,22 +743,51 @@ export default class extends AbstractView {
 
       var options = {
         method: 'GET',
-        url: mathomAIPUrl + '/owner/' + /*userAccount*/ '0x00',
+        url: mathomAIPUrl + '/owner/' + userAccount,
         headers: {'Content-Type': 'application/json'}
       };
 
       //Sent request to mathom, to get list of NFT of the user
       try{
-        let response = await axios.request(options)
-        if(response.status == 200){
-          let nftList = response.data;
-          for(let nft of nftList){
-            let mdata = nft.metadata;
-            //Determine weather this nft is an IOU
-            let isIOU = isIOUToken(mdata);
+        let response = await axios.request(options);
 
-            //Add nft to nft collection
-            addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+        //Empty the previously added NFTs
+        document.getElementById("NFTCollectionCustomComponent").innerHTML = '';
+        //Set to 0 the offset of the scrolling view
+        document.getElementById("NFTCollectionCustomComponent").setAttribute('reset-scroll', '1');
+
+        if(response.status == 200){
+          let displayOnlyValid = document.getElementById('ShowOnlyValidNFT').checked;
+          let nftList = response.data;
+          console.log(nftList);
+
+          //Extract the known network uniqueID list
+          let knownNetUniqueIDList = [];
+          bridgeApp.networks.forEach(n => {knownNetUniqueIDList.push(n.uniqueId)});
+
+          for(let nft of nftList){
+            //Filter NFT who are on the known chains (According to network_list.json)
+            if(knownNetUniqueIDList.includes(nft.universe)){
+              //Display only NFT which have Metadata
+              if(nft.status == "METADATAANDIMAGE"){
+                let mdata = nft.metadata;
+                //Determine wether this nft is an IOU
+                let isIOU = isIOUToken(mdata);
+
+                //Add nft to nft collection
+                addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
+              }
+              else if(nft.status == "ONLYMETADATA" && !displayOnlyValid){
+                let mdata = nft.metadata;
+                let isIOU = isIOUToken(mdata);
+                addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, '/site/medias/noMediaBg.png');
+              }/*else if(nft.status ==  "NOMETADATA" && !displayOnlyValid){
+                addNFTToCollection("Token ID: " + parseInt(nft.tokenId), nft.universe, nft.world, nft.tokenId, false, '/site/medias/noMediaBg.png');
+              }*/
+            }
+            else{
+              console.log(nft.network + " network isn't handled by this bridge.");
+            }
           }
         }else{
           console.log(response.status + ' : ' + response.statusText);
@@ -912,6 +943,7 @@ export default class extends AbstractView {
         //Change displayed connected wallet acc only on mig_form view
         if(document.getElementById("MigrationFormDisplay")){
           refreshConnectedAccount();
+          fetchUserNFTCollection();
           document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
           //Reload og token data
@@ -922,8 +954,6 @@ export default class extends AbstractView {
       }
 
       //Retrieve NFT collection of user
-      //TODO
-      console.log("----TODO---ADDING NFT");
       /*addNFTToCollection("Yeyy",
         "0x07dac20e",
         "0xCDD05c5881D2E234D651472a95c86691F4f25dE9",
@@ -941,8 +971,8 @@ export default class extends AbstractView {
         "0xf2E02E4ee09428755C78658a636B31a289d772B6",
         "300",
         true,
-        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");
-      fetchUserNFTCollection();*/
+        "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");*/
+      fetchUserNFTCollection();
 
     }
     //autoconnect to metamask if injected
@@ -1634,6 +1664,11 @@ export default class extends AbstractView {
         getAvailableTokenId();
       }
     });
+
+    //===CheckBox Only valid NFTs===
+    document.getElementById("ShowOnlyValidNFT").addEventListener('change', async function(){
+      fetchUserNFTCollection();
+    })
 
     //===Origin world input===
     //When return/enter key pressed in input: Display ogTokenID input
