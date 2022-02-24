@@ -2,6 +2,7 @@ const Jimp = require('jimp')
 const Gimli = require('./gimli')
 const Saruman = require('./saruman')
 const Axios = require('axios')
+const Buffer = require('buffer')
 const IPFSClient = require('./ipfs')
 const Conf = require('../conf')
 
@@ -43,9 +44,9 @@ class Forge {
      * 2 OPTIONS :
      *  IMAGE : We have the link, we apply _forgeImage and then upload to Gimli
      *  VIDEO : We have the link, we upload it to saruman and retrieve the S3 url / IPFS url
-     * 
-     *  TODO : Upload pictures from SARUMAN 
-     * Useless to have 2 ENDPOINTS for the same functionality 
+     *
+     *  TODO : Upload pictures from SARUMAN
+     * Useless to have 2 ENDPOINTS for the same functionality
      */
 
     /**
@@ -53,7 +54,22 @@ class Forge {
      * @param {string} imageUri : The url of the image to modify
      */
      async _forgeImage(imageUri){
-        const image = await Jimp.read(imageUri)
+        console.log("STARTING TO READ IMG FROM IMG-URI");
+        const image = await Jimp.read(imageUri);
+        console.log("IMG READ CONTENT");
+        console.log(image);
+
+        //GET IMG FROM AXIOS
+        let res = base64.encode(await Axios.get(imageUri));
+        console.log("AXIOS IMAGE");
+        //console.log(res);
+
+        const imgB64 = Buffer.from(res, 'binary').toString('base64')
+        var buffer = new Buffer(imgB64,'base64');
+        const image2 = await Jimp.read(buffer);
+        console.log("JIMP+AXIOS IMAGE");
+        console.log(buffer);
+
         // Resize original image
         if(image.bitmap.height < image.bitmap.width) image.resize(512, Jimp.AUTO)
         else image.resize(Jimp.AUTO, 512)
@@ -75,7 +91,7 @@ class Forge {
 
     /**
      * Forge IOU NFT metadata from original NFT metadata
-     * @param {JSON Object} originalMetadata 
+     * @param {JSON Object} originalMetadata
      */
     async _forgeMetadata(originalMetadata, migrationData){
         let image;
@@ -101,7 +117,7 @@ class Forge {
 
     /**
      * Forge IOU NFT metadata from original NFT metadata
-     * @param {string} originalTokenUri 
+     * @param {string} originalTokenUri
      */
     async forgeIOUMetadata(originalTokenUri, migrationData){
         const originalTokenMetadata = (await Axios.get(originalTokenUri)).data
@@ -113,12 +129,12 @@ class Forge {
             ipfsUrl = `https://ipfs.infura.io/ipfs/${(await this.ipfsClient.addJsonObj(forgedMetadata)).path}`
         }
 
-        await (new this.db.models.mintedIOUs({ 
+        await (new this.db.models.mintedIOUs({
             uri: ipfsUrl
             , world: migrationData.destinationWorld
             , universe: migrationData.destinationUniverse
             , tokenId: migrationData.destinationTokenId
-            , metadata: forgedMetadata 
+            , metadata: forgedMetadata
         })).save()
 
         return ipfsUrl
