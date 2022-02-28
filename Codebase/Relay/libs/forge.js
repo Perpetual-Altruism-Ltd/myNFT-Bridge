@@ -2,7 +2,7 @@ const Jimp = require('jimp')
 const Gimli = require('./gimli')
 const Saruman = require('./saruman')
 const Axios = require('axios')
-const Buffer = require('buffer')
+const Buffer = require('buffer').Buffer
 const IPFSClient = require('./ipfs')
 const Conf = require('../conf')
 
@@ -55,18 +55,32 @@ class Forge {
      */
      async _forgeImage(imageUri){
         console.log("STARTING TO READ IMG FROM IMG-URI");
-        const image = await Jimp.read(imageUri);
+        const image2 = await Jimp.read(imageUri);
         console.log("IMG READ CONTENT");
-        console.log(image);
+        //console.log(image);
 
         //GET IMG FROM AXIOS
-        let res = base64.encode(await Axios.get(imageUri));
+        // let imgUri = 'https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Jason-Momoa-Stop-Single-Use-Plastic/Cryptograph.png';
+        let res = await Axios.get(imageUri);
         console.log("AXIOS IMAGE");
-        //console.log(res);
+        //console.log(res.data);
+        console.log(Object.keys(res));
 
-        const imgB64 = Buffer.from(res, 'binary').toString('base64')
-        var buffer = new Buffer(imgB64,'base64');
-        const image2 = await Jimp.read(buffer);
+        function _imageEncode (arrayBuffer) {
+          let u8 = new Uint8Array(arrayBuffer);
+          let b64encoded = btoa([].reduce.call(new Uint8Array(arrayBuffer),function(p,c){return p+String.fromCharCode(c)},''))
+          let mimetype="image/jpeg";
+          return "data:"+mimetype+";base64,"+b64encoded;
+        }
+        //Buffer.from('Hello World!').toString('base64')
+        //const B64Encoded = Buffer.from(res.data, 'base64').toString('base64');
+        const B64Encoded = Buffer.from(res.data, 'binary').toString('base64');
+        const imgB64 = "data:image/jpeg;base64,"+B64Encoded;
+        //const imgB64 = _imageEncode(res.data);//.toString('base64')
+        console.log(imgB64);
+        //var buffer = new Buffer(imgB64,'base64');
+        console.log("Buffer Created, now create jimp img");
+        const image = await Jimp.read(imgB64);
         console.log("JIMP+AXIOS IMAGE");
         console.log(buffer);
 
