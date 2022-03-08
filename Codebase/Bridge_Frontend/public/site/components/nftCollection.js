@@ -34,7 +34,7 @@ const nftCollectionStyle = () => {
   let cssStyle = document.createElement('style');
   cssStyle.textContent = `.NFTCollectionComponent{
     width: 100%;
-    height: 22em;
+    height: 25em;
     overflow: hidden;
     position: relative;
 

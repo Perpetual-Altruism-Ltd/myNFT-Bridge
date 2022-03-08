@@ -22,7 +22,7 @@ const nftCardStruct = () => {
     </div>
 
     <div class="ControlContainer">
-      <button class="Button ColoredButton MintIOUButton">Mint IOU</button>
+      <button class="Button ColoredButton MintIOUButton">Select</button>
       <button class="Button ColoredButton RedeemIOUButton">Redeem IOU</button>
     </div>
   </div>`;
@@ -210,6 +210,7 @@ class NFTCard extends HTMLElement {
       if(newVal.toLowerCase() == 'true'){btnDisabled = false;}
       else{btnDisabled = true;}
       this.shadowRoot.querySelector(".RedeemIOUButton").disabled = btnDisabled;
+      this.shadowRoot.querySelector(".RedeemIOUButton").style.display = btnDisabled ? 'none' : 'block'
     }
     //SAVE NFT DATA
     else if(attrName == 'universe'){//Origin universe unique ID
