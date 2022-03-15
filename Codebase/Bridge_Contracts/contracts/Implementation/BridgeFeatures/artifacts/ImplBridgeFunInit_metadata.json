@@ -29,7 +29,7 @@
 					}
 				}
 			},
-			"title": "ImplMyNFTBridgeFunInit",
+			"title": "ImplBridgeFunInit",
 			"version": 1
 		},
 		"userdoc": {
@@ -45,7 +45,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": "ImplMyNFTBridgeFunInit"
+			"contracts/Implementation/BridgeFeatures/ImplBridgeFunInit.sol": "ImplBridgeFunInit"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -59,7 +59,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunInit.sol": {
+		"contracts/Implementation/BridgeFeatures/ImplBridgeFunInit.sol": {
 			"keccak256": "0x2da6f483f87e142268cbb70d14b857b40672484a97dab0742bc949783d186ab4",
 			"license": "Unlicense",
 			"urls": [

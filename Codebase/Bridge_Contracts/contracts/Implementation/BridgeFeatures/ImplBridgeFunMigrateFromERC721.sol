@@ -3,13 +3,13 @@ pragma solidity 0.8.9;
 
 import "../ImplMemoryStructure.sol";
 import "../ERC721.sol";
-import "../../MyNFTBridge.sol";
+import "../../Bridge.sol";
 
 
 /// @author Guillaume Gonnaud 2021
-/// @title ImplMyNFTBridgeFunMigrateFromRC721
+/// @title ImplBridgeFunMigrateFromRC721
 /// @notice The well-ordered memory structure of our bridge. Used for generating proper memory address at compilation.
-contract ImplMyNFTBridgeFunMigrateFromERC721  is ImplMemoryStructure, MyNFTBridgeERC721toERC721Arrival {
+contract ImplBridgeFunMigrateFromERC721  is ImplMemoryStructure, BridgeERC721toERC721Arrival {
 
     
     /// @notice Declare a migration of an ERC-721 token from a different bridge toward this bridge as an IOU token.

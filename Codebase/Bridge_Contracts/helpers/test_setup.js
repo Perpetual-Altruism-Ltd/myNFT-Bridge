@@ -4,10 +4,10 @@ const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
 const ImplTestERC721 = artifacts.require("ImplTestERC721");
 const IOUExample = artifacts.require("IOUExample");
 
-const ImplMyNFTBridgeFunInit = artifacts.require("ImplMyNFTBridgeFunInit");
+const ImplBridgeFunInit = artifacts.require("ImplBridgeFunInit");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
-const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateToERC721");
-const ImplMyNFTBridgeFunMigrateFromERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateFromERC721");
+const ImplBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
+const ImplBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
 
 exports.setup = async function(accounts){
 
@@ -18,10 +18,10 @@ exports.setup = async function(accounts){
     //Instancing the delegate contracts
     let logic_ERC1538Delegate = await ERC1538Delegate.new();
     let logic_ERC1538QueryDelegate = await ERC1538QueryDelegate.new();
-    let logic_ImplMyNFTBridgeFunInit = await ImplMyNFTBridgeFunInit.new();
+    let logic_ImplBridgeFunInit = await ImplBridgeFunInit.new();
     let logic_ImplERC721TokenReceiver = await ImplERC721TokenReceiver.new();
-    let logic_ImplMyNFTBridgeFunMigrateToERC721 = await ImplMyNFTBridgeFunMigrateToERC721.new();
-    let logic_ImplMyNFTBridgeFunMigrateFromERC721 = await ImplMyNFTBridgeFunMigrateFromERC721.new();
+    let logic_ImplBridgeFunMigrateToERC721 = await ImplBridgeFunMigrateToERC721.new();
+    let logic_ImplBridgeFunMigrateFromERC721 = await ImplBridgeFunMigrateFromERC721.new();
 
     //Instancing the bridges
     let alpha_proxyBridge =  await ImplTransparentProxy.new(logic_ERC1538Delegate.address);
@@ -47,48 +47,48 @@ exports.setup = async function(accounts){
 
     //ALPHA (0x1)
     await alpha_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunInit.address, 
+        logic_ImplBridgeFunInit.address, 
         "init(uint256)", 
-        "ImplMyNFTBridgeFunInit"
+        "ImplBridgeFunInit"
     );
-    let alpha_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(alpha_instancedProxyBridge.address);
+    let alpha_instancedProxyBridgeInit = await ImplBridgeFunInit.at(alpha_instancedProxyBridge.address);
     await alpha_instancedProxyBridgeInit.init("0x1");
 
     
     //BETA (0x2)
     await beta_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunInit.address, 
+        logic_ImplBridgeFunInit.address, 
         "init(uint256)", 
-        "ImplMyNFTBridgeFunInit"
+        "ImplBridgeFunInit"
     );
-    let beta_instancedProxyBridgeInit = await ImplMyNFTBridgeFunInit.at(beta_instancedProxyBridge.address);
+    let beta_instancedProxyBridgeInit = await ImplBridgeFunInit.at(beta_instancedProxyBridge.address);
     await beta_instancedProxyBridgeInit.init("0x2");
 
     //Adding their other features to the bridges
 
-    //MyNFTBridgeERC721Departure
+    //BridgeERC721Departure
     await alpha_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateToERC721.address, 
+        logic_ImplBridgeFunMigrateToERC721.address, 
         "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
-        "MyNFTBridgeERC721Departure Part1"
+        "BridgeERC721Departure Part1"
     );
 
     await alpha_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateToERC721.address, 
+        logic_ImplBridgeFunMigrateToERC721.address, 
         "isMigrationPreRegisteredERC721(bytes32)getProofOfEscrowHash(bytes32)generateMigrationHashERC721IOU(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)",
-         "MyNFTBridgeERC721Departure Part2"
+         "BridgeERC721Departure Part2"
     );
 
     await beta_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateToERC721.address, 
+        logic_ImplBridgeFunMigrateToERC721.address, 
         "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
-        "MyNFTBridgeERC721Departure Part1"
+        "BridgeERC721Departure Part1"
     );
 
     await beta_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateToERC721.address, 
+        logic_ImplBridgeFunMigrateToERC721.address, 
         "isMigrationPreRegisteredERC721(bytes32)getProofOfEscrowHash(bytes32)generateMigrationHashERC721IOU(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)",
-         "MyNFTBridgeERC721Departure Part2"
+         "BridgeERC721Departure Part2"
     );
 
 
@@ -105,16 +105,16 @@ exports.setup = async function(accounts){
         "ERC721TokenReceiver"
     );
 
-    //MyNFTBridgeArrival
+    //BridgeArrival
     await alpha_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateFromERC721.address, 
+        logic_ImplBridgeFunMigrateFromERC721.address, 
         "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)registerEscrowHashSignature(bytes32,bytes)registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)isMigrationRedeemable(bool)isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)",
-        "ImplMyNFTBridgeFunMigrateFromERC721 Pt1"
+        "ImplBridgeFunMigrateFromERC721 Pt1"
     );
     await beta_instancedProxyBridge.updateContract(
-        logic_ImplMyNFTBridgeFunMigrateFromERC721.address, 
+        logic_ImplBridgeFunMigrateFromERC721.address, 
         "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)registerEscrowHashSignature(bytes32,bytes)registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)isMigrationRedeemable(bool)isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)",
-        "ImplMyNFTBridgeFunMigrateFromERC721 Pt1"
+        "ImplBridgeFunMigrateFromERC721 Pt1"
     );
 
     //Creating the token contracts

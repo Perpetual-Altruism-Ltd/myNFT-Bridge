@@ -1289,7 +1289,7 @@
 					"details": "This function will assume that the owner that has initated the migration depositing  the token in the bridge is the _signee of the escrowhash"
 				}
 			},
-			"title": "MyNFTBridge",
+			"title": "Bridge",
 			"version": 1
 		},
 		"userdoc": {
@@ -1353,7 +1353,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/MyNFTBridge.sol": "MyNFTBridge"
+			"contracts/Bridge.sol": "Bridge"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -1375,7 +1375,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"contracts/MyNFTBridge.sol": {
+		"contracts/Bridge.sol": {
 			"keccak256": "0x0bac3290a98c0dcf383b7ab9b92d0239fc0181137659824ef91449d189812fb5",
 			"license": "Unlicense",
 			"urls": [

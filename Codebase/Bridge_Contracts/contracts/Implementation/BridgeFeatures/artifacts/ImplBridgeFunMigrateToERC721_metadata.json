@@ -606,7 +606,7 @@
 					}
 				}
 			},
-			"title": "ImplMyNFTBridgeFunMigrateToERC721",
+			"title": "ImplBridgeFunMigrateToERC721",
 			"version": 1
 		},
 		"userdoc": {
@@ -643,7 +643,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunMigrateToERC721.sol": "ImplMyNFTBridgeFunMigrateToERC721"
+			"contracts/Implementation/BridgeFeatures/ImplBridgeFunMigrateToERC721.sol": "ImplBridgeFunMigrateToERC721"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -657,7 +657,7 @@
 		"remappings": []
 	},
 	"sources": {
-		"contracts/Implementation/BridgeFeatures/ImplMyNFTBridgeFunMigrateToERC721.sol": {
+		"contracts/Implementation/BridgeFeatures/ImplBridgeFunMigrateToERC721.sol": {
 			"keccak256": "0x0c9962e2c52d1c6363aa330ecf74430eafdf673d66d7d387d4fde013c4b08fc6",
 			"license": "Unlicense",
 			"urls": [
@@ -681,7 +681,7 @@
 				"dweb:/ipfs/Qmf9RDNfsB7cPsHWZhErbtN8h5BKT3wjko4dSBHD6gCnXm"
 			]
 		},
-		"contracts/MyNFTBridge.sol": {
+		"contracts/Bridge.sol": {
 			"keccak256": "0xd24b9f9c053f4a48c6ebb93242fe8116ad8d87f886f593e5b278c8fd7bc4c87e",
 			"license": "Unlicense",
 			"urls": [

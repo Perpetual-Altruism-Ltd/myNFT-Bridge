@@ -3,9 +3,9 @@ const assert = require('assert');
 const truffleAssert = require('truffle-assertions');
 const Web3 = require('web3')
 var testSetup = require("../helpers/test_setup.js");
-const ImplMyNFTBridgeFunMigrateToERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateToERC721");
+const ImplBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
-const ImplMyNFTBridgeFunMigrateFromERC721 = artifacts.require("ImplMyNFTBridgeFunMigrateFromERC721");
+const ImplBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
 
 function numberToBytes32(number) {
 	return Web3.utils.padLeft(
@@ -45,7 +45,7 @@ contract("Testing Bridges features", async accounts => {
 	});
 
 	it(`Should announce an new tranfer of token n°1 to bridge_1`, async () => {
-		const bridge_1 = await ImplMyNFTBridgeFunMigrateToERC721.at(this.bridge_1.address);
+		const bridge_1 = await ImplBridgeFunMigrateToERC721.at(this.bridge_1.address);
 		const data = [
 			this.erc721_token.address,
 			1,
@@ -85,7 +85,7 @@ contract("Testing Bridges features", async accounts => {
 	});
 
 	it(`Should mint and attribute IOU n°1 to account[2] on bridge_2`, async() => {
-		const bridge_2 = await ImplMyNFTBridgeFunMigrateFromERC721.at(this.bridge_2.address);
+		const bridge_2 = await ImplBridgeFunMigrateFromERC721.at(this.bridge_2.address);
 		/*
 			const signedMessage = await web3.eth.accounts.sign(this.migrationHash, '208acdc5c18fe9a4cf723bc81c1ad9176824d2cc8dd8ff98ebfd12792fcee394');
 			const signedMessage2 = await web3.eth.sign(this.migrationHash, '0xC1027Fc6afED33548BEe9efa13158e5995a69E5e');

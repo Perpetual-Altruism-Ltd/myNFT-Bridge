@@ -567,7 +567,7 @@
 					"details": "This function will assume that the owner that has initated the migration depositing  the token in the bridge is the _signee of the escrowhash"
 				}
 			},
-			"title": "MyNFTBridgeERC721toERC721Arrival",
+			"title": "BridgeERC721toERC721Arrival",
 			"version": 1
 		},
 		"userdoc": {
@@ -601,7 +601,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/MyNFTBridge.sol": "MyNFTBridgeERC721toERC721Arrival"
+			"contracts/Bridge.sol": "BridgeERC721toERC721Arrival"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -623,7 +623,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"contracts/MyNFTBridge.sol": {
+		"contracts/Bridge.sol": {
 			"keccak256": "0x0bac3290a98c0dcf383b7ab9b92d0239fc0181137659824ef91449d189812fb5",
 			"license": "Unlicense",
 			"urls": [

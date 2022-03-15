@@ -629,7 +629,7 @@
 					}
 				}
 			},
-			"title": "MyNFTBridgeERC721Departure",
+			"title": "BridgeERC721Departure",
 			"version": 1
 		},
 		"userdoc": {
@@ -663,7 +663,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contracts/MyNFTBridge.sol": "MyNFTBridgeERC721Departure"
+			"contracts/Bridge.sol": "BridgeERC721Departure"
 		},
 		"evmVersion": "london",
 		"libraries": {},
@@ -685,7 +685,7 @@
 				"dweb:/ipfs/QmQTAZwJzMQi5ipzb1djjUWmCXCWa62wjhYBQUNY7y8FT3"
 			]
 		},
-		"contracts/MyNFTBridge.sol": {
+		"contracts/Bridge.sol": {
 			"keccak256": "0x0bac3290a98c0dcf383b7ab9b92d0239fc0181137659824ef91449d189812fb5",
 			"license": "Unlicense",
 			"urls": [
