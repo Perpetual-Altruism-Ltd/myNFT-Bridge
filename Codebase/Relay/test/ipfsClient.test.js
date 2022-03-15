@@ -1,9 +1,9 @@
-const IpfsClient = require('../libs/ipfsClient');
+const IpfsClient = require('../libs/ipfs');
 const fs = require('fs');
 
 async function run() {
     // Initialization
-    const path = 'C:/Users/Ian/Desktop/MyNFT/RESSOURCES/Piers Bourke/3d 1/360/img2/01-02.jpg'; // path of a file to upload on IPFS 'C:/Users/Ian/Desktop/MyNFT/RESSOURCES/Piers Bourke/3d 1/360/img2/01-02.jpg';
+    const path = "../../Bridge_Frontend/public/site/medias/myNFT_favicon-32x32.png"; // path of a file to upload on IPFS 
     const ipfsClient = new IpfsClient();
     
     // 1 - Upload a picture to IPFS
@@ -13,9 +13,9 @@ async function run() {
 
     // 2 - Upload metdata content to IPFS
     const json_data = await ipfsClient.addJsonObj({
-        "name": "Thor's hammer",
-        "description": "Mjölnir, the legendary hammer of the Norse god of thunder.",
-        "image": "https://game.example/item-id-8u5h2m.png",
+        "name": "myNFT icon",
+        "description": "The icon of myNFT company",
+        "image": "https://mynft.com",
         "strength": 20
     });
     console.log('JSON Data on IPFS : ', json_data);

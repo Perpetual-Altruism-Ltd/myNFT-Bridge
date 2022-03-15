@@ -93,8 +93,6 @@ contract("Testing Bridges features", async accounts => {
 			console.log('Signed message 2 : ', signedMessage2);
 		*/
 		let signedMessage = await web3.eth.sign(this.migrationHash, accounts[0]);
-		let v = await web3.utils.numberToHex( (await web3.utils.toBN('0x'+signedMessage.slice(-2))) + 27);
-		signedMessage = signedMessage.slice(0, -2) + v.slice(-2);
 
 		const data = [
             hexToBytes32("0x1"),
