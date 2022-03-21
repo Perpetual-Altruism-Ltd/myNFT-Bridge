@@ -31,6 +31,14 @@ contract IOU is ERC721 {
         owner = _owner;
     }
 
+    function name() external view returns (string _name){
+        return "myNFT Bridge: IOU Token";
+    }
+
+    function symbol() external view returns (string _symbol){
+        return "MYIOU";
+    }
+
     /// @notice Mint a token for msg.sender and return the tokenId of this token
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
