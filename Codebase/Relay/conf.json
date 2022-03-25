@@ -4,8 +4,8 @@
         "host": "ipfs.infura.io",
         "port": 5001,
         "protocol": "https",
-        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k",
-        "projectSecret": "78db432020396e4d0bf8963731a6b17a"
+        "projectId": "xxx",
+        "projectSecret": "xxx"
     },
     "bridgeUrl": "http://bridge.mynft.com/",
     "mongoDbConnectionString": "mongodb://127.0.0.1:27017/relay",
