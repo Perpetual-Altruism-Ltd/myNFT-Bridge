@@ -1,5 +1,6 @@
-{
+   {
     "ipfs": {
+        "gatewayUrl": "https://ipfs.infura.io",
         "host": "ipfs.infura.io",
         "port": 5001,
         "protocol": "https",
@@ -7,15 +8,13 @@
         "projectSecret": "78db432020396e4d0bf8963731a6b17a"
     },
     "bridgeUrl": "http://bridge.mynft.com/",
-    "gimliUrl": "",
-    "sarumanUrl": "https://saruman.mynft.com/api",
-    "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1",
+    "mongoDbConnectionString": "mongodb://127.0.0.1:27017/relay",
     "port": 5000,
     "balancer" : {
         "addresses": [
             {
                 "address": "0xD169F5F66F286384110963F551094650F7CCE8ee",
-                "key": "fe29ef4ffe24931d1522bb78fcc360f871b16cc4520350a45851cccf65161371"
+                "key": "xxx"
             }
         ],
         "minimalWalletAmount": 0.0001
