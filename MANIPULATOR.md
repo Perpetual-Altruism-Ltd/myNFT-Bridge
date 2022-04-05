@@ -2,18 +2,18 @@
 
 The manipulator is the single entry point to the supported blockchains. This is the contract that will permit multiple transaction per block through using multiple wallet simultaneously on the relay side.
 
-- [`Codebase/Manipulator_Contracts/contracts/Manipulator.sol`](/Codebase/Manipulator_Contracts/contracts/Manipulator.sol) - Is the manipulator contract. Will check if the address calling it is approved and forward the call to the bridge or the IOU contract.
-- [`Codebase/Manipulator_Contracts/contracts/MemoryStructure.sol`](/Codebase/Manipulator_Contracts/contracts/MemoryStructure.sol) - Is the memory structure used by the Manipulator. Is useful for proxyfication purpose.
-- [`Codebase/Manipulator_Contracts/contracts/1538/`](/Codebase/Manipulator_Contracts/contracts/1538) - All the proxy contracts
-- [`Codebase/Manipulator_Contracts/contracts/721/IOU.sol`](/Codebase/Manipulator_Contracts/contracts/721/IOU.sol) - The IOU contract. Will be initialized with the owner address. Should be the manipulator contract address in this setup.
+- [`Codebase/Bridge_Contracts/contracts/manipulator/Manipulator.sol`](/Codebase/Bridge_Contracts/contracts/manipulator/Manipulator.sol) - Is the manipulator contract. Will check if the address calling it is approved and forward the call to the bridge or the IOU contract.
+- [`Codebase/Bridge_Contracts/contracts/manipulator/ManipulatorMemoryStructure.sol`](/Codebase/Bridge_Contracts/contracts/manipulator/ManipulatorMemoryStructure.sol) - Is the memory structure used by the Manipulator. Is useful for proxyfication purpose.
+- [`Codebase/Bridge_Contracts/contracts/manipulator/1538/`](/Codebase/Bridge_Contracts/contracts/manipulator/1538) - All the proxy contracts
+- [`Codebase/Bridge_Contracts/contracts/manipulator/721/IOU.sol`](/Codebase/Bridge_Contracts/contracts/manipulator/721/IOU.sol) - The IOU contract. Will be initialized with the owner address. Should be the manipulator contract address in this setup.
 
 ## Configuration
 
-To deploy the manipulator you'll need to edit the [`Codebase/Manipulator_Contracts/migrations/1_init.js`](/Codebase/Manipulator_Contracts/migrations/1_init.js) file.
+To deploy the manipulator you'll need to edit the [`Codebase/Bridge_Contracts/migrations/5_deploy_manipulator.js`](/Codebase/Bridge_Contracts/migrations/5_deploy_manipulator.js) file.
 
 There is, line 69 to 72 some approve (`await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)`) function calls. You need to replace that with `your manipulating wallets addresses`. These addresse will be used by the relay to talk to the manipulator, call the bridge, and mint the IOUs.
 
-Then update [`Codebase/Manipulator_Contracts/truffle-config.js`](/Codebase/Manipulator_Contracts/truffle-config.js) with your credentials and network data:
+Then update [`Codebase/Bridge_Contracts/truffle-config.js`](/Codebase/Bridge_Contracts/truffle-config.js) with your credentials and network data:
 ```
 networks : {
  rinkeby: {

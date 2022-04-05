@@ -35,7 +35,7 @@ This is an open ended question with no correct answers, only compromises. Many s
 
 ## Using the myNFT bridge
 
-You can find an how to [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/USERHOWTO.md)
+You can find an how to [here](USERHOWTO.md)
 
 ## Tests
 
@@ -57,10 +57,10 @@ https://docs.google.com/document/d/1c5Uor2By5igFWXimipcKhsWjTAG8OWrl9bSVWTPsi6U/
 
 ## Being a relay
 
-- You first need to either find a bridge already deployed on your target blockchains, or deploy one yourself. You can find the informations about dpeloying a bridge [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/BRIDGE.md)
-- Then you need to depoy a Manipulator and a IOU (world) contract, you can find all the informations [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/MANIPULATOR.md)
-- Then you can configure and launch the relay. All the informations are [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/RELAY.md)
-- And lastly you must configure and launch a frontend server, [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/FRONTEND.md)
+- You first need to either find a bridge already deployed on your target blockchains, or deploy one yourself. You can find the informations about dpeloying a bridge [here](BRIDGE.md)
+- Then you need to depoy a Manipulator and a IOU (world) contract, you can find all the informations [here](MANIPULATOR.md)
+- Then you can configure and launch the relay. All the informations are [here](RELAY.md)
+- And lastly you must configure and launch a frontend server, [here](FRONTEND.md)
 
 ## Smart contract architecture
 

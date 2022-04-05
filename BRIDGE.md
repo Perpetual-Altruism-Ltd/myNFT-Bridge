@@ -3,20 +3,20 @@
 
 This project is a truffle project. There are multiple files in the contracts folder and you can select between:
 
-- [`Bridge.sol`](Codebase/Bridge_Contracts/contracts/Bridge.sol): This is the base bridge interface.
+- [`Bridge.sol`](Codebase/Bridge_Contracts/contracts/bridge/Bridge.sol): This is the base bridge interface.
 `Implementation`
-- [`/Implementation/ERC721.sol`](Codebase/Bridge_Contracts/contracts/Implementation/ERC721.sol): This is the base ERC-721 token interface.
+- [`/generic/721/ERC721.sol`](Codebase/Bridge_Contracts/contracts/generic/721/ERC721.sol): This is the base ERC-721 token interface.
 
-`/Implementation/BridgeFeatures/` folder contains the different functions of the bridge.
+[`bridge/Implementation/BridgeFeatures/`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/) folder contains the different functions of the bridge.
 The bridge implements the ERC-1538 proxy pattern in order to be upgradable:
-- [`ImplBridgeFunMigrateFromERC721.sol`](Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/ImplBridgeFunMigrateFromERC721.sol): This implements logic data of the arrival bridge (IOU minting / transfert / ...).
-- [`ImplERC721TokenReceiver.sol`](Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/ImplERC721TokenReceiver.sol): Handle the receipt of an NFT, the ERC721 smart contract calls this function on the recipient after a `transfer`.
-- [`ImplBridgeFunInit.sol`](Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/ImplBridgeFunInit.sol): This implements logic data of a bridge initialization.
-- [`ImplBridgeFunMigrateToERC721.sol`](Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/ImplBridgeFunMigrateToERC721.sol): This implements logic data of the departure bridge (migration intent / escrow and signature hash generation)
+- [`ImplBridgeFunMigrateFromERC721.sol`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/ImplBridgeFunMigrateFromERC721.sol): This implements logic data of the arrival bridge (IOU minting / transfert / ...).
+- [`ImplERC721TokenReceiver.sol`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/ImplERC721TokenReceiver.sol): Handle the receipt of an NFT, the ERC721 smart contract calls this function on the recipient after a `transfer`.
+- [`ImplBridgeFunInit.sol`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/ImplBridgeFunInit.sol): This implements logic data of a bridge initialization.
+- [`ImplBridgeFunMigrateToERC721.sol`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/ImplBridgeFunMigrateToERC721.sol): This implements logic data of the departure bridge (migration intent / escrow and signature hash generation)
 
-`/Implementation/Proxification/` folder contains the different functions of the ERC-1538 proxy pattern for Bridge deployment. Get more infos [here](https://eips.ethereum.org/EIPS/eip-1538)
+[`bridge/Implementation/Proxification/`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/Proxyfication/) folder contains the different functions of the ERC-1538 proxy pattern for Bridge deployment. Get more infos [here](https://eips.ethereum.org/EIPS/eip-1538)
 
-[`/Implementation/Test/`](Codebase/Bridge_Contracts/contracts/Implementation/Test) folder contains an implementation of a token ERC-721 and a custom ERC-721 with premint functions (IOU)
+[`bridge/Implementation/Test/`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/Test) folder contains an implementation of a token ERC-721 and a custom ERC-721 with premint functions (IOU)
 
 ### Testing
 Make sure that everything has been set up correctly:
@@ -27,11 +27,11 @@ $ truffle test
 
 ### Configuration
 
-To deploy the bridge you need to choose which network it will be operating on. To this, find the universe unique id (last 4 bytes of keccak256 hash of the nameof the network) and add it line 45-48 (`await instancedInit.init("0xe35d7d6b");`) to the deployement script [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/Codebase/Bridge_Contracts/migrations/2_deploy_bridge.js)
+To deploy the bridge you need to choose which network it will be operating on. To this, find the universe unique id (last 4 bytes of keccak256 hash of the nameof the network) and add it line 45-48 (`await instancedInit.init("0xe35d7d6b");`) to the deployement script [here](/Codebase/Bridge_Contracts/migrations/2_deploy_bridge.js)
 
 ### Deployment
 
-Update truffle-config.js with your credentials and network data:
+Update [truffle-config.js](Codebase/Bridge_Contracts/truffle-config.js) with your credentials and network data:
 ```
 networks : {
  rinkeby: {
@@ -52,4 +52,4 @@ $ truffle migrate --network rinkeby --reset
 
 ### After deployement
 
-Please note all the deployement informations. The ImplTransparentProxy contract address is the address of your bridge. You can then use that address in the relay configuration.
+Please note all the deployement informations. The BridgeTransparentProxy contract address is the address of your bridge. You can then use that address in the relay configuration.
