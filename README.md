@@ -37,6 +37,10 @@ This is an open ended question with no correct answers, only compromises. Many s
 
 You can find an how to [here](https://github.com/Perpetual-Altruism-Ltd/myNFT-Bridge/blob/master/USERHOWTO.md)
 
+## Tests
+
+You can run tests 
+
 ## More details 
 
 This NFT bridge is based on the model described in "A protocol for NFT Migration", drafted as part of a Web3 Foundation grant:

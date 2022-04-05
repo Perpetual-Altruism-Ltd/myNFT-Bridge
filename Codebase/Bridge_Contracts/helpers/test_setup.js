@@ -1,6 +1,6 @@
-const ImplTransparentProxy = artifacts.require("ImplTransparentProxy");
-const ERC1538Delegate = artifacts.require("ERC1538Delegate");
-const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegate");
+const ImplTransparentProxy = artifacts.require("BridgeTransparentProxy");
+const ERC1538Delegate = artifacts.require("ERC1538DelegateBridge");
+const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegateBridge");
 const ImplTestERC721 = artifacts.require("ImplTestERC721");
 const IOUExample = artifacts.require("IOUExample");
 

@@ -15,7 +15,7 @@ function hexToBytes32(string) {
 	return Web3.utils.padLeft(string, 64)
 }
 
-contract("Testing Bridges features", async accounts => {
+contract("Testing Relay features", async accounts => {
 
 	///////////////////////////////////////////////////
 	//////////////// Setup Test //////////////////////
