@@ -1,12 +1,16 @@
 Codebase/Solidity/build/contracts/*
-Codebase/Bridge_Frontend/node_modules/*
-Codebase/Bridge_Frontend/log/*
 Codebase/Bridge_Contracts/build/*
-Codebase/Relay/node_modules/*
+Codebase/Bridge_Frontend/log/*
 Codebase/Relay/log/*
-Codebase/Bridge_Contracts/contracts/Implementation/Proxyfication/artifacts/*
-Codebase/Bridge_Contracts/contracts/Implementation/BridgeFeatures/artifacts/*
-Codebase/Bridge_Contracts/contracts/Implementation/Proxyfication/artifacts/*
-Codebase/Bridge_Contracts/contracts/Implementation/Test/artifacts/*
+
+# Remove all artifacts generated automatically
+Codebase/Bridge_Contracts/contracts/bridge/Implementation/Proxyfication/artifacts/*
+Codebase/Bridge_Contracts/contracts/bridge/Implementation/BridgeFeatures/artifacts/*
+Codebase/Bridge_Contracts/contracts/bridge/Implementation/Proxyfication/artifacts/*
+Codebase/Bridge_Contracts/contracts/bridge/Implementation/Test/artifacts/*
+Codebase/Bridge_Contracts/contracts/artifacts/*
+
+# Remove node modules
+Codebase/Bridge_Frontend/node_modules/*
 Codebase/Bridge_Contracts/node_modules/*
-Codebase/Manipulator_Contracts/node_modules/*
+Codebase/Relay/node_modules/*

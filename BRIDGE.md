@@ -45,6 +45,8 @@ networks : {
 }
 ```
 Deploy all contracts on this network (migration/bridge/erc721/iou):
+(after setting configuration for the Manipulator (see [MANIPULATOR.md](MANIPULATOR.md)))
+
 
 ```bash
 $ truffle migrate --network rinkeby --reset
