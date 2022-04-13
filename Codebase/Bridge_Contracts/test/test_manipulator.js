@@ -81,20 +81,19 @@ contract("Testing Manipulator features", async accounts => {
        
 		let signedMessage = await web3.eth.sign(this.migrationHash, accounts[0]);
 
-		const data = [
-            hexToBytes32("0x1"),
-            hexToBytes32(this.bridge_1.address),
-            hexToBytes32(this.erc721_token.address),
-            numberToBytes32(1),
-            hexToBytes32(accounts[0]),
-            this.erc721_iou.address,
-            parseInt(1),
-            accounts[2],
-            accounts[0],
-            numberToBytes32(this.blockTimestamp),
-            signedMessage
-        ]
-		console.log(data)
-		const tx = await this.manipulator_2.migrateFromIOUERC721ToERC721(data,this.bridge_2.address);	
+		const data = '0x'
+            + hexToBytes32("0x1").replace("0x", "")
+            + hexToBytes32(this.bridge_1.address).replace("0x", "")
+            + hexToBytes32(this.erc721_token.address).replace("0x", "")
+            + numberToBytes32(1).replace("0x", "")
+            + hexToBytes32(accounts[0]).replace("0x", "")
+            + hexToBytes32(this.erc721_iou.address).replace("0x", "")
+            + numberToBytes32(1).replace("0x", "")
+            + hexToBytes32(accounts[2]).replace("0x", "")
+            + hexToBytes32(accounts[0]).replace("0x", "")
+            + numberToBytes32(this.blockTimestamp).replace("0x", "")
+            + signedMessage.replace("0x", "")
+
+		const tx = await this.manipulator_2.migrateFromIOUERC721ToERC721(data, this.bridge_2.address);	
 	});
 });
