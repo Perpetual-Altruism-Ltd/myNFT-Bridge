@@ -55,8 +55,12 @@ contract("Testing Manipulator features", async accounts => {
             this.bridge_1.address
 		];
 		const tx = await this.manipulator_1.migrateToERC721IOU(...data);
-		const block = await web3.eth.getBlock(tx.receipt.blockNumber);
+		const block = await web3.eth.getBlock(tx.receipt.rawLogs[0].blockNumber);
 		this.blockTimestamp = block.timestamp;
+		this.migrationHash = tx.receipt.rawLogs[0].topics[3];
+		let event = tx.receipt.rawLogs.some(l => { return l.topics[0] == '0x' + 'fa90ed0aaa999d2cb82691a60b10f4a8f6543965f9073af93d8e0af64ed1a08d' });
+																				// Keccak256(MigrationDeparturePreRegisteredERC721IOU(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32))
+		assert.ok(event, "event MigrationDeparturePreRegisteredERC721IOU not emitted");
 	});
 
 	it(`Should transfer token n°1 to bridge_1 via manipulator`, async () => {
@@ -90,7 +94,7 @@ contract("Testing Manipulator features", async accounts => {
             numberToBytes32(this.blockTimestamp),
             signedMessage
         ]
-
+		console.log(data)
 		const tx = await this.manipulator_2.migrateFromIOUERC721ToERC721(data,this.bridge_2.address);	
 	});
 });
