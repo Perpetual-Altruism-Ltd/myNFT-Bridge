@@ -9,11 +9,6 @@ const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
 const ImplBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
 const ImplBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
 
-const ManipulatorTransparentProxy = artifacts.require("ManipulatorTransparentProxy");
-const ERC1538DelegateManipulator = artifacts.require("ERC1538DelegateManipulator");
-const ERC1538QueryDelegateManipulator = artifacts.require("ERC1538QueryDelegateManipulator");
-const Manipulator = artifacts.require("Manipulator");
-
 exports.setup = async function(accounts){
 
     console.log("Setting up a clean test environment");
@@ -27,9 +22,6 @@ exports.setup = async function(accounts){
     let logic_ImplERC721TokenReceiver = await ImplERC721TokenReceiver.new();
     let logic_ImplBridgeFunMigrateToERC721 = await ImplBridgeFunMigrateToERC721.new();
     let logic_ImplBridgeFunMigrateFromERC721 = await ImplBridgeFunMigrateFromERC721.new();
-
-    let logic_ERC1538DelegateManipulator = await ERC1538DelegateManipulator.new();
-    let logic_ERC1538QueryDelegateManipulator = await ERC1538QueryDelegateManipulator.new();
 
     //Instancing the bridges
     let alpha_proxyBridge =  await BridgeTransparentProxy.new(logic_ERC1538DelegateBridge.address);
@@ -129,47 +121,11 @@ exports.setup = async function(accounts){
     let alpha_Tokens = await ImplTestERC721.new();
     let beta_Tokens = await IOUExample.new();
 
-    //---------------- Creating the manipulator ------------------------
-
-     //Instancing the manipulator
-    let manipulatorTransparentProxy = await ManipulatorTransparentProxy.new(logic_ERC1538DelegateManipulator.address)
-    let instancedProxy = await ERC1538DelegateManipulator.at(manipulatorTransparentProxy.address)
-    await instancedProxy.updateContract(
-        logic_ERC1538QueryDelegateManipulator.address,
-        "functionByIndex(uint256)functionExists(string)delegateAddress(string)"+
-        "delegateAddresses()delegateFunctionSignatures(address)functionById(bytes4)"+
-        "functionBySignature(string)functionSignatures()totalFunctions()",
-        "ERC1538Query"
-    )
-    //Deploying the manipulator
-    let manipulator = await Manipulator.new()
-
-    await instancedProxy.updateContract(
-        manipulator.address,
-        "init(address)approve(address,bool)mintedTokens(address)mint(address)"+
-        "setTokenUri(uint256,string,address)tokenURI(uint256,address)"+
-        "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
-        "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
-        "registerEscrowHashSignature(bytes32,bytes,address)"+
-        "migrateFromIOUERC721ToERC721(bytes,address)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
-        "Manipulator"
-    )
-    
-    //Instanciating the manipulator through the proxy
-    const instancedManipulator = await Manipulator.at(manipulatorTransparentProxy.address)
-    //Setting owner as transparent proxy
-    await instancedManipulator.init(accounts[0])
-    //Approving accounts
-    await instancedManipulator.approve(accounts[1], true)
-    await instancedManipulator.approve(accounts[2], true)
-    await instancedManipulator.approve(accounts[3], true)
-    
     return ({
         bridge_1 : alpha_proxyBridge,
         bridge_2 : beta_proxyBridge,
         erc721_token : alpha_Tokens,
         erc721_iou : beta_Tokens,
-        manipulator: instancedManipulator
     })
 
 }

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const truffleAssert = require('truffle-assertions');
 const Web3 = require('web3')
-var testSetup = require("../helpers/test_setup.js");
+var testSetup = require("../helpers/test_setup_bridge.js");
 const ImplBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
 const ImplBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
@@ -85,12 +85,7 @@ contract("Testing Bridges features", async accounts => {
 
 	it(`Should mint and attribute IOU n°1 to account[2] on bridge_2`, async() => {
 		const bridge_2 = await ImplBridgeFunMigrateFromERC721.at(this.bridge_2.address);
-		/*
-			const signedMessage = await web3.eth.accounts.sign(this.migrationHash, '208acdc5c18fe9a4cf723bc81c1ad9176824d2cc8dd8ff98ebfd12792fcee394');
-			const signedMessage2 = await web3.eth.sign(this.migrationHash, '0xC1027Fc6afED33548BEe9efa13158e5995a69E5e');
-			console.log('Signed message 1 : ', signedMessage.signature);
-			console.log('Signed message 2 : ', signedMessage2);
-		*/
+
 		let signedMessage = await web3.eth.sign(this.migrationHash, accounts[0]);
 
 		const data = [
