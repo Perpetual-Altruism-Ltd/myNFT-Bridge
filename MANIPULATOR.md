@@ -11,7 +11,7 @@ The manipulator is the single entry point to the supported blockchains. This is 
 
 To deploy the manipulator you'll need to edit the [`Codebase/Bridge_Contracts/migrations/5_deploy_manipulator.js`](/Codebase/Bridge_Contracts/migrations/5_deploy_manipulator.js) file.
 
-There is, line 69 to 72 some approve (`await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)`) function calls. You need to replace that with `your manipulating wallets addresses`. These addresse will be used by the relay to talk to the manipulator, call the bridge, and mint the IOUs.
+There is, line 53 to 57 some approve (`await instancedManipulator.approve("0x02f69FaEb7976FB4Ce32cDF4916f9DB01f559595", true)`) function calls. You need to replace that with `your manipulating wallets addresses`. These addresse will be used by the relay to talk to the manipulator, call the bridge, and mint the IOUs.
 
 Then update [`Codebase/Bridge_Contracts/truffle-config.js`](/Codebase/Bridge_Contracts/truffle-config.js) with your credentials and network data:
 ```

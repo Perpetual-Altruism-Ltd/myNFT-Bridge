@@ -21,7 +21,7 @@ contract("Testing Bridges features", async accounts => {
 	//////////////// Setup Test //////////////////////
 	/////////////////////////////////////////////////
 
-	it("Setup: Setting up both bridges features", async () => {
+	it("Setup: Setting up both bridges features with relay", async () => {
 		const contracts = await testSetup.setup(accounts);
 		this.bridge_1 = contracts.bridge_1;
 		this.bridge_2 = contracts.bridge_2;
