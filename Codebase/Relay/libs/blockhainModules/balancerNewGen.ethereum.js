@@ -94,9 +94,11 @@ class TransactionBalancerNewGen {
                 ...(!this.universe.eip1559 && { gasPrice: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
                 ...(this.universe.eip1559 && { maxFeePerGas: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
                 ...(this.universe.eip1559 && { maxPriorityFeePerGas: (((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.99).toFixed(0) }),
+                ...(this.universe.ganache && { maxFeePerGas: this.web3Instance.utils.toWei("10","gwei"), maxPriorityFeePerGas: this.web3Instance.utils.toWei("9","gwei") }),
                 ...this.transactionConfig,
                 ...transaction
             }
+
 
             Logger.info(`Executing transaction on account ${account.address} with nonce ${fullTransaction.nonce} on universe ${this.universe.name}.`)
 
