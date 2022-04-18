@@ -2,6 +2,7 @@ const ERC1538Delegate = artifacts.require("ERC1538DelegateManipulator")
 const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegateManipulator")
 const ImplTransparentProxy = artifacts.require("ManipulatorTransparentProxy")
 const Manipulator = artifacts.require("Manipulator")
+const IOU = artifacts.require("IOU")
 
 module.exports = async (deployer, network, accounts) => {
     //Deploying the logic code of the proxyfication
@@ -50,10 +51,11 @@ module.exports = async (deployer, network, accounts) => {
     const instancedManipulator = await Manipulator.at(ImplTransparentProxy.address)
     //Setting owner as transparent proxy
     console.log("Setting owner as current account...")
-    await instancedManipulator.init(accounts[0])
+    await instancedManipulator.init("0x53319AF8011CAaE348f0e545911130F0C7B7a8d1")
     //Approving accounts
-    await instancedManipulator.approve("0x3809C624f6640BCbd0A22bb27beCD92D80E656CC", true)
-    await instancedManipulator.approve("0x1F1ee303a3Ac8F75F5B85ee94545d6D6c88e5c3e", true)
-    await instancedManipulator.approve("0xBF1FD5Fe98feECcaE704ccdd803d05BCc0a68d92", true)
-    await instancedManipulator.approve("0xCAb3FC510Fb41b7F72A89Be5A9718780D2E6f0Dc", true)
+    await instancedManipulator.approve("0x3f90571A6DCFfBa0b3356012b571a3EAf1a242e7", true)
+    
+    // Deploying IOU contract
+    console.log("Deploying an IOU contract...")
+    await deployer.deploy(IOU,ImplTransparentProxy.address)
 }

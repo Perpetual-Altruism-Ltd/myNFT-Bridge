@@ -42,15 +42,15 @@ module.exports = async(deployer, network, accounts) => {
         "ImplBridgeFunInit"
     );
     let instancedInit = await ImplBridgeFunInit.at(ImplTransparentProxy.address);
-    //await instancedInit.init("0x8b3528a8"); //  GANACHE Replace localhost with whatever you are deploying on
-    //await instancedInit.init("0x07dac20e"); //  RINKEBY
-    //await instancedInit.init("0xee0bec75"); // KOVAN
-    //await instancedInit.init("0xe35d7d6b"); // POLKADOT TESTNET MOONBASE ALPHA
-    //await instancedInit.init("0x6d2f0e37") // Ethereum Mainnet
-    //await instancedInit.init("0x06551a5b") // Polkadot Moonriver
-    //await instancedInit.init("0x51147ce2") // Polkadot Moonbeam
-    //await instancedInit.init("0xb4aa1df4") // Binance Smart Chain Mainnet
-    await instancedInit.init("0xda3d6b12") // Polygon Mainnet
+    await instancedInit.init("0x8b3528a8"); //  GANACHE Replace localhost with whatever you are deploying on
+    // await instancedInit.init("0x07dac20e"); //  RINKEBY
+    // await instancedInit.init("0xee0bec75"); // KOVAN
+    // await instancedInit.init("0xe35d7d6b"); // POLKADOT TESTNET MOONBASE ALPHA
+    // await instancedInit.init("0x6d2f0e37") // Ethereum Mainnet
+    // await instancedInit.init("0x06551a5b") // Polkadot Moonriver
+    // await instancedInit.init("0x51147ce2") // Polkadot Moonbeam
+    // await instancedInit.init("0xb4aa1df4") // Binance Smart Chain Mainnet
+    // await instancedInit.init("0xda3d6b12") // Polygon Mainnet
 
     //Adding ImplERC721TokenReceiver features
     console.log("Adding ERC721TokenReceiver features...");
