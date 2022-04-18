@@ -11,9 +11,9 @@ yarn
 
 The frontend hold three configuration files :
 
-- `Codebase/Bridge_Frontend/conf.json` => Configure the port the frontend server will be listening to
-- `Codebase/Bridge_Frontend/public/network_list.json` => Configure the networks available to this frontend and which migration route the token can migrate, as well as through which relays
-- `Codebase/Bridge_Frontend/public/relay_list.json` => Configure the relay servers available to the frontend
+- [Codebase/Bridge_Frontend/conf.json](Codebase/Bridge_Frontend/conf.json) => Configure the port the frontend server will be listening to
+- [Codebase/Bridge_Frontend/public/network_list.json](Codebase/Bridge_Frontend/public/network_list.json) => Configure the networks available to this frontend and which migration route the token can migrate, as well as through which relays
+- [Codebase/Bridge_Frontend/public/relay_list.json](Codebase/Bridge_Frontend/public/relay_list.json) => Configure the relay servers available to the frontend
 
 ### conf.json
 
