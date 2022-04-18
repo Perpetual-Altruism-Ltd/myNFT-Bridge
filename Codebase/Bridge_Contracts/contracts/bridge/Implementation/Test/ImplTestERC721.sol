@@ -263,7 +263,7 @@ contract ImplTestERC721 is ERC721 {
     ///  `interfaceID` is not 0xffffffff, `false` otherwise
     function supportsInterface(bytes4 interfaceID) external pure returns(bool) {
         return (
-            interfaceID == 0x80ac58cd || //ERC721
+            interfaceID == type(ERC721).interfaceId || //ERC721
             interfaceID == 0x01ffc9a7 //ERC165
         );
         
