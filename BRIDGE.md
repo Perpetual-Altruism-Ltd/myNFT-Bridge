@@ -19,10 +19,9 @@ The bridge implements the ERC-1538 proxy pattern in order to be upgradable:
 [`bridge/Implementation/Test/`](Codebase/Bridge_Contracts/contracts/bridge/Implementation/Test) folder contains an implementation of a token ERC-721 and a custom ERC-721 with premint functions (IOU)
 
 ### Testing
-Make sure that everything has been set up correctly:
 
 ```
-$ truffle test
+$ npm test
 ```
 
 ### Configuration
