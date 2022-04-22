@@ -1,5 +1,4 @@
 import AbstractView from './AbstractView.js';
-import Conf from '../../../conf' assert { type: "json" };
 
 
 /*******************************Read before modifying code
@@ -1298,7 +1297,7 @@ export default class extends AbstractView {
       const regexIpfs = /(Qm[1-9A-HJ-NP-Za-km-z]{44,}|b[A-Za-z2-7]{58,}|B[A-Z2-7]{58,}|z[1-9A-HJ-NP-Za-km-z]{48,}|F[0-9A-F]{50,})(\/.*)*/
       let res = tokenURI;
       if(regexIpfs.test(tokenURI)){
-          res = `${Conf.ipfs.gatewayUrl}/ipfs/${tokenURI.match(regexIpfs)[0]}`
+          res = `https://ipfs.infura.io/ipfs/${tokenURI.match(regexIpfs)[0]}`
       }
       return res;
     }
