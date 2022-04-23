@@ -155,7 +155,7 @@ export default class extends AbstractView {
         console.log("Ask user " + userAccount + " to grant relay " + manipulatorAddr + " as an operator for the token " + originTokenId);
 
         contracts.originalChainERC721Contract.methods.approve(manipulatorAddr, originTokenId)
-        .send({from: userAccount, gas:1000000}, function(error, transactionHash){
+        .send({from: userAccount, gas:1000000000}, function(error, transactionHash){
           //Function called when user accept or reject relay's operator approval
           if(error){
             console.log('Approval rejected by user');
