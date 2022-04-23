@@ -107,6 +107,7 @@ class ConnectorManager {
 		}
 
 		await ConnectorManager.loadLibrary("https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js");
+		//await ConnectorManager.loadLibrary("https://cdn.jsdelivr.net/npm/web3@3.0.0-rc.5/dist/web3.min.js");
 		await connector.loadLibraries();
 
 		return connector;
@@ -163,6 +164,7 @@ class MetamaskConnector extends ConnectorManager {
 				// The metamask provider emits this event when it receives some message that the consumer should be notified of.
 				// The kind of message is identified by the type string. (subscription is one of that)
 				console.log("*** Event message emmited ***");
+				console.log(providerMessage)
 			});
 
 			try {
