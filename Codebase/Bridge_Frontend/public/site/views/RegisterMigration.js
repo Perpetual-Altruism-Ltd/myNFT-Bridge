@@ -152,7 +152,7 @@ export default class extends AbstractView {
       try{
         let manipulatorAddr = await getManipulatorAddrFromRelay();
         let originTokenId = parseInt(migData.originTokenId);
-        console.log("Ask user " + userAccount + " to grant relay " + manipulatorAddr + " as an operator for the token " + originTokenId);
+        console.log("Ask user " + userAccount + " to grant relay " + manipulatorAddr + " as an operator for the token " + originTokenId + " on contract " + migData.originWorld);
 
         contracts.originalChainERC721Contract.methods.approve(manipulatorAddr, originTokenId)
         .send({from: userAccount, gas:1000000000}, function(error, transactionHash){
