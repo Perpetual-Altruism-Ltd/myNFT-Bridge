@@ -40,6 +40,10 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
         return "MYIOU";
     }
 
+    function totalSupply() external view returns (uint256 _count){
+        return mintedTokens;
+    }
+
     /// @notice Mint a token for msg.sender and return the tokenId of this token
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
