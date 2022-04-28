@@ -5,8 +5,9 @@ pragma solidity 0.8.9;
 //It is a genric fgreely mintable ERC-721 standard.
 
 import "../../generic/721/ERC721.sol";
+import "../../generic/165/ERC165.sol";
 
-contract IOU is ERC721 {
+contract IOU is ERC721, ERC721Metadata, ERC165 {
 
     address public owner; //Address of the smart contract creator
 
@@ -31,11 +32,11 @@ contract IOU is ERC721 {
         owner = _owner;
     }
 
-    function name() external pure returns (string memory){
+    function name() external pure override returns (string memory _name){
         return "myNFT Bridge: IOU Token";
     }
 
-    function symbol() external pure returns (string memory){
+    function symbol() external pure override returns (string memory _symbol){
         return "MYIOU";
     }
 
@@ -159,7 +160,6 @@ contract IOU is ERC721 {
         tokenOperator[_tokenId] = _approved;
         emit Approval(_owner, _approved, _tokenId);
     }
-
 
     /// @notice Enable or disable approval for a third party ("operator") to manage
     ///  all of `msg.sender`'s assets.
@@ -308,72 +308,21 @@ contract IOU is ERC721 {
     /// @dev Throws if `_tokenId` is not a valid NFT. URIs are defined in RFC
     ///  3986. The URI may point to a JSON file that conforms to the "ERC721
     ///  Metadata JSON Schema".
-    function tokenURI(uint256 _tokenId) external view returns(string memory){
+    function tokenURI(uint256 _tokenId) external view override returns(string memory){
         require(tokenOwners[_tokenId] != address(0), "This token is not minted");
 
         return tokenUris[_tokenId];
     }
     
-        /// @notice Convert an Ethereum address to a human readable string
-    /// @param _addr The adress you want to convert
-    /// @return The address in 0x... format
-    function addressToString(address _addr) internal pure returns(string memory)
-    {
-        bytes32 addr32 = bytes32(uint256(uint160(_addr))); //Put the address 20 byte address in a bytes32 word
-        bytes memory alphabet = "0123456789abcdef";  //What are our allowed characters ?
-
-        //Initializing the array that is gonna get returned
-        bytes memory str = new bytes(42);
-
-        //Prefixing
-        str[0] = '0';
-        str[1] = 'x';
-
-        for (uint256 i = 0; i < 20; i++) { //iterating over the actual address
-
-            /*
-                proper offset : output starting at 2 because of '0X' prefix, 1 hexa char == 2 bytes.
-                input starting at 12 because of 12 bytes of padding, byteshifted because 2byte == 1char
-            */
-            str[2+i*2] = alphabet[uint8(addr32[i + 12] >> 4)];
-            str[3+i*2] = alphabet[uint8(addr32[i + 12] & 0x0f)];
-        }
-        return string(str);
-    }
-    
     /// @notice Query if a contract implements an interface
-    /// @param interfaceID The interface identifier, as specified in ERC-165
+    /// @param _interfaceID The interface identifier, as specified in ERC-165
     /// @dev Interface identification is specified in ERC-165. This function
     ///  uses less than 30,000 gas.
     /// @return `true` if the contract implements `interfaceID` and
-    ///  `interfaceID` is not 0xffffffff, `false` otherwise
-    function supportsInterface(bytes4 interfaceID) external pure returns(bool) {
-        return (
-            interfaceID == 0x80ac58cd || //ERC721
-            interfaceID == 0x01ffc9a7 //ERC165
-        );
-        
+    ///  `_interfaceID` is not 0xffffffff, `false` otherwise
+    function supportsInterface(bytes4 _interfaceId) external pure override returns(bool) {
+        return  _interfaceId == type(ERC721).interfaceId 
+        || _interfaceId == type(ERC721Metadata).interfaceId 
+        || _interfaceId == type(ERC165).interfaceId;
     }
-
-    function uint2str(uint256 _i) internal pure returns (string memory _uintAsString) {
-        unchecked{
-            if (_i == 0) {
-                return "0";
-            }
-            uint j = _i;
-            uint len;
-            while (j != 0) {
-                len++;
-                j /= 10;
-            }
-            bytes memory bstr = new bytes(len);
-            uint k = len - 1;
-            while (_i != 0) {
-                bstr[k--] = bytes1(uint8(48 + _i % 10));
-                _i /= 10;
-            }
-            return string(bstr);
-        }
-    }
-
 }
