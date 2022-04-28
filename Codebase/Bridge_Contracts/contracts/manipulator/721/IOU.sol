@@ -315,7 +315,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     }
     
     /// @notice Query if a contract implements an interface
-    /// @param _interfaceID The interface identifier, as specified in ERC-165
+    /// @param _interfaceId The interface identifier, as specified in ERC-165
     /// @dev Interface identification is specified in ERC-165. This function
     ///  uses less than 30,000 gas.
     /// @return `true` if the contract implements `interfaceID` and
