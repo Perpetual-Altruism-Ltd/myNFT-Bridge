@@ -1,10 +1,7 @@
 {
   "dependencies": {
-    "@truffle/hdwallet-provider": "^2.0.6",
-    "truffle": "^5.5.10",
-    "web3": "^1.6.1"
-  },
-  "scripts": {
-    "test": "truffle test --migrations_directory migrations_null"
+    "@truffle/hdwallet-provider": "^2.0.7",
+    "truffle": "^5.5.11",
+    "web3": "^1.7.3"
   }
 }
