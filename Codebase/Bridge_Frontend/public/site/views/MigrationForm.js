@@ -562,7 +562,7 @@ export default class extends AbstractView {
                         </video>`
                       }
                       else if(imgURL != null) {
-                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(imgURL) + '" target="_blank">' + encodeURI(imgURL) + '</a>';
+                          document.getElementById("OGTokenMetaImagePath").innerHTML = '<a href="' + encodeURI(imgURL) + '" target="_blank">' + encodeURI(ogTokenMetaData.image) + '</a>';
                       }
 
                       //enable or not redeem btn depending on the type of token (iou or not)
