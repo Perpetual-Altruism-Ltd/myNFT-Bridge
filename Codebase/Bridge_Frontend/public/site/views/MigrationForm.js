@@ -611,10 +611,12 @@ export default class extends AbstractView {
     }
     //Load destination token metadata + display dest token name
     let loadDestTokenMetadata = function(URI){
+
+      let standardisedIpfsUri = ipfsURLStandardisation(URI)
       //create get request
       var options = {
         method: 'GET',
-        url: URI,
+        url: standardisedIpfsUri,
         headers: {'Content-Type': 'text/json'}
       };
 
@@ -637,7 +639,7 @@ export default class extends AbstractView {
       }
 
       //Execute request
-      axios.get(URI, options).then(function (response) {
+      axios.get(standardisedIpfsUri, options).then(function (response) {
         requestCallback(response);
       }).catch(function (error) {
         displayDestTokenNameMsg("An error occured to retrieve the original token's name. Please contact us to report the bug with the link in the upper right corner.");
