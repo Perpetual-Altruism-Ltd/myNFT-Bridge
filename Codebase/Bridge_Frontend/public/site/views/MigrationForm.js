@@ -569,6 +569,7 @@ export default class extends AbstractView {
                       enableRedeemBtnIfNetworkMatch();
                   }
               };
+              xhr.setRequestHeader("Origin", window.location.origin);
               xhr.send();
           } catch (err) {
               console.log(err);
