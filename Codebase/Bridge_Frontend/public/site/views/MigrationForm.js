@@ -698,10 +698,14 @@ export default class extends AbstractView {
     //=====NFT Collection=====
     //Universe is the uniqueId
     let addNFTToCollection = function(name, universe, world, tokenId, isIOU, imgSrc){
+      if(typeof imgSrc !== "string" && typeof imgSrc === "object" && imgSrc !== null && typeof imgSrc.URI === "string")
+        imgSrc = ipfsURLStandardisation(imgSrc.URI)
+
+
       let cont = document.getElementById("NFTCollectionCustomComponent");
       let newNftCard = document.createElement("nft-card");
       newNftCard.setAttribute('slot', "NFTElement");
-      newNftCard.setAttribute('name', name);
+      newNftCard.setAttribute('name', name ? name : "No name");
       newNftCard.setAttribute('universe', universe);
       let netName = bridgeApp.net[universe].name;
       newNftCard.setAttribute('network-name', netName);
@@ -772,7 +776,12 @@ export default class extends AbstractView {
             if(knownNetUniqueIDList.includes(nft.universe)){
               //Display only NFT which have Metadata
               if(nft.status == "METADATAANDIMAGE"){
-                let mdata = nft.metadata;
+                let mdata
+                if(nft.mergedMetadata)
+                  mdata = nft.mergedMetadata
+                else if(nft.metadata)
+                  mdata = nft.metadata;
+                else continue
                 //Determine wether this nft is an IOU
                 let isIOU = isIOUToken(mdata);
 
@@ -780,12 +789,25 @@ export default class extends AbstractView {
                 addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, mdata.image);
               }
               else if(nft.status == "ONLYMETADATA" && !displayOnlyValid){
-                let mdata = nft.metadata;
+                let mdata
+                if(nft.mergedMetadata)
+                  mdata = nft.mergedMetadata
+                else if(nft.metadata)
+                  mdata = nft.metadata;
+                else continue
                 let isIOU = isIOUToken(mdata);
                 addNFTToCollection(mdata.name, nft.universe, nft.world, nft.tokenId, isIOU, '/site/medias/noMediaBg.png');
-              }/*else if(nft.status ==  "NOMETADATA" && !displayOnlyValid){
-                addNFTToCollection("Token ID: " + parseInt(nft.tokenId), nft.universe, nft.world, nft.tokenId, false, '/site/medias/noMediaBg.png');
-              }*/
+              }else if(nft.status ==  "NOMETADATA" && !displayOnlyValid){
+                addNFTToCollection("Token ID: " + nft.tokenId, nft.universe, nft.world, nft.tokenId, false, '/site/medias/noMediaBg.png');
+              }else if(nft.status == "ONLYIMAGE"){
+                let mdata
+                if(nft.computedMetadata)
+                  mdata = nft.computedMetadata
+                else if(nft.metadata)
+                  mdata = nft.metadata;
+                else continue                
+                addNFTToCollection("Token ID: " + nft.tokenId, nft.universe, nft.world, nft.tokenId, false, mdata.image);
+              }
             }
             else{
               console.log(nft.network + " network isn't handled by this bridge.");
