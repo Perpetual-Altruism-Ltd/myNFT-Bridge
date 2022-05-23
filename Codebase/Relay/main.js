@@ -253,7 +253,11 @@ const main = async () => {
         const tokenUri = await originUniverseRpc.getTokenUri(originUniverse.manipulatorAddress, migrationData.originWorld, migrationData.originTokenId)
         let tokenMetadata
         try{
-            tokenMetadata = (await Axios.get(normalizeLink(tokenUri))).data
+            const normalizedLink = normalizeLink(tokenUri)
+
+            Logger.info(`Normalizing ${tokenUri} ==> ${normalizedLink}`)
+
+            tokenMetadata = (await Axios.get(normalizedLink)).data
         }catch(err){
             console.log(err)
             res.status(400)
