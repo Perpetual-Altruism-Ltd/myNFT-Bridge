@@ -3,6 +3,8 @@ const ERC1538DelegateBridge = artifacts.require("ERC1538DelegateBridge");
 const ERC1538QueryDelegateBridge = artifacts.require("ERC1538QueryDelegateBridge");
 const ImplTestERC721 = artifacts.require("ImplTestERC721");
 const IOU = artifacts.require("IOU");
+const FullERC721 = artifacts.require("FullERC721");
+const FullMigrationController = artifacts.require("FullMigrationController");
 
 const ImplBridgeFunInit = artifacts.require("ImplBridgeFunInit");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
@@ -79,7 +81,7 @@ exports.setup = async function(accounts){
     //BridgeERC721Departure
     await alpha_instancedProxyBridge.updateContract(
         logic_ImplBridgeFunMigrateToERC721.address, 
-        "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
+        "setFullMigrationController(address,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
         "BridgeERC721Departure Part1"
     );
 
@@ -91,7 +93,7 @@ exports.setup = async function(accounts){
 
     await beta_instancedProxyBridge.updateContract(
         logic_ImplBridgeFunMigrateToERC721.address, 
-        "migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
+        "setFullMigrationController(address,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721IOU(address,uint256,bytes32,bytes32,bytes32)acceptedMigrationDestinationERC721Full(address,uint256,bytes32,bytes32,bytes32)",
         "BridgeERC721Departure Part1"
     );
 
@@ -149,6 +151,8 @@ exports.setup = async function(accounts){
         "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
         "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
         "registerEscrowHashSignature(bytes32,bytes,address)"+
+        "migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
+        "migrateFromFullERC721ToERC721(bytes,address)"+
         "migrateFromIOUERC721ToERC721(bytes,address)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
         "Manipulator"
     )
@@ -183,6 +187,8 @@ exports.setup = async function(accounts){
         "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
         "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
         "registerEscrowHashSignature(bytes32,bytes,address)"+
+        "migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
+        "migrateFromFullERC721ToERC721(bytes,address)"+
         "migrateFromIOUERC721ToERC721(bytes,address)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
         "Manipulator"
     )
@@ -199,14 +205,18 @@ exports.setup = async function(accounts){
     //Creating the token contracts
     let alpha_Tokens = await ImplTestERC721.new();
     let beta_Tokens = await IOU.new(beta_instancedManipulator.address);
+    let full_mig_token = await FullERC721.new();
+    let migration_controller = await FullMigrationController.new();
 
     return ({
         bridge_1 : alpha_proxyBridge,
         bridge_2 : beta_proxyBridge,
         erc721_token : alpha_Tokens,
         erc721_iou : beta_Tokens,
+        erc721_full: full_mig_token,
         manipulator_1: alpha_instancedManipulator,
-        manipulator_2: beta_instancedManipulator
+        manipulator_2: beta_instancedManipulator,
+        migration_controller: migration_controller,
     })
 
 }

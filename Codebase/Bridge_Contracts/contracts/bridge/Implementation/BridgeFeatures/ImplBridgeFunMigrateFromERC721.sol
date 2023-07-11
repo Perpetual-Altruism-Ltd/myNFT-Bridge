@@ -141,7 +141,51 @@ contract ImplBridgeFunMigrateFromERC721  is BridgeMemoryStructure, BridgeERC721t
         bytes32 _height,
         bytes calldata _migrationHashSigned
     ) external override {
+         
+        //Reconstruct the escrow hash
+        bytes32 migrationHash = generateMigrationHashArtificialLocalFullIncoming(
+                _originUniverse,
+                _originBridge,
+                _originWorld,
+                _originTokenId,
+                _originOwner,
+                _destinationWorld,
+                _destinationTokenId,
+                _destinationOwner,
+                _signee,
+                _height
+        );
 
+        //Check that the escrow hash have been legitimately signed for this relay
+        checkSignedHash(_signee, migrationHash, _migrationHashSigned);
+
+        //Build a potential old migration hash if the token is being redeemed
+        bytes32 oldMigrationHash = latestRegisteredMigration[keccak256(abi.encodePacked(_destinationWorld, _destinationTokenId))]; 
+
+        if(migrationOperator[oldMigrationHash] != address(0)){
+            require(isEscrowHashVerified[oldMigrationHash], "This token has not been unlocked by the relay with a signed escrowhash");
+
+            require(migrationOperator[oldMigrationHash] == msg.sender,"Only the original migration operator can withdraw an escrowed token");
+        }
+
+        //Try to get the current token owner
+        try ERC721(_destinationWorld).ownerOf(_destinationTokenId) returns (address _currOwner) {
+            if(_currOwner == address(0x0)){
+                // If the current token owner is 0, then the token is not strict ERC721 compliant BUT 
+                // the bridge should still be able to transfer it for the purpose of minting
+                ERC721(_destinationWorld).safeTransferFrom(address(0x0), _destinationOwner, _destinationTokenId);
+
+            } else if (_currOwner == address(this)){ 
+                // If the current token owner is the bridge, then the token was in escrow with us
+                // This mean that project creators and owners need to trust the relays to not move 
+                // the tokens prematurely while the represented NFT are on an another chain.
+                ERC721(_destinationWorld).safeTransferFrom(_currOwner, _destinationOwner, _destinationTokenId);
+            }
+        } catch {
+            // The bridge assume that the call failed because the _destinationWorld is ERC-721 compliant and the token has not been minted yet
+            // The call of Safetransfer by the bridge will henceforth mint the IOU token
+            ERC721(_destinationWorld).safeTransferFrom(address(0x0), _destinationOwner, _destinationTokenId);
+        }
     }
 
 
@@ -353,6 +397,36 @@ contract ImplBridgeFunMigrateFromERC721  is BridgeMemoryStructure, BridgeERC721t
     ) internal view returns(bytes32){
         return generateMigrationHashArtificial(
             true,     
+            _originUniverse, 
+            _originBridge,
+            _originWorld,  
+            _originTokenId, 
+            _originOwner,
+            localUniverse,
+            bytes32(uint(uint160(address(this)))),
+            bytes32(uint(uint160(_destinationWorld))), 
+            bytes32(_destinationTokenId),
+            bytes32(uint(uint160(_destinationOwner))),
+            bytes32(uint(uint160(_signee))),
+            _height
+        );
+    }
+
+        //Generate a migration hash for an incoming IOU migration
+    function generateMigrationHashArtificialLocalFullIncoming(   
+        bytes32 _originUniverse, 
+        bytes32 _originBridge,
+        bytes32 _originWorld, 
+        bytes32 _originTokenId, 
+        bytes32 _originOwner,
+        address _destinationWorld,
+        uint256 _destinationTokenId,
+        address _destinationOwner,
+        address _signee,
+        bytes32 _height
+    ) internal view returns(bytes32){
+        return generateMigrationHashArtificial(
+            false,     
             _originUniverse, 
             _originBridge,
             _originWorld,  

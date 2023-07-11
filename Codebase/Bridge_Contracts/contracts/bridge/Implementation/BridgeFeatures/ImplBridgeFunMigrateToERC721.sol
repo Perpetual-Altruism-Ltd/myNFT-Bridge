@@ -3,6 +3,7 @@ pragma solidity 0.8.9;
 
 import "../BridgeMemoryStructure.sol";
 import "../../Bridge.sol";
+import "../../../Generic/ownable.sol";
 
 /// @author Guillaume Gonnaud 2021
 /// @title ImplBridgeFunMigrateToERC721
@@ -148,13 +149,13 @@ contract ImplBridgeFunMigrateToERC721 is
             FullMigrationController(fullMigrationsDelegates[_originWorld])
                 .acceptableMigration(
                     _originWorld,
-                    _originTokenId,
                     _destinationUniverse,
-                    _destinationWorld,
-                    _destinationTokenId
+                    _destinationWorld
                 ),
             "This migration is not acceptable for the token creator"
         );
+
+        // require(isFullMigrationAllowed[_originWorld], "This migration is not acceptable for the token creator");
 
         bytes32 migrationHash = generateMigrationHashArtificialLocalFull(
             _originWorld,
@@ -194,6 +195,14 @@ contract ImplBridgeFunMigrateToERC721 is
             _signee,
             migrationHash
         );
+    }
+
+    function setFullMigrationController(address _originWorld, address _migrationController) external {
+        require(msg.sender == Ownable(_originWorld).owner(),
+            "msg.sender is not the owner, of the token contract"
+        );
+
+        fullMigrationsDelegates[_originWorld] = _migrationController;
     }
 
     /// @notice Query if a migration generating the given hash has been registered.
@@ -267,10 +276,8 @@ contract ImplBridgeFunMigrateToERC721 is
             FullMigrationController(fullMigrationsDelegates[_originWorld])
                 .acceptableMigration(
                     _originWorld,
-                    _originTokenId,
                     _destinationUniverse,
-                    _destinationWorld,
-                    _destinationTokenId
+                    _destinationWorld
                 );
     }
 
@@ -424,7 +431,7 @@ contract ImplBridgeFunMigrateToERC721 is
     ) internal view returns (bytes32) {
         return
             generateMigrationHashArtificial(
-                true,
+                false,
                 localUniverse,
                 bytes32(uint256(uint160(address(this)))),
                 bytes32(uint256(uint160(_originWorld))),

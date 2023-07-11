@@ -238,6 +238,9 @@ interface BridgeERC721Departure /* is ERC165, ERC721TokenReceiver */ {
         bytes32 _signee,
         bytes32 _originHeight
     ) external pure returns (bytes32);
+
+
+    function setFullMigrationController(address _originWorld, address _migrationController) external;
     
 
     /* 
@@ -510,19 +513,13 @@ interface FullMigrationController {
     /// same tokenID allowed.
     /// @param _originWorld An array of 32 bytes representing the origin world of the origin token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _originTokenId An array of 32 bytes representing the tokenId of the origin token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @param _destinationWorld An array of 32 bytes representing the destination world of the migrated token. 
     /// If the destination bridge is on an EVM, it is most likely an address.
-    /// @param _destinationTokenId An array of 32 bytes representing the tokenId world of the migrated token. 
-    /// If the destination token is an ERC-721 token in an EVM smart contract, it is most likely an uint256.
     /// @return True if the migration is acceptable and can be registered, False if not
     function acceptableMigration(
         address _originWorld, 
-        uint256 _originTokenId, 
         bytes32 _destinationUniverse, 
-        bytes32 _destinationWorld,
-        bytes32 _destinationTokenId
+        bytes32 _destinationWorld
     ) external view returns(bool);
     
 
