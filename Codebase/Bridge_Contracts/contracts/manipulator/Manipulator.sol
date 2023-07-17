@@ -114,6 +114,8 @@ contract Manipulator is ManipulatorMemoryStructure, IManipulator{
         , address _contractAddress
         ) external override onlyOwnerOrOperator returns (string memory){
 
+        require(bytes32(_originTokenId) == _destinationTokenId, "Destination tokenId cannot be different from original");
+
         BridgeERC721Departure(_contractAddress).migrateToERC721Full( _originWorld,  _originTokenId,  _destinationUniverse, _destinationBridge, _destinationWorld, _destinationTokenId, _destinationOwner, _signee);
     }
 

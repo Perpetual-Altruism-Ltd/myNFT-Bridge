@@ -2,19 +2,19 @@
 	"networks": [
 		{
 			"name":"Ethereum Testnet Rinkeby",
-			"chainID": 4,
-			"networkID": 4,
+			"chainID": 1337,
+			"networkID": 1337,
 			"uniqueId": "0x07dac20e",
 			"explorer" : "https://rinkeby.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}]
+			"targetList": [{"relayIds": [1], "networkId": 1337}, {"relayIds": [1], "networkId": 3337}]
 		},
 		{
 			"name":"Ethereum Testnet Kovan",
-			"chainID": 42,
-			"networkID": 42,
+			"chainID": 3337,
+			"networkID": 3337,
 			"uniqueId": "0xee0bec75",
 			"explorer" : "https://kovan.etherscan.io/",
-			"targetList": [{"relayIds": [1], "networkId": 4}, {"relayIds": [1], "networkId": 42}]
+			"targetList": [{"relayIds": [1], "networkId": 1337}, {"relayIds": [1], "networkId": 3337}]
 		}
 	]
 }

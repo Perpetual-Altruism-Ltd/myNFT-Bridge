@@ -66,7 +66,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     }
 
     function mint (uint256 _tokenID, string calldata _tokenUri) external returns(uint256){
-        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
         require((preminters[_tokenID] == address(0) || preminters[_tokenID] == msg.sender) && tokenOwners[_tokenID] == address(0), "This token is already minted");
         mintedTokens = mintedTokens + 1;
         tokenOwners[_tokenID] = msg.sender;
@@ -79,7 +79,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
     /// @return the future minted tokenId
     function premintFor(address _preminter) external returns(uint256){
-        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
 
         mintedTokens = mintedTokens + 1;
         require(preminters[mintedTokens] == address(0) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
@@ -92,7 +92,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     /// @return the future minted tokenId
     function premintFor(address _preminter, uint256 _tokenID) external returns(uint256){
 
-        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
 
         mintedTokens = mintedTokens + 1;
         require(preminters[_tokenID] == address(0) &&  tokenOwners[_tokenID] == address(0), "This token is already minted");

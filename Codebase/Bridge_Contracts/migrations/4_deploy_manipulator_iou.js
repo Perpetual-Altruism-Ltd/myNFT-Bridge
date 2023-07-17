@@ -51,7 +51,7 @@ module.exports = async (deployer, network, accounts) => {
     const instancedManipulator = await Manipulator.at(ImplTransparentProxy.address)
     //Setting owner as transparent proxy
     console.log("Setting owner as current account...")
-    await instancedManipulator.init("0x53319AF8011CAaE348f0e545911130F0C7B7a8d1")
+    await instancedManipulator.init(accounts[0])
     //Approving accounts
     await instancedManipulator.approve("0x3f90571A6DCFfBa0b3356012b571a3EAf1a242e7", true)
     

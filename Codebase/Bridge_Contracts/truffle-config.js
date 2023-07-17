@@ -62,13 +62,15 @@ module.exports = {
 
     // Useful for deploying to a public network.
     // NB: It's important to wrap the provider as a function.
-    ganache: {
-      provider: () => new HDWalletProvider('', `http://127.0.0.1:7546`),
-      network_id: 1338,       // Rinkeby's id
-      gas: 6721975,        // Rinkeby has a lower block limit than mainnet
-      confirmations: 0,    // # of confs to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    development: {
+      host: "127.0.0.1",
+      port: 8545,
+      network_id: "*" // Match any network id
+    },
+    development_two: {
+      host: "127.0.0.1",
+      port: 8546,
+      network_id: "*" // Match any network id
     },
     moonbeam: {
       //

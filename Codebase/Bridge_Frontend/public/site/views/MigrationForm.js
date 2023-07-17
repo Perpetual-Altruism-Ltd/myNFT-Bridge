@@ -838,6 +838,8 @@ export default class extends AbstractView {
       options.url = relayURL + '/getAvailableWorlds';
       options.data.universe = migData.destinationUniverseUniqueId;
 
+      console.log("-----------", options)
+
       axios.request(options).then(function (response) {
         //Add dest world available to dropdown and model.bridgeApp
         console.log("Available worlds: " + response.data.worlds);
@@ -1273,8 +1275,8 @@ export default class extends AbstractView {
           document.getElementById("MigTypeDescriptionMessage").textContent = "Redeeming an IOU will give you back the token it represents on the destination chain.";
         break;
 
-        case "":
-          document.getElementById("MigTypeDescriptionMessage").textContent = "";
+        case model.MintFullMigrationType:
+          document.getElementById("MigTypeDescriptionMessage").textContent = "Minting a Full migration NFT will create a new token in the destination network";
         break;
 
         default:
@@ -1397,6 +1399,12 @@ export default class extends AbstractView {
           migData.migrationType = model.MintOUIMigrationType;
           migData.isRedeem = false;
         break;
+        
+        case model.MintFullMigrationType:
+          btnToSelect = document.getElementById("FullMigrationButton");
+          migData.migrationType = model.MintFullMigrationType;
+          migData.isRedeem = false;
+        break;
 
         case model.RedeemIOUMigrationType:
           btnToSelect = document.getElementById("RedeemButton");
@@ -1504,6 +1512,13 @@ export default class extends AbstractView {
 
         //Prefill destWorld text element
         document.getElementById("DestWorldRedeem").textContent = migData.destinationWorld;
+      } else if(migData.migrationType == model.MintFullMigrationType){
+        //Select the Mint Full button
+        selectMigrationButton(model.MintFullMigrationType);
+
+        //Prefill destWorld
+        addDropDownOption("DestinationWorldSelector", migData.destinationWorld, "", "1");
+        selectDropDownOptionByIndex("DestinationWorldSelector", 0);
       }
 
       //Select relay
@@ -1615,6 +1630,22 @@ export default class extends AbstractView {
         //Retrieve dest token uri
         //Load dest token metadata + display token name
         getDestTokenURIAndDisplayTokenName();
+      } else if(migData.migrationType == model.MintFullMigrationType){
+        //Display next form field: arrival title + arrival dest network
+        showCardLine("ArrivalCard", true);
+        showCardLine("DestWorldRedeemCardLine", false);//Hide destWorld text
+        showCardLine("DestWorldCardLine", true);//Show destWorl selector
+
+        //Show DestTokenName if original token name retrieved
+        if(migData.originTokenName){
+          setDestTokenName(true, 'Full migration of ' + migData.originTokenName);
+        }
+
+        //Clear previous worlds retrieved from relay
+        clearDropDownOptions("DestinationWorldSelector");
+
+        //Load available destination world from relay
+        getRelayAvailableWorlds();
       }
 
       //Prefill dest owner
@@ -1777,7 +1808,28 @@ export default class extends AbstractView {
     });
 
     //Migration type buttons
-    document.getElementById("FullMigrationButton").addEventListener('click', async() =>{/*NOTHING*/});
+    document.getElementById("FullMigrationButton").addEventListener('click', async() =>{
+      //If button already selected, do nothing
+      if(migData.migrationType == model.MintFullMigrationType){return;}
+
+      //Select the new btn
+      selectMigrationButton(model.MintFullMigrationType);
+
+      //Clear destWorld previous data
+      clearDropDownOptions("DestinationWorldSelector");
+      //Reset previous migData destination var
+      setDestinationTokenId("");
+      //Unselect relay dropdown
+      unselectRelaySelector();
+
+      //Display next form field: relay drop down
+      showCardLine("MigrationRelayCardLine", true);
+
+      //Hide all fields after relay drop down
+      showFormFieldsAfterRelay(false);
+
+      refreshCompleteBtnEnabled();
+    });
     document.getElementById("IOUMigrationButton").addEventListener('click', function() {
       //If button already selected, do nothing
       if(migData.migrationType == model.MintOUIMigrationType){return;}

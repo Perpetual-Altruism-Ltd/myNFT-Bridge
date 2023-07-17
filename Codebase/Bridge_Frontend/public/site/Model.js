@@ -49,6 +49,7 @@ model.hash.escrowHashSigned = "";
 
 model.MintOUIMigrationType = 'Mint IOU';
 model.RedeemIOUMigrationType = 'Redeem IOU';
+model.MintFullMigrationType = 'Mint Full';
 
 model.listeningTimeOut = 1800; //seconds
 model.listeningRefreshFrequency = 5;//seconds

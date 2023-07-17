@@ -8,13 +8,13 @@
         "projectSecret": "xxx"
     },
     "bridgeUrl": "http://bridge.mynft.com/",
-    "mongoDbConnectionString": "mongodb://127.0.0.1:27017/relay",
+    "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017",
     "port": 5000,
     "balancer" : {
         "addresses": [
             {
-                "address": "0xD169F5F66F286384110963F551094650F7CCE8ee",
-                "key": "xxx"
+                "address": "0x9f148281978bCd94EF313f5f9A744ed88f683dc6",
+                "key": ""
             }
         ],
         "minimalWalletAmount": 0.0001
@@ -22,21 +22,21 @@
     "universes": [
         {
             "name":"Ethereum Testnet Rinkeby",
-            "rpc": "wss://rinkeby.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "chainID": 4,
-            "networkID": 4,
+            "rpc": "http://127.0.0.1:8545",
+            "chainID": 1337,
+            "networkID": 1337,
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "manipulatorAddress": "0x79a186242868024ef1ee0C49298EdA617c5D9d80",
-            "bridgeAddress": "0xbd51e2fe518Ed45e3ecB01d89558eb58681C2976",
+            "manipulatorAddress": "0xa2b3880222288496d47Eb5734b84B1430Bd6A168",
+            "bridgeAddress": "0x1F3Db43A55a92960Fb19561fAE752c6d014237E8",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x2f13399D9d49ed61D602CCb100E6d1be876B0e62",
+                    "address": "0x4Ad9338Ab9FfbEF2fCed6B948c373205C3EE4096",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
-                    "owner": "0x00"
+                    "owner": "0x9f148281978bCd94EF313f5f9A744ed88f683dc6"
                 }
             ],
             "handleRevert": true,
@@ -44,19 +44,19 @@
         },
         {
             "name":"Ethereum Testnet Kovan",
-            "rpc": "wss://kovan.infura.io/ws/v3/d2b2cc5abf7e4632a6dc2d85d7d479de",
-            "networkID": 42,
+            "rpc": "http://127.0.0.1:8546",
+            "networkID": 3337,
             "uniqueId": "0xee0bec75",
-            "manipulatorAddress": "0x8e0bbeaE7CDC5A44bE4C5dA6B2353636064F60Aa",
-            "bridgeAddress": "0x1B8D1d050522ed75533E444D46159EEF93A1c0bD",
+            "manipulatorAddress": "0xb15995c5b7dDa760fBd67c1aA3d77d9ABf19CCF4",
+            "bridgeAddress": "0x73a055eB1CeB4158832FE8BD0Bc5b10efEaf4433",
             "explorer" : "https://kovan.etherscan.io/",
             "eip1559": true,
             "worlds": [
                 {
-                    "address": "0x7BaC8E53e779E5661Bb62cA3eA2f3FE87672b21a",
+                    "address": "0x4Ad9338Ab9FfbEF2fCed6B948c373205C3EE4096",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
-                    "owner": "0x00"
+                    "owner": "0x9f148281978bCd94EF313f5f9A744ed88f683dc6"
                 }
             ]
         }
