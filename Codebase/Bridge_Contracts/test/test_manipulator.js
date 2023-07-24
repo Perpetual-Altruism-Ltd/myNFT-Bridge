@@ -178,6 +178,8 @@ contract("Testing Bridge features with manipulator", async accounts => {
 		this.manipulator_2 = contracts.manipulator_2;
 		this.migration_controller = contracts.migration_controller;
 
+		await this.erc721_full.addContractOperator(this.manipulator_2.address, true);
+
 		await this.erc721_token.mint();
 		let tokenMinted = await this.erc721_token.mintedTokens();
 		let tokenOwner = await this.erc721_token.ownerOf(1);

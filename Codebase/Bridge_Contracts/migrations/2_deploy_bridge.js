@@ -6,6 +6,7 @@ const ImplBridgeFunInit = artifacts.require("ImplBridgeFunInit");
 const ImplERC721TokenReceiver = artifacts.require("ImplERC721TokenReceiver");
 const ImplBridgeFunMigrateToERC721 = artifacts.require("ImplBridgeFunMigrateToERC721");
 const ImplBridgeFunMigrateFromERC721 = artifacts.require("ImplBridgeFunMigrateFromERC721");
+const FullMigrationController = artifacts.require("FullMigrationController");
 
 module.exports = async(deployer, network, accounts) => {
 
@@ -72,7 +73,7 @@ module.exports = async(deployer, network, accounts) => {
 
     await instancedProxy.updateContract(
         ImplBridgeFunMigrateToERC721.address,
-        "migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)",
+        "setFullMigrationController(address,address)migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721IOU(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)generateMigrationHashERC721Full(bytes32,address,address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32)",
         "ImplBridgeFunMigrateToERC721 Pt2"
     );
 
@@ -83,5 +84,9 @@ module.exports = async(deployer, network, accounts) => {
         "migrateFromIOUERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)migrateFromFullERC721ToERC721(bytes32,bytes32,bytes32,bytes32,bytes32,address,uint256,address,address,bytes32,bytes)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)registerEscrowHashSignature(bytes32,bytes)registerEscrowHashSignature(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,bytes)isMigrationRedeemable(bool)isMigrationRedeemable(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32)",
         "ImplBridgeFunMigrateFromERC721 Pt1"
     );
+
+    console.log("Deploying full migration controller")
+    await deployer.deploy(FullMigrationController);
+    
 
 }

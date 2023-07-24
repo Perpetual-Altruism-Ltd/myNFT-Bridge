@@ -23,6 +23,8 @@ contract FullERC721 is ERC721 {
 
     mapping(uint256 => string) internal tokenUri;
 
+    mapping(address => bool) internal contractOperator;
+
     // Total number of minted token
     uint256 public mintedTokens;
 
@@ -35,10 +37,10 @@ contract FullERC721 is ERC721 {
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
 
-        // require(
-        //     msg.sender == owner, // the contract owner
-        //     "msg.sender is not allowed to mint an address for the NFT"
-        // );
+        require(
+            msg.sender == owner || contractOperator[msg.sender], // the contract owner
+            "msg.sender is not allowed to mint an address for the NFT"
+        );
 
         mintedTokens = mintedTokens + 1;
         tokenOwners[mintedTokens] = msg.sender;
@@ -52,10 +54,10 @@ contract FullERC721 is ERC721 {
     /// @return the future minted tokenId
     function premintFor(address _preminter) external returns(uint256){
 
-        // require(
-        //     msg.sender == owner, // the contract owner
-        //     "msg.sender is not allowed to premint an address for the NFT"
-        // );
+        require(
+            msg.sender == owner || contractOperator[msg.sender], // the contract owner
+            "msg.sender is not allowed to premint an address for the NFT"
+        );
 
         mintedTokens = mintedTokens + 1;
         preminters[mintedTokens] = _preminter;
@@ -64,10 +66,10 @@ contract FullERC721 is ERC721 {
     }
 
     function setTokenUri(uint256 _tokenId, string calldata _tokenUri) external {
-        // require(
-        //     msg.sender == owner, // the contract owner
-        //     "msg.sender is not allowed to setTokenUri an address for the NFT"
-        // );
+        require(
+            msg.sender == owner || contractOperator[msg.sender], // the contract owner
+            "msg.sender is not allowed to setTokenUri an address for the NFT"
+        );
         tokenUri[_tokenId] = _tokenUri;
     }
 
@@ -289,8 +291,12 @@ contract FullERC721 is ERC721 {
         return (
             interfaceID == type(ERC721).interfaceId || //ERC721
             interfaceID == 0x01ffc9a7 //ERC165
-        );
-        
+        );    
+    }
+
+    function addContractOperator(address operator, bool status) external {
+        require(owner == msg.sender, "Only the smart contract owner or operator can mint tokens");
+        contractOperator[operator] = status;
     }
 
 }

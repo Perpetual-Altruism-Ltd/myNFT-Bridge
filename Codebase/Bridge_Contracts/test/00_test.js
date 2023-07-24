@@ -197,6 +197,8 @@ contract("Testing Bridges features", async accounts => {
 		this.erc721_full = contracts.erc721_full;
 		this.migration_controller = contracts.migration_controller;
 
+		await this.erc721_full.addContractOperator(this.bridge_2.address, true);
+
 		await this.erc721_token.mint();
 		let tokenMinted = await this.erc721_token.mintedTokens();
 		let tokenOwner = await this.erc721_token.ownerOf(1);

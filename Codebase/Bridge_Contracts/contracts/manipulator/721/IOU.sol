@@ -24,6 +24,8 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
 
     mapping(uint256 => string) internal tokenUris; // Each token uri
 
+    mapping(address => bool) internal contractOperator;
+
     // Total number of minted token
     uint256 public mintedTokens;
 
@@ -47,7 +49,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     /// @notice Mint a token for msg.sender and return the tokenId of this token
     /// @return the newly minted tokenId
     function mint() external returns(uint256){
-        require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require(owner == msg.sender || contractOperator[msg.sender], "Only the smart contract owner or operator can mint tokens");
 
         mintedTokens = mintedTokens + 1;
         require((preminters[mintedTokens] == address(0) || preminters[mintedTokens] == msg.sender) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
@@ -59,14 +61,14 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     }
 
     function setTokenUri (uint256 _tokenId, string calldata tokenUri) external {
-        require(owner == msg.sender, "Only the smart contract owner set tokens uri");
+        require(owner == msg.sender || contractOperator[msg.sender], "Only the smart contract owner or operator set tokens uri");
         require(tokenOwners[_tokenId] == address(0), "Token must not be transferred to a owner");
         
         tokenUris[_tokenId] = tokenUri;
     }
 
     function mint (uint256 _tokenID, string calldata _tokenUri) external returns(uint256){
-        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require(owner == msg.sender || contractOperator[msg.sender], "Only the smart contract owner or operator can mint tokens");
         require((preminters[_tokenID] == address(0) || preminters[_tokenID] == msg.sender) && tokenOwners[_tokenID] == address(0), "This token is already minted");
         mintedTokens = mintedTokens + 1;
         tokenOwners[_tokenID] = msg.sender;
@@ -79,7 +81,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     /// @notice Mint a token reservation, allowing the preminter to send the non-existing token from address 0
     /// @return the future minted tokenId
     function premintFor(address _preminter) external returns(uint256){
-        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require(owner == msg.sender || contractOperator[msg.sender], "Only the smart contract owner or operator can mint tokens");
 
         mintedTokens = mintedTokens + 1;
         require(preminters[mintedTokens] == address(0) &&  tokenOwners[mintedTokens] == address(0), "This token is already minted");
@@ -92,7 +94,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
     /// @return the future minted tokenId
     function premintFor(address _preminter, uint256 _tokenID) external returns(uint256){
 
-        // require(owner == msg.sender, "Only the smart contract owner can mint tokens");
+        require(owner == msg.sender || contractOperator[msg.sender], "Only the smart contract owner or operator can mint tokens");
 
         mintedTokens = mintedTokens + 1;
         require(preminters[_tokenID] == address(0) &&  tokenOwners[_tokenID] == address(0), "This token is already minted");
@@ -283,7 +285,7 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
             //require(msg.sender == preminters[_tokenId], string(abi.encodePacked("_____preminters[_tokenId]_", toAsciiString(preminters[_tokenId]), "_____msg.sender_", toAsciiString(msg.sender))));
             //require(_from == address(0x0), "_tokenId doesn't exist yet and neet to be minted");
             //require(_to == preminters[_tokenId], "_tokenId has not be approved for minting toward _to");
-            //require(msg.sender == owner, "only this smart contract owner can premint tokens");
+            //require(msg.sender == owner, "only this smart contract owner or operator can premint tokens");
         }
 
         //Prevent 0x0 burns
@@ -328,5 +330,10 @@ contract IOU is ERC721, ERC721Metadata, ERC165 {
         return  _interfaceId == type(ERC721).interfaceId 
         || _interfaceId == type(ERC721Metadata).interfaceId 
         || _interfaceId == type(ERC165).interfaceId;
+    }
+
+    function addContractOperator(address operator, bool status) external {
+        require(owner == msg.sender, "Only the smart contract owner or operator can mint tokens");
+        contractOperator[operator] = status;
     }
 }

@@ -42,6 +42,8 @@ module.exports = async (deployer, network, accounts) => {
         "premintFor(address,address)safeTransferFrom(address,address,uint256,address)"+
         "getProofOfEscrowHash(bytes32,address)migrateToERC721IOU(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
         "registerEscrowHashSignature(bytes32,bytes,address)"+
+        "migrateToERC721Full(address,uint256,bytes32,bytes32,bytes32,bytes32,bytes32,bytes32,address)"+
+        "migrateFromFullERC721ToERC721(bytes,address)"+
         "migrateFromIOUERC721ToERC721(bytes,address)cancelMigration(address,uint256,address,bytes32,bytes32,bytes32,bytes32,bytes32,address,bytes32,address)",
         "Manipulator"
     )

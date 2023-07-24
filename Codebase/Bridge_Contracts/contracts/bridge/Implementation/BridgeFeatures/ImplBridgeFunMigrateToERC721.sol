@@ -205,6 +205,10 @@ contract ImplBridgeFunMigrateToERC721 is
         fullMigrationsDelegates[_originWorld] = _migrationController;
     }
 
+    function getFullMigrationController(address _originWorld) external view returns(address) {
+        return fullMigrationsDelegates[_originWorld];
+    }
+
     /// @notice Query if a migration generating the given hash has been registered.
     /// @param _migrationHash The bytes32 migrationHash that would have been generated when pre-registering the migration
     /// @return TRUE if a migration generating such a hash was pre registered, FALSE if not.
