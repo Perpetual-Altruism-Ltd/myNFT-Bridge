@@ -3,6 +3,7 @@ const ERC1538QueryDelegate = artifacts.require("ERC1538QueryDelegateManipulator"
 const ImplTransparentProxy = artifacts.require("ManipulatorTransparentProxy")
 const Manipulator = artifacts.require("Manipulator")
 const IOU = artifacts.require("IOU")
+const FullERC721 = artifacts.require("FullERC721");
 
 module.exports = async (deployer, network, accounts) => {
     //Deploying the logic code of the proxyfication
@@ -60,4 +61,10 @@ module.exports = async (deployer, network, accounts) => {
     // Deploying IOU contract
     console.log("Deploying an IOU contract...")
     await deployer.deploy(IOU,ImplTransparentProxy.address)
+
+    // Deploying IOU contract
+    console.log("Deploying an erc721 full contract...")
+    await deployer.deploy(FullERC721)
+    let token = await FullERC721.deployed();
+    await token.addContractOperator(ImplTransparentProxy.address, true);
 }
