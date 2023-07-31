@@ -42,7 +42,8 @@ export default class extends AbstractView {
     //This var is not refreshed after this step on purpose.
     let userAccount = "";
     //Var indicating weather to send or not the getAvailableTokenId request. Set to true if receive "Too many requests"
-    let holdOnTokenIdReq = false;
+    let holdOnTokenIdReq = false
+  
 
     //=====Load data from server=====
     //Load static files like conf and ABIs
@@ -82,6 +83,8 @@ export default class extends AbstractView {
 
         };
     };
+ 
+
     let loadRelays = async function(callback){
       bridgeApp.relays = [];
 
@@ -821,6 +824,7 @@ export default class extends AbstractView {
       }
     }
 
+
     //=====Relay's interaction=====
     //Query relay for list of dest worlds available for the destination network selected
     //And display it into dropDown.
@@ -969,7 +973,8 @@ export default class extends AbstractView {
         //Change displayed connected wallet acc only on mig_form view
         if(document.getElementById("MigrationFormDisplay")){
           refreshConnectedAccount();
-          fetchUserNFTCollection();
+
+          // fetchUserNFTCollection();
           document.getElementById("ConnectedAccountAddr").textContent = userAccount;
 
           //Reload og token data
@@ -998,8 +1003,29 @@ export default class extends AbstractView {
         "300",
         true,
         "https://cryptographwebsitebucket.s3.eu-west-2.amazonaws.com/Vitalik-Buterin-Quadratic-Funding/Cryptograph.png");*/
-      fetchUserNFTCollection();
+      // fetchUserNFTCollection();
+      
+      if(document.getElementById("MigrationFormDisplay")) {
+        document.getElementById('manualPointerBtn').onclick = async function() {
+          const contractAddress = document.getElementById('contractAddress').value;
+          const tokenID = document.getElementById('tokenId').value;
+      
+          let web3 = new Web3(window.ethereum);
+          let ownerFetcher = new web3.eth.Contract(ABIS.ERC721, contractAddress);
+          let metadataFetcher = new web3.eth.Contract(ABIS.ERC721Metadata, contractAddress);
+          let check = await ownerFetcher.methods.ownerOf(tokenID).call();
+          if (check.toLowerCase() === window.ethereum.selectedAddress.toLowerCase()) {
+          // Add Card
+            let tokenURI = await metadataFetcher.methods.tokenURI(tokenID).call();
+            let metadata = await (await fetch(tokenURI)).json();
+            
+            console.log(tokenURI);
+            console.log('success');
 
+            addNFTToCollection(metadata.name, "0x07dac20e", contractAddress, tokenId, false, metadata.image)
+          }
+        }
+      }
     }
     //autoconnect to metamask if injected
     let connectToMetamask = async function () {
@@ -1722,7 +1748,7 @@ export default class extends AbstractView {
 
     //===CheckBox Only valid NFTs===
     document.getElementById("ShowOnlyValidNFT").addEventListener('change', async function(){
-      fetchUserNFTCollection();
+      // fetchUserNFTCollection();
     })
 
     //===Origin world input===
