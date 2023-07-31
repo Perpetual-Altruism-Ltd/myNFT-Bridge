@@ -115,6 +115,8 @@ class Client {
             this.migrationHashSignature,
             this.blockTimestamp
         )).transactionHash
+
+        console.log(this.creationTransferHash);
     }
 
     async closeRedeemMigration(){

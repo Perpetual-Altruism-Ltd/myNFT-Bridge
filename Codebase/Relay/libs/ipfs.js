@@ -1,6 +1,8 @@
 const Logger = require('./winston.js')('IPFS');
 const IPFS = require('ipfs-http-client');
-const Conf = require('../conf')
+const FormData = require('form-data');
+const Conf = require('../conf');
+const Axios = require('axios');
 
 class IPFSClient {
     constructor() {
@@ -34,6 +36,33 @@ class IPFSClient {
     async addFileObj(content) {
         return await this.ipfsInstance.add(content);
     }
+
+    async uploadFileIpfs(fileBuffer) {
+        const form = new FormData()
+        form.append('file', fileBuffer, 'file')
+      
+        let returnData;
+        try {
+         const { data } = await Axios.post(
+          `${Conf.ipfs.protocol}://${Conf.ipfs.host}:${Conf.ipfs.port}/api/v0/add`
+          , form
+          , { 
+              headers: { 
+                ...form.getHeaders(),
+                authorization: 'Basic ' + Buffer.from(Conf.ipfs.projectId + ':' + Conf.ipfs.projectSecret).toString('base64') 
+            },
+              maxContentLength: Infinity,
+              maxBodyLength: Infinity,
+              timeout: 2000000
+            }
+          )
+          returnData = data; 
+        } catch (error) {
+            console.log("something went wrong")
+        }
+
+        return returnData
+      };
 
     /**
      * Remove an object from IPFS

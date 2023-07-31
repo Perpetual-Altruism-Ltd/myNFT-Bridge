@@ -427,7 +427,6 @@ const main = async () => {
                 // Check if escrow hash is valid before doing anything
                 await client.verifyEscrowHashSigned(req.body.escrowHashSignature)
                 Logger.info(`Escrow hash verified`)
-
                 const premintedToken = await db.models.premintedTokens.findOneAndUpdate(
                     { tokenId: client.migrationData.destinationTokenId }
                     , { minted: true }
@@ -514,6 +513,7 @@ const main = async () => {
         if(!client) {
             return res.status(400).json({ error : 'Unknown migrationId' })
         }
+        // console.log(client);
         if(client.creationTransferHash) {
             return res.json({
                 "migrationStatus":"Ok",
