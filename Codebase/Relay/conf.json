@@ -28,12 +28,12 @@
             "uniqueId": "0x07dac20e",
             "chain": "rinkeby",
             "hardfork": "london",
-            "manipulatorAddress": "0xa2b3880222288496d47Eb5734b84B1430Bd6A168",
-            "bridgeAddress": "0x1F3Db43A55a92960Fb19561fAE752c6d014237E8",
+            "manipulatorAddress": "0x3196bbcdE6B7F2179fFAE76435f250D337711AE3",
+            "bridgeAddress": "0x04bed5785259D043f55E5d1EA28C03978739e41e",
             "explorer" : "https://rinkeby.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x4Ad9338Ab9FfbEF2fCed6B948c373205C3EE4096",
+                    "address": "0x9935b5aA3d94C72c9191D86b1ae078a88486991F",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x9f148281978bCd94EF313f5f9A744ed88f683dc6"
@@ -47,13 +47,13 @@
             "rpc": "http://127.0.0.1:8546",
             "networkID": 3337,
             "uniqueId": "0xee0bec75",
-            "manipulatorAddress": "0xb15995c5b7dDa760fBd67c1aA3d77d9ABf19CCF4",
-            "bridgeAddress": "0x73a055eB1CeB4158832FE8BD0Bc5b10efEaf4433",
+            "manipulatorAddress": "0x3196bbcdE6B7F2179fFAE76435f250D337711AE3",
+            "bridgeAddress": "0xfa9ea6BfEf4d20A6340265b11f93d86e23c596b8",
             "explorer" : "https://kovan.etherscan.io/",
             "eip1559": true,
             "worlds": [
                 {
-                    "address": "0x4Ad9338Ab9FfbEF2fCed6B948c373205C3EE4096",
+                    "address": "0x9935b5aA3d94C72c9191D86b1ae078a88486991F",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
                     "owner": "0x9f148281978bCd94EF313f5f9A744ed88f683dc6"
