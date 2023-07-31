@@ -64,7 +64,7 @@ exports.setup = async function(accounts){
         "ImplBridgeFunInit"
     );
     let alpha_instancedProxyBridgeInit = await ImplBridgeFunInit.at(alpha_instancedProxyBridge.address);
-    await alpha_instancedProxyBridgeInit.init("0x1");
+    await alpha_instancedProxyBridgeInit.init("0x07dac20e");
 
     
     //BETA (0x2)
@@ -74,7 +74,7 @@ exports.setup = async function(accounts){
         "ImplBridgeFunInit"
     );
     let beta_instancedProxyBridgeInit = await ImplBridgeFunInit.at(beta_instancedProxyBridge.address);
-    await beta_instancedProxyBridgeInit.init("0x2");
+    await beta_instancedProxyBridgeInit.init("0xee0bec75");
 
     //Adding their other features to the bridges
 

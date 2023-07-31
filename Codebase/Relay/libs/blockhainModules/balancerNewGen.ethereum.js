@@ -18,6 +18,8 @@ class TransactionBalancerNewGen {
 
         this.universe = universe
 
+        this.chainName = universe.name
+
         this.addresses = Conf.balancer.addresses.map(address => {
             return {
                 ...address,
@@ -41,6 +43,7 @@ class TransactionBalancerNewGen {
     async send(transaction){
         return new Promise((resolve, reject) => {
             const transactionHash = Crypto.createHash('md5').update(JSON.stringify(transaction)).digest("hex")
+            Logger.info(`==> ${transactionHash}`);
             const handler = res => {
                 if(res.state) {
                     return resolve(res.transactionResult)
@@ -50,6 +53,7 @@ class TransactionBalancerNewGen {
             this.eventEmitter.once(transactionHash, handler)
             Logger.info(`New transaction registered with transaction balancer.`)
             this.transactionQueue.push(transaction)
+            Logger.info('Transaction queued');
         }) 
     }
 
@@ -77,37 +81,53 @@ class TransactionBalancerNewGen {
             const transactionHash = Crypto.createHash('md5').update(JSON.stringify(transaction)).digest("hex")
 
             transaction.from = account.address
-            transaction.nonce = await this.web3Instance.eth.getTransactionCount(transaction.from)
+
+            Logger.info(`Sending a transaction to ${this.chainName}`)
 
             let gasEstimate
-            try{
-                gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
-                Logger.info(`Gas needed estimed (${gasEstimate}).`)
-            }catch(err){
-                this.eventEmitter.emit(transactionHash, { state: false, transactionResult: err })
-                account.locked = false
-                continue
-            }
+            let continuer = true;
 
-            const fullTransaction = {
-                gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
-                ...(!this.universe.eip1559 && { gasPrice: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
-                ...(this.universe.eip1559 && 
-                    { 
-                        maxFeePerGas: (((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0)) === "1"
-                        ? this.web3Instance.utils.toWei("10","gwei") : ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0)
-                    }
-                ),
-                ...(this.universe.eip1559 && 
-                    { 
-                        maxPriorityFeePerGas: ((((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.99).toFixed(0)) === "1" 
-                        ? this.web3Instance.utils.toWei("9","gwei") : (((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.99).toFixed(0)
-                    }
-                ),
-                ...this.transactionConfig,
-                ...transaction
-            }
+            while(continuer) {
+                Logger.info(`Looping for ==> ${transactionHash}`);
+                transaction.nonce = await this.web3Instance.eth.getTransactionCount(transaction.from)
 
+                try{
+                    gasEstimate = await this.web3Instance.eth.estimateGas(transaction)
+                    Logger.info(`Gas needed estimed (${gasEstimate}).`)
+                    continuer = false;
+                }catch(err){
+                    this.eventEmitter.emit(transactionHash, { state: false, transactionResult: err })
+                    account.locked = false
+                    await new Promise(resolve => setTimeout(resolve, 5000));
+                    continue
+                }
+            }
+            
+
+                try { 
+                    var fullTransaction = {
+                        gas: this.web3Instance.utils.numberToHex(gasEstimate * 2),
+                        ...(!this.universe.eip1559 && { gasPrice: ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0) }),
+                        ...(this.universe.eip1559 && 
+                            { 
+                                maxFeePerGas: (((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0)) === "1"
+                                ? this.web3Instance.utils.toWei("10","gwei") : ((await this.web3Instance.eth.getGasPrice()) * 1.2).toFixed(0)
+                            }
+                        ),
+                        ...(this.universe.eip1559 && 
+                            { 
+                                maxPriorityFeePerGas: ((((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.99).toFixed(0)) === "1" 
+                                ? this.web3Instance.utils.toWei("9","gwei") : (((await this.web3Instance.eth.getGasPrice()) * 1.2) * 0.99).toFixed(0)
+                            }
+                        ),
+                        ...this.transactionConfig,
+                        ...transaction
+                    }
+                    continuer = false;
+                } catch (error) {
+                    Logger.error(error);
+
+                }
             Logger.info(`Executing transaction on account ${account.address} with nonce ${fullTransaction.nonce} on universe ${this.universe.name}.`)
 
             const signedTransaction = await this.web3Instance.eth.accounts.signTransaction(fullTransaction, account.key)

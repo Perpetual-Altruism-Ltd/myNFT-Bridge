@@ -28,8 +28,8 @@ class Ethereum extends EventEmitter {
             }
         })
         this.web3Instance = new Web3(this.web3Provider)
-        //this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
-        //this.web3Instance.eth.defaultAccount = this.web3Wallet.address
+        // this.web3Wallet = this.web3Instance.eth.accounts.wallet.add(Conf.relayPrivateKey)
+        // this.web3Instance.eth.defaultAccount = this.web3Wallet.address
         this.balancer = new TransactionBalancerNewGen(universe, this.web3Instance);
 
         Logger.info(`Web3 ethereum querier instanciated on rpc ${this.rpc}`)
@@ -46,6 +46,8 @@ class Ethereum extends EventEmitter {
                 manipulatorAddress, 
                 { gas: 8000000 }
             );
+
+            Logger.info('Sending a premintFor call');
 
             const calldata = await contract.methods.premintFor(bridgeAddress, contractAddress).encodeABI();
             const txObject = {
@@ -74,6 +76,8 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
+        Logger.info('Sending a getProofOfEscrowHash call');
+
         const escrowHash = await web3Contract.methods.getProofOfEscrowHash(migrationHash, bridgeAddress).call();
         return escrowHash;
     }
@@ -85,6 +89,7 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
+        Logger.info('Sending a safeTransferFrom call');
 
         const calldata = await web3Contract.methods.safeTransferFrom(from, to, tokenId, contract).encodeABI();
         const txObject = {
@@ -92,6 +97,7 @@ class Ethereum extends EventEmitter {
             value: 0,
             data: calldata
         };
+
         const escrowHash = await this.balancer.send(txObject);
         return escrowHash
     }
@@ -147,6 +153,8 @@ class Ethereum extends EventEmitter {
                         value: 0,
                         data: calldata
                     };
+                    Logger.info('Sending a migrateToERC721IOU call');
+
                     await this.balancer.send(txObject);
                 }catch(err){
                     console.log(err)
@@ -173,6 +181,7 @@ class Ethereum extends EventEmitter {
             value: 0,
             data: calldata
         };
+        Logger.info('Sending a registerEscrowHashSignature call');
         await this.balancer.send(txObject);
     }
 
@@ -183,6 +192,16 @@ class Ethereum extends EventEmitter {
             manipulatorAddress,
             { gas: 8000000 }
         )
+
+        let toPrint = {
+            manipulatorAddress,
+            originBridge,
+            migrationData,
+            migrationHashSignature,
+            blockTimestamp
+        }
+
+        console.log(toPrint);
         /*const web3Contract = new this.web3Instance.eth.Contract(
             BridgeAbi,
             migrationData.destinationBridge,
@@ -214,6 +233,9 @@ class Ethereum extends EventEmitter {
         + this.web3Instance.utils.padLeft(this.web3Instance.utils.numberToHex(this.web3Instance.utils.toBN(parseInt(blockTimestamp))), 64).replace("0x", "")
         + migrationHashSignature.replace("0x", "")
 
+        Logger.info('Sending a migrateFromIOUERC721ToERC721 call');
+
+
         const calldata = await web3Contract.methods.migrateFromIOUERC721ToERC721(data, migrationData.destinationBridge).encodeABI();
         const txObject = {
             to: manipulatorAddress,
@@ -226,7 +248,15 @@ class Ethereum extends EventEmitter {
             value: 0,
             data: calldata
         };*/
-        return await this.balancer.send(txObject);
+
+
+        try {
+            return await this.balancer.send(txObject);
+        } catch (error) {
+            console.log(error)
+            return new Error('failed');
+        }
+        
     }
 
     async getTokenUri(manipulatorAddress, contract, tokenId){
@@ -272,6 +302,8 @@ class Ethereum extends EventEmitter {
             migrationData.originOwner,
             this.numberToBytes32(blockTimestamp)
         ]
+
+        Logger.info('Sending a cancelMigration call');
 
         const calldata = await web3Contract.methods.cancelMigration(...data, originBridge).encodeABI();
         const txObject = {
