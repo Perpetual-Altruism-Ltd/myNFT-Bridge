@@ -204,7 +204,8 @@ exports.setup = async function(accounts){
     
     //Creating the token contracts
     let alpha_Tokens = await ImplTestERC721.new();
-    let beta_Tokens = await IOU.new(beta_instancedManipulator.address);
+    let beta_Tokens = await IOU.new(accounts[0]);
+    await beta_Tokens.addContractOperator(beta_instancedProxy.address, true);
     let full_mig_token = await FullERC721.new();
     let migration_controller = await FullMigrationController.new();
 
