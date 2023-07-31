@@ -17,6 +17,16 @@ contract FullMigrationController {
         migrationAllowed[_originWorld][destination] = true;
     }
 
+    function cancelFullMigration(address _originWorld, bytes32 _destinationUniverse, bytes32 _destinationWorld) external {
+      
+        require(msg.sender == Ownable(_originWorld).owner(),
+            "msg.sender is not the owner, of the token contract"
+        );
+
+        bytes32 destination = keccak256(abi.encodePacked(_destinationUniverse, _destinationWorld));
+        migrationAllowed[_originWorld][destination] = false;
+    }
+
     function acceptableMigration(
         address _originWorld, 
         bytes32 _destinationUniverse, 

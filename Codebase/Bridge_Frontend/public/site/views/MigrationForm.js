@@ -1,6 +1,5 @@
 import AbstractView from './AbstractView.js';
 
-
 /*******************************Read before modifying code
 Inputs elements should be read only.
 Therefore to modify the content of inputOGContractAddress, inputOGTokenID, inputDestOwner:
@@ -183,6 +182,27 @@ export default class extends AbstractView {
             lert("Could not load ERC165 ABI at " + pathERC721Metadata);
         };
     };
+    var loadFMControllerABI = async function () {
+      let pathFMControllerABI = '/ABI/FullMigrationController.json';
+      try {
+          let xhr = new XMLHttpRequest();
+          xhr.open('GET', pathFMControllerABI);
+          xhr.onload = function () {
+              if (xhr.status != 200) { // analyze HTTP status of the response
+                  console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+                  alert("Could not load FMController ABI at " + pathFMControllerABI);
+              } else { // show the result
+                  //console.log(`Done, got ${xhr.response}`); // responseText is the server
+                  var resp = xhr.response;
+                  ABIS.FMController = JSON.parse(resp).abi;
+              }
+          };
+          xhr.send();
+      } catch (err) {
+          console.log(err);
+          alert("Could not load FMController ABI at " + pathFMControllerABI);
+      };
+    }
     //Return true if all above data from server are loaded
     let areDataLoadedFromServer = function(){
       return bridgeApp.networks.length  > 0 && bridgeApp.relays.length  > 0;
@@ -1025,6 +1045,39 @@ export default class extends AbstractView {
             addNFTToCollection(metadata.name, "0x07dac20e", contractAddress, tokenId, false, metadata.image)
           }
         }
+        document.getElementById('FMCCContractApproval').onclick = async function() {
+          const FCCAddress = document.getElementById('FMCContractAddress').value;
+          const erc721 = document.getElementById('FMCERC721ContractAddress').value;
+          const FMCOriginUniverse = Web3.utils.padLeft(document.getElementById('FMCOriginUniverse').value, 64);
+          const FMCDestinationUniverse = Web3.utils.padLeft(document.getElementById('FMCDestinationUniverse').value, 64);
+      
+          let web3 = new Web3(window.ethereum);
+          let FMController = new web3.eth.Contract(ABIS.FMController, FCCAddress);
+
+          console.log(window.ethereum.selectedAddress)
+
+          FMController.methods.approveFullMigration(erc721, FMCOriginUniverse, FMCDestinationUniverse).send({from: window.ethereum.selectedAddress})
+
+          //0xF703F142595C77ec55D869467D06e45eC9209931
+
+          console.log(FMController)
+        }
+        document.getElementById('FMCCContractRemoveApproval').onclick = async function() {
+          const FCCAddress = document.getElementById('FMCContractAddress').value;
+          const erc721 = document.getElementById('FMCERC721ContractAddress').value;
+          const FMCOriginUniverse = Web3.utils.padLeft(document.getElementById('FMCOriginUniverse').value, 64);
+          const FMCDestinationUniverse = Web3.utils.padLeft(document.getElementById('FMCDestinationUniverse').value, 64);
+      
+          let web3 = new Web3(window.ethereum);
+          let FMController = new web3.eth.Contract(ABIS.FMController, FCCAddress);
+
+          console.log(window.ethereum.selectedAddress)
+
+          FMController.methods.cancelFullMigration(erc721, FMCOriginUniverse, FMCDestinationUniverse).send({from: window.ethereum.selectedAddress})
+
+          console.log(FMController)
+        }
+        
       }
     }
     //autoconnect to metamask if injected
@@ -1613,6 +1666,7 @@ export default class extends AbstractView {
     loadERC721MetadataABI(function (){});
     //Load ERC165 ABI
     loadERC165ABI(function (){});
+    loadFMControllerABI(function (){});
 
     //Listeners & Callback
     //When new origin network selected : Prompt user to connect to new chain selected

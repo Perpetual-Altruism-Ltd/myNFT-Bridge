@@ -262,6 +262,29 @@ var loadBridgeERC721DepartureABI = async function () {
         alert("Could not DepartureBridge ABI at " + pathERC721Metadata);
     };
 }
+var loadFMControllerABI = async function () {
+  let pathFMControllerABI = '/ABI/FullMigrationController.json';
+  try {
+      let xhr = new XMLHttpRequest();
+      xhr.open('GET', pathFMControllerABI);
+      xhr.onload = function () {
+          if (xhr.status != 200) { // analyze HTTP status of the response
+              console.log(`Error ${xhr.status}: ${xhr.statusText}`); // e.g. 404: Not Found
+              alert("Could not load FMController ABI at " + pathFMControllerABI);
+          } else { // show the result
+              //console.log(`Done, got ${xhr.response}`); // responseText is the server
+              var resp = xhr.response;
+              ABIS.FMController = JSON.parse(resp).abi;
+          }
+      };
+      xhr.send();
+  } catch (err) {
+      console.log(err);
+      alert("Could not load FMController ABI at " + pathFMControllerABI);
+  };
+}
+loadFMControllerABI();
+
 //loadBridgeERC721DepartureABI();//TO UNCOMMENT WHEN ABI OK
 ABIS.DepartureBridge = {};
 
