@@ -1,7 +1,7 @@
 
 # Full migration
 
-## AGo to the url of the relay and connect your wallet.
+## Go to the url of the bridge and connect your wallet.
 ![1](doc/1.PNG)
 
 ## On the next page, complete the form:
