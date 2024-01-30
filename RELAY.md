@@ -1,14 +1,51 @@
 
 # Relay
 
-The relay is the center piece of the mecanism. It is orchestrating the migration between the user, the bridge, and the IOU contract.
+The relay is the center piece of the mecanism. It is orchestrating the migration between the user, the bridge, and the token contracts.
 
-## Installation
+## Prerequisites
 
-```sh
-cd myNFT-Bridge/Codebase/Relay
-yarn
-```
+- [Node.js](https://nodejs.org/en/download)
+- [Docker](https://docs.docker.com/desktop/)
+
+Make sure the above requirements are installed before going through the steps below.
+
+## List of steps
+
+1. Launch MongoDB server
+2. Clone the project
+3. Navigate to the Relay directory
+4. cd Relay
+5. npm install
+6. Update configuration file `conf.json` with your parameters
+7. npm start
+
+## Launch MongoDB
+
+Start MongoDB database using docker, adding your configuration pameters in the command, replace [USER] and [PASS] with the one you want to use for your database. 
+
+> docker run -e MONGO_INITDB_ROOT_USERNAME=[USER] -e MONGO_INITDB_ROOT_PASSWORD=[PASS] -p 27017:27017 mongo:latest
+
+## Cloning the project
+
+The first step of course is to grab your own copy of the project - either cloning through git or a ZIP download works. Once that's done you will need to navigate to the project directory through the terminal. If you're not familiar with the basic commands, then follow the following steps depending on your operating system:
+
+MacOS: Through the Finder application, navigate to the project folder, right click on it, and choose 'New Terminal at Folder' from the bottom of the list.
+
+Windows: Through the Windows Explorer application, navigate to the project folder, right click on it, and choose 'Open in Terminal' from the bottom of the list.
+
+Linux: I'm sure you know basic terminal commands already 😉
+
+Now dive an extra level deeper by typing the command below and tapping enter/return. you will know be at the root of the project.
+
+> cd Relay
+
+The relay require its own list of dependencies in order to function, so the first command to run here is:
+
+> npm install
+
+This might take a few minutes, but when done, follow it up with the line below:
+
 
 ## Configuration
 
@@ -18,7 +55,6 @@ You will need :
    - An [infura](https://infura.io) account with IPFS enabled (projectId and projectSecret)
    - A bridge deployed on each universes you want to support with the wallet given before
    - A IOU enabled ERC721 contract on each of the IOU destination universes, deployed with the manipulator given before
-   - A MongoDb server running to hold the data of the relay
 
 Here a description of the configuration options :
 
@@ -29,8 +65,8 @@ Here a description of the configuration options :
         "host": "ipfs.infura.io", // Default value
         "port": 5001, // Default value
         "protocol": "https", // Default value
-        "projectId": "205glgJgV59a6lg5A3w9qCWCS8k", // Your infura project id
-        "projectSecret": "78db432020396e4d0bf8963731a6b17a" // Your infura project secret
+        "projectId": "205gl...", // Your infura project id
+        "projectSecret": "78db..." // Your infura project secret
     },
     "bridgeUrl": "http://bridge.mynft.com/", // Address of the frontend that will be linked to this relay
     "mongoDbConnectionString": "mongodb://root:example@127.0.0.1:27017/relay?authSource=admin&w=1", // Your mongodb server connection string
@@ -38,8 +74,8 @@ Here a description of the configuration options :
     "balancer" : { // The part that is sending out transactions to the blockchain (wallet)
         "addresses": [
             {
-                "address": "0xbf21e21414554dB734C9f86835D51B57136BC35b", // Public key
-                "key": "1386457b43129beb2c4687aa1d981fb82e8cced627ee02afe2de073db0d4f4e8" // Associated private key
+                "address": "0xbfAB...", // Public key
+                "key": "138..." // Associated private key
             }
         ],
         "minimalWalletAmount": 0.0001 // Minimal wallet amount before warning about refiling
@@ -49,12 +85,12 @@ Here a description of the configuration options :
             "name":"Ethereum Testnet Rinkeby", // The universe name
             "rpc": "wss://rinkeby.infura.io/ws/v3/xxx", // The websocket enabled RPC on which your relay will be operating for this universe
             "uniqueId": "0x07dac20e", // A unique id for your universe, will be used to communicate with the frontend (should be the same each side)
-            "manipulatorAddress": "0x85FDD7880A3C7FCaa0540c3307Cf00FC301fE564", // The manipulator address
-            "bridgeAddress": "0x75Fcc7880A3C7FCaa0540c3307Cf00FC301fD242", // The bridge contract address
+            "manipulatorAddress": "0x85FD...", // The manipulator address
+            "bridgeAddress": "0x75Fc...", // The bridge contract address
             "explorer" : "https://rinkeby.etherscan.io/", // The explorer address to display transactions informations to users
             "worlds": [ // A list of contract your relay will be using to emit IOU. One is usually enough
                 {
-                    "address": "0xf2E02E4ee09428755C78658a636B31a289d772B6", // IOU contract address
+                    "address": "0xf2E0...", // IOU contract address
                     "name": "MyContract", // Contract name
                     "tokenName": "TOKENNAME", // Token name
                     "owner": "0x00" // Owner of the contract
@@ -67,17 +103,23 @@ Here a description of the configuration options :
             "chainID": 42,
             "networkID": 42,
             "uniqueId": "0xee0bec75",
-            "bridgeAdress": "0xF7c4fD79E2e121A69f1feD6224C332E9087706e5",
+            "bridgeAdress": "0xF7c4...",
             "explorer" : "https://kovan.etherscan.io/",
             "worlds": [
                 {
-                    "address": "0x3c1F63bDb0Ea3Fb6d5cf06195BFD7C48a29eDDBd",
+                    "address": "0x3c1F...",
                     "name": "MyContract",
                     "tokenName": "TOKENNAME",
-                    "owner": "0x00"
+                    "owner": "0x00..."
                 }
             ]
         }
     ]
 }
 ```
+
+## Launch Relay
+
+> npm start
+
+You should now have the Relay running at port 5000 of your computer (accessible at http://localhost:5000)
